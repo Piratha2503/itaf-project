@@ -1,6 +1,5 @@
 package com.ii.testautomation.dto.request;
 
-import com.ii.testautomation.entities.Modules;
 import lombok.Getter;
 import lombok.Setter;
 
