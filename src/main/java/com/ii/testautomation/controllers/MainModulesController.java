@@ -1,21 +1,16 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.MainModulesRequest;
-import com.ii.testautomation.entities.MainModules;
-import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.MainModulesService;
-import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @CrossOrigin
 public class MainModulesController
