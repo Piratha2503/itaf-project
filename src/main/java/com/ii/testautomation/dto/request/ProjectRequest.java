@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ProductRequest {
+public class ProjectRequest {
   private Long id;
   private String name;
 }
