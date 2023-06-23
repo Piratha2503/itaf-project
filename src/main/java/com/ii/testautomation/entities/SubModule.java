@@ -15,6 +15,6 @@ public class SubModule {
     private String name;
     private String prefix;
     @ManyToOne
-    @JoinColumn(name = "mainModule_id",nullable = false)
+    @JoinColumn(name = "main_module_id",nullable = false)
     private MainModule mainModule;
 }
