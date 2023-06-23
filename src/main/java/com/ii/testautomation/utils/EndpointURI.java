@@ -15,6 +15,24 @@ public final class EndpointURI {
   public static final String PRODUCT_BY_ID = PROJECT + ID;
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //URLs for modules
+  public static final String MODULE =BASE_API_PATH +"module";
+  public static final String MODULE_BY_ID =MODULE +ID;
+
+
   private EndpointURI() {
   }
 }

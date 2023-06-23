@@ -32,5 +32,27 @@ public class StatusCodeBundle {
  private String projectAllReadyExistsMessage;
 
 
+//Modules
+ @Value("${code.validation.module.alreadyExists}")
+    private String moduleAllReadyExistsCode;
 
+ @Value("${code.validation.module.notExists}")
+ private  String moduleNotExistsCode;
+
+ @Value("${message.success.update.module}")
+ private String updateModuleSuccessMessage;
+
+ @Value("${message.validation.module.name.alreadyExists}")
+    private String moduleNameAllReadyExistsMessage;
+
+ @Value("${message.success.save.module}")
+    private String saveModuleSuccessMessage;
+
+ @Value("${message.validation.module.prefix.alreadyExists}")
+    private String modulePrefixAllReadyExistsMessage;
+
+ @Value("${message.validation.module.notExists}")
+    private String moduleNotExistsMessage;
+ @Value("${message.success.delete.module}")
+    private String deleteModuleSuccessMessage;
 }
