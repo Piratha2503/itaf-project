@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ProductResponse {
+public class ProjectResponse {
   private Long id;
   private String name;
 }
