@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Setter
 @Getter
-public class Module {
+public class Modules {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

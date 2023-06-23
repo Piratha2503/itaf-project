@@ -2,7 +2,6 @@ package com.ii.testautomation.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import javax.persistence.*;
 
@@ -19,5 +18,5 @@ public class TestGrouping {
     private TestCases testCases;
     @ManyToOne
     @JoinColumn(name ="testType_id", nullable = false)
-    private TestType testType;
+    private TestTypes testType;
 }

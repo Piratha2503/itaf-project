@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-public class TestType {
+public class TestTypes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

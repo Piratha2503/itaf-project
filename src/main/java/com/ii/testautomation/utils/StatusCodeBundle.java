@@ -22,31 +22,15 @@ public class StatusCodeBundle {
   private String failureCode;
 
 //Product
- @Value("${message.success.save.product}")
- private String saveProductSuccessMessage;
+ @Value("${message.success.save.project}")
+ private String saveProjectSuccessMessage;
 
- @Value("${message.success.update.product}")
- private String updateProductSuccessMessage;
+ @Value("${code.validation.project.alreadyExists}")
+ private String projectAllReadyExistCode;
 
- @Value("${message.success.getAll.product}")
- private String getAllProductSuccessMessage;
+ @Value("${message.validation.project.alreadyExists}")
+ private String projectAllReadyExistsMessage;
 
- @Value("${message.success.delete.product}")
- private String deleteProductSuccessMessage;
 
- @Value("${message.success.getById.product}")
- private String getByIdProductSuccessMessage;
-
- @Value("${code.validation.product.notExists}")
- private String productNotExistCode;
-
- @Value("${message.validation.product.notExists}")
- private String productNotExistMessage;
-
- @Value("${code.validation.product.alreadyExists}")
- private String productAlreadyExistCode;
-
- @Value("${message.validation.product.alreadyExists}")
- private String productAlreadyExistMessage;
 
 }
