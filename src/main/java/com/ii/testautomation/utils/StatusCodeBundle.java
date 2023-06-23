@@ -59,6 +59,22 @@ public class StatusCodeBundle {
 
 
 
+    @Value("${message.success.insertmain}")
+    private String SuccessMessageInsert;
+    @Value("${message.success.deletemain}")
+    private String SuccessMessageDelete;
+    @Value("${message.success.updatemain}")
+    private String SuccessUpdateMessage;
+    @Value("${message.success.viewallmain}")
+    private String SuccessViewAllMessage;
 
+    @Value("${message.failure.alreadyexistname}")
+    private String NameAlreadyExist;
+    @Value("${message.failure.alreadyexistpreix}")
+    private String PrefixAlreadyExist;
+    @Value("${message.failure.noid}")
+    private String Noid;
+    @Value("${message.failure.MainIdnotFound}")
+    private String NoMainModId;
 
 }
