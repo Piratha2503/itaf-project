@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MainModulesRepository extends JpaRepository<MainModules,Long>
 {
-    public boolean existsByName(String name);
-    public boolean existsByPrefix(String prefix);
+    boolean existsByName(String name);
+    boolean existsByPrefix(String prefix);
 
     boolean existsByNameIgnoreCaseAndIdNot(String mainmoduleName, Long mainmoduleId);
 
