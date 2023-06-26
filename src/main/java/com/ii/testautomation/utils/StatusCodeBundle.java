@@ -21,13 +21,14 @@ public class StatusCodeBundle {
   @Value("${code.failure.common}")
   private String failureCode;
 
-//Product
+//Project
     @Value("${code.validation.project.alreadyExists}")
     private String projectAlReadyExistCode;
     @Value("${code.validation.project.notExists}")
     private String projectNotExistCode;
     @Value("${code.validation.project.file.empty}")
     private String projectFileEmptyCode;
+
     @Value("${message.validation.project.notExits}")
     private String projectNotExistsMessage;
     @Value("${message.validation.project.code.alreadyExists}")
@@ -52,9 +53,29 @@ public class StatusCodeBundle {
     private String getProjectSuccessMessage;
     @Value("${message.success.delete.project}")
     private String getProjectDeleteMessage;
+    //SubModules
+    @Value("${code.validation.subModules.alreadyExists}")
+    private String subModulesAlReadyExistCode;
+    @Value("${code.validation.subModules.notExists}")
+    private String subModulesNotExistCode;
 
+    @Value("${message.validation.subModule.Name.alreadyExists}")
+    private String subModuleNameAlReadyExistMessage;
+    @Value("${message.validation.subModule.prefix.alreadyExists}")
+    private String subModulePrefixAlReadyExistMessage;
+    @Value("${message.validation.subModule.notExists}")
+    private String subModuleNotExistsMessage;
+    @Value("${message.success.save.subModule}")
+    private String saveSubModuleSuccessMessage;
+    @Value("${message.success.update.subModule}")
+    private String updateSubModuleSuccessMessage;
 
+    //MainModules
+    @Value("${code.validation.mainModules.notExists}")
+    private String mainModulesNotExistCode;
 
+    @Value("${message.validation.mainModule.notExists}")
+    private String mainModuleNotExistsMessage;
 
 
 
