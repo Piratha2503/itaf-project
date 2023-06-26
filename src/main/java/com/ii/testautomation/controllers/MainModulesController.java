@@ -2,7 +2,6 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.MainModulesRequest;
 import com.ii.testautomation.dto.search.MainModuleSearch;
-import com.ii.testautomation.dto.search.ProjectSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 
 @RestController
 @CrossOrigin
@@ -31,7 +29,7 @@ public class MainModulesController
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(EndpointURI.MAINMODULE)
-    public ResponseEntity<Object> insertMain(@RequestBody MainModulesRequest mainModulesRequest)
+    public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest)
     {
 
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleid()))
@@ -52,7 +50,7 @@ public class MainModulesController
                 statusCodeBundle.getSuccessMessageInsert()));
     }
     @DeleteMapping(EndpointURI.MAINMODULE_BY_ID)
-    public ResponseEntity<Object> deleteMain(@PathVariable Long id)
+    public ResponseEntity<Object> deleteMainModules(@PathVariable Long id)
     {
         if (!mainModulesService.isExistMainModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -64,7 +62,7 @@ public class MainModulesController
                 statusCodeBundle.getSuccessMessageDelete()));
     }
     @GetMapping(EndpointURI.MAINMODULE_BY_ID)
-    public ResponseEntity<Object> getById(@PathVariable Long id)
+    public ResponseEntity<Object> getMainModulesById(@PathVariable Long id)
     {
         if (!mainModulesService.isExistMainModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -78,7 +76,7 @@ public class MainModulesController
                 statusCodeBundle.getSuccessViewAllMessage()));
     }
     @PutMapping(EndpointURI.MAINMODULE)
-    public ResponseEntity<Object> updateMod(@RequestBody MainModulesRequest mainModulesRequest)
+    public ResponseEntity<Object> updateMainModules(@RequestBody MainModulesRequest mainModulesRequest)
     {
         if (!mainModulesService.isExistMainModulesId(mainModulesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -106,7 +104,7 @@ public class MainModulesController
     }
 
     @GetMapping(EndpointURI.MAINMODULES)
-    public ResponseEntity<Object> getAllPage(Pageable pageable)
+    public ResponseEntity<Object> getAllMainModulesPage(Pageable pageable)
     {
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,
                 mainModulesService.viewAllMainModulesPage(pageable),
@@ -117,7 +115,7 @@ public class MainModulesController
     }
 
     @GetMapping(EndpointURI.MAINMODULEPAGE)
-    public ResponseEntity<Object> serach(@RequestParam(name = "page") int page,
+    public ResponseEntity<Object> SearcgMainModuleswithpage(@RequestParam(name = "page") int page,
                                          @RequestParam(name = "size") int size,
                                          @RequestParam(name = "direction") String direction,
                                          @RequestParam(name = "sortField") String sortField,

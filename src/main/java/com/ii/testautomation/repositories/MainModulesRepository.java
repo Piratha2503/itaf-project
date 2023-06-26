@@ -1,8 +1,6 @@
 package com.ii.testautomation.repositories;
 
 import com.ii.testautomation.entities.MainModules;
-import com.ii.testautomation.entities.Project;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
