@@ -8,15 +8,15 @@ import org.springframework.data.domain.Pageable;
 
 public interface MainModulesService
 {
-   public void insertMainModules(MainModulesRequest mainModulesRequest);
-   public void deleteMainModules(Long id);
-   public MainModules getByMainModulesId(Long id);
-   public void updateMainModules(MainModulesRequest mainModulesRequest);
-   public Page<MainModules> viewAllMainModulesPage(Pageable pageable);
-   public boolean isExistMainModulesId(Long id);
-   public boolean isExistMainModulesName(String name);
-   public boolean isExistPrefix(String prefix);
-   public boolean isExistModulesId(Long id);
-   public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
-   public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
+    void insertMainModules(MainModulesRequest mainModulesRequest);
+    void deleteMainModules(Long id);
+    MainModules getByMainModulesId(Long id);
+    void updateMainModules(MainModulesRequest mainModulesRequest);
+    Page<MainModules> viewAllMainModulesPage(Pageable pageable);
+    boolean isExistMainModulesId(Long id);
+    boolean isExistMainModulesName(String name);
+    boolean isExistPrefix(String prefix);
+    boolean isExistModulesId(Long id);
+    boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
+    boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
 }
