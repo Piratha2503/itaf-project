@@ -62,7 +62,7 @@ public class StatusCodeBundle {
 
 //Modules
  @Value("${code.validation.module.alreadyExists}")
-    private String moduleAllReadyExistsCode;
+    private String moduleAlReadyExistsCode;
 
  @Value("${code.validation.module.notExists}")
  private  String moduleNotExistsCode;
@@ -81,6 +81,15 @@ public class StatusCodeBundle {
 
  @Value("${message.validation.module.notExists}")
     private String moduleNotExistsMessage;
+    @Value("${message.validation.module.notHaveProject}")
+    private String moduleNotHaveProjectMessage;
  @Value("${message.success.delete.module}")
     private String deleteModuleSuccessMessage;
+ @Value("${message.success.getAll.module}")
+    private String getAllModuleSuccessMessage;
+
+ @Value("{message.success.getById.module}")
+    private  String getModuleByIdSuccessMessage;
+ @Value("${message.success.getByProjectId.module}")
+    private String getModuleByProjectIdSuccessMessage;
 }
