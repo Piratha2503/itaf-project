@@ -22,14 +22,42 @@ public class StatusCodeBundle {
   private String failureCode;
 
 //Product
- @Value("${message.success.save.project}")
- private String saveProjectSuccessMessage;
+    @Value("${code.validation.project.alreadyExists}")
+    private String projectAlReadyExistCode;
+    @Value("${code.validation.project.notExists}")
+    private String projectNotExistCode;
+    @Value("${code.validation.project.file.empty}")
+    private String projectFileEmptyCode;
+    @Value("${message.validation.project.notExits}")
+    private String projectNotExistsMessage;
+    @Value("${message.validation.project.code.alreadyExists}")
+    private String projectCodeAlReadyExistMessage;
+    @Value("${message.validation.project.Name.alreadyExists}")
+    private String projectNameAlReadyExistMessage;
+    @Value("${message.validation.project.alreadyExists}")
+    private String projectAlReadyExistMessage;
+    @Value("${message.validation.project.file.name.empty}")
+    private String projectNameEmptyMessage;
+    @Value("${message.validation.project.file.code.empty}")
+    private String projectCodeEmptyMessage;
+    @Value("${message.validation.project.file.description.empty}")
+    private String projectDescriptionEmptyMessage;
+    @Value("${message.success.save.project}")
+    private String saveProjectSuccessMessage;
+    @Value("${message.success.update.project}")
+    private String updateProjectSuccessMessage;
+    @Value("${message.success.getAll.project}")
+    private String getAllProjectSuccessMessage;
+    @Value("${message.success.get.project}")
+    private String getProjectSuccessMessage;
+    @Value("${message.success.delete.project}")
+    private String getProjectDeleteMessage;
 
- @Value("${code.validation.project.alreadyExists}")
- private String projectAllReadyExistCode;
 
- @Value("${message.validation.project.alreadyExists}")
- private String projectAllReadyExistsMessage;
+
+
+
+
 
 
 //Modules

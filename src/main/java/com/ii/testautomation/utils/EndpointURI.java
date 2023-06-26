@@ -11,8 +11,9 @@ public final class EndpointURI {
   
   // URLs for Product
   public static final String PROJECT = BASE_API_PATH + "project";
-  public static final String PROJECTS = BASE_API_PATH + "products";
-  public static final String PRODUCT_BY_ID = PROJECT + ID;
+  public static final String PROJECT_IMPORT = BASE_API_PATH + "import";
+  public static final String PROJECTS = BASE_API_PATH +SEARCH+SLASH + "products";
+  public static final String PROJECT_BY_ID = PROJECT + ID;
 
 
 

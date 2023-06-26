@@ -1,8 +1,9 @@
 package com.ii.testautomation.utils;
 
 public class Constants {
-  // Room
-  public static final String PRODUCTS = "products";
+
+  public static final String PROJECTS= "projects";
+  public static final String PROJECT= "project";
 
 
   public static final String MODULE ="module";
