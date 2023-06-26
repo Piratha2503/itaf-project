@@ -52,7 +52,7 @@ public class StatusCodeBundle {
     @Value("${message.success.get.project}")
     private String getProjectSuccessMessage;
     @Value("${message.success.delete.project}")
-    private String getProjectDeleteMessage;
+    private String deleteProjectSuccessMessage;
     //SubModules
     @Value("${code.validation.subModules.alreadyExists}")
     private String subModulesAlReadyExistCode;
@@ -69,16 +69,20 @@ public class StatusCodeBundle {
     private String saveSubModuleSuccessMessage;
     @Value("${message.success.update.subModule}")
     private String updateSubModuleSuccessMessage;
-
+    @Value("${message.success.get.subModules}")
+    private String getSubModulesSuccessMessage;
+    @Value("${message.success.getAll.subModule}")
+    private String getAllSubModuleSuccessMessage;
+    @Value("${message.success.delete.subModule}")
+    private String deleteSubModuleSuccessMessage;
+    @Value("${message.validation.get.mainModule.notHave}")
+    private String getSubModuleNotHaveMainModuleId;
     //MainModules
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
 
     @Value("${message.validation.mainModule.notExists}")
     private String mainModuleNotExistsMessage;
-
-
-
 
 
 

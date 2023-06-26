@@ -151,7 +151,7 @@ public class ProjectController {
         }
         projectService.deleteProject(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetProjectDeleteMessage()
+                statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteProjectSuccessMessage()
         ));
     }
 
