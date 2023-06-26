@@ -81,18 +81,22 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
+        if (Utils.isNotNullAndEmpty(projectSearch.getName()))
+        {
             booleanBuilder.and(QProject.project.name.eq(projectSearch.getName()));
         }
-        if (Utils.isNotNullAndEmpty(projectSearch.getCode())) {
+        if (Utils.isNotNullAndEmpty(projectSearch.getCode()))
+        {
             booleanBuilder.and(QProject.project.code.eq(projectSearch.getCode()));
         }
+
         List<ProjectResponse> projectResponseList = new ArrayList<>();
         Page<Project> projectPage = projectRepository.findAll(booleanBuilder, pageable);
 
         pagination.setTotalRecords(projectPage.getTotalElements());
         pagination.setPageSize(projectPage.getTotalPages());
-        for (Project project : projectPage) {
+        for (Project project : projectPage)
+        {
             ProjectResponse projectResponse = new ProjectResponse();
             BeanUtils.copyProperties(project, projectResponse);
             projectResponseList.add(projectResponse);

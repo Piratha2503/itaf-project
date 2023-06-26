@@ -120,7 +120,8 @@ public class ProjectController {
                                                  @RequestParam(name = "size") int size,
                                                  @RequestParam(name = "direction") String direction,
                                                  @RequestParam(name = "sortField") String sortField,
-                                                 ProjectSearch projectSearch) {
+                                                 ProjectSearch projectSearch)
+    {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
         return ResponseEntity.ok(new ContentResponse<>(Constants.PROJECTS, projectService.multiSearchProject(pageable, pagination, projectSearch),

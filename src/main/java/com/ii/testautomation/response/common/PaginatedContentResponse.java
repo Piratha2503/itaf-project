@@ -7,7 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PaginatedContentResponse<T> extends ContentResponse<T> {
+public class PaginatedContentResponse<T> extends ContentResponse<T>
+{
   private Map<String, T> result = new HashMap<>();
 
   public PaginatedContentResponse(String key, T dto, String status, String statusCode,
@@ -19,7 +20,8 @@ public class PaginatedContentResponse<T> extends ContentResponse<T> {
   private Pagination pagination;
 
   public PaginatedContentResponse(String key, T dto, String status, String statusCode,
-      String message, Pagination pagination) {
+      String message, Pagination pagination)
+  {
     super(key, dto, status, statusCode, message);
     result.put(key, dto);
     this.pagination = pagination;
@@ -27,8 +29,10 @@ public class PaginatedContentResponse<T> extends ContentResponse<T> {
 
   @Getter
   @Setter
-  public static class Pagination {
-    public Pagination(Integer pageNumber, Integer pageSize, Integer totalPages, Long totalRecords) {
+  public static class Pagination
+  {
+    public Pagination(Integer pageNumber, Integer pageSize, Integer totalPages, Long totalRecords)
+    {
       this.pageNumber = pageNumber;
       this.pageSize = pageSize;
       this.totalPages = totalPages;

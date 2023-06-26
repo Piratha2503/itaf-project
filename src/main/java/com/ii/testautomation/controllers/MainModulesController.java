@@ -1,16 +1,25 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.MainModulesRequest;
+import com.ii.testautomation.dto.search.MainModuleSearch;
+import com.ii.testautomation.dto.search.ProjectSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.utils.Constants;
+import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+
 @RestController
 @CrossOrigin
 public class MainModulesController
@@ -21,7 +30,7 @@ public class MainModulesController
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-    @PostMapping("/insertMod")
+    @PostMapping(EndpointURI.MAINMODULE)
     public ResponseEntity<Object> insertMain(@RequestBody MainModulesRequest mainModulesRequest)
     {
 
@@ -42,7 +51,7 @@ public class MainModulesController
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessMessageInsert()));
     }
-    @DeleteMapping("/deleteMod/{id}")
+    @DeleteMapping(EndpointURI.MAINMODULE_BY_ID)
     public ResponseEntity<Object> deleteMain(@PathVariable Long id)
     {
         if (!mainModulesService.isExistMainModulesId(id))
@@ -54,7 +63,7 @@ public class MainModulesController
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessMessageDelete()));
     }
-    @GetMapping("/getById/{id}")
+    @GetMapping(EndpointURI.MAINMODULE_BY_ID)
     public ResponseEntity<Object> getById(@PathVariable Long id)
     {
         if (!mainModulesService.isExistMainModulesId(id))
@@ -68,7 +77,7 @@ public class MainModulesController
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));
     }
-    @PutMapping("/update")
+    @PutMapping(EndpointURI.MAINMODULE)
     public ResponseEntity<Object> updateMod(@RequestBody MainModulesRequest mainModulesRequest)
     {
         if (!mainModulesService.isExistMainModulesId(mainModulesRequest.getId()))
@@ -96,7 +105,7 @@ public class MainModulesController
 
     }
 
-    @GetMapping("/getAll")
+    @GetMapping(EndpointURI.MAINMODULES)
     public ResponseEntity<Object> getAllPage(Pageable pageable)
     {
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,
@@ -105,6 +114,22 @@ public class MainModulesController
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));
 
+    }
+
+    @GetMapping(EndpointURI.MAINMODULEPAGE)
+    public ResponseEntity<Object> serach(@RequestParam(name = "page") int page,
+                                         @RequestParam(name = "size") int size,
+                                         @RequestParam(name = "direction") String direction,
+                                         @RequestParam(name = "sortField") String sortField,
+                                         MainModuleSearch mainModuleSearch)
+    {
+           Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
+           PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.SearchMainModulesWithPagination(pageable, pagination, mainModuleSearch),
+                RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getSuccessViewAllMessage()));
     }
 
 

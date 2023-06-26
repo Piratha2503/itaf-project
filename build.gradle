@@ -1,8 +1,8 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.12'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    id 'java'
+    id 'org.springframework.boot' version '2.7.12'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.ii'
@@ -10,55 +10,55 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 ext {
-	set('springCloudVersion', "2021.0.6")
+    set('springCloudVersion', "2021.0.6")
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation group: 'com.querydsl', name: 'querydsl-apt', version: '5.0.0'
-	implementation group: 'com.querydsl', name: 'querydsl-jpa', version: '5.0.0'
-	implementation 'com.opencsv:opencsv:5.7.1'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation group: 'com.querydsl', name: 'querydsl-apt', version: '5.0.0'
+    implementation group: 'com.querydsl', name: 'querydsl-jpa', version: '5.0.0'
+    implementation 'com.opencsv:opencsv:5.7.1'
 
 }
 sourceSets {
-	main {
-		java {
-			srcDir 'src/main/java'
-		}
-	}
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+    }
 }
 def generatedSrcDir = 'gradle/generated'
 querydsl {
-	jpa = true
-	querydslSourcesDir = generatedSrcDir
+    jpa = true
+    querydslSourcesDir = generatedSrcDir
 }
 compileQuerydsl {
-	options.annotationProcessorPath = configurations.querydsl
-	source = sourceSets.main.java
-	options.compilerArgs << '-proc:only' << "-processor" << "com.querydsl.apt.jpa.JPAAnnotationProcessor" << "-s" << file(generatedSrcDir).absolutePath
+    options.annotationProcessorPath = configurations.querydsl
+    source = sourceSets.main.java
+    options.compilerArgs << '-proc:only' << "-processor" << "com.querydsl.apt.jpa.JPAAnnotationProcessor" << "-s" << file(generatedSrcDir).absolutePath
 }
 configurations {
-	querydsl.extendsFrom compileClasspath
+    querydsl.extendsFrom compileClasspath
 }
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
