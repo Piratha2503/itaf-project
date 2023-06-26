@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.MainModulesRequest;
+<<<<<<< HEAD
 import com.ii.testautomation.dto.response.MainModulesResponse;
 import com.ii.testautomation.dto.search.MainModuleSearch;
 import com.ii.testautomation.entities.MainModules;
@@ -12,15 +13,26 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+=======
+import com.ii.testautomation.entities.MainModules;
+import com.ii.testautomation.entities.Modules;
+import com.ii.testautomation.repositories.MainModulesRepository;
+import com.ii.testautomation.repositories.ModulesRepository;
+import com.ii.testautomation.repositories.ProjectRepository;
+import com.ii.testautomation.service.MainModulesService;
+>>>>>>> 0a0f24cb0bbeb23441effb6462c41af7925d5675
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
 
+=======
+>>>>>>> 0a0f24cb0bbeb23441effb6462c41af7925d5675
 
 @Service
 public class MainModulesServiceImp implements MainModulesService
@@ -68,6 +80,7 @@ public class MainModulesServiceImp implements MainModulesService
 
     }
 
+<<<<<<< HEAD
     @Override
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch)
     {
@@ -94,6 +107,8 @@ public class MainModulesServiceImp implements MainModulesService
         }
         return mainModulesResponseList;
     }
+=======
+>>>>>>> 0a0f24cb0bbeb23441effb6462c41af7925d5675
     public boolean isExistModulesId(Long id)
     {
         return modulesRepository.existsById(id);

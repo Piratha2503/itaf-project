@@ -8,4 +8,7 @@ public class Constants {
   //Main Module
   public static final String MAINMODULES = "Main Modules";
 
+  //Main Module
+  public static final String MAINMODULES = "Main Modules";
+
 }
