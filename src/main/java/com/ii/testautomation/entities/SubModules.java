@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-public class SubModule {
+public class SubModules {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,5 +16,5 @@ public class SubModule {
     private String prefix;
     @ManyToOne
     @JoinColumn(name = "main_module_id",nullable = false)
-    private MainModule mainModule;
+    private MainModules mainModule;
 }

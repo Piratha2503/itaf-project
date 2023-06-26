@@ -10,9 +10,10 @@ public final class EndpointURI {
   private static final String ID = "/{id}";
   
   // URLs for Product
-  public static final String PRODUCT = BASE_API_PATH + "product";
-  public static final String PRODUCTS = BASE_API_PATH + "products";
-  public static final String PRODUCT_BY_ID = PRODUCT + ID;
+  public static final String PROJECT = BASE_API_PATH + "project";
+  public static final String PROJECT_IMPORT = BASE_API_PATH + "import";
+  public static final String PROJECTS = BASE_API_PATH +SEARCH+SLASH + "products";
+  public static final String PROJECT_BY_ID = PROJECT + ID;
 
 
   private EndpointURI() {

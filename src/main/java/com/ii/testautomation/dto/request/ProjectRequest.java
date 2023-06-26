@@ -8,5 +8,7 @@ import lombok.Setter;
 public class ProjectRequest {
   private Long id;
   private String name;
+  private String description;
+  private String code;
 }
 
