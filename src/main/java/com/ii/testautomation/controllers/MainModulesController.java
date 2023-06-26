@@ -75,6 +75,20 @@ public class MainModulesController
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));
     }
+    @GetMapping(EndpointURI.MAINMODULE_BY_MODULEID)
+    public ResponseEntity<Object> getMainModulesByModuleId(@PathVariable Long id)
+    {
+        if (!mainModulesService.isExistModulesId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getModuleIdNotFound()));
+
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,
+                mainModulesService.getByModuleId(id),
+                RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getSuccessViewAllMessage()));
+    }
     @PutMapping(EndpointURI.MAINMODULE)
     public ResponseEntity<Object> updateMainModules(@RequestBody MainModulesRequest mainModulesRequest)
     {
@@ -102,8 +116,6 @@ public class MainModulesController
 
 
     }
-
-
 
     @GetMapping(EndpointURI.MAINMODULEPAGE)
     public ResponseEntity<Object> SearcgMainModuleswithpage(@RequestParam(name = "page") int page,

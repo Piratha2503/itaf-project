@@ -23,6 +23,8 @@ public final class EndpointURI {
   public static final String MAINMODULEPAGE = BASE_API_PATH +SEARCHWITHPAGE+SLASH + "MainModules";
 
   public static final String MAINMODULE_BY_ID = MAINMODULE + ID;
+  public static final String MAINMODULE_BY_MODULEID = BASE_API_PATH + "getByModuleId" + ID;
+
   private EndpointURI() {
   }
 }

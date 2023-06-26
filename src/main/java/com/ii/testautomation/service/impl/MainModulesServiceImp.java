@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -45,10 +46,18 @@ public class MainModulesServiceImp implements MainModulesService
         mainModulesRepository.deleteById(id);
     }
 
-    public MainModules getByMainModulesId(Long id)
+    public MainModulesResponse getByMainModulesId(Long id)
     {
+        MainModulesResponse mainModulesResponse = new MainModulesResponse();
         MainModules mainModules = mainModulesRepository.findById(id).get();
-        return mainModules;
+        mainModulesResponse.setModules(mainModules.getModules());
+        BeanUtils.copyProperties(mainModules,mainModulesResponse);
+        return mainModulesResponse;
+    }
+    public List<MainModules> getByModuleId(Long id)
+    {
+        List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(id);
+        return mainModulesList;
     }
 
     @Override
