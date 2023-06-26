@@ -14,22 +14,22 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
-  // Common Success code
-  @Value("${code.success.common}")
-  private String commonSuccessCode;
+    // Common Success code
+    @Value("${code.success.common}")
+    private String commonSuccessCode;
 
-  @Value("${code.failure.common}")
-  private String failureCode;
+    @Value("${code.failure.common}")
+    private String failureCode;
 
-//Product
- @Value("${message.success.save.project}")
- private String saveProjectSuccessMessage;
+    //Product
+    @Value("${message.success.save.project}")
+    private String saveProjectSuccessMessage;
 
- @Value("${code.validation.project.alreadyExists}")
- private String projectAllReadyExistCode;
+    @Value("${code.validation.project.alreadyExists}")
+    private String projectAllReadyExistCode;
 
- @Value("${message.validation.project.alreadyExists}")
- private String projectAllReadyExistsMessage;
+    @Value("${message.validation.project.alreadyExists}")
+    private String projectAllReadyExistsMessage;
 
     @Value("${message.success.insertmain}")
     private String SuccessMessageInsert;
@@ -47,6 +47,6 @@ public class StatusCodeBundle {
     @Value("${message.failure.noid}")
     private String Noid;
     @Value("${message.failure.MainIdnotFound}")
-    private String NoMainModId;
+    private String MainIdnotFound;
 
 }
