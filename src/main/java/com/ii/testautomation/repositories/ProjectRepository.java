@@ -11,6 +11,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, Queryds
     boolean existsByCodeIgnoreCase(String code);
 
     boolean existsByNameIgnoreCaseAndIdNot(String name,Long id);
-    boolean existsByCodeIgnoreCaseAndIdNot(String code,Long is);
+    boolean existsByCodeIgnoreCaseAndIdNot(String code,Long id);
 
 }
