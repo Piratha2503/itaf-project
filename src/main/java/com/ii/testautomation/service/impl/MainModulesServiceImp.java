@@ -13,18 +13,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class MainModulesServiceImp implements MainModulesService
 {
-    String msg = "ok";
     @Autowired
     private MainModulesRepository mainModulesRepository;
     @Autowired
     private ModulesRepository modulesRepository;
-    @Autowired
-    private ProjectRepository projectRepository;
+
 
     public void insertMainModules(MainModulesRequest mainModulesRequest)
     {
