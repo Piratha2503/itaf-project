@@ -75,6 +75,6 @@ public class StatusCodeBundle {
     @Value("${message.failure.noid}")
     private String Noid;
     @Value("${message.failure.MainIdnotFound}")
-    private String NoMainModId;
+    private String MainIdnotFound;
 
 }

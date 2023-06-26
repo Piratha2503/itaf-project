@@ -6,7 +6,8 @@ import lombok.Setter;
 @Setter
 public class MainModulesResponse
 {
-    private Long proid;
+    private Long moduleid;
+    private Long id;
     private String name;
     private String prefix;
     private Module modules;
