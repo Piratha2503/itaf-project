@@ -1,7 +1,6 @@
 package com.ii.testautomation.service;
 
 
-<<<<<<< HEAD
 import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
@@ -38,9 +37,5 @@ public interface ProjectService {
 
     public List<ProjectRequest> importProjectFile(MultipartFile multipartFile);
 
-=======
-public interface ProjectService
-{
->>>>>>> 0a0f24cb0bbeb23441effb6462c41af7925d5675
 
 }

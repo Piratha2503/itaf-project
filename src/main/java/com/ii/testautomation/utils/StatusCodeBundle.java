@@ -14,14 +14,13 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
-    // Common Success code
-    @Value("${code.success.common}")
-    private String commonSuccessCode;
+  // Common Success code
+  @Value("${code.success.common}")
+  private String commonSuccessCode;
 
-    @Value("${code.failure.common}")
-    private String failureCode;
+  @Value("${code.failure.common}")
+  private String failureCode;
 
-<<<<<<< HEAD
 //Product
     @Value("${code.validation.project.alreadyExists}")
     private String projectAlReadyExistCode;
@@ -53,39 +52,11 @@ public class StatusCodeBundle {
     private String getProjectSuccessMessage;
     @Value("${message.success.delete.project}")
     private String getProjectDeleteMessage;
-=======
-    //Product
-    @Value("${message.success.save.project}")
-    private String saveProjectSuccessMessage;
+
+
 
     @Value("${code.validation.project.alreadyExists}")
-    private String projectAllReadyExistCode;
-
-    @Value("${message.validation.project.alreadyExists}")
-    private String projectAllReadyExistsMessage;
->>>>>>> 0a0f24cb0bbeb23441effb6462c41af7925d5675
-
-    @Value("${message.success.insertmain}")
-    private String SuccessMessageInsert;
-    @Value("${message.success.deletemain}")
-    private String SuccessMessageDelete;
-    @Value("${message.success.updatemain}")
-    private String SuccessUpdateMessage;
-    @Value("${message.success.viewallmain}")
-    private String SuccessViewAllMessage;
-
-    @Value("${message.failure.alreadyexistname}")
-    private String NameAlreadyExist;
-    @Value("${message.failure.alreadyexistpreix}")
-    private String PrefixAlreadyExist;
-    @Value("${message.failure.noid}")
-    private String Noid;
-    @Value("${message.failure.MainIdnotFound}")
-    private String MainIdnotFound;
-
-<<<<<<< HEAD
-
-
+    private String AlreadyExistCode;
 
 
     @Value("${message.success.insertmain}")
@@ -102,11 +73,8 @@ public class StatusCodeBundle {
     @Value("${message.failure.alreadyexistpreix}")
     private String PrefixAlreadyExist;
     @Value("${message.failure.noid}")
-    private String Noid;
+    private String ModuleIdNotFound;
     @Value("${message.failure.MainIdnotFound}")
     private String MainIdnotFound;
 
 }
-=======
-}
->>>>>>> 0a0f24cb0bbeb23441effb6462c41af7925d5675
