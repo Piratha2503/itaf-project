@@ -31,6 +31,16 @@ public final class EndpointURI {
   public static final String SUBMODULE_BY_ID = SUBMODULE  + ID;
   public static final String SUBMODULE_BY_MAIN_MODULE_ID = SUBMODULE  + "/mainModuleId"+ID;
 
+  // URLs for Test Types
+
+ public static final String TESTTYPE = BASE_API_PATH + "Testtype";
+ public static final String TESTTYPE_IMPORT = BASE_API_PATH +TESTTYPE+ "import";
+ public static final String TESTTYPES_SEARCH = BASE_API_PATH +SEARCH+SLASH + "Testtypes";
+ public static final String TESTTYPE_BY_ID = TESTTYPE  + ID;
+
+
+
+
 
 
 

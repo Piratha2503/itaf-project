@@ -36,9 +36,10 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.save(project);
     }
     @Override
-    public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest:projectRequestList
-             ) {
+    public void saveProjectList(List<ProjectRequest> projectRequestList)
+    {
+        for (ProjectRequest projectRequest:projectRequestList)
+        {
 
                 Project project = new Project();
                 BeanUtils.copyProperties(projectRequest, project);
@@ -99,7 +100,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (Project project : projectPage)
         {
             ProjectResponse projectResponse = new ProjectResponse();
-            BeanUtils.copyProperties(project, projectResponse);
+            BeanUtils.copyProperties(project,projectResponse);
             projectResponseList.add(projectResponse);
         }
         return projectResponseList;

@@ -11,10 +11,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 
-public interface MainModulesService {
+public interface MainModulesService
+{
     public void saveMainModules(MainModulesRequest mainModulesRequest);
 
-   public void deleteMainModules(Long id);
+    public void deleteMainModules(Long id);
 
     public MainModulesResponse getByMainModulesId(Long id);
 
@@ -32,7 +33,6 @@ public interface MainModulesService {
 
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
 
-   public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
-public interface MainModulesService {
-    public boolean existsByMainModuleId(Long mainModuleId);
+    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
 }
+

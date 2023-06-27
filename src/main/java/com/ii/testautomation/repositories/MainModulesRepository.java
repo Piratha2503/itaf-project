@@ -13,6 +13,7 @@ public interface MainModulesRepository extends JpaRepository<MainModules,Long>, 
     boolean existsByName(String name);
     boolean existsByPrefix(String prefix);
     boolean existsByNameIgnoreCaseAndIdNot(String mainmoduleName, Long mainmoduleId);
+    boolean existsByModulesId(Long id);
 
     boolean existsByPrefixIgnoreCaseAndIdNot(String mainModuleprefix, Long mainModuleId);
 

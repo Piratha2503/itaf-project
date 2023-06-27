@@ -10,6 +10,7 @@ import com.ii.testautomation.repositories.MainModulesRepository;
 import com.ii.testautomation.repositories.ModulesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
+import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
@@ -57,6 +58,15 @@ public class MainModulesServiceImp implements MainModulesService
     public List<MainModules> getByModuleId(Long id)
     {
         List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(id);
+       /* if (mainModulesList.isEmpty())
+        {
+          List<String> ErrorMsg = new ArrayList<>();
+            StatusCodeBundle statusCodeBundle = new StatusCodeBundle();
+            ErrorMsg.add(statusCodeBundle.getFailureCode());
+            return ErrorMsg;
+        }
+
+        */
         return mainModulesList;
     }
 

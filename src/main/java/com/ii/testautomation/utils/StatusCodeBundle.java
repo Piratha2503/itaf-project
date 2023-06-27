@@ -77,12 +77,16 @@ public class StatusCodeBundle {
     private String deleteSubModuleSuccessMessage;
     @Value("${message.validation.get.mainModule.notHave}")
     private String getSubModuleNotHaveMainModuleId;
+
     //MainModules
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
 
     @Value("${message.validation.mainModule.notExists}")
     private String mainModuleNotExistsMessage;
+
+    @Value("${message.failure.moduleidnotassigned}")
+    private String ModuleIdNotAssignedmsg;
 
 
     @Value("${code.validation.project.alreadyExists}")
@@ -135,4 +139,44 @@ public class StatusCodeBundle {
     private  String getModuleByIdSuccessMessage;
  @Value("${message.success.getByProjectId.module}")
     private String getModuleByProjectIdSuccessMessage;
+
+
+    // Test Types Codes & Messages //
+    @Value("${code.validation.testtype.alreadyExists}")
+    private String TestTypeAlReadyExistCode;
+
+    @Value("${code.validation.testtype.notExists}")
+    private String TestTypeNotExistCode;
+
+    @Value("${message.failure.alreadyexistTestTypeid}")
+    private String TestTypeIdAlReadyExistMessage;
+
+    @Value("${message.failure.alreadyexistTestTypename}")
+    private String TestTypeNameAlReadyExistMessage;
+
+    @Value("${message.failure.TestTypeidNotFound}")
+    private String TestTypeIdNotFoundMessage;
+
+    @Value("${message.success.insertTestTypes}")
+    private String insertTestTypesSuccessMessage;
+
+    @Value("${message.success.updateTestTypes}")
+    private String updateTestTypeSuccessMessage;
+
+    @Value("${message.success.viewTestTypeforId}")
+    private String viewTestTypeforIdSuccessMessage;
+
+    @Value("${message.success.viewallTestTypes}")
+    private String viewAllTestTypesSuccessMessage;
+
+    @Value("${message.success.deleteTestTypes}")
+    private String deleteTestTypesSuccessMessage;
+
+
+/*
+    @Value("${message.validation.get.mainModule.notHave}")
+    private String getSubModuleNotHaveMainModuleId;
+
+    ****************************************************************
+*/
 }

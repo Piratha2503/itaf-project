@@ -49,7 +49,7 @@ public class SubModulesController {
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
         }
-        if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id()))
+        if (!mainModulesService.isExistModulesId(subModulesRequest.getMain_module_Id()))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
@@ -70,7 +70,7 @@ public class SubModulesController {
                     statusCodeBundle.getSubModulesNotExistCode(),
                     statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id()))
+        if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id()))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
@@ -113,7 +113,7 @@ public class SubModulesController {
     @GetMapping(value = EndpointURI.SUBMODULE_BY_MAIN_MODULE_ID)
     public ResponseEntity<Object> getSubModuleByMainModuleId(@PathVariable Long id)
     {
-        if (!mainModulesService.existsByMainModuleId(id))
+        if (!mainModulesService.isExistMainModulesId(id))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
