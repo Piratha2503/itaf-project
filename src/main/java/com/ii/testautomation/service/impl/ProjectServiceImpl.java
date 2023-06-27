@@ -26,41 +26,49 @@ import java.util.List;
 public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
+
     @Override
     public void saveProject(ProjectRequest projectRequest) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
         projectRepository.save(project);
     }
+
     @Override
     public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest:projectRequestList
-             ) {
-                Project project = new Project();
-                BeanUtils.copyProperties(projectRequest, project);
-                projectRepository.save(project);
+        for (ProjectRequest projectRequest : projectRequestList
+        ) {
+            Project project = new Project();
+            BeanUtils.copyProperties(projectRequest, project);
+            projectRepository.save(project);
         }
     }
+
     @Override
     public boolean existByProjectName(String projectName) {
         return projectRepository.existsByNameIgnoreCase(projectName);
     }
+
     @Override
     public boolean existByProjectCode(String projectCode) {
         return projectRepository.existsByCodeIgnoreCase(projectCode);
     }
+
     @Override
     public boolean isUpdateProjectNameExist(String projectName, Long projectId) {
         return projectRepository.existsByNameIgnoreCaseAndIdNot(projectName, projectId);
     }
+
     @Override
     public boolean isUpdateProjectCodeExist(String projectCode, Long projectId) {
-        return projectRepository.existsByCodeIgnoreCaseAndIdNot(projectCode,projectId);
+        return projectRepository.existsByCodeIgnoreCaseAndIdNot(projectCode, projectId);
     }
+
     @Override
     public boolean existByProjectId(Long projectId) {
         return projectRepository.existsById(projectId);
     }
+
     @Override
     public ProjectResponse getProjectById(Long projectId) {
         Project project = projectRepository.findById(projectId).get();
@@ -68,6 +76,7 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(project, projectResponse);
         return projectResponse;
     }
+
     @Override
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -94,26 +103,38 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProject(Long projectId) {
         projectRepository.deleteById(projectId);
     }
+
     @Override
     public List<ProjectRequest> importProjectFile(MultipartFile multipartFile) {
-        List<ProjectRequest> projectRequestList=new ArrayList<>();
+        List<ProjectRequest> projectRequestList = new ArrayList<>();
         try {
-            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(multipartFile.getInputStream()));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()));
             String line;
-            while ((line=bufferedReader.readLine())!=null)
-            {
-                String data[]=line.split(",");
-                ProjectRequest projectRequest=new ProjectRequest();
-                projectRequest.setCode(data[0]);
-                projectRequest.setDescription(data[1]);
-               projectRequest.setName(data[2]);
-
-             projectRequestList.add(projectRequest);
+            boolean firstLine = true;
+            String header[] = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                String data[] = line.split(",");
+                if (firstLine) {
+                    header = data;
+                    firstLine = false;
+                    continue;
+                }
+                ProjectRequest projectRequest = new ProjectRequest();
+                for (int i = 0; i < header.length; i++) {
+                    if (header[i].equals("code")) {
+                        projectRequest.setCode(data[i]);
+                    }
+                    if (header[i].equals("name")) {
+                        projectRequest.setName(data[i]);
+                    }
+                    if (header[i].equals("description")) {
+                        projectRequest.setDescription(data[i]);
+                    }
+                }
+                projectRequestList.add(projectRequest);
             }
-        }
-        catch (Exception e)
-        {
-            System.out.println(e+"not save");
+        } catch (Exception e) {
+            System.out.println(e + "not save");
         }
         return projectRequestList;
     }
