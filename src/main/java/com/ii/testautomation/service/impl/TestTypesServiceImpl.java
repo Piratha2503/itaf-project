@@ -1,12 +1,10 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.TestTypesRequest;
-import com.ii.testautomation.dto.response.MainModulesResponse;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
-import com.ii.testautomation.entities.MainModules;
-import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.entities.QTestTypes;
+import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestTypesService;

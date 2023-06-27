@@ -4,13 +4,12 @@ import com.ii.testautomation.dto.request.MainModulesRequest;
 import com.ii.testautomation.dto.response.MainModulesResponse;
 import com.ii.testautomation.dto.search.MainModuleSearch;
 import com.ii.testautomation.entities.MainModules;
-import com.ii.testautomation.entities.QMainModules;
 import com.ii.testautomation.entities.Modules;
+import com.ii.testautomation.entities.QMainModules;
 import com.ii.testautomation.repositories.MainModulesRepository;
 import com.ii.testautomation.repositories.ModulesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
-import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
