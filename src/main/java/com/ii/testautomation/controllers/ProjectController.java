@@ -10,16 +10,12 @@ import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
-import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -28,7 +24,6 @@ public class ProjectController {
     private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-
     @PostMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> saveProject(@RequestBody ProjectRequest projectRequest) {
 
@@ -46,9 +41,7 @@ public class ProjectController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveProjectSuccessMessage()));
-
     }
-
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestBody ProjectRequest projectRequest) {
         if (!projectService.existByProjectId(projectRequest.getId())) {
@@ -73,7 +66,6 @@ public class ProjectController {
                 statusCodeBundle.getUpdateProjectSuccessMessage()));
 
     }
-
     @GetMapping(value = EndpointURI.PROJECTS)
     public ResponseEntity<Object> getALlProjects(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
@@ -87,7 +79,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllProjectSuccessMessage()));
     }
-
     @GetMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> getProjectById(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -100,7 +91,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetProjectSuccessMessage()));
     }
-
     @DeleteMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> deleteProject(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -113,6 +103,4 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteProjectSuccessMessage()
         ));
     }
-
-
 }
