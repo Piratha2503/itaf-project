@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ModulesServiceImplementation implements ModulesService {
+public class ModulesServiceImpl implements ModulesService {
     @Autowired
     private ModulesRepository modulesRepository;
     @Autowired
