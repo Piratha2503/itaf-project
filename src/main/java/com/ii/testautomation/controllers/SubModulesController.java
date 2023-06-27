@@ -31,24 +31,19 @@ public class SubModulesController {
 
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-
     @PostMapping(value = EndpointURI.SUBMODULE)
-    public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest)
-    {
-        if(subModulesService.existsBySubModulesName(subModulesRequest.getName()))
-        {
+    public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest) {
+        if (subModulesService.existsBySubModulesName(subModulesRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
         }
-        if(subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix()))
-        {
+        if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
         }
-        if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id()))
-        {
+        if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
@@ -57,74 +52,59 @@ public class SubModulesController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveSubModuleSuccessMessage()));
-
     }
-    @PutMapping(value=EndpointURI.SUBMODULE)
-    public ResponseEntity<Object> editSubModules(@RequestBody SubModulesRequest subModulesRequest)
-    {
-        if (!subModulesService.existsBySubModuleId(subModulesRequest.getId()))
-        {
+    @PutMapping(value = EndpointURI.SUBMODULE)
+    public ResponseEntity<Object> editSubModules(@RequestBody SubModulesRequest subModulesRequest) {
+        if (!subModulesService.existsBySubModuleId(subModulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesNotExistCode(),
                     statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id()))
-        {
+        if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
         }
-        if(subModulesService.isUpdateSubModuleNameExits(subModulesRequest.getName(),subModulesRequest.getId()))
-        {
+        if (subModulesService.isUpdateSubModuleNameExits(subModulesRequest.getName(), subModulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
         }
-        if(subModulesService.isUpdateSubModulePrefixExits(subModulesRequest.getPrefix(),subModulesRequest.getId()))
-        {
+        if (subModulesService.isUpdateSubModulePrefixExits(subModulesRequest.getPrefix(), subModulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
         }
-
         subModulesService.saveSubModules(subModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateSubModuleSuccessMessage()));
-
     }
     @GetMapping(value = EndpointURI.SUBMODULE_BY_ID)
-    public ResponseEntity<Object> getSubModuleById(@PathVariable Long id)
-    {
-        if (!subModulesService.existsBySubModuleId(id))
-        {
+    public ResponseEntity<Object> getSubModuleById(@PathVariable Long id) {
+        if (!subModulesService.existsBySubModuleId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesNotExistCode(),
                     statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULE,subModulesService.getSubModuleById(id),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULE, subModulesService.getSubModuleById(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetSubModulesSuccessMessage()));
     }
-
     @GetMapping(value = EndpointURI.SUBMODULE_BY_MAIN_MODULE_ID)
-    public ResponseEntity<Object> getSubModuleByMainModuleId(@PathVariable Long id)
-    {
-        if (!mainModulesService.existsByMainModuleId(id))
-        {
+    public ResponseEntity<Object> getSubModuleByMainModuleId(@PathVariable Long id) {
+        if (!mainModulesService.existsByMainModuleId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
         }
-        List<SubModulesResponse> subModulesResponseList=subModulesService.getAllSubModuleByMainModuleId(id);
-        if(subModulesResponseList.isEmpty())
-        {
+        List<SubModulesResponse> subModulesResponseList = subModulesService.getAllSubModuleByMainModuleId(id);
+        if (subModulesResponseList.isEmpty()) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getGetSubModuleNotHaveMainModuleId()));
         }
-
         return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULES,
                 subModulesService.getAllSubModuleByMainModuleId(id),
                 RequestStatus.SUCCESS.getStatus(),
@@ -139,16 +119,14 @@ public class SubModulesController {
                                                                  SubModuleSearch subModuleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
-        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULES, subModulesService.multiSearchSubModule(pageable,pagination,subModuleSearch),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULES, subModulesService.multiSearchSubModule(pageable, pagination, subModuleSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllSubModuleSuccessMessage()));
     }
     @DeleteMapping(value = EndpointURI.SUBMODULE_BY_ID)
-    public ResponseEntity<Object> deleteSubModuleById(@PathVariable Long id)
-    {
-        if (!subModulesService.existsBySubModuleId(id))
-        {
+    public ResponseEntity<Object> deleteSubModuleById(@PathVariable Long id) {
+        if (!subModulesService.existsBySubModuleId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesNotExistCode(),
                     statusCodeBundle.getSubModuleNotExistsMessage()));
@@ -158,5 +136,4 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getDeleteSubModuleSuccessMessage()));
     }
-
 }

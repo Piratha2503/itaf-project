@@ -24,7 +24,6 @@ public class ProjectController {
     private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-
     @PostMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> saveProject(@RequestBody ProjectRequest projectRequest) {
 
@@ -85,7 +84,6 @@ public class ProjectController {
 //                statusCodeBundle.getSaveProjectSuccessMessage()));
 //
 //    }
-
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestBody ProjectRequest projectRequest) {
         if (!projectService.existByProjectId(projectRequest.getId())) {
@@ -110,7 +108,6 @@ public class ProjectController {
                 statusCodeBundle.getUpdateProjectSuccessMessage()));
 
     }
-
     @GetMapping(value = EndpointURI.PROJECTS)
     public ResponseEntity<Object> getALlProjects(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
@@ -124,7 +121,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllProjectSuccessMessage()));
     }
-
     @GetMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> getProjectById(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -137,7 +133,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetProjectSuccessMessage()));
     }
-
     @DeleteMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> deleteProject(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -150,6 +145,4 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteProjectSuccessMessage()
         ));
     }
-
-
 }
