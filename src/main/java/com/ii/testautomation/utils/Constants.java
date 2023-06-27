@@ -6,8 +6,8 @@ public class Constants {
   public static final String PROJECT= "project";
   public static final String SUBMODULES = "subModules";
   public static final String SUBMODULE = "subModule";
-
-
+  public static final String TESTTYPE = "Test Type";
+  public static final String TESTTYPES = "Test Types";
   public static final String MODULE ="module";
   public static final String MODULES="modules";
 

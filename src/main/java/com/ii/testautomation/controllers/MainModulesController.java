@@ -91,7 +91,7 @@ public class MainModulesController
                     statusCodeBundle.getModuleIdNotAssignedmsg()));
 
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,
-                mainModulesService.getByModuleId(id),
+                mainModulesService.getMainModulesByModuleId(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));
