@@ -3,7 +3,6 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.search.SubModuleSearch;
-import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 
