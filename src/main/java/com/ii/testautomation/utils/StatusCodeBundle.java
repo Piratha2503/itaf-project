@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
-  // Common Success code
-  @Value("${code.success.common}")
-  private String commonSuccessCode;
+    // Common Success code
+    @Value("${code.success.common}")
+    private String commonSuccessCode;
 
-  @Value("${code.failure.common}")
-  private String failureCode;
+    @Value("${code.failure.common}")
+    private String failureCode;
 
-//Project
+    //Project
     @Value("${code.validation.project.alreadyExists}")
     private String projectAlReadyExistCode;
     @Value("${code.validation.project.notExists}")
@@ -85,36 +85,63 @@ public class StatusCodeBundle {
     private String mainModuleNotExistsMessage;
 
 
-//Modules
- @Value("${code.validation.module.alreadyExists}")
+    //Modules
+    @Value("${code.validation.module.alreadyExists}")
     private String moduleAlReadyExistsCode;
 
- @Value("${code.validation.module.notExists}")
- private  String moduleNotExistsCode;
+    @Value("${code.validation.module.notExists}")
+    private String moduleNotExistsCode;
 
- @Value("${message.success.update.module}")
- private String updateModuleSuccessMessage;
+    @Value("${message.success.update.module}")
+    private String updateModuleSuccessMessage;
 
- @Value("${message.validation.module.name.alreadyExists}")
+    @Value("${message.validation.module.name.alreadyExists}")
     private String moduleNameAllReadyExistsMessage;
 
- @Value("${message.success.save.module}")
+    @Value("${message.success.save.module}")
     private String saveModuleSuccessMessage;
 
- @Value("${message.validation.module.prefix.alreadyExists}")
+    @Value("${message.validation.module.prefix.alreadyExists}")
     private String modulePrefixAllReadyExistsMessage;
 
- @Value("${message.validation.module.notExists}")
+    @Value("${message.validation.module.notExists}")
     private String moduleNotExistsMessage;
     @Value("${message.validation.module.notHaveProject}")
     private String moduleNotHaveProjectMessage;
- @Value("${message.success.delete.module}")
+    @Value("${message.success.delete.module}")
     private String deleteModuleSuccessMessage;
- @Value("${message.success.getAll.module}")
+    @Value("${message.success.getAll.module}")
     private String getAllModuleSuccessMessage;
 
- @Value("{message.success.getById.module}")
-    private  String getModuleByIdSuccessMessage;
- @Value("${message.success.getByProjectId.module}")
+    @Value("${message.success.getById.module}")
+    private String getModuleByIdSuccessMessage;
+    @Value("${message.success.getByProjectId.module}")
     private String getModuleByProjectIdSuccessMessage;
+
+    // TestCases
+    @Value("${code.validation.testCase.alreadyExists}")
+    private String testCaseAlreadyExistsCode;
+    @Value("${code.validation.testCase.notExists}")
+    private String testCaseNotExistsCode;
+
+    @Value("${message.validation.TestCase.name.alreadyExists}")
+    private String testCaseNameAlreadyExistsMessage;
+    @Value("${message.validation.testCase.notExists}")
+    private String testCaseNotExistsMessage;
+    @Value("${message.success.save.testcases}")
+    private String saveTestCaseSuccessMessage;
+    @Value("${message.success.getById.testCase}")
+    private String getTestCaseByIdSuccessMessage;
+    @Value("${message.success.delete.testCase}")
+    private String deleteTestCaseSuccessMessage;
+    @Value("${message.success.update.testCase}")
+    private String updateTestCaseSuccessMessage;
+    @Value("${message.success.getAll.testCases}")
+    private String getAllTestCasesSuccessMessage;
+    @Value("${message.success.getBySubModuleId.testCase}")
+    private String getTestCaseBySubModuleIdSuccessMessage;
+    @Value("${message.validation.TestCase.notHaveSubModule}")
+    private String getTestCaseNotHaveSubModuleIdMessage;
+
+
 }
