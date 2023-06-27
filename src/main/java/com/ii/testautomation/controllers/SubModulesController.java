@@ -2,7 +2,6 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.response.SubModulesResponse;
-import com.ii.testautomation.dto.search.ProjectSearch;
 import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -13,7 +12,6 @@ import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
