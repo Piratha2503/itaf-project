@@ -24,10 +24,8 @@ import java.util.List;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
-
     @Autowired
     private ProjectRepository projectRepository;
-
     @Override
     public void saveProject(ProjectRequest projectRequest) {
         Project project = new Project();
@@ -38,38 +36,31 @@ public class ProjectServiceImpl implements ProjectService {
     public void saveProjectList(List<ProjectRequest> projectRequestList) {
         for (ProjectRequest projectRequest:projectRequestList
              ) {
-
                 Project project = new Project();
                 BeanUtils.copyProperties(projectRequest, project);
                 projectRepository.save(project);
-
         }
     }
     @Override
     public boolean existByProjectName(String projectName) {
         return projectRepository.existsByNameIgnoreCase(projectName);
     }
-
     @Override
     public boolean existByProjectCode(String projectCode) {
         return projectRepository.existsByCodeIgnoreCase(projectCode);
     }
-
     @Override
     public boolean isUpdateProjectNameExist(String projectName, Long projectId) {
         return projectRepository.existsByNameIgnoreCaseAndIdNot(projectName, projectId);
     }
-
     @Override
     public boolean isUpdateProjectCodeExist(String projectCode, Long projectId) {
         return projectRepository.existsByCodeIgnoreCaseAndIdNot(projectCode,projectId);
     }
-
     @Override
     public boolean existByProjectId(Long projectId) {
         return projectRepository.existsById(projectId);
     }
-
     @Override
     public ProjectResponse getProjectById(Long projectId) {
         Project project = projectRepository.findById(projectId).get();
@@ -77,7 +68,6 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(project, projectResponse);
         return projectResponse;
     }
-
     @Override
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -104,7 +94,6 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProject(Long projectId) {
         projectRepository.deleteById(projectId);
     }
-
     @Override
     public List<ProjectRequest> importProjectFile(MultipartFile multipartFile) {
         List<ProjectRequest> projectRequestList=new ArrayList<>();
@@ -128,7 +117,4 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return projectRequestList;
     }
-
-
-
 }

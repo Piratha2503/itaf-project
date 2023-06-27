@@ -1,13 +1,11 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SubModulesRequest;
-import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.entities.MainModules;
-import com.ii.testautomation.entities.Project;
-import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.QSubModules;
+import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.repositories.SubModulesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SubModulesService;
@@ -50,12 +48,10 @@ public class SubModulesServiceImpl implements SubModulesService {
     public boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId) {
         return subModulesRepository.existsByNameIgnoreCaseAndIdNot(subModuleName,subModuleId);
     }
-
     @Override
     public boolean isUpdateSubModulePrefixExits(String subModulePrefix, Long subModuleId) {
         return subModulesRepository.existsByPrefixIgnoreCaseAndIdNot(subModulePrefix,subModuleId);
     }
-
     @Override
     public boolean existsBySubModuleId(Long subModuleId) {
         return subModulesRepository.existsById(subModuleId);
@@ -70,7 +66,6 @@ public class SubModulesServiceImpl implements SubModulesService {
         BeanUtils.copyProperties(subModules,subModulesResponse);
         return subModulesResponse;
     }
-
     @Override
     public List<SubModulesResponse> getAllSubModuleByMainModuleId(Long mainModuleId) {
         List<SubModules> subModulesList=subModulesRepository.findAllSubModulesByMainModuleId(mainModuleId);
@@ -85,7 +80,6 @@ public class SubModulesServiceImpl implements SubModulesService {
         }
         return subModulesResponseList;
     }
-
     @Override
     public List<SubModulesResponse> multiSearchSubModule(Pageable pageable, PaginatedContentResponse.Pagination pagination, SubModuleSearch subModuleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -116,7 +110,6 @@ public class SubModulesServiceImpl implements SubModulesService {
         }
         return subModulesResponseList;
     }
-
     @Override
     public void deleteSubModuleById(Long subModuleId) {
         subModulesRepository.deleteById(subModuleId);

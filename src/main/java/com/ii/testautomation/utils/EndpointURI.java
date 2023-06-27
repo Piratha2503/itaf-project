@@ -11,7 +11,7 @@ public final class EndpointURI {
   
   // URLs for Project
   public static final String PROJECT = BASE_API_PATH + "project";
-  public static final String PROJECT_IMPORT = BASE_API_PATH +PROJECT+ "import";
+  public static final String PROJECT_IMPORT = PROJECT+ "/import";
   public static final String PROJECTS = BASE_API_PATH +SEARCH+SLASH + "products";
   public static final String PROJECT_BY_ID = PROJECT + ID;
 
@@ -22,25 +22,18 @@ public final class EndpointURI {
   public static final String SUBMODULE_BY_ID = SUBMODULE  + ID;
   public static final String SUBMODULE_BY_MAIN_MODULE_ID = SUBMODULE  + "/mainModuleId"+ID;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   //URLs for modules
   public static final String MODULE =BASE_API_PATH +"module";
   public static final String MODULE_BY_ID =MODULE +ID;
   public static final String MODULES = BASE_API_PATH +SEARCH+SLASH + "modules";
   public static final String MODULES_BY_ID=BASE_API_PATH+"moduleByProjectId" +ID;
-
+  // URLs for TestGrouping
+  public static final String TEST_GROUPING = BASE_API_PATH + "testGrouping";
+  public static final String TEST_GROUPING_IMPORT = BASE_API_PATH +TEST_GROUPING+ "import";
+  public static final String TEST_GROUPING_SEARCH = BASE_API_PATH +SEARCH+SLASH + "testGrouping";
+  public static final String TEST_GROUPING_BY_ID = TEST_GROUPING  + ID;
+  public static final String TEST_GROUPING_BY_TEST_CASE_ID = TEST_GROUPING  + "/testCase"+ID;
+  public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING   + "/testType"+ID;
 
   private EndpointURI() {
   }
