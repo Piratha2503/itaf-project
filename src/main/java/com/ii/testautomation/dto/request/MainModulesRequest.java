@@ -6,10 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MainModulesRequest
-{
-    private Long moduleId;
+{   private Long moduleId;
     private Long id;
     private String name;
     private String prefix;
-
 }

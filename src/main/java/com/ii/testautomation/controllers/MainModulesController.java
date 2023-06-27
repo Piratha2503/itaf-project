@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class MainModulesController
 {
-
     @Autowired
     private MainModulesService mainModulesService;
     @Autowired
@@ -140,9 +139,4 @@ public class MainModulesController
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));
     }
-
-
-
-
-
 }

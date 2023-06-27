@@ -17,11 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-
-
 @Service
 public class MainModulesServiceImp implements MainModulesService
 {
@@ -29,8 +26,6 @@ public class MainModulesServiceImp implements MainModulesService
     private MainModulesRepository mainModulesRepository;
     @Autowired
     private ModulesRepository modulesRepository;
-
-
     public void saveMainModules(MainModulesRequest mainModulesRequest)
     {
         MainModules mainModules = new MainModules();
@@ -39,12 +34,10 @@ public class MainModulesServiceImp implements MainModulesService
         BeanUtils.copyProperties(mainModulesRequest,mainModules);
         mainModulesRepository.save(mainModules);
     }
-
     public void deleteMainModules(Long id)
     {
         mainModulesRepository.deleteById(id);
     }
-
     public MainModulesResponse getByMainModulesId(Long id)
     {
         MainModulesResponse mainModulesResponse = new MainModulesResponse();
@@ -59,7 +52,6 @@ public class MainModulesServiceImp implements MainModulesService
 
         return mainModulesList;
     }
-
     @Override
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch)
     {
@@ -113,6 +105,5 @@ public class MainModulesServiceImp implements MainModulesService
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
         return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix,mainModuleId);
     }
-
 }
 

@@ -140,7 +140,6 @@ public class StatusCodeBundle {
  @Value("${message.success.getByProjectId.module}")
     private String getModuleByProjectIdSuccessMessage;
 
-
     // Test Types Codes & Messages //
     @Value("${code.validation.testtype.alreadyExists}")
     private String TestTypeAlReadyExistCode;
@@ -172,11 +171,4 @@ public class StatusCodeBundle {
     @Value("${message.success.deleteTestTypes}")
     private String deleteTestTypesSuccessMessage;
 
-
-/*
-    @Value("${message.validation.get.mainModule.notHave}")
-    private String getSubModuleNotHaveMainModuleId;
-
-    ****************************************************************
-*/
 }

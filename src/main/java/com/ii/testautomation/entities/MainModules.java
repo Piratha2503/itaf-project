@@ -17,5 +17,4 @@ public class MainModules {
     @ManyToOne
     @JoinColumn(name = "module_id",nullable = false)
     private Modules modules;
-
 }

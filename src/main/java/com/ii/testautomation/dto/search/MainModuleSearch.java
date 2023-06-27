@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MainModuleSearch
-{
-    private String name;
+{   private String name;
     private String prefix;
 }

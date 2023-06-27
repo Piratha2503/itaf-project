@@ -16,7 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 @RestController
 @CrossOrigin
 public class TestTypesController
@@ -112,4 +113,24 @@ public class TestTypesController
                 statusCodeBundle.getSuccessViewAllMessage()));
     }
 
+    @PostMapping("/test")
+    public ResponseEntity<Object> importEmployees(@RequestParam("file") MultipartFile file) throws IOException
+    {
+       /* if (!employeeService.importEmployeesFromCsv(file))
+        {
+
+            logger.info("Cannot Import Employee");
+
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+
+                    validationFailureResponseCode.getEmployeecanNotImportCsvCode(),
+
+                    validationFailureResponseCode.getEmployeecanNotImportCsvMessage()));
+
+        }*/
+        testTypesService.importfromFile(file);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getInsertTestTypesSuccessMessage()));
+    }
 }
