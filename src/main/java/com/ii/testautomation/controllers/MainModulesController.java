@@ -64,7 +64,7 @@ public class MainModulesController
     }
 
     @GetMapping(EndpointURI.MAINMODULE_BY_ID)
-    public ResponseEntity<Object> getMainModulesById(@PathVariable Long id)
+    public ResponseEntity<Object> getMainModulesByMainModuleId(@PathVariable Long id)
     {
         if (!mainModulesService.isExistMainModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -85,7 +85,7 @@ public class MainModulesController
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getModuleIdNotFound()));
-        if (mainModulesService.getByModuleId(id).isEmpty())
+        if (mainModulesService.getMainModulesByModuleId(id).isEmpty())
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getModuleIdNotAssignedmsg()));

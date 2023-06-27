@@ -19,7 +19,7 @@ public interface MainModulesService
 
     public MainModulesResponse getByMainModulesId(Long id);
 
-    public List<MainModules> getByModuleId(Long id);
+    public List<MainModules> getMainModulesByModuleId(Long id);
 
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch);
 

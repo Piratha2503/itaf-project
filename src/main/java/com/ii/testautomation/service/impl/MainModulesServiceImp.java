@@ -55,7 +55,7 @@ public class MainModulesServiceImp implements MainModulesService
         BeanUtils.copyProperties(mainModules,mainModulesResponse);
         return mainModulesResponse;
     }
-    public List<MainModules> getByModuleId(Long id)
+    public List<MainModules> getMainModulesByModuleId(Long id)
     {
         List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(id);
        /* if (mainModulesList.isEmpty())
