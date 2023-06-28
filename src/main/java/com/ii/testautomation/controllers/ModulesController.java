@@ -67,8 +67,7 @@ public class ModulesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModulePrefixAllReadyExistsMessage()));
         }
-        if(!projectService.existByProjectId(modulesRequest.getProjectId()))
-        {
+        if (!projectService.existByProjectId(modulesRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getProjectNotExistsMessage()));
