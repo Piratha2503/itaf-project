@@ -53,7 +53,8 @@ public class TestCasesController {
     public ResponseEntity<Object> GetTestcaseById(@PathVariable Long id) {
         if (!testCasesService.existsByTestCasesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+                    statusCodeBundle.getTestCasesNotExistCode(),
+                    statusCodeBundle.getTestCasesNotExistsMessage()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASE, testCasesService.getById(id), RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseByIdSuccessMessage()));
@@ -63,7 +64,8 @@ public class TestCasesController {
     public ResponseEntity<Object> UpdateTestCase(@RequestBody TestCaseRequest testCaseRequest) {
         if (!testCasesService.existsByTestCasesId(testCaseRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+                    statusCodeBundle.getTestCasesNotExistCode(),
+                    statusCodeBundle.getTestCasesNotExistsMessage()));
         }
         if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getId(), testCaseRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -100,7 +102,7 @@ public class TestCasesController {
         }
         List<TestCaseResponse> testCaseResponseList = testCasesService.getAllTestCaseBySubModuleId(id);
         if (testCaseResponseList.isEmpty()) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(),
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getGetTestCaseNotHaveSubModuleIdMessage()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id),
@@ -112,6 +114,8 @@ public class TestCasesController {
     public ResponseEntity<Object> DeleteTestCaseById(@PathVariable Long id) {
         if (!testCasesService.existsByTestCasesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestCasesNotExistCode(),
+                    statusCodeBundle.getTestCasesNotExistsMessage()));
                     statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
         }
         if (testGroupingService.isExistsTestCase(id)) {

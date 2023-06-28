@@ -103,4 +103,9 @@ public class TestCasesServiceImpl implements TestCasesService {
     public void DeleteTestCaseById(Long id) {
         testCasesRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existsBySubModuleId(Long subModuleId) {
+        return testCasesRepository.existsBySubModuleId(subModuleId);
+    }
 }

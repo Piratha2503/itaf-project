@@ -140,8 +140,14 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public boolean isExistsTestCase(Long id) {
-        return testGroupingRepository.existsByTestCasesId(id);
+    public boolean existsByTestCasesId(Long testCaseId) {
+        return testGroupingRepository.existsByTestCasesId(testCaseId);
     }
+
+    @Override
+    public boolean existsByTestTypesId(Long testTypeId) {
+        return testGroupingRepository.existsByTestTypeId(testTypeId);
+    }
+
 
 }

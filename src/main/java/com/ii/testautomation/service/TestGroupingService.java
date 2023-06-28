@@ -27,5 +27,8 @@ public interface TestGroupingService {
 
     public void deleteTestGroupingById(Long testGroupingId);
 
-    public boolean isExistsTestCase(Long id);
+    public boolean existsByTestCasesId(Long testCaseId);
+
+    public boolean existsByTestTypesId(Long testTypeId);
+
 }
