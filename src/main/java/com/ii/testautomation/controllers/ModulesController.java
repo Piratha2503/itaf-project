@@ -67,6 +67,12 @@ public class ModulesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModulePrefixAllReadyExistsMessage()));
         }
+        if(!projectService.existByProjectId(modulesRequest.getProjectId()))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
         modulesService.saveModule(modulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateModuleSuccessMessage()));
@@ -76,9 +82,9 @@ public class ModulesController {
     public ResponseEntity<Object> deleteModuleById(@PathVariable Long id) {
         if (!modulesService.existsByModulesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleNotExistsMessage()));
+                    statusCodeBundle.getModuleNotExistsCode(), statusCodeBundle.getModuleNotExistsMessage()));
         }
-        if (mainModulesService.isExistsByModule(id)) {
+        if (mainModulesService.existsMainModuleByModuleId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(), statusCodeBundle.getGetValidationModuleAssignedMessage()));
         }

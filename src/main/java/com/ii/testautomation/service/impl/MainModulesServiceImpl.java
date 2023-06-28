@@ -16,7 +16,9 @@ public class MainModulesServiceImpl implements MainModulesService {
     }
 
     @Override
-    public boolean isExistsByModule(Long id) {
-        return mainModuleRepository.existsByModuleId(id);
+    public boolean existsMainModuleByModuleId(Long moduleId) {
+        return mainModuleRepository.existsByModuleId(moduleId);
     }
+
+
 }

@@ -126,8 +126,8 @@ public class StatusCodeBundle {
     //TestCases code
     @Value("${code.validation.testCases.notExists}")
     private String testCasesNotExistCode;
-    @Value("${code.validation.testCase.alreadyExists}")
-    private String testCaseAlreadyExistsCode;
+    @Value("${code.validation.testCases.alreadyExists}")
+    private String testCasesAlreadyExistsCode;
     //TestCase Message
     @Value("${message.validation.testCases.notExists}")
     private String testCasesNotExistsMessage;

@@ -79,6 +79,7 @@ public class ModulesServiceImpl implements ModulesService {
         for (Modules modules : modulesPage) {
             ModulesResponse modulesResponse = new ModulesResponse();
             modulesResponse.setProjectId(modules.getProject().getId());
+            modulesResponse.setProjectName(modules.getProject().getName());
             BeanUtils.copyProperties(modules, modulesResponse);
             modulesResponseList.add(modulesResponse);
 
