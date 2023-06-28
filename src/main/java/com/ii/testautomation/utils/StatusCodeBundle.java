@@ -147,6 +147,8 @@ public class StatusCodeBundle {
     private String getTestCaseBySubModuleIdSuccessMessage;
     @Value("${message.validation.testCase.notHaveSubModule}")
     private String getTestCaseNotHaveSubModuleIdMessage;
+    @Value("${message.validation.testCase.assigned}")
+    private String getValidationTestCaseAssignedMessage;
 
     //TestTypes Code
     @Value("${code.validation.testTypes.notExists}")
