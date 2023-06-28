@@ -6,6 +6,7 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
@@ -27,7 +28,10 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
     @Autowired
+    private ModulesService modulesService;
+    @Autowired
     private StatusCodeBundle statusCodeBundle;
+
     @PostMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> saveProject(@RequestBody ProjectRequest projectRequest) {
 
@@ -46,9 +50,11 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveProjectSuccessMessage()));
     }
+
+
     @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-    public ResponseEntity<Object> saveProjectByImportFile(MultipartFile multipartFile) {
-        List<ProjectRequest> projectRequestList = projectService.importProjectFile(multipartFile);
+    public ResponseEntity<Object> saveProjectByImportFile(@RequestParam MultipartFile multipartFile) {
+        List<ProjectRequest> projectRequestList = projectService.importProjectFileXls(multipartFile);
         if (projectRequestList.isEmpty()) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
@@ -112,6 +118,7 @@ public class ProjectController {
                 statusCodeBundle.getUpdateProjectSuccessMessage()));
 
     }
+
     @GetMapping(value = EndpointURI.PROJECTS)
     public ResponseEntity<Object> getALlProjects(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
@@ -125,6 +132,7 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllProjectSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> getProjectById(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -137,6 +145,7 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetProjectSuccessMessage()));
     }
+
     @DeleteMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> deleteProject(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -144,6 +153,12 @@ public class ProjectController {
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getProjectNotExistsMessage()));
         }
+        if (modulesService.existsModuleByProjectId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectIdDependentCode(),
+                    statusCodeBundle.getProjectIdDependentMessage()));
+        }
+
         projectService.deleteProject(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteProjectSuccessMessage()

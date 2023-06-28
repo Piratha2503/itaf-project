@@ -24,4 +24,6 @@ public interface TestCasesService {
     public List<TestCaseResponse> getAllTestCaseBySubModuleId(Long subModuleId);
 
     public void DeleteTestCaseById(Long id);
+
+    public boolean existsBySubModuleId(Long subModuleId);
 }

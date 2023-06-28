@@ -1,7 +1,6 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.SubModulesRequest;
-import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -9,6 +8,7 @@ import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.SubModulesService;
+import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
@@ -19,8 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin
 public class SubModulesController {
@@ -28,9 +26,11 @@ public class SubModulesController {
     private SubModulesService subModulesService;
     @Autowired
     private MainModulesService mainModulesService;
-
+    @Autowired
+    private TestCasesService testCasesService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
+
     @PostMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest) {
         if (subModulesService.existsBySubModulesName(subModulesRequest.getName())) {
@@ -53,6 +53,7 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveSubModuleSuccessMessage()));
     }
+
     @PutMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> editSubModules(@RequestBody SubModulesRequest subModulesRequest) {
         if (!subModulesService.existsBySubModuleId(subModulesRequest.getId())) {
@@ -80,6 +81,7 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateSubModuleSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.SUBMODULE_BY_ID)
     public ResponseEntity<Object> getSubModuleById(@PathVariable Long id) {
         if (!subModulesService.existsBySubModuleId(id)) {
@@ -92,6 +94,7 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetSubModulesSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.SUBMODULE_BY_MAIN_MODULE_ID)
     public ResponseEntity<Object> getSubModuleByMainModuleId(@PathVariable Long id) {
         if (!mainModulesService.existsByMainModuleId(id)) {
@@ -99,8 +102,7 @@ public class SubModulesController {
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
         }
-        List<SubModulesResponse> subModulesResponseList = subModulesService.getAllSubModuleByMainModuleId(id);
-        if (subModulesResponseList.isEmpty()) {
+        if (!subModulesService.existsByMainModuleId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getGetSubModuleNotHaveMainModuleId()));
@@ -111,6 +113,7 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetSubModulesSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.SUBMODULES_SEARCH)
     public ResponseEntity<Object> getALlSubModuleWithMultiSearch(@RequestParam(name = "page") int page,
                                                                  @RequestParam(name = "size") int size,
@@ -124,12 +127,18 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllSubModuleSuccessMessage()));
     }
+
     @DeleteMapping(value = EndpointURI.SUBMODULE_BY_ID)
     public ResponseEntity<Object> deleteSubModuleById(@PathVariable Long id) {
         if (!subModulesService.existsBySubModuleId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesNotExistCode(),
                     statusCodeBundle.getSubModuleNotExistsMessage()));
+        }
+        if (testCasesService.existsBySubModuleId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getSubModulesDependentCode(),
+                    statusCodeBundle.getSubModulesDependentMessage()));
         }
         subModulesService.deleteSubModuleById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),

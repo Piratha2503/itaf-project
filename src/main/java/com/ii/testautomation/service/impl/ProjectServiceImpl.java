@@ -10,6 +10,10 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -135,6 +139,44 @@ public class ProjectServiceImpl implements ProjectService {
             }
         } catch (Exception e) {
             System.out.println(e + "not save");
+        }
+        return projectRequestList;
+    }
+
+    @Override
+    public List<ProjectRequest> importProjectFileXls(MultipartFile multipartFile) {
+        String header[] = null;
+        List<ProjectRequest> projectRequestList = new ArrayList<>();
+        try {
+            Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                ProjectRequest projectRequest = new ProjectRequest();
+                if (row.getRowNum() == 0) {
+                    for (int i = 0; i < 3; i++) {
+                        header[i] = row.getCell(i).getStringCellValue();
+                    }
+                    continue;
+                }
+                for (int i = 0; i < 3; i++) {
+                    if (header[i].equals("code")) {
+                        if (row.getCell(i).getStringCellValue().isEmpty()) continue;
+                        projectRequest.setCode(row.getCell(i).getStringCellValue());
+                    }
+                    if (header[i].equals("name")) {
+                        if (row.getCell(i).getStringCellValue().isEmpty()) continue;
+                        projectRequest.setName(row.getCell(i).getStringCellValue());
+                    }
+                    if (header[i].equals("description")) {
+                        if (row.getCell(i).getStringCellValue().isEmpty()) continue;
+                        projectRequest.setDescription(row.getCell(i).getStringCellValue());
+                    }
+                }
+                projectRequestList.add(projectRequest);
+            }
+
+        } catch (Exception e) {
+            System.out.println("error");
         }
         return projectRequestList;
     }
