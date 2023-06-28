@@ -7,6 +7,7 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
@@ -28,6 +29,8 @@ public class ModulesController {
     private ModulesService modulesService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private MainModulesService mainModulesService;
 
     @Autowired
     private StatusCodeBundle statusCodeBundle;
@@ -64,6 +67,11 @@ public class ModulesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModulePrefixAllReadyExistsMessage()));
         }
+        if (!projectService.existByProjectId(modulesRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
         modulesService.saveModule(modulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateModuleSuccessMessage()));
@@ -73,7 +81,11 @@ public class ModulesController {
     public ResponseEntity<Object> deleteModuleById(@PathVariable Long id) {
         if (!modulesService.existsByModulesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleNotExistsMessage()));
+                    statusCodeBundle.getModuleNotExistsCode(), statusCodeBundle.getModuleNotExistsMessage()));
+        }
+        if (mainModulesService.existsMainModuleByModuleId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(), statusCodeBundle.getGetValidationModuleAssignedMessage()));
         }
         modulesService.deleteModuleById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
@@ -127,5 +139,4 @@ public class ModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetModuleByProjectIdSuccessMessage()));
     }
-
 }

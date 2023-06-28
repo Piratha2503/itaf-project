@@ -30,4 +30,5 @@ public interface TestGroupingService {
     public boolean existsByTestCasesId(Long testCaseId);
 
     public boolean existsByTestTypesId(Long testTypeId);
+
 }

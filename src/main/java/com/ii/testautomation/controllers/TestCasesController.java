@@ -9,6 +9,7 @@ import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.service.TestCasesService;
+import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
@@ -30,6 +31,8 @@ public class TestCasesController {
     private SubModulesService subModulesService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
+    @Autowired
+    private TestGroupingService testGroupingService;
 
     @PostMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
@@ -66,7 +69,7 @@ public class TestCasesController {
         }
         if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getId(), testCaseRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestCaseAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
+                    statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -113,6 +116,10 @@ public class TestCasesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestCasesNotExistCode(),
                     statusCodeBundle.getTestCasesNotExistsMessage()));
+        }
+        if (testGroupingService.existsByTestCasesId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(), statusCodeBundle.getGetValidationTestCaseAssignedMessage()));
         }
         testCasesService.DeleteTestCaseById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
