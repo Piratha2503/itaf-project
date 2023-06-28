@@ -84,11 +84,13 @@ public class StatusCodeBundle {
     private String getModuleByIdSuccessMessage;
     @Value("${message.success.getByProjectId.module}")
     private String getModuleByProjectIdSuccessMessage;
+    @Value("${message.validation.module.assigned}")
+    private String getValidationModuleAssignedMessage;
 
     //MainModules Code
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
-    //MainModules Code
+    //MainModules Message
     @Value("${message.validation.mainModule.notExists}")
     private String mainModuleNotExistsMessage;
 
@@ -121,12 +123,12 @@ public class StatusCodeBundle {
     @Value("${message.validation.get.mainModule.notHave}")
     private String getSubModuleNotHaveMainModuleId;
 
-    //TestCases Code
+    //TestCases code
     @Value("${code.validation.testCases.notExists}")
     private String testCasesNotExistCode;
-    @Value("${code.validation.testCase.alreadyExists}")
-    private String testCaseAlreadyExistsCode;
-    //TestCases Message
+    @Value("${code.validation.testCases.alreadyExists}")
+    private String testCasesAlreadyExistsCode;
+    //TestCase Message
     @Value("${message.validation.testCases.notExists}")
     private String testCasesNotExistsMessage;
     @Value("${message.validation.testCase.name.alreadyExists}")
@@ -143,13 +145,15 @@ public class StatusCodeBundle {
     private String getAllTestCasesSuccessMessage;
     @Value("${message.success.getBySubModuleId.testCase}")
     private String getTestCaseBySubModuleIdSuccessMessage;
-    @Value("${message.validation.TestCase.notHaveSubModule}")
+    @Value("${message.validation.testCase.notHaveSubModule}")
     private String getTestCaseNotHaveSubModuleIdMessage;
+    @Value("${message.validation.testCase.assigned}")
+    private String getValidationTestCaseAssignedMessage;
 
     //TestTypes Code
     @Value("${code.validation.testTypes.notExists}")
     private String testTypesNotExistCode;
-    //TestTypes Message
+    //TestType Message
     @Value("${message.validation.testTypes.notExists}")
     private String testTypesNotExistsMessage;
 
@@ -175,6 +179,5 @@ public class StatusCodeBundle {
     private String getTestGroupingNotHaveTestTypeId;
     @Value("${message.validation.delete.testGrouping}")
     private String deleteTestGroupingSuccessMessage;
-
 
 }

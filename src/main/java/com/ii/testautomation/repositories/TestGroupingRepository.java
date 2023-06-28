@@ -18,4 +18,5 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
     boolean existsByTestCasesId(Long id);
 
     boolean existsByTestTypeId(Long id);
+
 }
