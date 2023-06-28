@@ -29,4 +29,6 @@ public interface ModulesService {
 
     public void deleteModuleById(Long id);
 
+    public boolean existsModuleByProjectId(Long projectId);
+
 }

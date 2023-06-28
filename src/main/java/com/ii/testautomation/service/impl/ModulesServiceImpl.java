@@ -116,5 +116,8 @@ public class ModulesServiceImpl implements ModulesService {
         modulesRepository.deleteById(id);
     }
 
-
+    @Override
+    public boolean existsModuleByProjectId(Long projectId) {
+        return modulesRepository.existsByProjectId(projectId);
+    }
 }

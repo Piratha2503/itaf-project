@@ -12,18 +12,27 @@ import java.util.List;
 
 public interface ProjectService {
     public void saveProject(ProjectRequest projectRequest);
+
     void saveProjectList(List<ProjectRequest> projectRequestList);
+
     public boolean existByProjectName(String projectName);
 
     public boolean existByProjectCode(String projectCode);
+
     public boolean isUpdateProjectNameExist(String projectName, Long projectId);
+
     public boolean isUpdateProjectCodeExist(String projectCode, Long projectId);
+
     public boolean existByProjectId(Long projectId);
+
     public ProjectResponse getProjectById(Long projectId);
+
     List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination,
                                              ProjectSearch projectSearch);
+
     public void deleteProject(Long projectId);
+
     public List<ProjectRequest> importProjectFile(MultipartFile multipartFile);
 
-
+    public List<ProjectRequest> importProjectFileXls(MultipartFile multipartFile);
 }

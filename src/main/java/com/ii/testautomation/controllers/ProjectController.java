@@ -6,16 +6,21 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -23,7 +28,10 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
     @Autowired
+    private ModulesService modulesService;
+    @Autowired
     private StatusCodeBundle statusCodeBundle;
+
     @PostMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> saveProject(@RequestBody ProjectRequest projectRequest) {
 
@@ -42,6 +50,50 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveProjectSuccessMessage()));
     }
+
+
+    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
+    public ResponseEntity<Object> saveProjectByImportFile(@RequestParam MultipartFile multipartFile) {
+        List<ProjectRequest> projectRequestList = projectService.importProjectFileXls(multipartFile);
+        if (projectRequestList.isEmpty()) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getProjectFileEmptyMessage()));
+        }
+        for (ProjectRequest projectRequest : projectRequestList) {
+            if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getProjectFileEmptyCode(),
+                        statusCodeBundle.getProjectNameEmptyMessage()));
+            }
+            if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getProjectFileEmptyCode(),
+                        statusCodeBundle.getProjectCodeEmptyMessage()));
+            }
+            if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getProjectFileEmptyCode(),
+                        statusCodeBundle.getProjectDescriptionEmptyMessage()));
+            }
+            if (projectService.existByProjectName(projectRequest.getName())) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getProjectAlReadyExistCode(),
+                        statusCodeBundle.getProjectNameAlReadyExistMessage()));
+            }
+            if (projectService.existByProjectCode(projectRequest.getCode())) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getProjectAlReadyExistCode(),
+                        statusCodeBundle.getProjectCodeAlReadyExistMessage()));
+            }
+
+        }
+        projectService.saveProjectList(projectRequestList);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getSaveProjectSuccessMessage()));
+    }
+
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestBody ProjectRequest projectRequest) {
         if (!projectService.existByProjectId(projectRequest.getId())) {
@@ -66,6 +118,7 @@ public class ProjectController {
                 statusCodeBundle.getUpdateProjectSuccessMessage()));
 
     }
+
     @GetMapping(value = EndpointURI.PROJECTS)
     public ResponseEntity<Object> getALlProjects(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
@@ -79,6 +132,7 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllProjectSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> getProjectById(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -91,6 +145,7 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetProjectSuccessMessage()));
     }
+
     @DeleteMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> deleteProject(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -98,6 +153,12 @@ public class ProjectController {
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getProjectNotExistsMessage()));
         }
+        if (modulesService.existsModuleByProjectId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectIdDependentCode(),
+                    statusCodeBundle.getProjectIdDependentMessage()));
+        }
+
         projectService.deleteProject(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteProjectSuccessMessage()
