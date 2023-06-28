@@ -129,7 +129,7 @@ public class StatusCodeBundle {
     //TestCases Message
     @Value("${message.validation.testCases.notExists}")
     private String testCasesNotExistsMessage;
-    @Value("${message.validation.testCase.name.alreadyExists}")
+    @Value("${message.validation.testCases.name.alreadyExists}")
     private String testCaseNameAlreadyExistsMessage;
     @Value("${message.success.save.testcases}")
     private String saveTestCaseSuccessMessage;
@@ -175,6 +175,4 @@ public class StatusCodeBundle {
     private String getTestGroupingNotHaveTestTypeId;
     @Value("${message.validation.delete.testGrouping}")
     private String deleteTestGroupingSuccessMessage;
-
-
 }
