@@ -7,6 +7,7 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
@@ -28,6 +29,8 @@ public class ModulesController {
     private ModulesService modulesService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private MainModulesService mainModulesService;
 
     @Autowired
     private StatusCodeBundle statusCodeBundle;
@@ -74,6 +77,10 @@ public class ModulesController {
         if (!modulesService.existsByModulesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleNotExistsMessage()));
+        }
+        if (mainModulesService.isExistsByModule(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(), statusCodeBundle.getGetValidationModuleAssignedMessage()));
         }
         modulesService.deleteModuleById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
@@ -127,5 +134,4 @@ public class ModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetModuleByProjectIdSuccessMessage()));
     }
-
 }

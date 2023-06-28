@@ -133,9 +133,15 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponses;
     }
+
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
         testGroupingRepository.deleteById(testGroupingId);
+    }
+
+    @Override
+    public boolean isExistsTestCase(Long id) {
+        return testGroupingRepository.existsByTestCasesId(id);
     }
 
 }

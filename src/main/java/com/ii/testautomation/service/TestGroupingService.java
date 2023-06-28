@@ -26,4 +26,6 @@ public interface TestGroupingService {
     public List<TestGroupingResponse> multiSearchTestGrouping(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch);
 
     public void deleteTestGroupingById(Long testGroupingId);
+
+    public boolean isExistsTestCase(Long id);
 }

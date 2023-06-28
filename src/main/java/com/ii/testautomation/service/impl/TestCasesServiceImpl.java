@@ -3,6 +3,7 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
+import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.repositories.TestCasesRepository;
@@ -11,7 +12,6 @@ import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
-import com.ii.testautomation.entities.QTestCases;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +22,7 @@ import java.util.List;
 
 @Service
 public class TestCasesServiceImpl implements TestCasesService {
+
     @Autowired
     private TestCasesRepository testCasesRepository;
 
