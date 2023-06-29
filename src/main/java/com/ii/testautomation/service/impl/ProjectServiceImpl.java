@@ -14,6 +14,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,9 +26,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -108,76 +116,95 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.deleteById(projectId);
     }
 
+
     @Override
-    public List<ProjectRequest> importProjectFile(MultipartFile multipartFile) {
+    public boolean hasCsvFormat(MultipartFile multipartFile) {
+        String expectedContentType = "text/csv";
+        String actualContentType = multipartFile.getContentType();
+        return expectedContentType.equals(actualContentType);
+    }
+
+    @Override
+    public boolean hasExcelFormat(MultipartFile multipartFile) {
+        try {
+            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+            workbook.close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<ProjectRequest> csvToProjectRequest(InputStream inputStream) {
+        List<ProjectRequest> projectRequestList = new ArrayList<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+
+            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+
+            for (CSVRecord csvRecord : csvRecords) {
+                ProjectRequest projectRequest = new ProjectRequest();
+                projectRequest.setCode(csvRecord.get("Code"));
+                projectRequest.setDescription(csvRecord.get("description"));
+                projectRequest.setName(csvRecord.get("name"));
+                projectRequestList.add(projectRequest);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
+        }
+        return projectRequestList;
+    }
+
+    public List<ProjectRequest> excelToProjectRequest(InputStream inputStream) {
         List<ProjectRequest> projectRequestList = new ArrayList<>();
         try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()));
-            String line;
+            Workbook workbook = WorkbookFactory.create(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            DataFormatter dataFormatter = new DataFormatter();
             boolean firstLine = true;
-            String header[] = null;
-            while ((line = bufferedReader.readLine()) != null) {
-                String data[] = line.split(",");
+
+            Row headerRow = sheet.getRow(0);
+            Map<String, Integer> columnMap = getColumnMap(headerRow);
+
+            for (Row row : sheet) {
                 if (firstLine) {
-                    header = data;
                     firstLine = false;
                     continue;
                 }
+
                 ProjectRequest projectRequest = new ProjectRequest();
-                for (int i = 0; i < header.length; i++) {
-                    if (header[i].equals("code")) {
-                        projectRequest.setCode(data[i]);
-                    }
-                    if (header[i].equals("name")) {
-                        projectRequest.setName(data[i]);
-                    }
-                    if (header[i].equals("description")) {
-                        projectRequest.setDescription(data[i]);
-                    }
-                }
+
+                Cell codeCell = row.getCell(columnMap.get("Code"));
+                Cell descriptionCell = row.getCell(columnMap.get("Description"));
+                Cell nameCell = row.getCell(columnMap.get("Name"));
+
+                projectRequest.setCode(dataFormatter.formatCellValue(codeCell));
+                projectRequest.setDescription(dataFormatter.formatCellValue(descriptionCell));
+                projectRequest.setName(dataFormatter.formatCellValue(nameCell));
+
                 projectRequestList.add(projectRequest);
             }
-        } catch (Exception e) {
-            System.out.println(e + "not save");
+
+            workbook.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
         }
         return projectRequestList;
     }
 
-    @Override
-    public List<ProjectRequest> importProjectFileXls(MultipartFile multipartFile) {
-        String header[] = null;
-        List<ProjectRequest> projectRequestList = new ArrayList<>();
-        try {
-            Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
-            Sheet sheet = workbook.getSheetAt(0);
-            for (Row row : sheet) {
-                ProjectRequest projectRequest = new ProjectRequest();
-                if (row.getRowNum() == 0) {
-                    for (int i = 0; i < 3; i++) {
-                        header[i] = row.getCell(i).getStringCellValue();
-                    }
-                    continue;
-                }
-                for (int i = 0; i < 3; i++) {
-                    if (header[i].equals("code")) {
-                        if (row.getCell(i).getStringCellValue().isEmpty()) continue;
-                        projectRequest.setCode(row.getCell(i).getStringCellValue());
-                    }
-                    if (header[i].equals("name")) {
-                        if (row.getCell(i).getStringCellValue().isEmpty()) continue;
-                        projectRequest.setName(row.getCell(i).getStringCellValue());
-                    }
-                    if (header[i].equals("description")) {
-                        if (row.getCell(i).getStringCellValue().isEmpty()) continue;
-                        projectRequest.setDescription(row.getCell(i).getStringCellValue());
-                    }
-                }
-                projectRequestList.add(projectRequest);
-            }
+    private Map<String, Integer> getColumnMap(Row headerRow) {
+        Map<String, Integer> columnMap = new HashMap<>();
 
-        } catch (Exception e) {
-            System.out.println("error");
+        for (Cell cell : headerRow) {
+            String cellValue = cell.getStringCellValue();
+            columnMap.put(cellValue, cell.getColumnIndex());
         }
-        return projectRequestList;
+
+        return columnMap;
     }
 }
+
+
