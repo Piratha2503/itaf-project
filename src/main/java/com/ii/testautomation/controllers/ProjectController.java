@@ -53,48 +53,6 @@ public class ProjectController {
                 statusCodeBundle.getSaveProjectSuccessMessage()));
 
     }
-//    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-//    public ResponseEntity<Object> saveProjectByImportFile(MultipartFile multipartFile) {
-//        List<ProjectRequest> projectRequestList = projectService.importProjectFile(multipartFile);
-//        if (projectRequestList.isEmpty()) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                    statusCodeBundle.getFailureCode(),
-//                    statusCodeBundle.getProjectFileEmptyMessage()));
-//        }
-//        for (ProjectRequest projectRequest : projectRequestList) {
-//            if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                        statusCodeBundle.getProjectFileEmptyCode(),
-//                        statusCodeBundle.getProjectNameEmptyMessage()));
-//            }
-//            if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                        statusCodeBundle.getProjectFileEmptyCode(),
-//                        statusCodeBundle.getProjectCodeEmptyMessage()));
-//            }
-//            if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                        statusCodeBundle.getProjectFileEmptyCode(),
-//                        statusCodeBundle.getProjectDescriptionEmptyMessage()));
-//            }
-//            if (projectService.existByProjectName(projectRequest.getName())) {
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                        statusCodeBundle.getProjectAlReadyExistCode(),
-//                        statusCodeBundle.getProjectNameAlReadyExistMessage()));
-//            }
-//            if (projectService.existByProjectCode(projectRequest.getCode())) {
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                        statusCodeBundle.getProjectAlReadyExistCode(),
-//                        statusCodeBundle.getProjectCodeAlReadyExistMessage()));
-//            }
-//
-//        }
-//        projectService.saveProjectList(projectRequestList);
-//        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-//                statusCodeBundle.getCommonSuccessCode(),
-//                statusCodeBundle.getSaveProjectSuccessMessage()));
-//    }
-
 
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestBody ProjectRequest projectRequest) {
@@ -161,112 +119,6 @@ public class ProjectController {
         ));
     }
 
-    //    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-//    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
-//        if (!projectService.hasCsvFormat(multipartFile)) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                    statusCodeBundle.getFailureCode(),
-//                    statusCodeBundle.getFileCsvValidationMessage()));
-//        }
-//        try {
-//            List<ProjectRequest> projectRequestList = projectService.csvToProject(multipartFile.getInputStream());
-//
-//            for (ProjectRequest projectRequest : projectRequestList) {
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
-//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                            statusCodeBundle.getProjectFileEmptyCode(),
-//                            statusCodeBundle.getProjectNameEmptyMessage()));
-//                }
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
-//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                            statusCodeBundle.getProjectFileEmptyCode(),
-//                            statusCodeBundle.getProjectCodeEmptyMessage()));
-//                }
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
-//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                            statusCodeBundle.getProjectFileEmptyCode(),
-//                            statusCodeBundle.getProjectDescriptionEmptyMessage()));
-//                }
-//                if (projectService.existByProjectName(projectRequest.getName())) {
-//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                            statusCodeBundle.getProjectAlReadyExistCode(),
-//                            statusCodeBundle.getProjectNameAlReadyExistMessage()));
-//                }
-//                if (projectService.existByProjectCode(projectRequest.getCode())) {
-//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                            statusCodeBundle.getProjectAlReadyExistCode(),
-//                            statusCodeBundle.getProjectCodeAlReadyExistMessage()));
-//                }
-//                projectService.saveProject(projectRequest);
-//            }
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-//                    statusCodeBundle.getCommonSuccessCode(),
-//                    statusCodeBundle.getSaveProjectSuccessMessage()));
-//
-//        } catch (IOException e) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-//                    statusCodeBundle.getCommonSuccessCode(),
-//                    statusCodeBundle.getSaveProjectValidationMessage()));
-//        }
-//    }
-//    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-//    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
-//        if (!projectService.hasCsvFormat(multipartFile)) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                    statusCodeBundle.getFailureCode(),
-//                    statusCodeBundle.getFileCsvValidationMessage()));
-//        }
-//
-//        Map<Integer, List<String>> errorMessages = new HashMap<>();
-//
-//        try {
-//            List<ProjectRequest> projectRequestList = projectService.csvToProject(multipartFile.getInputStream());
-//
-//            for (int rowIndex = 1; rowIndex <= projectRequestList.size(); rowIndex++) {
-//                ProjectRequest projectRequest = projectRequestList.get(rowIndex - 1);
-//
-//                List<String> rowErrors = new ArrayList<>();
-//
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
-//                    rowErrors.add(statusCodeBundle.getProjectNameEmptyMessage());
-//                }
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
-//                    rowErrors.add(statusCodeBundle.getProjectCodeEmptyMessage());
-//                }
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
-//                    rowErrors.add(statusCodeBundle.getProjectDescriptionEmptyMessage());
-//                }
-//                if (projectService.existByProjectName(projectRequest.getName())) {
-//                    rowErrors.add(statusCodeBundle.getProjectNameAlReadyExistMessage());
-//                }
-//                if (projectService.existByProjectCode(projectRequest.getCode())) {
-//                    rowErrors.add(statusCodeBundle.getProjectCodeAlReadyExistMessage());
-//                }
-//
-//                if (!rowErrors.isEmpty()) {
-//                    errorMessages.put(rowIndex, rowErrors);
-//                }
-//
-//                projectService.saveProject(projectRequest);
-//            }
-//
-//            if (!errorMessages.isEmpty()) {
-//                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-//                        statusCodeBundle.getFailureCode(),
-//                        statusCodeBundle.getProjectFileErrorMessage(),
-//                        errorMessages));
-//            } else {
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-//                        statusCodeBundle.getCommonSuccessCode(),
-//                        statusCodeBundle.getSaveProjectSuccessMessage()));
-//            }
-//
-//        } catch (IOException e) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                    statusCodeBundle.getFailureCode(),
-//                    statusCodeBundle.getSaveProjectValidationMessage()));
-//        }
-//    }
     @PostMapping(value = EndpointURI.PROJECT_IMPORT)
     public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
@@ -276,11 +128,10 @@ public class ProjectController {
                 projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
             } else if (projectService.hasExcelFormat(multipartFile)) {
                 projectRequestList = projectService.excelToProjectRequest(multipartFile.getInputStream());
-            }
-            else {
+            } else {
                 return ResponseEntity.badRequest().body("Invalid file format");
             }
-            for (int rowIndex = 2; rowIndex <= projectRequestList.size()+1; rowIndex++) {
+            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
                 ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
 
                 if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
@@ -306,7 +157,7 @@ public class ProjectController {
                         errorMessages));
             } else {
                 for (ProjectRequest projectRequest : projectRequestList
-                ){
+                ) {
                     projectService.saveProject(projectRequest);
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),

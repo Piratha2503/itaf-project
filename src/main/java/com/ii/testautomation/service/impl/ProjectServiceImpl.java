@@ -118,6 +118,7 @@ public class ProjectServiceImpl implements ProjectService {
         String actualContentType = multipartFile.getContentType();
         return expectedContentType.equals(actualContentType);
     }
+
     @Override
     public boolean hasExcelFormat(MultipartFile multipartFile) {
         try {
@@ -128,6 +129,7 @@ public class ProjectServiceImpl implements ProjectService {
             return false;
         }
     }
+
     @Override
     public List<ProjectRequest> csvToProjectRequest(InputStream inputStream) {
         List<ProjectRequest> projectRequestList = new ArrayList<>();
@@ -197,17 +199,6 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         return columnMap;
-    }
-
-
-    @Override
-    public void saveMultiPartFile(MultipartFile multipartFile) {
-        try {
-            List<ProjectRequest> projectRequestList = csvToProjectRequest(multipartFile.getInputStream());
-            saveProjectList(projectRequestList);
-        } catch (IOException e) {
-            throw new RuntimeException("fail to store csv data: " + e.getMessage());
-        }
     }
 }
 
