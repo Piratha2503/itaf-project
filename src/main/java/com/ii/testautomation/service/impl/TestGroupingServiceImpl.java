@@ -133,9 +133,21 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponses;
     }
+
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
         testGroupingRepository.deleteById(testGroupingId);
     }
+
+    @Override
+    public boolean existsByTestCasesId(Long testCaseId) {
+        return testGroupingRepository.existsByTestCasesId(testCaseId);
+    }
+
+    @Override
+    public boolean existsByTestTypesId(Long testTypeId) {
+        return testGroupingRepository.existsByTestTypeId(testTypeId);
+    }
+
 
 }

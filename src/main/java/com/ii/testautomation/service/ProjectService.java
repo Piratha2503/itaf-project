@@ -33,7 +33,10 @@ public interface ProjectService {
 
     public void deleteProject(Long projectId);
 
+    public List<ProjectRequest> importProjectFile(MultipartFile multipartFile);
 
+
+    public List<ProjectRequest> importProjectFileXls(MultipartFile multipartFile);
     boolean hasCsvFormat(MultipartFile multipartFile);
 
     public boolean hasExcelFormat(MultipartFile multipartFile);
