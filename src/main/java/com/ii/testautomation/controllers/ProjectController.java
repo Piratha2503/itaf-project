@@ -59,49 +59,6 @@ public class ProjectController {
                 statusCodeBundle.getSaveProjectSuccessMessage()));
     }
 
-
-    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-    public ResponseEntity<Object> saveProjectByImportFile(@RequestParam MultipartFile multipartFile) {
-        List<ProjectRequest> projectRequestList = projectService.importProjectFileXls(multipartFile);
-        if (projectRequestList.isEmpty()) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getProjectFileEmptyMessage()));
-        }
-        for (ProjectRequest projectRequest : projectRequestList) {
-            if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectFileEmptyCode(),
-                        statusCodeBundle.getProjectNameEmptyMessage()));
-            }
-            if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectFileEmptyCode(),
-                        statusCodeBundle.getProjectCodeEmptyMessage()));
-            }
-            if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectFileEmptyCode(),
-                        statusCodeBundle.getProjectDescriptionEmptyMessage()));
-            }
-            if (projectService.existByProjectName(projectRequest.getName())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectAlReadyExistCode(),
-                        statusCodeBundle.getProjectNameAlReadyExistMessage()));
-            }
-            if (projectService.existByProjectCode(projectRequest.getCode())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectAlReadyExistCode(),
-                        statusCodeBundle.getProjectCodeAlReadyExistMessage()));
-            }
-
-        }
-        projectService.saveProjectList(projectRequestList);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSaveProjectSuccessMessage()));
-    }
-
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestBody ProjectRequest projectRequest) {
         if (!projectService.existByProjectId(projectRequest.getId())) {
