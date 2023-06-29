@@ -5,6 +5,7 @@ import com.ii.testautomation.dto.search.ProjectSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
@@ -21,6 +22,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -46,49 +54,6 @@ public class ProjectController {
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
         projectService.saveProject(projectRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSaveProjectSuccessMessage()));
-    }
-
-
-    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-    public ResponseEntity<Object> saveProjectByImportFile(@RequestParam MultipartFile multipartFile) {
-        List<ProjectRequest> projectRequestList = projectService.importProjectFileXls(multipartFile);
-        if (projectRequestList.isEmpty()) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getProjectFileEmptyMessage()));
-        }
-        for (ProjectRequest projectRequest : projectRequestList) {
-            if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectFileEmptyCode(),
-                        statusCodeBundle.getProjectNameEmptyMessage()));
-            }
-            if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectFileEmptyCode(),
-                        statusCodeBundle.getProjectCodeEmptyMessage()));
-            }
-            if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectFileEmptyCode(),
-                        statusCodeBundle.getProjectDescriptionEmptyMessage()));
-            }
-            if (projectService.existByProjectName(projectRequest.getName())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectAlReadyExistCode(),
-                        statusCodeBundle.getProjectNameAlReadyExistMessage()));
-            }
-            if (projectService.existByProjectCode(projectRequest.getCode())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getProjectAlReadyExistCode(),
-                        statusCodeBundle.getProjectCodeAlReadyExistMessage()));
-            }
-
-        }
-        projectService.saveProjectList(projectRequestList);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveProjectSuccessMessage()));
@@ -164,4 +129,67 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteProjectSuccessMessage()
         ));
     }
+
+    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
+    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
+        Map<String, List<Integer>> errorMessages = new HashMap<>();
+        List<ProjectRequest> projectRequestList = new ArrayList<>();
+        try {
+            if (projectService.hasCsvFormat(multipartFile)) {
+                projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
+            } else if (projectService.hasExcelFormat(multipartFile)) {
+                projectRequestList = projectService.excelToProjectRequest(multipartFile.getInputStream());
+            } else {
+                return ResponseEntity.badRequest().body("Invalid file format");
+            }
+            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
+                ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
+
+                if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
+                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
+                }
+                if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
+                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
+                }
+                if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
+                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
+                }
+                if (projectService.existByProjectName(projectRequest.getName())) {
+                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+                }
+                if (projectService.existByProjectCode(projectRequest.getCode())) {
+                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
+                }
+            }
+            if (!errorMessages.isEmpty()) {
+                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(),
+                        statusCodeBundle.getProjectFileErrorMessage(),
+                        errorMessages));
+            } else {
+                for (ProjectRequest projectRequest : projectRequestList
+                ) {
+                    projectService.saveProject(projectRequest);
+                }
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                        statusCodeBundle.getCommonSuccessCode(),
+                        statusCodeBundle.getSaveProjectSuccessMessage()));
+            }
+
+        } catch (IOException e) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getSaveProjectValidationMessage()));
+        }
+    }
+
+    private void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
+        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
+        errorList.add(value);
+        errorMessages.put(key, errorList);
+    }
 }
+
+
+
+

@@ -39,8 +39,14 @@ public class StatusCodeBundle {
     private String projectCodeAlReadyExistMessage;
     @Value("${message.validation.project.Name.alreadyExists}")
     private String projectNameAlReadyExistMessage;
-    @Value("${message.validation.project.file.empty}")
-    private String projectFileEmptyMessage;
+    @Value("${message.validation.project.file.error}")
+    private String projectFileErrorMessage;
+    @Value("${message.success.project.file}")
+    private String projectFileUploadSuccessMessage;
+    @Value("${message.validation.project.file}")
+    private String projectFileUploadValidationMessage;
+    @Value("${message.validation.file.csv}")
+    private String fileCsvValidationMessage;
     @Value("${message.validation.project.file.name.empty}")
     private String projectNameEmptyMessage;
     @Value("${message.validation.project.file.code.empty}")
@@ -49,6 +55,8 @@ public class StatusCodeBundle {
     private String projectDescriptionEmptyMessage;
     @Value("${message.success.save.project}")
     private String saveProjectSuccessMessage;
+    @Value("${message.validation.save.project}")
+    private String saveProjectValidationMessage;
     @Value("${message.success.update.project}")
     private String updateProjectSuccessMessage;
     @Value("${message.success.getAll.project}")
