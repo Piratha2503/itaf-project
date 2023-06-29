@@ -8,6 +8,7 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface ProjectService {
@@ -23,7 +24,12 @@ public interface ProjectService {
     List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination,
                                              ProjectSearch projectSearch);
     public void deleteProject(Long projectId);
-    public List<ProjectRequest> importProjectFile(MultipartFile multipartFile);
 
 
+    boolean hasCsvFormat(MultipartFile multipartFile);
+    public boolean hasExcelFormat(MultipartFile multipartFile);
+
+    void saveMultiPartFile(MultipartFile multipartFile);
+    public List<ProjectRequest> csvToProjectRequest(InputStream inputStream);
+    public List<ProjectRequest> excelToProjectRequest(InputStream inputStream);
 }
