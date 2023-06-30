@@ -22,5 +22,7 @@ public interface MainModulesService
     public boolean isExistModulesId(Long id);
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
+
+    public boolean isExistsSubmodulesByMainModule(Long id);
 }
 

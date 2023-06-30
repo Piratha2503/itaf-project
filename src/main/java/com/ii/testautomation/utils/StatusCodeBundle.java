@@ -85,12 +85,14 @@ public class StatusCodeBundle {
     @Value("${message.validation.mainModule.notExists}")
     private String mainModuleNotExistsMessage;
 
-    @Value("${message.failure.moduleidnotassigned}")
-    private String ModuleIdNotAssignedmsg;
-
-
-    @Value("${code.validation.project.alreadyExists}")
+   @Value("${code.validation.project.alreadyExists}")
     private String AlreadyExistCode;
+
+    @Value("${message.failure.moduleidnotassignedwithMainmod}")
+    private String ModuleIdNotAssigned;
+
+    @Value("${Message.validation.IdAsignedwithAnotherTable}")
+    private String IdAsignedwithanotherTable;
 //Modules
  @Value("${code.validation.module.alreadyExists}")
     private String moduleAlReadyExistsCode;
@@ -170,5 +172,17 @@ public class StatusCodeBundle {
 
     @Value("${message.success.deleteTestTypes}")
     private String deleteTestTypesSuccessMessage;
+
+    // Bulk Code & Msg
+    @Value("${code.bulkimport.success}")
+    private String BulkImportCode;
+    @Value("${message.bulkimport.success}")
+    private String BulkImportMessage;
+
+    /*
+     = Module Id Does not Assigned in Main Modules
+
+     */
+
 
 }

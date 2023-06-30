@@ -8,6 +8,7 @@ import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.entities.QMainModules;
 import com.ii.testautomation.repositories.MainModulesRepository;
 import com.ii.testautomation.repositories.ModulesRepository;
+import com.ii.testautomation.repositories.SubModulesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.utils.Utils;
@@ -26,6 +27,8 @@ public class MainModulesServiceImp implements MainModulesService
     private MainModulesRepository mainModulesRepository;
     @Autowired
     private ModulesRepository modulesRepository;
+    @Autowired
+    private SubModulesRepository subModulesRepository;
     public void saveMainModules(MainModulesRequest mainModulesRequest)
     {
         MainModules mainModules = new MainModules();
@@ -104,6 +107,10 @@ public class MainModulesServiceImp implements MainModulesService
 
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
         return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix,mainModuleId);
+    }
+    public boolean isExistsSubmodulesByMainModule(Long id)
+    {
+        return subModulesRepository.existsByMainModuleId(id);
     }
 }
 
