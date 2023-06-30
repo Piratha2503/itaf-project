@@ -16,6 +16,5 @@ public class MainModules {
     private String prefix;
     @ManyToOne
     @JoinColumn(name = "module_id",nullable = false)
-    private Modules module;
-
+    private Modules modules;
 }

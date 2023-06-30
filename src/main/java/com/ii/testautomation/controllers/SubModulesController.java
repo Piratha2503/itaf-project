@@ -12,12 +12,15 @@ import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -43,7 +46,7 @@ public class SubModulesController {
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
         }
-        if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id())) {
+        if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
@@ -52,6 +55,7 @@ public class SubModulesController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveSubModuleSuccessMessage()));
+
     }
 
     @PutMapping(value = EndpointURI.SUBMODULE)
@@ -61,7 +65,7 @@ public class SubModulesController {
                     statusCodeBundle.getSubModulesNotExistCode(),
                     statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id())) {
+        if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
@@ -89,7 +93,7 @@ public class SubModulesController {
                     statusCodeBundle.getSubModulesNotExistCode(),
                     statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULE, subModulesService.getSubModuleById(id),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULE,subModulesService.getSubModuleById(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetSubModulesSuccessMessage()));
@@ -97,7 +101,7 @@ public class SubModulesController {
 
     @GetMapping(value = EndpointURI.SUBMODULE_BY_MAIN_MODULE_ID)
     public ResponseEntity<Object> getSubModuleByMainModuleId(@PathVariable Long id) {
-        if (!mainModulesService.existsByMainModuleId(id)) {
+        if (!mainModulesService.isExistMainModulesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));

@@ -5,6 +5,7 @@ import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,32 +13,33 @@ import java.io.InputStream;
 import java.util.List;
 
 public interface ProjectService {
-    public void saveProject(ProjectRequest projectRequest);
 
-    void saveProjectList(List<ProjectRequest> projectRequestList);
+        public void saveProject(ProjectRequest projectRequest);
 
-    public boolean existByProjectName(String projectName);
+        void saveProjectList(List<ProjectRequest> projectRequestList);
 
-    public boolean existByProjectCode(String projectCode);
+        public boolean existByProjectName(String projectName);
 
-    public boolean isUpdateProjectNameExist(String projectName, Long projectId);
+        public boolean existByProjectCode(String projectCode);
 
-    public boolean isUpdateProjectCodeExist(String projectCode, Long projectId);
+        public boolean isUpdateProjectNameExist(String projectName, Long projectId);
 
-    public boolean existByProjectId(Long projectId);
+        public boolean isUpdateProjectCodeExist(String projectCode, Long projectId);
 
-    public ProjectResponse getProjectById(Long projectId);
+        public boolean existByProjectId(Long projectId);
 
-    List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination,
-                                             ProjectSearch projectSearch);
+        public ProjectResponse getProjectById(Long projectId);
 
-    public void deleteProject(Long projectId);
+        List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination,
+                                                 ProjectSearch projectSearch);
 
-    boolean hasCsvFormat(MultipartFile multipartFile);
+        public void deleteProject(Long projectId);
+        boolean hasCsvFormat(MultipartFile multipartFile);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+        public boolean hasExcelFormat(MultipartFile multipartFile);
 
-    public List<ProjectRequest> csvToProjectRequest(InputStream inputStream);
+        public List<ProjectRequest> csvToProjectRequest(InputStream inputStream);
 
-    public List<ProjectRequest> excelToProjectRequest(InputStream inputStream);
-}
+        public List<ProjectRequest> excelToProjectRequest(InputStream inputStream);
+    }
+
