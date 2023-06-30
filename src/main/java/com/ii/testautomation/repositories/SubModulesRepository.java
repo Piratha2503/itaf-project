@@ -18,6 +18,6 @@ public interface SubModulesRepository extends JpaRepository<SubModules, Long>, Q
     List<SubModules> findAllSubModulesByMainModuleId(Long id);
     boolean existsByMainModuleId(Long id);
 
-    boolean existsByMainModuleId(Long id);
+
 
 }

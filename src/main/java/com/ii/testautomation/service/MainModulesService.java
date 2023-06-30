@@ -23,7 +23,7 @@ public interface MainModulesService
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
     public boolean isExistsSubmodulesByMainModule(Long id);
-    public boolean existsByMainModuleId(Long id);
+    //public boolean existsByMainModuleId(Long id);
     public boolean existsMainModuleByModuleId(Long id);
 
 }

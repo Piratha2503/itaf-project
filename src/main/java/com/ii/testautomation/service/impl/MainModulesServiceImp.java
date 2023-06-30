@@ -29,6 +29,7 @@ public class MainModulesServiceImp implements MainModulesService
     private ModulesRepository modulesRepository;
     @Autowired
     private SubModulesRepository subModulesRepository;
+
     public void saveMainModules(MainModulesRequest mainModulesRequest)
     {
         MainModules mainModules = new MainModules();
@@ -112,5 +113,7 @@ public class MainModulesServiceImp implements MainModulesService
     {
         return subModulesRepository.existsByMainModuleId(id);
     }
+    public boolean existsMainModuleByModuleId(Long id) {return mainModulesRepository.existsByModulesId(id);}
+
 }
 
