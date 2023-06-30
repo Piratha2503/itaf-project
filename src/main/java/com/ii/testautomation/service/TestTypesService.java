@@ -26,4 +26,5 @@ public interface TestTypesService
     public boolean isExistsTestTypeByName(String name);
     public boolean isExistsTestTypeById(Long id);
     public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
+    public boolean existsByTestTypesId(Long id);
 }

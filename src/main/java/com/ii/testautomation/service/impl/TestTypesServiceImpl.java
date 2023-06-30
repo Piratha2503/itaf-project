@@ -6,14 +6,8 @@ import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.entities.QTestTypes;
 import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.repositories.TestTypesRepository;
-import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestTypesService;
-import com.ii.testautomation.utils.Utils;
-import com.querydsl.core.BooleanBuilder;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -101,4 +95,10 @@ public class TestTypesServiceImpl implements TestTypesService
     public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id) {
         return testTypesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
     }
+
+    @Override
+    public boolean existsByTestTypesId(Long id) {
+        return testTypesRepository.existsById(id);
+    }
+
 }
