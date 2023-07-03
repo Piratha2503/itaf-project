@@ -18,11 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
-public class MainModulesServiceImp implements MainModulesService
-{
+public class MainModulesServiceImp implements MainModulesService {
     @Autowired
     private MainModulesRepository mainModulesRepository;
     @Autowired
@@ -30,42 +31,39 @@ public class MainModulesServiceImp implements MainModulesService
     @Autowired
     private SubModulesRepository subModulesRepository;
 
-    public void saveMainModules(MainModulesRequest mainModulesRequest)
-    {
+    public void saveMainModules(MainModulesRequest mainModulesRequest) {
         MainModules mainModules = new MainModules();
         Modules modules1 = modulesRepository.findById(mainModulesRequest.getModuleId()).get();
         mainModules.setModules(modules1);
-        BeanUtils.copyProperties(mainModulesRequest,mainModules);
+        BeanUtils.copyProperties(mainModulesRequest, mainModules);
         mainModulesRepository.save(mainModules);
     }
-    public void deleteMainModules(Long id)
-    {
+
+    public void deleteMainModules(Long id) {
         mainModulesRepository.deleteById(id);
     }
-    public MainModulesResponse getByMainModulesId(Long id)
-    {
+
+    public MainModulesResponse getByMainModulesId(Long id) {
         MainModulesResponse mainModulesResponse = new MainModulesResponse();
         MainModules mainModules = mainModulesRepository.findById(id).get();
         mainModulesResponse.setModules(mainModules.getModules());
-        BeanUtils.copyProperties(mainModules,mainModulesResponse);
+        BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
-    public List<MainModules> getMainModulesByModuleId(Long id)
-    {
+
+    public List<MainModules> getMainModulesByModuleId(Long id) {
         List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(id);
 
         return mainModulesList;
     }
+
     @Override
-    public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch)
-    {
+    public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (Utils.isNotNullAndEmpty(mainModuleSearch.getName()))
-        {
+        if (Utils.isNotNullAndEmpty(mainModuleSearch.getName())) {
             booleanBuilder.and(QMainModules.mainModules.name.eq(mainModuleSearch.getName()));
         }
-        if (Utils.isNotNullAndEmpty(mainModuleSearch.getPrefix()))
-        {
+        if (Utils.isNotNullAndEmpty(mainModuleSearch.getPrefix())) {
             booleanBuilder.and(QMainModules.mainModules.prefix.eq(mainModuleSearch.getPrefix()));
         }
 
@@ -74,31 +72,27 @@ public class MainModulesServiceImp implements MainModulesService
 
         pagination.setTotalRecords(mainModulesPage.getTotalElements());
         pagination.setPageSize(mainModulesPage.getTotalPages());
-        for (MainModules mainModules : mainModulesPage)
-        {
+        for (MainModules mainModules : mainModulesPage) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
         return mainModulesResponseList;
     }
-    public boolean isExistModulesId(Long id)
-    {
+
+    public boolean isExistModulesId(Long id) {
         return modulesRepository.existsById(id);
     }
 
-    public boolean isExistMainModulesName(String name)
-    {
+    public boolean isExistMainModulesName(String name) {
         return mainModulesRepository.existsByName(name);
     }
 
-    public boolean isExistPrefix(String prefix)
-    {
+    public boolean isExistPrefix(String prefix) {
         return mainModulesRepository.existsByPrefix(prefix);
     }
 
-    public boolean isExistMainModulesId(Long id)
-    {
+    public boolean isExistMainModulesId(Long id) {
         return mainModulesRepository.existsById(id);
     }
 
@@ -107,13 +101,16 @@ public class MainModulesServiceImp implements MainModulesService
     }
 
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
-        return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix,mainModuleId);
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix, mainModuleId);
     }
-    public boolean isExistsSubmodulesByMainModule(Long id)
-    {
+
+    public boolean isExistsSubmodulesByMainModule(Long id) {
         return subModulesRepository.existsByMainModuleId(id);
     }
-    public boolean existsMainModuleByModuleId(Long id) {return mainModulesRepository.existsByModulesId(id);}
+
+    public boolean existsMainModuleByModuleId(Long id) {
+        return mainModulesRepository.existsByModulesId(id);
+    }
 
 }
 

@@ -2,15 +2,12 @@ package com.ii.testautomation.repositories;
 
 import com.ii.testautomation.entities.Modules;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
 
 
-public interface ModulesRepository extends JpaRepository<Modules, Long>, QuerydslPredicateExecutor<Modules>
-{
+public interface ModulesRepository extends JpaRepository<Modules, Long>, QuerydslPredicateExecutor<Modules> {
     public boolean existsByNameIgnoreCase(String name);
 
     public boolean existsByPrefixIgnoreCase(String prefix);

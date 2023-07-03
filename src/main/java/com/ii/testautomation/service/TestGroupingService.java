@@ -32,8 +32,10 @@ public interface TestGroupingService {
     public boolean existsByTestCasesId(Long testCaseId);
 
     public boolean existsByTestTypesId(Long testTypeId);
+
     List<TestGroupingRequest> csvToTestGroupingRequest(InputStream inputStream);
 
     List<TestGroupingRequest> excelToTestGroupingRequest(InputStream inputStream);
+
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 }

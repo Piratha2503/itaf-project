@@ -14,7 +14,6 @@ import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -95,7 +92,7 @@ public class SubModulesController {
                 if (subModulesService.existsBySubModulesName(subModulesRequest.getName())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNameAlReadyExistMessage(), rowIndex);
                 }
-                if (!mainModulesService.existsByMainModuleId(subModulesRequest.getMain_module_Id())) {
+                if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModuleNotExistsMessage(), rowIndex);
                 }
             }
@@ -156,7 +153,7 @@ public class SubModulesController {
                     statusCodeBundle.getSubModulesNotExistCode(),
                     statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULE,subModulesService.getSubModuleById(id),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULE, subModulesService.getSubModuleById(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetSubModulesSuccessMessage()));

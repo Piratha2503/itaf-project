@@ -57,6 +57,8 @@ public class StatusCodeBundle {
     private String getProjectSuccessMessage;
     @Value("${message.success.delete.project}")
     private String deleteProjectSuccessMessage;
+    @Value("${message.validation.save.project}")
+    private String saveProjectValidationMessage;
     //SubModules Code
     @Value("${code.validation.subModules.alreadyExists}")
     private String subModulesAlReadyExistCode;
@@ -65,6 +67,14 @@ public class StatusCodeBundle {
     @Value("${code.validation.subModules.dependent}")
     private String subModulesDependentCode;
     //SubModules Message
+    @Value("${message.validation.save.subModule}")
+    private String saveSubModuleValidationMessage;
+    @Value("${message.validation.subModule.file}")
+    private String subModuleFileImportValidationMessage;
+    @Value("${message.validation.subModule.file.name.empty}")
+    private String subModuleNameEmptyMessage;
+    @Value("${message.validation.subModule.file.prefix.empty}")
+    private String subModulePrefixEmptyMessage;
     @Value("${message.validation.subModule.Name.alreadyExists}")
     private String subModuleNameAlReadyExistMessage;
     @Value("${message.validation.subModule.prefix.alreadyExists}")
@@ -93,7 +103,7 @@ public class StatusCodeBundle {
     @Value("${message.validation.mainModule.notExists}")
     private String mainModuleNotExistsMessage;
 
-   @Value("${code.validation.project.alreadyExists}")
+    @Value("${code.validation.project.alreadyExists}")
     private String AlreadyExistCode;
 
     @Value("${message.failure.moduleidnotassignedwithMainmod}")
@@ -106,11 +116,11 @@ public class StatusCodeBundle {
     @Value("${code.validation.module.alreadyExists}")
     private String moduleAlReadyExistsCode;
 
- @Value("${code.validation.module.notExists}")
- private  String moduleNotExistsCode;
+    @Value("${code.validation.module.notExists}")
+    private String moduleNotExistsCode;
 
- @Value("${message.success.update.module}")
- private String updateModuleSuccessMessage;
+    @Value("${message.success.update.module}")
+    private String updateModuleSuccessMessage;
 
     @Value("${message.success.insertmain}")
     private String SuccessMessageInsert;
@@ -260,5 +270,6 @@ public class StatusCodeBundle {
     private String TestGroupFileImportValidationMessage;
     @Value("${message.validation.testGroup.file.name.empty}")
     private String TestGroupNameEmptyMessage;
+
 
 }
