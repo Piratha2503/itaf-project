@@ -1,6 +1,5 @@
 package com.ii.testautomation.controllers;
 
-import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.enums.RequestStatus;
@@ -64,6 +63,7 @@ public class TestGroupingController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
+
     @PostMapping(value = EndpointURI.TEST_GROUPING_IMPORT)
     public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
@@ -82,15 +82,14 @@ public class TestGroupingController {
                 if (!Utils.isNotNullAndEmpty(testGroupingRequest.getName())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupNameEmptyMessage(), rowIndex);
                 }
-                if(testGroupingService.existsByTestGroupingName(testGroupingRequest.getName()))
-                {
-                    testGroupingService.addToErrorMessages(errorMessages,statusCodeBundle.getTestGroupingNameAlReadyExistMessage(),rowIndex);
+                if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), rowIndex);
                 }
                 if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), rowIndex);
                 }
                 if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-                   testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), rowIndex);
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), rowIndex);
                 }
             }
             if (!errorMessages.isEmpty()) {
@@ -99,7 +98,7 @@ public class TestGroupingController {
                         statusCodeBundle.getTestGroupFileImportValidationMessage(),
                         errorMessages));
             } else {
-                for (TestGroupingRequest testGroupingRequest:testGroupingRequestList) {
+                for (TestGroupingRequest testGroupingRequest : testGroupingRequestList) {
                     testGroupingService.saveTestGrouping(testGroupingRequest);
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
