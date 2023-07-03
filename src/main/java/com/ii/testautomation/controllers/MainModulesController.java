@@ -11,6 +11,7 @@ import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import org.apache.poi.ss.formula.functions.Column;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.aspectj.weaver.ast.Or;
@@ -23,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -177,15 +175,16 @@ public class MainModulesController {
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
             boolean isError = false;
-            for (Row row : sheet) {
+
+            for (Row row : sheet)
+            {
+                if (row.getRowNum()== 0) continue;
                 MainModulesRequest mainModulesRequest = new MainModulesRequest();
-                if (row.getRowNum() == 0) continue;
 
                 // Asigning the Cell Values
                 Cell name = row.getCell(0);
                 Cell prefix = row.getCell(1);
                 Cell moduleId = row.getCell(2);
-
 
                 // checking the Excel Sheet
                 if (name == null || name.getCellType() == CellType.BLANK || prefix == null || prefix.getCellType() == CellType.BLANK || moduleId == null || moduleId.getCellType() == CellType.BLANK) {
@@ -200,11 +199,11 @@ public class MainModulesController {
                     {
                         ModulesId_NotFound_RowNumbers.add(row.getRowNum() + 1);
                         myErrorListMap.put("Given Module Ids Not Found in following Row Numbers", ModulesId_NotFound_RowNumbers);
-
                     }
                     else
                     {
-                        if (mainModulesService.isExistMainModulesName(name.getStringCellValue())) {
+                        if (mainModulesService.isExistMainModulesName(name.getStringCellValue()))
+                        {
                             Name_Already_Exist_RowNumbers.add(row.getRowNum() + 1);
                             myErrorListMap.put("Given Names Already Exist in following Row Numbers", Name_Already_Exist_RowNumbers);
                         }
