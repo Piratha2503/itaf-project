@@ -1,10 +1,12 @@
 package com.ii.testautomation.controllers;
 
+import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.service.TestGroupingService;
@@ -12,12 +14,21 @@ import com.ii.testautomation.service.TestTypesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -53,6 +64,56 @@ public class TestGroupingController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
+    @PostMapping(value = EndpointURI.TEST_GROUPING_IMPORT)
+    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
+        Map<String, List<Integer>> errorMessages = new HashMap<>();
+        List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+                testGroupingRequestList = testGroupingService.csvToTestGroupingRequest(inputStream);
+            } else if (multipartFile.getOriginalFilename().endsWith(".xlsx")) {
+                testGroupingRequestList = testGroupingService.excelToTestGroupingRequest(inputStream);
+            } else {
+                return ResponseEntity.badRequest().body("Invalid file format");
+            }
+            for (int rowIndex = 2; rowIndex <= testGroupingRequestList.size() + 1; rowIndex++) {
+                TestGroupingRequest testGroupingRequest = testGroupingRequestList.get(rowIndex - 2);
+
+                if (!Utils.isNotNullAndEmpty(testGroupingRequest.getName())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupNameEmptyMessage(), rowIndex);
+                }
+                if(testGroupingService.existsByTestGroupingName(testGroupingRequest.getName()))
+                {
+                    testGroupingService.addToErrorMessages(errorMessages,statusCodeBundle.getTestGroupingNameAlReadyExistMessage(),rowIndex);
+                }
+                if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), rowIndex);
+                }
+                if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
+                   testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), rowIndex);
+                }
+            }
+            if (!errorMessages.isEmpty()) {
+                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(),
+                        statusCodeBundle.getTestGroupFileImportValidationMessage(),
+                        errorMessages));
+            } else {
+                for (TestGroupingRequest testGroupingRequest:testGroupingRequestList) {
+                    testGroupingService.saveTestGrouping(testGroupingRequest);
+                }
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                        statusCodeBundle.getCommonSuccessCode(),
+                        statusCodeBundle.getSaveTestCaseSuccessMessage()));
+            }
+
+        } catch (IOException e) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getSaveTestGroupValidationMessage()));
+        }
+    }
+
 
     @PutMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {

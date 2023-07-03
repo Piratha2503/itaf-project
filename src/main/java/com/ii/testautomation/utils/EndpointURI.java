@@ -17,7 +17,7 @@ public final class EndpointURI {
 
     // URLs for SubModules
     public static final String SUBMODULE = BASE_API_PATH + "subModules";
-    public static final String SUBMODULE_IMPORT = BASE_API_PATH + SUBMODULE + "import";
+    public static final String SUBMODULE_IMPORT =SUBMODULE + "/import";
     public static final String SUBMODULES_SEARCH = BASE_API_PATH + SEARCH + SLASH + "subModules";
     public static final String SUBMODULE_BY_ID = SUBMODULE + ID;
     public static final String SUBMODULE_BY_MAIN_MODULE_ID = SUBMODULE + "/mainModuleId" + ID;
@@ -29,7 +29,7 @@ public final class EndpointURI {
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectId" + ID;
     // URLs for TestGrouping
     public static final String TEST_GROUPING = BASE_API_PATH + "testGrouping";
-    public static final String TEST_GROUPING_IMPORT = BASE_API_PATH + TEST_GROUPING + "import";
+    public static final String TEST_GROUPING_IMPORT = TEST_GROUPING + "/import";
     public static final String TEST_GROUPING_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testGrouping";
     public static final String TEST_GROUPING_BY_ID = TEST_GROUPING + ID;
     public static final String TEST_GROUPING_BY_TEST_CASE_ID = TEST_GROUPING + "/testCase" + ID;

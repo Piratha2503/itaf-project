@@ -39,8 +39,8 @@ public class StatusCodeBundle {
     private String projectCodeAlReadyExistMessage;
     @Value("${message.validation.project.Name.alreadyExists}")
     private String projectNameAlReadyExistMessage;
-    @Value("${message.validation.project.file.empty}")
-    private String projectFileEmptyMessage;
+    @Value("${message.validation.project.file}")
+    private String projectFileImportValidationMessage;
     @Value("${message.validation.project.file.name.empty}")
     private String projectNameEmptyMessage;
     @Value("${message.validation.project.file.code.empty}")
@@ -49,6 +49,8 @@ public class StatusCodeBundle {
     private String projectDescriptionEmptyMessage;
     @Value("${message.success.save.project}")
     private String saveProjectSuccessMessage;
+    @Value("${message.validation.save.project}")
+    private String saveProjectValidationMessage;
     @Value("${message.success.update.project}")
     private String updateProjectSuccessMessage;
     @Value("${message.success.getAll.project}")
@@ -112,6 +114,16 @@ public class StatusCodeBundle {
     private String subModuleNotExistsMessage;
     @Value("${message.success.save.subModule}")
     private String saveSubModuleSuccessMessage;
+    @Value("${message.validation.save.subModule}")
+    private String saveSubModuleValidationMessage;
+    @Value("${message.validation.submodule.file}")
+    private String subModuleFileImportValidationMessage;
+    @Value("${message.validation.subModule.file.name.empty}")
+    private String subModuleNameEmptyMessage;
+    @Value("${message.validation.subModule.file.prefix.empty}")
+    private String subModulePrefixEmptyMessage;
+    @Value("${message.validation.subModule.file.mainModuleId.empty}")
+    private String subModuleMainModuleIdEmptyMessage;
     @Value("${message.success.update.subModule}")
     private String updateSubModuleSuccessMessage;
     @Value("${message.success.get.subModules}")
@@ -179,4 +191,11 @@ public class StatusCodeBundle {
     private String getTestGroupingNotHaveTestTypeId;
     @Value("${message.validation.delete.testGrouping}")
     private String deleteTestGroupingSuccessMessage;
+    @Value("${message.validation.save.testGroup}")
+    private String saveTestGroupValidationMessage;
+    @Value("${message.validation.testGroup.file}")
+    private String TestGroupFileImportValidationMessage;
+    @Value("${message.validation.testGroup.file.name.empty}")
+    private String TestGroupNameEmptyMessage;
+
 }

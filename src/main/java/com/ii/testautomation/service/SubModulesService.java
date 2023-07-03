@@ -1,12 +1,15 @@
 package com.ii.testautomation.service;
 
+import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface SubModulesService {
     public void saveSubModules(SubModulesRequest subModulesRequest);
@@ -30,4 +33,8 @@ public interface SubModulesService {
     public void deleteSubModuleById(Long subModuleId);
 
     boolean existsByMainModuleId(Long mainModuleId);
+    List<SubModulesRequest> csvToSubModuleRequest(InputStream inputStream);
+
+    List<SubModulesRequest> excelToSubModuleRequest(InputStream inputStream);
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 }

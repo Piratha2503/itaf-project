@@ -1,5 +1,6 @@
 package com.ii.testautomation.service.impl;
 
+import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.search.SubModuleSearch;
@@ -11,14 +12,24 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SubModulesServiceImpl implements SubModulesService {
@@ -124,5 +135,83 @@ public class SubModulesServiceImpl implements SubModulesService {
     @Override
     public boolean existsByMainModuleId(Long mainModuleId) {
         return subModulesRepository.existsByMainModuleId(mainModuleId);
+    }
+    @Override
+    public List<SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
+        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+
+            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+
+            for (CSVRecord csvRecord : csvRecords) {
+                SubModulesRequest subModulesRequest = new SubModulesRequest();
+                subModulesRequest.setName(csvRecord.get("name"));
+                subModulesRequest.setPrefix(csvRecord.get("prefix"));
+                subModulesRequest.setMain_module_Id(Long.parseLong(csvRecord.get("main_module_id")));
+                subModulesRequestList.add(subModulesRequest);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
+        }
+        return subModulesRequestList;
+    }
+
+    private Map<String, Integer> getColumnMap(Row headerRow) {
+        Map<String, Integer> columnMap = new HashMap<>();
+
+        for (Cell cell : headerRow) {
+            String cellValue = cell.getStringCellValue().toLowerCase();
+            columnMap.put(cellValue, cell.getColumnIndex());
+        }
+
+        return columnMap;
+    }
+
+    @Override
+    public List<SubModulesRequest> excelToSubModuleRequest(InputStream inputStream) {
+        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
+        try {
+            Workbook workbook = WorkbookFactory.create(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            DataFormatter dataFormatter = new DataFormatter();
+            boolean firstLine = true;
+
+            Row headerRow = sheet.getRow(0);
+            Map<String, Integer> columnMap = getColumnMap(headerRow);
+
+            for (Row row : sheet) {
+                if (firstLine) {
+                    firstLine = false;
+                    continue;
+                }
+
+                SubModulesRequest subModulesRequest = new SubModulesRequest();
+
+                Cell nameCell = row.getCell(columnMap.get("name"));
+                Cell prefixCell = row.getCell(columnMap.get("prefix"));
+                Cell main_module_id_Cell = row.getCell(columnMap.get("main_module_id"));
+
+                subModulesRequest.setName(dataFormatter.formatCellValue(nameCell));
+                subModulesRequest.setPrefix(dataFormatter.formatCellValue(prefixCell));
+                subModulesRequest.setMain_module_Id(Long.parseLong(dataFormatter.formatCellValue(main_module_id_Cell)));
+
+                subModulesRequestList.add(subModulesRequest);
+            }
+
+            workbook.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
+        }
+        return subModulesRequestList;
+    }
+
+    @Override
+    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
+        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
+        errorList.add(value);
+        errorMessages.put(key, errorList);
     }
 }
