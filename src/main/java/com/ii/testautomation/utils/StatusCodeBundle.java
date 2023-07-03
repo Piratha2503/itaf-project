@@ -49,8 +49,6 @@ public class StatusCodeBundle {
     private String projectDescriptionEmptyMessage;
     @Value("${message.success.save.project}")
     private String saveProjectSuccessMessage;
-    @Value("${message.validation.save.project}")
-    private String saveProjectValidationMessage;
     @Value("${message.success.update.project}")
     private String updateProjectSuccessMessage;
     @Value("${message.success.getAll.project}")
@@ -59,21 +57,88 @@ public class StatusCodeBundle {
     private String getProjectSuccessMessage;
     @Value("${message.success.delete.project}")
     private String deleteProjectSuccessMessage;
+    //SubModules Code
+    @Value("${code.validation.subModules.alreadyExists}")
+    private String subModulesAlReadyExistCode;
+    @Value("${code.validation.subModules.notExists}")
+    private String subModulesNotExistCode;
+    @Value("${code.validation.subModules.dependent}")
+    private String subModulesDependentCode;
+    //SubModules Message
+    @Value("${message.validation.subModule.Name.alreadyExists}")
+    private String subModuleNameAlReadyExistMessage;
+    @Value("${message.validation.subModule.prefix.alreadyExists}")
+    private String subModulePrefixAlReadyExistMessage;
+    @Value("${message.validation.subModule.notExists}")
+    private String subModuleNotExistsMessage;
+    @Value("${message.success.save.subModule}")
+    private String saveSubModuleSuccessMessage;
+    @Value("${message.success.update.subModule}")
+    private String updateSubModuleSuccessMessage;
+    @Value("${message.success.get.subModules}")
+    private String getSubModulesSuccessMessage;
+    @Value("${message.success.getAll.subModule}")
+    private String getAllSubModuleSuccessMessage;
+    @Value("${message.success.delete.subModule}")
+    private String deleteSubModuleSuccessMessage;
+    @Value("${message.validation.get.mainModule.notHave}")
+    private String getSubModuleNotHaveMainModuleId;
+    @Value("${message.validation.subModules.dependent}")
+    private String subModulesDependentMessage;
+
+    //MainModules
+    @Value("${code.validation.mainModules.notExists}")
+    private String mainModulesNotExistCode;
+
+    @Value("${message.validation.mainModule.notExists}")
+    private String mainModuleNotExistsMessage;
+
+   @Value("${code.validation.project.alreadyExists}")
+    private String AlreadyExistCode;
+
+    @Value("${message.failure.moduleidnotassignedwithMainmod}")
+    private String ModuleIdNotAssigned;
+
+    @Value("${Message.validation.IdAsignedwithAnotherTable}")
+    private String IdAsignedwithanotherTable;
 
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
     private String moduleAlReadyExistsCode;
-    @Value("${code.validation.module.notExists}")
-    private String moduleNotExistsCode;
+
+ @Value("${code.validation.module.notExists}")
+ private  String moduleNotExistsCode;
+
+ @Value("${message.success.update.module}")
+ private String updateModuleSuccessMessage;
+
+    @Value("${message.success.insertmain}")
+    private String SuccessMessageInsert;
+    @Value("${message.success.deletemain}")
+    private String SuccessMessageDelete;
+    @Value("${message.success.updatemain}")
+    private String SuccessUpdateMessage;
+    @Value("${message.success.viewallmain}")
+    private String SuccessViewAllMessage;
+
     //Modules Message
-    @Value("${message.success.update.module}")
-    private String updateModuleSuccessMessage;
+
     @Value("${message.validation.module.name.alreadyExists}")
     private String moduleNameAllReadyExistsMessage;
     @Value("${message.success.save.module}")
     private String saveModuleSuccessMessage;
     @Value("${message.validation.module.prefix.alreadyExists}")
     private String modulePrefixAllReadyExistsMessage;
+    @Value("${message.failure.alreadyexistname}")
+    private String NameAlreadyExist;
+    @Value("${message.failure.alreadyexistpreix}")
+    private String PrefixAlreadyExist;
+    @Value("${message.failure.noid}")
+    private String ModuleIdNotFound;
+    @Value("${message.failure.MainIdnotFound}")
+    private String MainIdnotFound;
+
+
     @Value("${message.validation.module.notExists}")
     private String moduleNotExistsMessage;
     @Value("${message.validation.module.notHaveProject}")
@@ -86,54 +151,52 @@ public class StatusCodeBundle {
     private String getModuleByIdSuccessMessage;
     @Value("${message.success.getByProjectId.module}")
     private String getModuleByProjectIdSuccessMessage;
+
+    // Test Types Codes & Messages //
+    @Value("${code.validation.testtype.alreadyExists}")
+    private String TestTypeAlReadyExistCode;
+
+    @Value("${code.validation.testtype.notExists}")
+    private String TestTypeNotExistCode;
+
+    @Value("${message.failure.alreadyexistTestTypeid}")
+    private String TestTypeIdAlReadyExistMessage;
+
+    @Value("${message.failure.alreadyexistTestTypename}")
+    private String TestTypeNameAlReadyExistMessage;
+
+    @Value("${message.failure.TestTypeidNotFound}")
+    private String TestTypeIdNotFoundMessage;
+
+    @Value("${message.success.insertTestTypes}")
+    private String insertTestTypesSuccessMessage;
+
+    @Value("${message.success.updateTestTypes}")
+    private String updateTestTypeSuccessMessage;
+
+    @Value("${message.success.viewTestTypeforId}")
+    private String viewTestTypeforIdSuccessMessage;
+
+    @Value("${message.success.viewallTestTypes}")
+    private String viewAllTestTypesSuccessMessage;
+
+    @Value("${message.success.deleteTestTypes}")
+    private String deleteTestTypesSuccessMessage;
+
+    // Bulk Code & Msg
+    @Value("${code.bulkimport.success}")
+    private String BulkImportCode;
+    @Value("${message.bulkimport.success}")
+    private String BulkImportMessage;
+
+    /*
+     = Module Id Does not Assigned in Main Modules
+
+     */
+
+
     @Value("${message.validation.module.assigned}")
     private String getValidationModuleAssignedMessage;
-
-    //MainModules Code
-    @Value("${code.validation.mainModules.notExists}")
-    private String mainModulesNotExistCode;
-    //MainModules Message
-    @Value("${message.validation.mainModule.notExists}")
-    private String mainModuleNotExistsMessage;
-
-    //SubModules Code
-    @Value("${code.validation.subModules.alreadyExists}")
-    private String subModulesAlReadyExistCode;
-    @Value("${code.validation.subModules.notExists}")
-    private String subModulesNotExistCode;
-    @Value("${code.validation.subModules.dependent}")
-    private String subModulesDependentCode;
-    //SubModules Message
-    @Value("${message.validation.subModules.dependent}")
-    private String subModulesDependentMessage;
-    @Value("${message.validation.subModule.Name.alreadyExists}")
-    private String subModuleNameAlReadyExistMessage;
-    @Value("${message.validation.subModule.prefix.alreadyExists}")
-    private String subModulePrefixAlReadyExistMessage;
-    @Value("${message.validation.subModule.notExists}")
-    private String subModuleNotExistsMessage;
-    @Value("${message.success.save.subModule}")
-    private String saveSubModuleSuccessMessage;
-    @Value("${message.validation.save.subModule}")
-    private String saveSubModuleValidationMessage;
-    @Value("${message.validation.submodule.file}")
-    private String subModuleFileImportValidationMessage;
-    @Value("${message.validation.subModule.file.name.empty}")
-    private String subModuleNameEmptyMessage;
-    @Value("${message.validation.subModule.file.prefix.empty}")
-    private String subModulePrefixEmptyMessage;
-    @Value("${message.validation.subModule.file.mainModuleId.empty}")
-    private String subModuleMainModuleIdEmptyMessage;
-    @Value("${message.success.update.subModule}")
-    private String updateSubModuleSuccessMessage;
-    @Value("${message.success.get.subModules}")
-    private String getSubModulesSuccessMessage;
-    @Value("${message.success.getAll.subModule}")
-    private String getAllSubModuleSuccessMessage;
-    @Value("${message.success.delete.subModule}")
-    private String deleteSubModuleSuccessMessage;
-    @Value("${message.validation.get.mainModule.notHave}")
-    private String getSubModuleNotHaveMainModuleId;
 
     //TestCases code
     @Value("${code.validation.testCases.notExists}")

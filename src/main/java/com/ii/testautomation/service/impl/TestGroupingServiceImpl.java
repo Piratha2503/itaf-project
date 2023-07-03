@@ -73,7 +73,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
         testGroupingResponse.setSubModuleName(testGrouping.getTestCases().getSubModule().getName());
         testGroupingResponse.setMainModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getName());
-        testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModule().getName());
+        testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModules().getName());
         BeanUtils.copyProperties(testGrouping, testGroupingResponse);
         return testGroupingResponse;
     }
@@ -89,7 +89,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
             testGroupingResponse.setSubModuleName(testGrouping.getTestCases().getSubModule().getName());
             testGroupingResponse.setMainModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getName());
-            testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModule().getName());
+            testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModules().getName());
             BeanUtils.copyProperties(testGrouping, testGroupingResponse);
             testGroupingResponses.add(testGroupingResponse);
         }
@@ -107,7 +107,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
             testGroupingResponse.setSubModuleName(testGrouping.getTestCases().getSubModule().getName());
             testGroupingResponse.setMainModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getName());
-            testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModule().getName());
+            testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModules().getName());
             BeanUtils.copyProperties(testGrouping, testGroupingResponse);
             testGroupingResponses.add(testGroupingResponse);
         }
@@ -138,7 +138,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
             testGroupingResponse.setSubModuleName(testGrouping.getTestCases().getSubModule().getName());
             testGroupingResponse.setMainModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getName());
-            testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModule().getName());
+            testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModules().getName());
             BeanUtils.copyProperties(testGrouping, testGroupingResponse);
             testGroupingResponses.add(testGroupingResponse);
         }

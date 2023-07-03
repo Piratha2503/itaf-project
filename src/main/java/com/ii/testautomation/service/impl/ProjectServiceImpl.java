@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +37,9 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
 
     @Override
-    public void saveProject(ProjectRequest projectRequest) {
+
+    public void saveProject(ProjectRequest projectRequest)
+    {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
         projectRepository.save(project);
@@ -44,11 +47,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest : projectRequestList
-        ) {
-            Project project = new Project();
-            BeanUtils.copyProperties(projectRequest, project);
-            projectRepository.save(project);
+        for (ProjectRequest projectRequest:projectRequestList
+             ) {
+
+                Project project = new Project();
+                BeanUtils.copyProperties(projectRequest, project);
+                projectRepository.save(project);
         }
     }
 
