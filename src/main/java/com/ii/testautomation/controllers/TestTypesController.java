@@ -17,7 +17,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @CrossOrigin
 public class TestTypesController
@@ -113,24 +121,41 @@ public class TestTypesController
                 statusCodeBundle.getSuccessViewAllMessage()));
     }
 
-    @PostMapping("/test")
-    public ResponseEntity<Object> importEmployees(@RequestParam("file") MultipartFile file) throws IOException
+
+    @PostMapping("/bulkTesttypes")
+    public ResponseEntity<Object> fileImport(@RequestParam("file") MultipartFile file) throws IOException
     {
-       /* if (!employeeService.importEmployeesFromCsv(file))
+        Map<String,List<Object>> MyList = new HashMap<>();
+        List<Object> myErrorlist = new ArrayList<>();
+
+        List<TestTypesRequest> testTypesRequestList = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream())))
         {
 
-            logger.info("Cannot Import Employee");
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                String[] data = line.split(",");
+                TestTypesRequest testTypesRequest = new TestTypesRequest();
+                testTypesRequest.setName(data[1]);
+                testTypesRequest.setDescription(data[2]);
+                testTypesRequestList.add(testTypesRequest);
+                myErrorlist.add(testTypesRequest);
+                myErrorlist.add("Hello");
+                myErrorlist.add(true);
+                myErrorlist.add("C");
+                myErrorlist.add(500);
+                myErrorlist.add(5000L);
+                List<String> testList =new ArrayList<>();
+                testList.add("My name is Piratha");
+                myErrorlist.add(testList);
+                MyList.put("My Error",myErrorlist);
 
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+            }
+        }
 
-                    validationFailureResponseCode.getEmployeecanNotImportCsvCode(),
+        catch (Exception e){}
 
-                    validationFailureResponseCode.getEmployeecanNotImportCsvMessage()));
-
-        }*/
-        testTypesService.importfromFile(file);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getInsertTestTypesSuccessMessage()));
+        return ResponseEntity.ok(MyList);
     }
 }

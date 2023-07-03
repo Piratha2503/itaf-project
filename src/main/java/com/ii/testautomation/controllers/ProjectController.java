@@ -133,21 +133,27 @@ public class ProjectController {
     }
 
     @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
+    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile)
+    {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<ProjectRequest> projectRequestList = new ArrayList<>();
         try {
-            if (projectService.hasCsvFormat(multipartFile)) {
+            if (projectService.hasCsvFormat(multipartFile))
+            {
                 projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
-            } else if (projectService.hasExcelFormat(multipartFile)) {
+            }
+            else if (projectService.hasExcelFormat(multipartFile))
+            {
                 projectRequestList = projectService.excelToProjectRequest(multipartFile.getInputStream());
-            } else {
+            }
+            else {
                 return ResponseEntity.badRequest().body("Invalid file format");
             }
             for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
                 ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
 
-                if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
+                if (!Utils.isNotNullAndEmpty(projectRequest.getName()))
+                {
                     addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
                 }
                 if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
