@@ -87,6 +87,7 @@ public class TestTypesServiceImpl implements TestTypesService
     public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id) {
         return testTypesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
     }
+
     @Override
     public boolean existsByTestTypesId(Long id) {
         return testTypesRepository.existsById(id);

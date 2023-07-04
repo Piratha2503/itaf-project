@@ -168,6 +168,8 @@ public class MainModulesController {
         List<Integer> Name_Already_Exist_RowNumbers = new ArrayList<>();
         List<Integer> Prefix_Already_Exist_RowNumbers = new ArrayList<>();
         List<Integer> ModulesId_NotFound_RowNumbers = new ArrayList<>();
+        BaseResponse baseResponse = new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getBulkImportCode(), statusCodeBundle.getBulkImportMessage());
 
         Map<String,List<Integer>> myErrorListMap = new HashMap<>();
 
