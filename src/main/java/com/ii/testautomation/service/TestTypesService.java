@@ -15,12 +15,12 @@ public interface TestTypesService
     // CRUD Functions
     public void saveTestTypes(TestTypesRequest testTypesRequest);
     public void deleteTestTypeById(Long id);
-    public TestTypesResponse getTestTypeById(Long id);
 
-    // Search & Pagination
+    // Get Functions
+    public TestTypesResponse getTestTypeById(Long id);
     public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
 
-    public void importfromFile(MultipartFile file) throws IOException;
+    //public void importfromFile(MultipartFile file) throws IOException;
 
     // Checking Functions
     public boolean isExistsTestTypeByName(String name);

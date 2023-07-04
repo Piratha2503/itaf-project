@@ -10,20 +10,17 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,9 +36,7 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
 
     @Override
-
-    public void saveProject(ProjectRequest projectRequest)
-    {
+    public void saveProject(ProjectRequest projectRequest) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
         projectRepository.save(project);
@@ -49,15 +44,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest:projectRequestList
-             ) {
+        for (ProjectRequest projectRequest : projectRequestList
+        ) {
 
-                Project project = new Project();
-                BeanUtils.copyProperties(projectRequest, project);
-                projectRepository.save(project);
-
+            Project project = new Project();
+            BeanUtils.copyProperties(projectRequest, project);
+            projectRepository.save(project);
         }
     }
+
     @Override
     public boolean existByProjectName(String projectName) {
         return projectRepository.existsByNameIgnoreCase(projectName);
@@ -118,24 +113,6 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.deleteById(projectId);
     }
 
-
-    @Override
-    public boolean hasCsvFormat(MultipartFile multipartFile) {
-        String expectedContentType = "text/csv";
-        String actualContentType = multipartFile.getContentType();
-        return expectedContentType.equals(actualContentType);
-    }
-
-    @Override
-    public boolean hasExcelFormat(MultipartFile multipartFile) {
-        try {
-            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
-            workbook.close();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
     @Override
     public List<ProjectRequest> csvToProjectRequest(InputStream inputStream) {
         List<ProjectRequest> projectRequestList = new ArrayList<>();
@@ -158,23 +135,22 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRequestList;
     }
 
+    @Override
     public List<ProjectRequest> excelToProjectRequest(InputStream inputStream) {
+
         List<ProjectRequest> projectRequestList = new ArrayList<>();
         try {
-            Workbook workbook = WorkbookFactory.create(inputStream);
+            Workbook workbook = new XSSFWorkbook(inputStream);
             Sheet sheet = workbook.getSheetAt(0);
 
             DataFormatter dataFormatter = new DataFormatter();
-            boolean firstLine = true;
 
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
 
             for (Row row : sheet) {
-                if (firstLine) {
-                    firstLine = false;
-                    continue;
-                }
+
+                if (row.getRowNum() == 0) continue;
 
                 ProjectRequest projectRequest = new ProjectRequest();
 
@@ -200,10 +176,17 @@ public class ProjectServiceImpl implements ProjectService {
         Map<String, Integer> columnMap = new HashMap<>();
 
         for (Cell cell : headerRow) {
-            String cellValue = cell.getStringCellValue();
+            String cellValue = cell.getStringCellValue().toLowerCase();
             columnMap.put(cellValue, cell.getColumnIndex());
         }
 
         return columnMap;
+    }
+
+    @Override
+    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
+        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
+        errorList.add(value);
+        errorMessages.put(key, errorList);
     }
 }

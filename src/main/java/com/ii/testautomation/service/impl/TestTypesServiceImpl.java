@@ -14,8 +14,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -74,23 +77,6 @@ public class TestTypesServiceImpl implements TestTypesService
         return testTypesResponseList;
     }
 
-    @Override
-    @Transactional
-
-    public void importfromFile(MultipartFile file) throws IOException {
-     try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream())))
-        {
-            String line;
-        while ((line = reader.readLine()) != null)
-            {
-                String[] data = line.split(",");
-                TestTypes testTypes = new TestTypes();
-                testTypes.setName(data[1]);
-                testTypes.setDescription(data[2]);
-                testTypesRepository.save(testTypes);
-            }
-        }
-    }
 
     // Check
     @Override

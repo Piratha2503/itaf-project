@@ -42,6 +42,7 @@ public class MainModulesServiceImp implements MainModulesService
     {
         mainModulesRepository.deleteById(id);
     }
+
     public MainModulesResponse getByMainModulesId(Long id)
     {
         MainModulesResponse mainModulesResponse = new MainModulesResponse();
@@ -50,11 +51,35 @@ public class MainModulesServiceImp implements MainModulesService
         BeanUtils.copyProperties(mainModules,mainModulesResponse);
         return mainModulesResponse;
     }
-    public List<MainModules> getMainModulesByModuleId(Long id)
+    public List<MainModulesResponse> getMainModulesByModuleId(Long id)
     {
+        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(id);
 
-        return mainModulesList;
+        for (MainModules mainModules : mainModulesList)
+        {
+            MainModulesResponse mainModulesResponse =new MainModulesResponse();
+            BeanUtils.copyProperties(mainModules,mainModulesResponse);
+            mainModulesResponseList.add(mainModulesResponse);
+        }
+
+        return mainModulesResponseList;
+    }
+
+    @Override
+    public List<MainModulesResponse> getByMainModulesName(String name)
+    {
+        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+        List<MainModules> mainModulesList = mainModulesRepository.findAllByNameIgnoreCase(name);
+
+        for (MainModules mainModules: mainModulesList)
+        {
+            MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            BeanUtils.copyProperties(mainModules,mainModulesResponse);
+            mainModulesResponseList.add(mainModulesResponse);
+        }
+
+        return mainModulesResponseList;
     }
     @Override
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch)
@@ -89,7 +114,7 @@ public class MainModulesServiceImp implements MainModulesService
 
     public boolean isExistMainModulesName(String name)
     {
-        return mainModulesRepository.existsByName(name);
+        return mainModulesRepository.existsByNameIgnoreCase(name);
     }
 
     public boolean isExistPrefix(String prefix)
@@ -109,10 +134,12 @@ public class MainModulesServiceImp implements MainModulesService
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
         return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix,mainModuleId);
     }
+
     public boolean isExistsSubmodulesByMainModule(Long id)
     {
         return subModulesRepository.existsByMainModuleId(id);
     }
+
     public boolean existsMainModuleByModuleId(Long id) {return mainModulesRepository.existsByModulesId(id);}
 
 }

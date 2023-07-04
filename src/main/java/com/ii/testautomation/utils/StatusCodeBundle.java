@@ -41,14 +41,8 @@ public class StatusCodeBundle {
     private String projectCodeAlReadyExistMessage;
     @Value("${message.validation.project.Name.alreadyExists}")
     private String projectNameAlReadyExistMessage;
-    @Value("${message.validation.project.file.error}")
-    private String projectFileErrorMessage;
-    @Value("${message.success.project.file}")
-    private String projectFileUploadSuccessMessage;
     @Value("${message.validation.project.file}")
-    private String projectFileUploadValidationMessage;
-    @Value("${message.validation.file.csv}")
-    private String fileCsvValidationMessage;
+    private String projectFileImportValidationMessage;
     @Value("${message.validation.project.file.name.empty}")
     private String projectNameEmptyMessage;
     @Value("${message.validation.project.file.code.empty}")
@@ -57,8 +51,6 @@ public class StatusCodeBundle {
     private String projectDescriptionEmptyMessage;
     @Value("${message.success.save.project}")
     private String saveProjectSuccessMessage;
-    @Value("${message.validation.save.project}")
-    private String saveProjectValidationMessage;
     @Value("${message.success.update.project}")
     private String updateProjectSuccessMessage;
     @Value("${message.success.getAll.project}")
@@ -67,12 +59,24 @@ public class StatusCodeBundle {
     private String getProjectSuccessMessage;
     @Value("${message.success.delete.project}")
     private String deleteProjectSuccessMessage;
-    //SubModules
+    @Value("${message.validation.save.project}")
+    private String saveProjectValidationMessage;
+    //SubModules Code
     @Value("${code.validation.subModules.alreadyExists}")
     private String subModulesAlReadyExistCode;
     @Value("${code.validation.subModules.notExists}")
     private String subModulesNotExistCode;
-
+    @Value("${code.validation.subModules.dependent}")
+    private String subModulesDependentCode;
+    //SubModules Message
+    @Value("${message.validation.save.subModule}")
+    private String saveSubModuleValidationMessage;
+    @Value("${message.validation.subModule.file}")
+    private String subModuleFileImportValidationMessage;
+    @Value("${message.validation.subModule.file.name.empty}")
+    private String subModuleNameEmptyMessage;
+    @Value("${message.validation.subModule.file.prefix.empty}")
+    private String subModulePrefixEmptyMessage;
     @Value("${message.validation.subModule.Name.alreadyExists}")
     private String subModuleNameAlReadyExistMessage;
     @Value("${message.validation.subModule.prefix.alreadyExists}")
@@ -91,12 +95,15 @@ public class StatusCodeBundle {
     private String deleteSubModuleSuccessMessage;
     @Value("${message.validation.get.mainModule.notHave}")
     private String getSubModuleNotHaveMainModuleId;
+    @Value("${message.validation.subModules.dependent}")
+    private String subModulesDependentMessage;
 
     //MainModules
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
     @Value("${message.validation.mainModule.notExists}")
     private String mainModuleNotExistsMessage;
+
     @Value("${message.failure.alreadyexistname}")
     private String NameAlreadyExist;
     @Value("${message.failure.alreadyexistpreix}")
@@ -109,6 +116,17 @@ public class StatusCodeBundle {
     private String ModuleIdNotAssigned;
     @Value("${Message.validation.IdAsignedwithAnotherTable}")
     private String IdAsignedwithanotherTable;
+
+    //Modules Code
+    @Value("${code.validation.module.alreadyExists}")
+    private String moduleAlReadyExistsCode;
+
+    @Value("${code.validation.module.notExists}")
+    private String moduleNotExistsCode;
+
+    @Value("${message.success.update.module}")
+    private String updateModuleSuccessMessage;
+
     @Value("${message.success.insertmain}")
     private String SuccessMessageInsert;
     @Value("${message.success.deletemain}")
@@ -118,12 +136,6 @@ public class StatusCodeBundle {
     @Value("${message.success.viewallmain}")
     private String SuccessViewAllMessage;
     //Modules Code
-    @Value("${code.validation.module.alreadyExists}")
-    private String moduleAlReadyExistsCode;
-    @Value("${code.validation.module.notExists}")
-    private String moduleNotExistsCode;
-    @Value("${message.success.update.module}")
-    private String updateModuleSuccessMessage;
     //Modules Message
     @Value("${message.validation.module.file.prefix.empty}")
     private String moduleNameEmptyMessage;
@@ -188,15 +200,6 @@ public class StatusCodeBundle {
      */
 
 
-    //SubModules Code
-
-    @Value("${code.validation.subModules.dependent}")
-    private String subModulesDependentCode;
-    //SubModules Message
-    @Value("${message.validation.subModules.dependent}")
-    private String subModulesDependentMessage;
-
-
     //TestCases code
     @Value("${code.validation.testCases.notExists}")
     private String testCasesNotExistCode;
@@ -253,4 +256,12 @@ public class StatusCodeBundle {
     private String getTestGroupingNotHaveTestTypeId;
     @Value("${message.validation.delete.testGrouping}")
     private String deleteTestGroupingSuccessMessage;
+    @Value("${message.validation.save.testGroup}")
+    private String saveTestGroupValidationMessage;
+    @Value("${message.validation.testGroup.file}")
+    private String TestGroupFileImportValidationMessage;
+    @Value("${message.validation.testGroup.file.name.empty}")
+    private String TestGroupNameEmptyMessage;
+
+
 }

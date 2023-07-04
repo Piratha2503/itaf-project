@@ -34,7 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ModulesServiceImpl implements ModulesService {
+public class ModulesServiceImpl implements ModulesService
+{
 
     @Autowired
     private ModulesRepository modulesRepository;
