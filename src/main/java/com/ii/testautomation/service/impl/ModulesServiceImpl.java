@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
+//import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.entities.Modules;
@@ -11,15 +12,26 @@ import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.utils.Utils;
+import com.opencsv.CSVParser;
 import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
+//import org.apache.commons.csv.CSVParser;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ModulesServiceImpl implements ModulesService {
@@ -122,4 +134,102 @@ public class ModulesServiceImpl implements ModulesService {
     public boolean existsModuleByProjectId(Long projectId) {
         return modulesRepository.existsByProjectId(projectId);
     }
+
+//    @Override
+//    public boolean hasCsvFormat(MultipartFile multipartFile) {
+//        String expectedContentType = "text/csv";
+//        String actualContentType = multipartFile.getContentType();
+//        return expectedContentType.equals(actualContentType);
+//    }
+
+//    @Override
+//    public boolean hasExcelFormat(MultipartFile multipartFile) {
+//        try {
+//            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+//            workbook.close();
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
+
+//    @Override
+//    public List<ModulesRequest> csvToModulesRequest(InputStream inputStream) {
+//            List<ModulesRequest> modulesRequestsList = new ArrayList<>();
+//            try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+//                 //CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+//                   // CSVParser csvParser=new CSVParser(fileReader,CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
+//               // Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+//               // for (CSVRecord csvRecord:csvRecords) {
+//
+//                ModulesRequest modulesRequest = new ModulesRequest();
+//                modulesRequest.setName(csvRecord.get("Name"));
+//                modulesRequest.setPrefix(csvRecord.get("prefix"));
+//                modulesRequest.setProjectId(Long.parseLong(csvRecord.get("ProjectId")));
+//                modulesRequestsList.add(modulesRequest);
+//            }
+//
+//            } catch (IOException e) {
+//                throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
+//            }
+//        return modulesRequestsList;
+//    }
+
+
+//    public List<ModulesRequest> excelToModulesRequest(InputStream inputStream) {
+//        List<ModulesRequest> moduleRequestList = new ArrayList<>();
+//        try {
+//            Workbook workbook = WorkbookFactory.create(inputStream);
+//            Sheet sheet = workbook.getSheetAt(0);
+//
+//            DataFormatter dataFormatter = new DataFormatter();
+//            boolean firstLine = true;
+//
+//            Row headerRow = sheet.getRow(0);
+//            Map<String, Integer> columnMap = getColumnMap(headerRow);
+//
+//            for (Row row : sheet) {
+//                if (firstLine) {
+//                    firstLine = false;
+//                    continue;
+//                }
+//                ModulesRequest modulesRequest=new ModulesRequest();
+//
+//                Cell nameCell = row.getCell(columnMap.get("Name"));
+//                Cell prefixCell = row.getCell(columnMap.get("Prefix"));
+//                Cell projectIdCell = row.getCell(columnMap.get("ProjectId"));
+//
+//                modulesRequest.setPrefix(dataFormatter.formatCellValue(prefixCell));
+//                modulesRequest.setProjectId(Long.parseLong(dataFormatter.formatCellValue(projectIdCell)));
+//                modulesRequest.setName(dataFormatter.formatCellValue(nameCell));
+//
+//                moduleRequestList.add(modulesRequest);
+//            }
+//
+//            workbook.close();
+//        } catch (IOException e) {
+//            throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
+//        }
+//        return moduleRequestList;
+//    }
+
+//    @Override
+//    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
+//        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
+//        errorList.add(value);
+//        errorMessages.put(key, errorList);
+//    }
+//    private Map<String, Integer> getColumnMap(Row headerRow) {
+//        Map<String, Integer> columnMap = new HashMap<>();
+//
+//        for (Cell cell : headerRow) {
+//            String cellValue = cell.getStringCellValue();
+//            columnMap.put(cellValue, cell.getColumnIndex());
+//        }
+//
+//        return columnMap;
+//    }
+
+
+
 }

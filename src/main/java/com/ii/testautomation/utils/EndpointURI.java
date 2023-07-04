@@ -42,6 +42,7 @@ public final class EndpointURI {
     public static final String MODULE_BY_ID = MODULE + ID;
     public static final String MODULES = BASE_API_PATH + SEARCH + SLASH + "modules";
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectId" + ID;
+    public static final String MODULE_IMPORT=MODULE +"/import";
     // URLs for TestGrouping
     public static final String TEST_GROUPING = BASE_API_PATH + "testGrouping";
     public static final String TEST_GROUPING_IMPORT = BASE_API_PATH + TEST_GROUPING + "import";
