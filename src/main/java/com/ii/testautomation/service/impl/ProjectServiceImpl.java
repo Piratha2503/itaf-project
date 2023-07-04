@@ -22,7 +22,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,6 +135,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return projectRequestList;
     }
+
     @Override
     public boolean hasExcelFormat(MultipartFile multipartFile) {
         try {
@@ -142,6 +146,7 @@ public class ProjectServiceImpl implements ProjectService {
             return false;
         }
     }
+
     @Override
     public List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
         List<ProjectRequest> projectRequestList = new ArrayList<>();
@@ -182,21 +187,23 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return projectRequestList;
     }
-    private String getStringCellValue(Cell cell) {
-        if (cell == null || cell.getCellType() == CellType.BLANK) {
-            return null;
-        }
-        cell.setCellType(CellType.STRING);
-        return cell.getStringCellValue();
-    }
+//
+//    private String getStringCellValue(Cell cell) {
+//        if (cell == null || cell.getCellType() == CellType.BLANK) {
+//            return null;
+//        }
+//        cell.setCellType(CellType.STRING);
+//        return cell.getStringCellValue();
+//    }
+//
+////    private Long getLongCellValue(Cell cell) {
+////        if (cell == null || cell.getCellType() == CellType.BLANK) {
+////            return null;
+////        }
+////        cell.setCellType(CellType.NUMERIC);
+////        return (long) cell.getNumericCellValue();
+////    }
 
-    private Long getLongCellValue(Cell cell) {
-        if (cell == null || cell.getCellType() == CellType.BLANK) {
-            return null;
-        }
-        cell.setCellType(CellType.NUMERIC);
-        return (long) cell.getNumericCellValue();
-    }
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 
@@ -210,39 +217,38 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
 
-
-    public File convertXlsxToCsv(MultipartFile xlsxFile) throws IOException {
-        File tempCsvFile = File.createTempFile("temp", ".csv");
-
-        File parentDir = new File("D:/Temp");
-        tempCsvFile = new File(parentDir, tempCsvFile.getName());
-
-        Workbook workbook = new XSSFWorkbook(xlsxFile.getInputStream());
-        Sheet sheet = workbook.getSheetAt(0);
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempCsvFile))) {
-            for (Row row : sheet) {
-                for (Cell cell : row) {
-                    CellType cellType = cell.getCellType();
-                    String cellValue = "";
-
-                    if (cellType == CellType.STRING) {
-                        cellValue = cell.getStringCellValue();
-                    } else if (cellType == CellType.NUMERIC) {
-                        cellValue = String.valueOf(cell.getNumericCellValue());
-                    } else if (cellType == CellType.BOOLEAN) {
-                        cellValue = String.valueOf(cell.getBooleanCellValue());
-                    }
-
-                    writer.append(cellValue);
-                    writer.append(",");
-                }
-                writer.newLine();
-            }
-        }
-
-        return tempCsvFile;
-    }
+//    public File convertXlsxToCsv(MultipartFile xlsxFile) throws IOException {
+//        File tempCsvFile = File.createTempFile("temp", ".csv");
+//
+//        File parentDir = new File("D:/Temp");
+//        tempCsvFile = new File(parentDir, tempCsvFile.getName());
+//
+//        Workbook workbook = new XSSFWorkbook(xlsxFile.getInputStream());
+//        Sheet sheet = workbook.getSheetAt(0);
+//
+//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempCsvFile))) {
+//            for (Row row : sheet) {
+//                for (Cell cell : row) {
+//                    CellType cellType = cell.getCellType();
+//                    String cellValue = "";
+//
+//                    if (cellType == CellType.STRING) {
+//                        cellValue = cell.getStringCellValue();
+//                    } else if (cellType == CellType.NUMERIC) {
+//                        cellValue = String.valueOf(cell.getNumericCellValue());
+//                    } else if (cellType == CellType.BOOLEAN) {
+//                        cellValue = String.valueOf(cell.getBooleanCellValue());
+//                    }
+//
+//                    writer.append(cellValue);
+//                    writer.append(",");
+//                }
+//                writer.newLine();
+//            }
+//        }
+//
+//        return tempCsvFile;
+//    }
 
     @Override
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {

@@ -8,8 +8,6 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +32,12 @@ public interface ProjectService {
     List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch);
 
     void deleteProject(Long projectId);
-    File convertXlsxToCsv(MultipartFile xlsxFile) throws IOException;
+//    File convertXlsxToCsv(MultipartFile xlsxFile) throws IOException;
 
     List<ProjectRequest> csvToProjectRequest(InputStream inputStream);
 
     public boolean hasExcelFormat(MultipartFile multipartFile);
+
     List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);

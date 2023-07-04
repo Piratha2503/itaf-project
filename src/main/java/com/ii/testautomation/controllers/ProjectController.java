@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,9 +68,6 @@ public class ProjectController {
                 projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
             } else if (projectService.hasExcelFormat(multipartFile)) {
                 projectRequestList = projectService.excelToProjectRequest(multipartFile);
-//                File convertedFile = projectService.convertXlsxToCsv(multipartFile);
-//                projectRequestList = projectService.csvToProjectRequest(new FileInputStream(convertedFile));
-//                convertedFile.delete();
             } else {
                 return ResponseEntity.badRequest().body("Invalid file format");
             }
