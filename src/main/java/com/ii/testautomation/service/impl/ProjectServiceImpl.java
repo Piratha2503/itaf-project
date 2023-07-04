@@ -20,11 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,10 +88,10 @@ public class ProjectServiceImpl implements ProjectService {
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
-            booleanBuilder.and(QProject.project.name.eq(projectSearch.getName()));
+            booleanBuilder.and(QProject.project.name.containsIgnoreCase(projectSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(projectSearch.getCode())) {
-            booleanBuilder.and(QProject.project.code.eq(projectSearch.getCode()));
+            booleanBuilder.and(QProject.project.code.containsIgnoreCase(projectSearch.getCode()));
         }
         List<ProjectResponse> projectResponseList = new ArrayList<>();
         Page<Project> projectPage = projectRepository.findAll(booleanBuilder, pageable);
@@ -134,13 +132,21 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return projectRequestList;
     }
-
     @Override
-    public List<ProjectRequest> excelToProjectRequest(InputStream inputStream) {
-
+    public boolean hasExcelFormat(MultipartFile multipartFile) {
+        try {
+            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+            workbook.close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    @Override
+    public List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
         List<ProjectRequest> projectRequestList = new ArrayList<>();
         try {
-            Workbook workbook = new XSSFWorkbook(inputStream);
+            Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
 
             DataFormatter dataFormatter = new DataFormatter();
@@ -154,33 +160,88 @@ public class ProjectServiceImpl implements ProjectService {
 
                 ProjectRequest projectRequest = new ProjectRequest();
 
-                Cell codeCell = row.getCell(columnMap.get("Code"));
-                Cell descriptionCell = row.getCell(columnMap.get("Description"));
-                Cell nameCell = row.getCell(columnMap.get("Name"));
+
+                Cell codeCell = row.getCell(columnMap.get("code"));
+                Cell descriptionCell = row.getCell(columnMap.get("description"));
+                Cell nameCell = row.getCell(columnMap.get("name"));
 
                 projectRequest.setCode(dataFormatter.formatCellValue(codeCell));
                 projectRequest.setDescription(dataFormatter.formatCellValue(descriptionCell));
                 projectRequest.setName(dataFormatter.formatCellValue(nameCell));
 
+//                projectRequest.setCode(getStringCellValue(row.getCell(0)));
+//                projectRequest.setDescription(getStringCellValue(row.getCell(1)));
+//                projectRequest.setName(getStringCellValue(row.getCell(2)));
+
                 projectRequestList.add(projectRequest);
             }
 
-            workbook.close();
+//            workbook.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
         }
         return projectRequestList;
     }
+    private String getStringCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.STRING);
+        return cell.getStringCellValue();
+    }
 
+    private Long getLongCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.NUMERIC);
+        return (long) cell.getNumericCellValue();
+    }
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 
         for (Cell cell : headerRow) {
             String cellValue = cell.getStringCellValue().toLowerCase();
-            columnMap.put(cellValue, cell.getColumnIndex());
+            int columnIndex = cell.getColumnIndex();
+            columnMap.put(cellValue, columnIndex);
         }
 
         return columnMap;
+    }
+
+
+
+    public File convertXlsxToCsv(MultipartFile xlsxFile) throws IOException {
+        File tempCsvFile = File.createTempFile("temp", ".csv");
+
+        File parentDir = new File("D:/Temp");
+        tempCsvFile = new File(parentDir, tempCsvFile.getName());
+
+        Workbook workbook = new XSSFWorkbook(xlsxFile.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempCsvFile))) {
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    CellType cellType = cell.getCellType();
+                    String cellValue = "";
+
+                    if (cellType == CellType.STRING) {
+                        cellValue = cell.getStringCellValue();
+                    } else if (cellType == CellType.NUMERIC) {
+                        cellValue = String.valueOf(cell.getNumericCellValue());
+                    } else if (cellType == CellType.BOOLEAN) {
+                        cellValue = String.valueOf(cell.getBooleanCellValue());
+                    }
+
+                    writer.append(cellValue);
+                    writer.append(",");
+                }
+                writer.newLine();
+            }
+        }
+
+        return tempCsvFile;
     }
 
     @Override
