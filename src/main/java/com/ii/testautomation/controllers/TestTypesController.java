@@ -141,14 +141,7 @@ public class TestTypesController
                 testTypesRequest.setDescription(data[2]);
                 testTypesRequestList.add(testTypesRequest);
                 myErrorlist.add(testTypesRequest);
-                myErrorlist.add("Hello");
-                myErrorlist.add(true);
-                myErrorlist.add("C");
-                myErrorlist.add(500);
-                myErrorlist.add(5000L);
-                List<String> testList =new ArrayList<>();
-                testList.add("My name is Piratha");
-                myErrorlist.add(testList);
+
                 MyList.put("My Error",myErrorlist);
 
             }
