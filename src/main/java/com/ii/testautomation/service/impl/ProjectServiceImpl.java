@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -90,10 +91,10 @@ public class ProjectServiceImpl implements ProjectService {
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
-            booleanBuilder.and(QProject.project.name.eq(projectSearch.getName()));
+            booleanBuilder.and(QProject.project.name.containsIgnoreCase(projectSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(projectSearch.getCode())) {
-            booleanBuilder.and(QProject.project.code.eq(projectSearch.getCode()));
+            booleanBuilder.and(QProject.project.code.containsIgnoreCase(projectSearch.getCode()));
         }
         List<ProjectResponse> projectResponseList = new ArrayList<>();
         Page<Project> projectPage = projectRepository.findAll(booleanBuilder, pageable);
@@ -136,35 +137,33 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectRequest> excelToProjectRequest(InputStream inputStream) {
+    public boolean hasExcelFormat(MultipartFile multipartFile) {
+        try {
+            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+            workbook.close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
+    @Override
+    public List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
         List<ProjectRequest> projectRequestList = new ArrayList<>();
         try {
-            Workbook workbook = new XSSFWorkbook(inputStream);
+            Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-
             DataFormatter dataFormatter = new DataFormatter();
-
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
-
             for (Row row : sheet) {
-
                 if (row.getRowNum() == 0) continue;
-
                 ProjectRequest projectRequest = new ProjectRequest();
-
-                Cell codeCell = row.getCell(columnMap.get("Code"));
-                Cell descriptionCell = row.getCell(columnMap.get("Description"));
-                Cell nameCell = row.getCell(columnMap.get("Name"));
-
-                projectRequest.setCode(dataFormatter.formatCellValue(codeCell));
-                projectRequest.setDescription(dataFormatter.formatCellValue(descriptionCell));
-                projectRequest.setName(dataFormatter.formatCellValue(nameCell));
-
+                projectRequest.setCode(dataFormatter.formatCellValue(row.getCell(columnMap.get("code"))));
+                projectRequest.setDescription(dataFormatter.formatCellValue(row.getCell(columnMap.get("description"))));
+                projectRequest.setName(dataFormatter.formatCellValue(row.getCell(columnMap.get("name"))));
                 projectRequestList.add(projectRequest);
             }
-
             workbook.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
@@ -177,7 +176,8 @@ public class ProjectServiceImpl implements ProjectService {
 
         for (Cell cell : headerRow) {
             String cellValue = cell.getStringCellValue().toLowerCase();
-            columnMap.put(cellValue, cell.getColumnIndex());
+            int columnIndex = cell.getColumnIndex();
+            columnMap.put(cellValue, columnIndex);
         }
 
         return columnMap;

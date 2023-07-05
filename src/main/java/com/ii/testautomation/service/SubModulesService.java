@@ -5,6 +5,7 @@ import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.List;
@@ -35,7 +36,7 @@ public interface SubModulesService {
 
     List<SubModulesRequest> csvToSubModuleRequest(InputStream inputStream);
 
-    List<SubModulesRequest> excelToSubModuleRequest(InputStream inputStream);
+    List<SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 }

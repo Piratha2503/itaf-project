@@ -56,17 +56,18 @@ public class ProjectController {
                 statusCodeBundle.getSaveProjectSuccessMessage()));
     }
 
-
     @PostMapping(value = EndpointURI.PROJECT_IMPORT)
     public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<ProjectRequest> projectRequestList;
 
+        File tempFile = null;
+
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
-            } else if (multipartFile.getOriginalFilename().endsWith(".xlsx")) {
-                projectRequestList = projectService.excelToProjectRequest(multipartFile.getInputStream());
+            } else if (projectService.hasExcelFormat(multipartFile)) {
+                projectRequestList = projectService.excelToProjectRequest(multipartFile);
             } else {
                 return ResponseEntity.badRequest().body("Invalid file format");
             }
@@ -91,7 +92,6 @@ public class ProjectController {
                 }
             }
 
-
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
@@ -109,16 +109,6 @@ public class ProjectController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSaveProjectValidationMessage()));
-        } finally {
-            // Delete the temporary file after processing
-            try {
-                File tempFile = File.createTempFile("temp", null);
-                multipartFile.transferTo(tempFile);
-                tempFile.deleteOnExit(); // Use deleteOnExit() instead of delete()
-            } catch (IOException e) {
-                // Handle any exceptions related to file deletion
-                e.printStackTrace();
-            }
         }
     }
 
