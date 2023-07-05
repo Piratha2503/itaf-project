@@ -153,56 +153,23 @@ public class ProjectServiceImpl implements ProjectService {
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-
             DataFormatter dataFormatter = new DataFormatter();
-
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
-
             for (Row row : sheet) {
-
                 if (row.getRowNum() == 0) continue;
-
                 ProjectRequest projectRequest = new ProjectRequest();
-
-
-                Cell codeCell = row.getCell(columnMap.get("code"));
-                Cell descriptionCell = row.getCell(columnMap.get("description"));
-                Cell nameCell = row.getCell(columnMap.get("name"));
-
-                projectRequest.setCode(dataFormatter.formatCellValue(codeCell));
-                projectRequest.setDescription(dataFormatter.formatCellValue(descriptionCell));
-                projectRequest.setName(dataFormatter.formatCellValue(nameCell));
-
-//                projectRequest.setCode(getStringCellValue(row.getCell(0)));
-//                projectRequest.setDescription(getStringCellValue(row.getCell(1)));
-//                projectRequest.setName(getStringCellValue(row.getCell(2)));
-
+                projectRequest.setCode(dataFormatter.formatCellValue(row.getCell(columnMap.get("code"))));
+                projectRequest.setDescription(dataFormatter.formatCellValue(row.getCell(columnMap.get("description"))));
+                projectRequest.setName(dataFormatter.formatCellValue(row.getCell(columnMap.get("name"))));
                 projectRequestList.add(projectRequest);
             }
-
-//            workbook.close();
+            workbook.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
         }
         return projectRequestList;
     }
-//
-//    private String getStringCellValue(Cell cell) {
-//        if (cell == null || cell.getCellType() == CellType.BLANK) {
-//            return null;
-//        }
-//        cell.setCellType(CellType.STRING);
-//        return cell.getStringCellValue();
-//    }
-//
-////    private Long getLongCellValue(Cell cell) {
-////        if (cell == null || cell.getCellType() == CellType.BLANK) {
-////            return null;
-////        }
-////        cell.setCellType(CellType.NUMERIC);
-////        return (long) cell.getNumericCellValue();
-////    }
 
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
@@ -215,40 +182,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         return columnMap;
     }
-
-
-//    public File convertXlsxToCsv(MultipartFile xlsxFile) throws IOException {
-//        File tempCsvFile = File.createTempFile("temp", ".csv");
-//
-//        File parentDir = new File("D:/Temp");
-//        tempCsvFile = new File(parentDir, tempCsvFile.getName());
-//
-//        Workbook workbook = new XSSFWorkbook(xlsxFile.getInputStream());
-//        Sheet sheet = workbook.getSheetAt(0);
-//
-//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempCsvFile))) {
-//            for (Row row : sheet) {
-//                for (Cell cell : row) {
-//                    CellType cellType = cell.getCellType();
-//                    String cellValue = "";
-//
-//                    if (cellType == CellType.STRING) {
-//                        cellValue = cell.getStringCellValue();
-//                    } else if (cellType == CellType.NUMERIC) {
-//                        cellValue = String.valueOf(cell.getNumericCellValue());
-//                    } else if (cellType == CellType.BOOLEAN) {
-//                        cellValue = String.valueOf(cell.getBooleanCellValue());
-//                    }
-//
-//                    writer.append(cellValue);
-//                    writer.append(",");
-//                }
-//                writer.newLine();
-//            }
-//        }
-//
-//        return tempCsvFile;
-//    }
 
     @Override
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
