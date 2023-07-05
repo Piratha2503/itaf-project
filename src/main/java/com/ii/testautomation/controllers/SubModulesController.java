@@ -62,20 +62,20 @@ public class SubModulesController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveSubModuleSuccessMessage()));
-
     }
 
     @PostMapping(value = EndpointURI.SUBMODULE_IMPORT)
-    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
+    public ResponseEntity<Object> importSubModuleFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 subModulesRequestList = subModulesService.csvToSubModuleRequest(inputStream);
-            } else if (multipartFile.getOriginalFilename().endsWith(".xlsx")) {
+            } else if (subModulesService.hasExcelFormat(multipartFile)) {
                 subModulesRequestList = subModulesService.excelToSubModuleRequest(multipartFile);
             } else {
-                return ResponseEntity.badRequest().body("Invalid file format");
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
             for (int rowIndex = 2; rowIndex <= subModulesRequestList.size() + 1; rowIndex++) {
                 SubModulesRequest subModulesRequest = subModulesRequestList.get(rowIndex - 2);
@@ -109,14 +109,12 @@ public class SubModulesController {
                         statusCodeBundle.getCommonSuccessCode(),
                         statusCodeBundle.getSaveSubModuleSuccessMessage()));
             }
-
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getSaveSubModuleValidationMessage()));
+                    statusCodeBundle.getSaveProjectValidationMessage()));
         }
     }
-
 
     @PutMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> editSubModules(@RequestBody SubModulesRequest subModulesRequest) {

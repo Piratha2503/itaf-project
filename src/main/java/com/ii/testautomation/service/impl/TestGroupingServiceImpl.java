@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -182,35 +183,42 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRequestList;
     }
 
-    private Map<String, Integer> getColumnMap(Row headerRow) {
-        Map<String, Integer> columnMap = new HashMap<>();
-
-        for (Cell cell : headerRow) {
-            String cellValue = cell.getStringCellValue().toLowerCase();
-            columnMap.put(cellValue, cell.getColumnIndex());
+    @Override
+    public boolean hasExcelFormat(MultipartFile multipartFile) {
+        try {
+            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+            workbook.close();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
-        return columnMap;
     }
 
     @Override
-    public List<TestGroupingRequest> excelToTestGroupingRequest(InputStream inputStream) {
+    public boolean hasCsvFormat(MultipartFile multipartFile) {
+        String expectedContentType = "text/csv";
+        String actualContentType = multipartFile.getContentType();
+        return expectedContentType.equals(actualContentType);
+    }
+
+    @Override
+    public List<TestGroupingRequest> excelToTestGroupingRequest(MultipartFile multipartFile) {
         List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
-        try (Workbook workbook = new XSSFWorkbook(inputStream)) {
+        try {
+            Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
+            DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
-
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) {
-                    continue; // Skip the header row
-                }
+                if (row.getRowNum() == 0) continue;
                 TestGroupingRequest testGroupingRequest = new TestGroupingRequest();
                 testGroupingRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
-                testGroupingRequest.setTestCaseId(getLongCellValue(row.getCell(columnMap.get("testCaseId"))));
-                testGroupingRequest.setTestTypeId(getLongCellValue(row.getCell(columnMap.get("testTypeId"))));
+                testGroupingRequest.setTestTypeId(getLongCellValue(row.getCell(columnMap.get("test_type_id"))));
+                testGroupingRequest.setTestCaseId(getLongCellValue(row.getCell(columnMap.get("test_case_id"))));
                 testGroupingRequestList.add(testGroupingRequest);
             }
+            workbook.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
         }
@@ -231,6 +239,18 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
+    }
+
+
+    private Map<String, Integer> getColumnMap(Row headerRow) {
+        Map<String, Integer> columnMap = new HashMap<>();
+
+        for (Cell cell : headerRow) {
+            String cellValue = cell.getStringCellValue().toLowerCase();
+            int columnIndex = cell.getColumnIndex();
+            columnMap.put(cellValue, columnIndex);
+        }
+        return columnMap;
     }
 
     @Override
