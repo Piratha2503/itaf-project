@@ -61,7 +61,7 @@ public class TestTypesServiceImpl implements TestTypesService
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(testTypesSearch.getName()))
         {
-            booleanBuilder.and(QTestTypes.testTypes.name.eq(testTypesSearch.getName()));
+            booleanBuilder.and(QTestTypes.testTypes.name.containsIgnoreCase(testTypesSearch.getName()));
         }
         List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
         Page<TestTypes> testTypesPage = testTypesRepository.findAll(booleanBuilder, pageable);

@@ -41,7 +41,7 @@ public final class EndpointURI {
 
     public static final String TESTTYPE = BASE_API_PATH + "Testtype";
     public static final String TESTTYPE_IMPORT = BASE_API_PATH + TESTTYPE + "import";
-    public static final String TESTTYPES_SEARCH = BASE_API_PATH + SEARCH + SLASH + "Testtypes";
+    public static final String TESTTYPES_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testTypes";
     public static final String TESTTYPE_BY_ID = TESTTYPE + ID;
 
     //URLs for TestCases

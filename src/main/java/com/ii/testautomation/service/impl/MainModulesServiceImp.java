@@ -87,11 +87,11 @@ public class MainModulesServiceImp implements MainModulesService
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(mainModuleSearch.getName()))
         {
-            booleanBuilder.and(QMainModules.mainModules.name.eq(mainModuleSearch.getName()));
+            booleanBuilder.and(QMainModules.mainModules.name.containsIgnoreCase(mainModuleSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(mainModuleSearch.getPrefix()))
         {
-            booleanBuilder.and(QMainModules.mainModules.prefix.eq(mainModuleSearch.getPrefix()));
+            booleanBuilder.and(QMainModules.mainModules.prefix.containsIgnoreCase(mainModuleSearch.getPrefix()));
         }
 
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();

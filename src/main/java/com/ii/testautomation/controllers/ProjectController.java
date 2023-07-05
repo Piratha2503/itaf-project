@@ -72,7 +72,8 @@ public class ProjectController {
                 return ResponseEntity.badRequest().body("Invalid file format");
             }
 
-            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
+            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++)
+            {
                 ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
 
                 if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
@@ -97,8 +98,11 @@ public class ProjectController {
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getProjectFileImportValidationMessage(),
                         errorMessages));
-            } else {
-                for (ProjectRequest projectRequest : projectRequestList) {
+            }
+            else
+            {
+                for (ProjectRequest projectRequest : projectRequestList)
+                {
                     projectService.saveProject(projectRequest);
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
