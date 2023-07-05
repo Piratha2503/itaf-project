@@ -121,10 +121,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             booleanBuilder.and(QTestGrouping.testGrouping.name.eq(testGroupingSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(testGroupingSearch.getTestCaseName())) {
-            booleanBuilder.and(QTestGrouping.testGrouping.testCases.name.eq(testGroupingSearch.getTestCaseName()));
+            booleanBuilder.and(QTestGrouping.testGrouping.testCases.name.containsIgnoreCase(testGroupingSearch.getTestCaseName()));
         }
         if (Utils.isNotNullAndEmpty(testGroupingSearch.getTestTypeName())) {
-            booleanBuilder.and(QTestGrouping.testGrouping.testType.name.eq(testGroupingSearch.getTestTypeName()));
+            booleanBuilder.and(QTestGrouping.testGrouping.testType.name.containsIgnoreCase(testGroupingSearch.getTestTypeName()));
         }
         List<TestGroupingResponse> testGroupingResponses = new ArrayList<>();
         Page<TestGrouping> testGroupings = testGroupingRepository.findAll(booleanBuilder, pageable);

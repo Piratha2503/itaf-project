@@ -73,7 +73,7 @@ public class SubModulesController {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 subModulesRequestList = subModulesService.csvToSubModuleRequest(inputStream);
             } else if (multipartFile.getOriginalFilename().endsWith(".xlsx")) {
-                subModulesRequestList = subModulesService.excelToSubModuleRequest(inputStream);
+                subModulesRequestList = subModulesService.excelToSubModuleRequest(multipartFile);
             } else {
                 return ResponseEntity.badRequest().body("Invalid file format");
             }
