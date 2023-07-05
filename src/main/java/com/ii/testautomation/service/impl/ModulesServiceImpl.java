@@ -78,13 +78,16 @@ public class ModulesServiceImpl implements ModulesService
     }
 
     @Override
-    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch) {
+    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination,String searchTerm, ModuleSearch moduleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(moduleSearch.getModuleName())) {
-            booleanBuilder.and(QModules.modules.name.eq(moduleSearch.getModuleName()));
+
+            booleanBuilder.and(QModules.modules.name.likeIgnoreCase("%" + searchTerm + "%"));
+            //booleanBuilder.and(QModules.modules.name.eq(moduleSearch.getModuleName()));
         }
         if (Utils.isNotNullAndEmpty(moduleSearch.getModulePrefix())) {
-            booleanBuilder.and(QModules.modules.prefix.eq(moduleSearch.getModulePrefix()));
+           // booleanBuilder.and(QModules.modules.prefix.eq(moduleSearch.getModulePrefix()));
+            booleanBuilder.and(QModules.modules.prefix.likeIgnoreCase("%" + searchTerm + "%"));
         }
         List<ModulesResponse> modulesResponseList = new ArrayList<>();
         Page<Modules> modulesPage = modulesRepository.findAll(booleanBuilder, pageable);

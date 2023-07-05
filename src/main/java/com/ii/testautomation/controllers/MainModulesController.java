@@ -188,8 +188,8 @@ public class MainModulesController {
                     mainModulesRequest.setModuleId(Long.parseLong(csvRecord.get("moduleId")));
                     mainModulesRequestList.add(mainModulesRequest);
                 }
-
-                return ResponseEntity.ok(processfile(mainModulesRequestList));
+                processfile(mainModulesRequestList);
+                return ResponseEntity.ok("CSV ok");
             } catch (Exception e) {}
 
         }
@@ -210,41 +210,42 @@ public class MainModulesController {
                     mainModulesRequestList.add(mainModulesRequest);
 
                 }
-                return ResponseEntity.ok(processfile(mainModulesRequestList));
+                processfile(mainModulesRequestList);
+                return ResponseEntity.ok("Xlsx ok");
             } catch (Exception e) {
             }
 
         }
 
-        return ResponseEntity.badRequest().body("Invalid format");
+        return ResponseEntity.badRequest().body(file.getOriginalFilename());
     }
 
-    public int processfile(List<MainModulesRequest> mainModulesRequestList)
+    public void processfile(List<MainModulesRequest> mainModulesRequestList)
     {
         for (MainModulesRequest mainModulesRequest : mainModulesRequestList)
         {
             if (!Utils.isNotNullAndEmpty(mainModulesRequest.getName()))
-                return mainModulesRequestList.indexOf(mainModulesRequest);
-
+               // return mainModulesRequestList.indexOf(mainModulesRequest);
+                continue;
             if (!Utils.isNotNullAndEmpty(mainModulesRequest.getPrefix()))
-                return mainModulesRequestList.indexOf(mainModulesRequest);
-
+                //return mainModulesRequestList.indexOf(mainModulesRequest);
+                continue;
             if (!Utils.isNotNullAndEmpty(mainModulesRequest.getModuleId().toString()))
-                return mainModulesRequestList.indexOf(mainModulesRequest);
-
+                //return mainModulesRequestList.indexOf(mainModulesRequest);
+                continue;
             if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
-                return mainModulesRequestList.indexOf(mainModulesRequest);
-
+                //return mainModulesRequestList.indexOf(mainModulesRequest);
+                continue;
             if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName()))
-                return mainModulesRequestList.indexOf(mainModulesRequest);
-
+               // return mainModulesRequestList.indexOf(mainModulesRequest);
+                continue;
             if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix()))
-                return mainModulesRequestList.indexOf(mainModulesRequest);
-
+                //return mainModulesRequestList.indexOf(mainModulesRequest);
+                continue;
            mainModulesService.saveMainModules(mainModulesRequest);
 
         }
-        return 200;
+
     }
 
 

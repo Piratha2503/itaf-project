@@ -25,7 +25,7 @@ public interface ModulesService {
 
     public boolean isUpdateModulePrefixExists(String prefix, Long id);
 
-    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch);
+    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination,String searchTerm, ModuleSearch moduleSearch);
 
     public ModulesResponse getModuleById(Long id);
 
