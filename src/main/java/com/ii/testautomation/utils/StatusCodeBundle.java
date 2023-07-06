@@ -20,6 +20,11 @@ public class StatusCodeBundle {
 
     @Value("${code.failure.common}")
     private String failureCode;
+    @Value("${code.failure.file}")
+    private String fileFailureCode;
+    // Common File Failure Message
+    @Value("${message.file.failure.common}")
+    private String fileFailureMessage;
 
     //Project Code
     @Value("${code.validation.project.alreadyExists}")

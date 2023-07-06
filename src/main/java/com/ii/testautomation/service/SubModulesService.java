@@ -38,5 +38,7 @@ public interface SubModulesService {
 
     List<SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile);
 
+    public boolean hasExcelFormat(MultipartFile multipartFile);
+
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 }

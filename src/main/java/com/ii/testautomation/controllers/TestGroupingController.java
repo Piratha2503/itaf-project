@@ -65,20 +65,20 @@ public class TestGroupingController {
     }
 
     @PostMapping(value = EndpointURI.TEST_GROUPING_IMPORT)
-    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
+    public ResponseEntity<Object> importTestGroupingFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                testGroupingRequestList = testGroupingService.csvToTestGroupingRequest(inputStream);
-            } else if (multipartFile.getOriginalFilename().endsWith(".xlsx")) {
-                testGroupingRequestList = testGroupingService.excelToTestGroupingRequest(inputStream);
+            if (testGroupingService.hasCsvFormat(multipartFile)) {
+                testGroupingRequestList = testGroupingService.csvToTestGroupingRequest(multipartFile.getInputStream());
+            } else if (testGroupingService.hasExcelFormat(multipartFile)) {
+                testGroupingRequestList = testGroupingService.excelToTestGroupingRequest(multipartFile);
             } else {
-                return ResponseEntity.badRequest().body("Invalid file format");
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
             for (int rowIndex = 2; rowIndex <= testGroupingRequestList.size() + 1; rowIndex++) {
                 TestGroupingRequest testGroupingRequest = testGroupingRequestList.get(rowIndex - 2);
-
                 if (!Utils.isNotNullAndEmpty(testGroupingRequest.getName())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupNameEmptyMessage(), rowIndex);
                 }
@@ -95,7 +95,7 @@ public class TestGroupingController {
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getTestGroupFileImportValidationMessage(),
+                        statusCodeBundle.getSubModuleFileImportValidationMessage(),
                         errorMessages));
             } else {
                 for (TestGroupingRequest testGroupingRequest : testGroupingRequestList) {
@@ -103,16 +103,15 @@ public class TestGroupingController {
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getSaveTestCaseSuccessMessage()));
+                        statusCodeBundle.getSaveTestGroupingSuccessMessage()));
             }
 
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getSaveTestGroupValidationMessage()));
+                    statusCodeBundle.getSaveProjectValidationMessage()));
         }
     }
-
 
     @PutMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {

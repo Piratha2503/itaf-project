@@ -32,7 +32,6 @@ public interface ProjectService {
     List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch);
 
     void deleteProject(Long projectId);
-//    File convertXlsxToCsv(MultipartFile xlsxFile) throws IOException;
 
     List<ProjectRequest> csvToProjectRequest(InputStream inputStream);
 
