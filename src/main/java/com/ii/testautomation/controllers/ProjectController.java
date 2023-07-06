@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -57,19 +56,17 @@ public class ProjectController {
     }
 
     @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
+    public ResponseEntity<Object> importProjectFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<ProjectRequest> projectRequestList;
-
-        File tempFile = null;
-
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
             } else if (projectService.hasExcelFormat(multipartFile)) {
                 projectRequestList = projectService.excelToProjectRequest(multipartFile);
             } else {
-                return ResponseEntity.badRequest().body("Invalid file format");
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
 
             for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++)

@@ -159,36 +159,42 @@ public class SubModulesServiceImpl implements SubModulesService {
         }
         return subModulesRequestList;
     }
+
+    @Override
+    public boolean hasExcelFormat(MultipartFile multipartFile) {
+        try {
+            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+            workbook.close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Override
     public List<SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile) {
         List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-
             DataFormatter dataFormatter = new DataFormatter();
-
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
                 SubModulesRequest subModulesRequest = new SubModulesRequest();
-                Cell mainModuleIdCell = row.getCell(columnMap.get("main_module_id"));
-                Cell prefixCell = row.getCell(columnMap.get("prefix"));
-                Cell nameCell = row.getCell(columnMap.get("name"));
-                subModulesRequest.setName(dataFormatter.formatCellValue(nameCell));
-                subModulesRequest.setPrefix(dataFormatter.formatCellValue(prefixCell));
-                subModulesRequest.setMain_module_Id(Long.parseLong(dataFormatter.formatCellValue(mainModuleIdCell)));
-
+                subModulesRequest.setMain_module_Id(getLongCellValue(row.getCell(columnMap.get("main_module_id"))));
+                subModulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
+                subModulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 subModulesRequestList.add(subModulesRequest);
             }
-
-//            workbook.close();
+            workbook.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
         }
         return subModulesRequestList;
     }
+
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;
@@ -204,6 +210,7 @@ public class SubModulesServiceImpl implements SubModulesService {
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
     }
+
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 
