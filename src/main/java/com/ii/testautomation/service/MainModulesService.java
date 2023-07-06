@@ -4,9 +4,22 @@ import com.ii.testautomation.dto.request.MainModulesRequest;
 import com.ii.testautomation.dto.response.MainModulesResponse;
 import com.ii.testautomation.dto.search.MainModuleSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface MainModulesService
 {   public void saveMainModules(MainModulesRequest mainModulesRequest);
@@ -28,4 +41,12 @@ public interface MainModulesService
     public boolean isExistsSubmodulesByMainModule(Long id);
     public boolean existsMainModuleByModuleId(Long id);
     //public boolean existsByMainModuleId(Long id);
+
+    // Bulk Import
+    public boolean hasExcelFormat(MultipartFile multipartFile);
+    public List<MainModulesRequest> csvProcess(InputStream inputStream);
+    public List<MainModulesRequest> excelProcess(MultipartFile multipartFile);
+    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
+
 }

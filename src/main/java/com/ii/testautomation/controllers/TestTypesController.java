@@ -1,15 +1,23 @@
 package com.ii.testautomation.controllers;
 
+import com.ii.testautomation.dto.request.MainModulesRequest;
 import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestTypesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,34 +130,69 @@ public class TestTypesController
                 statusCodeBundle.getSuccessViewAllMessage()));
     }
 
-
-    @PostMapping("/bulkTesttypes")
-    public ResponseEntity<Object> fileImport(@RequestParam("file") MultipartFile file) throws IOException
+    @PostMapping("/bulkInserttest")
+    public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile)
     {
-        Map<String,List<Object>> MyList = new HashMap<>();
-        List<Object> myErrorlist = new ArrayList<>();
 
-        List<TestTypesRequest> testTypesRequestList = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream())))
+        Map<String, List<Integer>> errorMessages = new HashMap<>();
+        List<TestTypesRequest> testTypesRequestList;
+
+        try
         {
-
-            String line;
-            while ((line = reader.readLine()) != null)
+            if (multipartFile.getOriginalFilename().endsWith(".csv"))
             {
-                String[] data = line.split(",");
-                TestTypesRequest testTypesRequest = new TestTypesRequest();
-                testTypesRequest.setName(data[1]);
-                testTypesRequest.setDescription(data[2]);
-                testTypesRequestList.add(testTypesRequest);
-                myErrorlist.add(testTypesRequest);
-
-                MyList.put("My Error",myErrorlist);
+                testTypesRequestList = testTypesService.csvProcess(multipartFile.getInputStream());
 
             }
+            else if (testTypesService.hasExcelFormat(multipartFile))
+            {
+                testTypesRequestList = testTypesService.excelProcess(multipartFile);
+            }
+            else
+            {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+            }
+
+            for(int rowIndex = 2; rowIndex <= testTypesRequestList.size() + 1; rowIndex++)
+            {
+                TestTypesRequest testTypesRequest = testTypesRequestList.get(rowIndex - 2);
+
+                if (!Utils.isNotNullAndEmpty(testTypesRequest.getName())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
+                }
+                if (!Utils.isNotNullAndEmpty(testTypesRequest.getDescription())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
+                }
+                if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+                }
+            }
+
+            if (!errorMessages.isEmpty())
+            {
+                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(),
+                        statusCodeBundle.getProjectFileImportValidationMessage(),
+                        errorMessages));
+            }
+            else
+            {
+                for (TestTypesRequest testTypesRequest : testTypesRequestList)
+                {
+                    testTypesService.saveTestTypes(testTypesRequest);
+                }
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                        statusCodeBundle.getCommonSuccessCode(),
+                        statusCodeBundle.getSaveProjectSuccessMessage()));
+            }
+        }
+        catch (IOException e)
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getSaveProjectValidationMessage()));
         }
 
-        catch (Exception e){}
-
-        return ResponseEntity.ok(MyList);
     }
+
 }

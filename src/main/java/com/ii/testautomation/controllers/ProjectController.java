@@ -28,7 +28,8 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-public class ProjectController {
+public class ProjectController
+{
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -59,12 +60,18 @@ public class ProjectController {
     public ResponseEntity<Object> importProjectFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<ProjectRequest> projectRequestList;
-        try {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+        try
+        {
+            if (multipartFile.getOriginalFilename().endsWith(".csv"))
+            {
                 projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
-            } else if (projectService.hasExcelFormat(multipartFile)) {
+            }
+            else if (projectService.hasExcelFormat(multipartFile))
+            {
                 projectRequestList = projectService.excelToProjectRequest(multipartFile);
-            } else {
+            }
+            else
+            {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
