@@ -165,6 +165,8 @@ public class StatusCodeBundle {
     private String saveModuleValidationMessage;
     @Value("${message.validation.module.file.error}")
     private String moduleFileErrorMessage;
+    @Value("${message.validation.module.file.projectId.empty}")
+    private String moduleProjectIdEmptyMessage;
 
     // Test Types Codes & Messages //
     @Value("${code.validation.testtype.alreadyExists}")

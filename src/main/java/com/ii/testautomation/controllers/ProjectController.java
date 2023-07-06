@@ -71,7 +71,6 @@ public class ProjectController {
             } else {
                 return ResponseEntity.badRequest().body("Invalid file format");
             }
-
             for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
                 ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
 
@@ -151,7 +150,7 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllProjectSuccessMessage()));
     }
-//
+
 
 
 
@@ -187,64 +186,6 @@ public class ProjectController {
         ));
     }
 
-//    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-//    public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
-//        Map<String, List<Integer>> errorMessages = new HashMap<>();
-//        List<ProjectRequest> projectRequestList = new ArrayList<>();
-//        try {
-//            if (projectService.hasCsvFormat(multipartFile)) {
-//                projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
-//            } else if (projectService.hasExcelFormat(multipartFile)) {
-//                projectRequestList = projectService.excelToProjectRequest(multipartFile.getInputStream());
-//            } else {
-//                return ResponseEntity.badRequest().body("Invalid file format");
-//            }
-//            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
-//                ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
-//
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
-//                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
-//                }
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
-//                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
-//                }
-//                if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
-//                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
-//                }
-//                if (projectService.existByProjectName(projectRequest.getName())) {
-//                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
-//                }
-//                if (projectService.existByProjectCode(projectRequest.getCode())) {
-//                    addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
-//                }
-//            }
-//            if (!errorMessages.isEmpty()) {
-//                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-//                        statusCodeBundle.getFailureCode(),
-//                        statusCodeBundle.getProjectFileErrorMessage(),
-//                        errorMessages));
-//            } else {
-//                for (ProjectRequest projectRequest : projectRequestList
-//                ) {
-//                    projectService.saveProject(projectRequest);
-//                }
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-//                        statusCodeBundle.getCommonSuccessCode(),
-//                        statusCodeBundle.getSaveProjectSuccessMessage()));
-//            }
-//
-//        } catch (IOException e) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                    statusCodeBundle.getFailureCode(),
-//                    statusCodeBundle.getSaveProjectValidationMessage()));
-//        }
-//    }
-
-//    private void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
-//        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
-//        errorList.add(value);
-//        errorMessages.put(key, errorList);
-//    }
 }
 
 

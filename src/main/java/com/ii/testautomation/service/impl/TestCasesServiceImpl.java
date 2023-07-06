@@ -66,10 +66,10 @@ public class TestCasesServiceImpl implements TestCasesService {
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(testCaseSearch.getName())) {
-            booleanBuilder.and(QTestCases.testCases.name.eq(testCaseSearch.getName()));
+            booleanBuilder.and(QTestCases.testCases.name.containsIgnoreCase(testCaseSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(testCaseSearch.getSubModuleName())) {
-            booleanBuilder.and(QTestCases.testCases.subModule.name.eq(testCaseSearch.getSubModuleName()));
+            booleanBuilder.and(QTestCases.testCases.subModule.name.containsIgnoreCase(testCaseSearch.getSubModuleName()));
         }
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         Page<TestCases> testCasesPage = testCasesRepository.findAll(booleanBuilder, pageable);

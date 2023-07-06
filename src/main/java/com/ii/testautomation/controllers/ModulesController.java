@@ -22,7 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,11 +104,10 @@ public class ModulesController {
                                                 @RequestParam(name = "size") int size,
                                                 @RequestParam(name = "direction") String direction,
                                                 @RequestParam(name = "sortField") String sortField,
-                                                @RequestParam(name = "searchTerm") String searchTerm,
                                                 ModuleSearch moduleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES, modulesService.multiSearchModules(pageable, pagination,searchTerm,moduleSearch),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES, modulesService.multiSearchModules(pageable, pagination,moduleSearch),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllModuleSuccessMessage()));
 
@@ -148,57 +147,55 @@ public class ModulesController {
                 statusCodeBundle.getGetModuleByProjectIdSuccessMessage()));
     }
 
-//    @PostMapping(EndpointURI.MODULE_IMPORT)
-//    public ResponseEntity<Object> importFile(@RequestParam("multipartFile") MultipartFile multipartFile) {
-//            Map<String, List<Integer>> errorMessages = new HashMap<>();
-//            List<ModulesRequest> moduleRequestList;
-//
-//            try {
-//                if (modulesService.hasCsvFormat(multipartFile)) {
-//                    moduleRequestList = modulesService .csvToModulesRequest(multipartFile.getInputStream());
-//                } else if (modulesService.hasExcelFormat(multipartFile)) {
-//                    moduleRequestList = modulesService.excelToModulesRequest(multipartFile.getInputStream());
-//                } else {
-//                    return ResponseEntity.badRequest().body("Invalid file format");
-//                }
-//
-//                int rowIndex = 2;
-//                for (ModulesRequest moduleRequest : moduleRequestList) {
-//                    if (!Utils.isNotNullAndEmpty(moduleRequest.getName())) {
-//                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
-//                    }
-//                    if (!Utils.isNotNullAndEmpty(moduleRequest.getPrefix())) {
-//                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixEmptyMessage(), rowIndex);
-//                    }
-//                    if (modulesService.isModuleExistsByName(moduleRequest.getName())) {
-//                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameAlReadyExistsMessage(), rowIndex);
-//                    }
-//                    if (modulesService.isModuleExistsByPrefix(moduleRequest.getPrefix())) {
-//                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(), rowIndex);
-//                    }
-//                    rowIndex++;
-//                }
-//
-//                if (!errorMessages.isEmpty()) {
-//                    return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-//                            statusCodeBundle.getFailureCode(),
-//                            statusCodeBundle.getModuleFileErrorMessage(),
-//                            errorMessages));
-//                } else {
-//                    for (ModulesRequest modulesRequest : moduleRequestList) {
-//                        modulesService.saveModule(modulesRequest);
-//                    }
-//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-//                            statusCodeBundle.getCommonSuccessCode(),
-//                            statusCodeBundle.getSaveModuleSuccessMessage()));
-//                }
-//            } catch (IOException e) {
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                        statusCodeBundle.getFailureCode(),
-//                        statusCodeBundle.getSaveModuleValidationMessage()));
-//            }
-//        }
+   @PostMapping(EndpointURI.MODULE_IMPORT)
+   public ResponseEntity<Object> importFile(@RequestParam MultipartFile multipartFile) {
+      Map<String, List<Integer>> errorMessages = new HashMap<>();
+           List<ModulesRequest> modulesRequestList;
+            File tempFile = null;
+            try {
+             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+                 modulesRequestList = modulesService.csvToModulesRequest(multipartFile.getInputStream());
+             } else if (modulesService.hasExcelFormat(multipartFile)) {
+                 modulesRequestList=modulesService.excelToModulesRequest(multipartFile);
 
-
-
+             } else {
+                 return ResponseEntity.badRequest().body("Invalid file format");
+             }
+                for (int rowIndex = 2; rowIndex <=modulesRequestList.size()+1 ; rowIndex++) {
+                    ModulesRequest modulesRequest = modulesRequestList.get(rowIndex - 2);
+                    if (!Utils.isNotNullAndEmpty(modulesRequest.getName())) {
+                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
+                    }
+                    if (!Utils.isNotNullAndEmpty(modulesRequest.getPrefix())) {
+                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixEmptyMessage(), rowIndex);
+                    }
+                    if (modulesService.isModuleExistsByName(modulesRequest.getName())) {
+                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameAlReadyExistsMessage(), rowIndex);
+                    }
+                    if (modulesService.isModuleExistsByPrefix(modulesRequest.getPrefix())) {
+                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(), rowIndex);
+                    }
+                    if(projectService.existByProjectId(modulesRequest.getProjectId())){
+                        modulesService.addToErrorMessages(errorMessages,statusCodeBundle.getModuleProjectIdEmptyMessage(),rowIndex);
+                    }
+              }
+              if (!errorMessages.isEmpty()) {
+                    return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
+                            statusCodeBundle.getFailureCode(),
+                            statusCodeBundle.getModuleFileErrorMessage(),
+                            errorMessages));
+                } else {
+                    for (ModulesRequest modulesRequest : modulesRequestList) {
+                        modulesService.saveModule(modulesRequest);
+                    }
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                            statusCodeBundle.getCommonSuccessCode(),
+                            statusCodeBundle.getSaveModuleSuccessMessage()));
+                }
+            } catch (IOException e) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(),
+                        statusCodeBundle.getSaveModuleValidationMessage()));
+            }
+        }
 }

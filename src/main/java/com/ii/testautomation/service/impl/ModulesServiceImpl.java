@@ -1,7 +1,6 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
-//import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.entities.Modules;
@@ -12,18 +11,18 @@ import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.utils.Utils;
-import com.opencsv.CSVParser;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-//import org.apache.commons.csv.CSVParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,16 +77,14 @@ public class ModulesServiceImpl implements ModulesService
     }
 
     @Override
-    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination,String searchTerm, ModuleSearch moduleSearch) {
+    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(moduleSearch.getModuleName())) {
-
-            booleanBuilder.and(QModules.modules.name.likeIgnoreCase("%" + searchTerm + "%"));
-            //booleanBuilder.and(QModules.modules.name.eq(moduleSearch.getModuleName()));
+            booleanBuilder.and(QModules.modules.name.containsIgnoreCase(moduleSearch.getModuleName()));
         }
         if (Utils.isNotNullAndEmpty(moduleSearch.getModulePrefix())) {
-           // booleanBuilder.and(QModules.modules.prefix.eq(moduleSearch.getModulePrefix()));
-            booleanBuilder.and(QModules.modules.prefix.likeIgnoreCase("%" + searchTerm + "%"));
+            booleanBuilder.and(QModules.modules.prefix.containsIgnoreCase(moduleSearch.getModulePrefix()));
+          //  booleanBuilder.and(QModules.modules.prefix.likeIgnoreCase("%" + searchTerm + "%"));
         }
         List<ModulesResponse> modulesResponseList = new ArrayList<>();
         Page<Modules> modulesPage = modulesRepository.findAll(booleanBuilder, pageable);
@@ -139,101 +136,98 @@ public class ModulesServiceImpl implements ModulesService
         return modulesRepository.existsByProjectId(projectId);
     }
 
-//    @Override
-//    public boolean hasCsvFormat(MultipartFile multipartFile) {
-//        String expectedContentType = "text/csv";
-//        String actualContentType = multipartFile.getContentType();
-//        return expectedContentType.equals(actualContentType);
-//    }
-
-//    @Override
-//    public boolean hasExcelFormat(MultipartFile multipartFile) {
-//        try {
-//            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
-//            workbook.close();
-//            return true;
-//        } catch (Exception e) {
-//            return false;
-//        }
-//    }
-
-//    @Override
-//    public List<ModulesRequest> csvToModulesRequest(InputStream inputStream) {
-//            List<ModulesRequest> modulesRequestsList = new ArrayList<>();
-//            try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-//                 //CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
-//                   // CSVParser csvParser=new CSVParser(fileReader,CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
-//               // Iterable<CSVRecord> csvRecords = csvParser.getRecords();
-//               // for (CSVRecord csvRecord:csvRecords) {
-//
-//                ModulesRequest modulesRequest = new ModulesRequest();
-//                modulesRequest.setName(csvRecord.get("Name"));
-//                modulesRequest.setPrefix(csvRecord.get("prefix"));
-//                modulesRequest.setProjectId(Long.parseLong(csvRecord.get("ProjectId")));
-//                modulesRequestsList.add(modulesRequest);
-//            }
-//
-//            } catch (IOException e) {
-//                throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
-//            }
-//        return modulesRequestsList;
-//    }
 
 
-//    public List<ModulesRequest> excelToModulesRequest(InputStream inputStream) {
-//        List<ModulesRequest> moduleRequestList = new ArrayList<>();
-//        try {
-//            Workbook workbook = WorkbookFactory.create(inputStream);
-//            Sheet sheet = workbook.getSheetAt(0);
-//
-//            DataFormatter dataFormatter = new DataFormatter();
-//            boolean firstLine = true;
-//
-//            Row headerRow = sheet.getRow(0);
-//            Map<String, Integer> columnMap = getColumnMap(headerRow);
-//
-//            for (Row row : sheet) {
-//                if (firstLine) {
-//                    firstLine = false;
-//                    continue;
-//                }
-//                ModulesRequest modulesRequest=new ModulesRequest();
-//
-//                Cell nameCell = row.getCell(columnMap.get("Name"));
-//                Cell prefixCell = row.getCell(columnMap.get("Prefix"));
-//                Cell projectIdCell = row.getCell(columnMap.get("ProjectId"));
-//
-//                modulesRequest.setPrefix(dataFormatter.formatCellValue(prefixCell));
-//                modulesRequest.setProjectId(Long.parseLong(dataFormatter.formatCellValue(projectIdCell)));
-//                modulesRequest.setName(dataFormatter.formatCellValue(nameCell));
-//
-//                moduleRequestList.add(modulesRequest);
-//            }
-//
-//            workbook.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
-//        }
-//        return moduleRequestList;
-//    }
 
-//    @Override
-//    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
-//        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
-//        errorList.add(value);
-//        errorMessages.put(key, errorList);
-//    }
-//    private Map<String, Integer> getColumnMap(Row headerRow) {
-//        Map<String, Integer> columnMap = new HashMap<>();
-//
-//        for (Cell cell : headerRow) {
-//            String cellValue = cell.getStringCellValue();
-//            columnMap.put(cellValue, cell.getColumnIndex());
-//        }
-//
-//        return columnMap;
-//    }
+    @Override
+    public List<ModulesRequest> csvToModulesRequest(InputStream inputStream) {
+           List<ModulesRequest> modulesRequestsList = new ArrayList<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+                Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+                for (CSVRecord csvRecord:csvRecords) {
+
+                ModulesRequest modulesRequest = new ModulesRequest();
+                modulesRequest.setName(csvRecord.get("name"));
+                modulesRequest.setPrefix(csvRecord.get("prefix"));
+                modulesRequest.setProjectId(Long.parseLong(csvRecord.get("projectId")));
+                modulesRequestsList.add(modulesRequest);
+            }
+
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
+            }
+        return modulesRequestsList;
+    }
+    @Override
+    public boolean hasExcelFormat(MultipartFile multipartFile){
+       try {
+           Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+           workbook.close();
+           return true;
+       }catch(Exception e){
+           return false;
+        }
+    }
+    @Override
+    public List<ModulesRequest> excelToModulesRequest(MultipartFile multipartFile){
+        List<ModulesRequest> modulesRequestList=new ArrayList<>();
+        try{
+            Workbook workbook=new XSSFWorkbook(multipartFile.getInputStream());
+            Sheet sheet= workbook.getSheetAt(0);
+            DataFormatter dataFormatter=new DataFormatter();
+            Row headerRow= sheet.getRow(0);
+            Map<String,Integer> columnMap = getColumnMap(headerRow);
+            for (Row row : sheet) {
+                if(row.getRowNum()==0) continue;
+                ModulesRequest modulesRequest=new ModulesRequest();
+                modulesRequest.setName(row.getCell(0).getStringCellValue());
+                modulesRequest.setPrefix(row.getCell(1).getStringCellValue());
+                modulesRequest.setProjectId(getLongCellValue(row.getCell(2)));
+                modulesRequestList.add(modulesRequest);
+            }
+          workbook.close();
+        }catch (IOException e){
+            throw new RuntimeException("Failed to Parse Excel File: "+ e.getMessage());
+        }
+        return modulesRequestList;
+    }
 
 
+
+    private String getStringCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.STRING);
+        return cell.getStringCellValue();
+    }
+
+    private Long getLongCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.NUMERIC);
+        return (long) cell.getNumericCellValue();
+    }
+
+
+    @Override
+    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
+        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
+        errorList.add(value);
+        errorMessages.put(key, errorList);
+    }
+    private Map<String, Integer> getColumnMap(Row headerRow) {
+        Map<String, Integer> columnMap = new HashMap<>();
+
+        for (Cell cell : headerRow) {
+            String cellValue = cell.getStringCellValue().toLowerCase();
+            int columnIndex = cell.getColumnIndex();
+            columnMap.put(cellValue, columnIndex);
+        }
+
+        return columnMap;
+    }
 
 }

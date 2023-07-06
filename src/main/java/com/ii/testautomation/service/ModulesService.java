@@ -25,7 +25,7 @@ public interface ModulesService {
 
     public boolean isUpdateModulePrefixExists(String prefix, Long id);
 
-    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination,String searchTerm, ModuleSearch moduleSearch);
+    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch);
 
     public ModulesResponse getModuleById(Long id);
 
@@ -34,12 +34,12 @@ public interface ModulesService {
     public void deleteModuleById(Long id);
 
     public boolean existsModuleByProjectId(Long projectId);
-    //boolean hasCsvFormat(MultipartFile multipartFile);
 
-    ////public boolean hasExcelFormat(MultipartFile multipartFile);
+    public boolean hasExcelFormat(MultipartFile multipartFile);
 
-    //public List<ModulesRequest> csvToModulesRequest(InputStream inputStream);
+    public List<ModulesRequest> csvToModulesRequest(InputStream inputStream);
 
-    //public List<ModulesRequest> excelToModulesRequest(InputStream inputStream);
-    //public void addToErrorMessages (Map< String, List < Integer >> errorMessages, String key, int value);
+    public List<ModulesRequest> excelToModulesRequest(MultipartFile multipartFile);
+
+    public void addToErrorMessages (Map< String, List < Integer >> errorMessages, String key, int value);
 }

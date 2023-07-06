@@ -124,7 +124,7 @@ public class ProjectServiceImpl implements ProjectService {
 
             for (CSVRecord csvRecord : csvRecords) {
                 ProjectRequest projectRequest = new ProjectRequest();
-                projectRequest.setCode(csvRecord.get("Code"));
+                projectRequest.setCode(csvRecord.get("code"));
                 projectRequest.setDescription(csvRecord.get("description"));
                 projectRequest.setName(csvRecord.get("name"));
                 projectRequestList.add(projectRequest);
