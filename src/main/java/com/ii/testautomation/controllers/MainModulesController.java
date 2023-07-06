@@ -154,14 +154,13 @@ public class MainModulesController {
         List<Integer> Prefix_Already_Exist_RowNumbers = new ArrayList<>();
         List<Integer> ModulesId_NotFound_RowNumbers = new ArrayList<>();
         BaseResponse baseResponse = new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getBulkImportCode(),statusCodeBundle.getBulkImportMessage());
+                statusCodeBundle.getBulkImportCode(), statusCodeBundle.getBulkImportMessage());
 
 
         try {
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-            for (Row row : sheet)
-            {
+            for (Row row : sheet) {
                 MainModulesRequest mainModulesRequest = new MainModulesRequest();
                 if (row.getRowNum() == 0) continue;
 
@@ -172,15 +171,15 @@ public class MainModulesController {
 
                 // checking the Excel Sheet
                 if (name == null || name.getCellType() == CellType.BLANK) {
-                    Null_Value_RowNumbers.add(row.getRowNum()+1);
+                    Null_Value_RowNumbers.add(row.getRowNum() + 1);
                     continue;
                 }
                 if (prefix == null || prefix.getCellType() == CellType.BLANK) {
-                    Null_Value_RowNumbers.add(row.getRowNum()+1);
+                    Null_Value_RowNumbers.add(row.getRowNum() + 1);
                     continue;
                 }
                 if (moduleId == null || moduleId.getCellType() == CellType.BLANK) {
-                    Null_Value_RowNumbers.add(row.getRowNum()+1);
+                    Null_Value_RowNumbers.add(row.getRowNum() + 1);
                     continue;
                 }
 
@@ -189,15 +188,15 @@ public class MainModulesController {
 
                 // Checking Validation
                 if (!mainModulesService.isExistModulesId(moduleIds)) {
-                    ModulesId_NotFound_RowNumbers.add(row.getRowNum()+1);
+                    ModulesId_NotFound_RowNumbers.add(row.getRowNum() + 1);
                     continue;
                 }
                 if (mainModulesService.isExistMainModulesName(name.getStringCellValue())) {
-                    Name_Already_Exist_RowNumbers.add(row.getRowNum()+1);
+                    Name_Already_Exist_RowNumbers.add(row.getRowNum() + 1);
                     continue;
                 }
                 if (mainModulesService.isExistPrefix(prefix.getStringCellValue())) {
-                    Prefix_Already_Exist_RowNumbers.add(row.getRowNum()+1);
+                    Prefix_Already_Exist_RowNumbers.add(row.getRowNum() + 1);
                     continue;
                 }
                 // Set Entity fields
@@ -209,10 +208,11 @@ public class MainModulesController {
                 mainModulesService.saveMainModules(mainModulesRequest);
             }
 
-            return ResponseEntity.ok(new MainModulesBResponse(baseResponse,Constants.SKIPPED_MSG,
-                    Null_Value_RowNumbers,Name_Already_Exist_RowNumbers,Prefix_Already_Exist_RowNumbers,ModulesId_NotFound_RowNumbers));
+            return ResponseEntity.ok(new MainModulesBResponse(baseResponse, Constants.SKIPPED_MSG,
+                    Null_Value_RowNumbers, Name_Already_Exist_RowNumbers, Prefix_Already_Exist_RowNumbers, ModulesId_NotFound_RowNumbers));
 
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         return ResponseEntity.ok(new BaseResponse("Success", "20000", "Successfully Inserted"));
     }

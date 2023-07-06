@@ -17,47 +17,43 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
-public class TestTypesServiceImpl implements TestTypesService
-{
+public class TestTypesServiceImpl implements TestTypesService {
     @Autowired
     private TestTypesRepository testTypesRepository;
 
     // CRUD
     @Override
-    public void saveTestTypes(TestTypesRequest testTypesRequest)
-    {
+    public void saveTestTypes(TestTypesRequest testTypesRequest) {
         TestTypes testTypes = new TestTypes();
-        BeanUtils.copyProperties(testTypesRequest,testTypes);
+        BeanUtils.copyProperties(testTypesRequest, testTypes);
         testTypesRepository.save(testTypes);
     }
 
     @Override
-    public void deleteTestTypeById(Long id)
-    {
+    public void deleteTestTypeById(Long id) {
         testTypesRepository.deleteById(id);
     }
 
     @Override
-    public TestTypesResponse getTestTypeById(Long id)
-    {
+    public TestTypesResponse getTestTypeById(Long id) {
         TestTypes testTypes = testTypesRepository.findById(id).get();
         TestTypesResponse testTypesResponse = new TestTypesResponse();
-        BeanUtils.copyProperties(testTypes,testTypesResponse);
+        BeanUtils.copyProperties(testTypes, testTypesResponse);
         return testTypesResponse;
     }
 
     @Override
-    public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch)
-    {
+    public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (Utils.isNotNullAndEmpty(testTypesSearch.getName()))
-        {
+        if (Utils.isNotNullAndEmpty(testTypesSearch.getName())) {
             booleanBuilder.and(QTestTypes.testTypes.name.eq(testTypesSearch.getName()));
         }
         List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
@@ -65,8 +61,7 @@ public class TestTypesServiceImpl implements TestTypesService
 
         pagination.setTotalRecords(testTypesPage.getTotalElements());
         pagination.setPageSize(testTypesPage.getTotalPages());
-        for (TestTypes testTypes : testTypesPage)
-        {
+        for (TestTypes testTypes : testTypesPage) {
             TestTypesResponse testTypesResponse = new TestTypesResponse();
             BeanUtils.copyProperties(testTypes, testTypesResponse);
             testTypesResponseList.add(testTypesResponse);
@@ -78,11 +73,9 @@ public class TestTypesServiceImpl implements TestTypesService
     @Transactional
 
     public void importfromFile(MultipartFile file) throws IOException {
-     try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream())))
-        {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
-        while ((line = reader.readLine()) != null)
-            {
+            while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 TestTypes testTypes = new TestTypes();
                 testTypes.setName(data[1]);
@@ -94,9 +87,15 @@ public class TestTypesServiceImpl implements TestTypesService
 
     // Check
     @Override
-    public boolean isExistsTestTypeByName(String name) {return testTypesRepository.existsByName(name);    }
+    public boolean isExistsTestTypeByName(String name) {
+        return testTypesRepository.existsByName(name);
+    }
+
     @Override
-    public boolean isExistsTestTypeById(Long id) {return testTypesRepository.existsById(id);}
+    public boolean isExistsTestTypeById(Long id) {
+        return testTypesRepository.existsById(id);
+    }
+
     @Override
     public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id) {
         return testTypesRepository.existsByNameIgnoreCaseAndIdNot(name, id);

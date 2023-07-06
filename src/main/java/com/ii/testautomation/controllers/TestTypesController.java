@@ -17,19 +17,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+
 @RestController
 @CrossOrigin
-public class TestTypesController
-{
+public class TestTypesController {
     @Autowired
     private TestTypesService testTypesService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(EndpointURI.TESTTYPE)
-    public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest)
-    {
+    public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(
                     RequestStatus.FAILURE.getStatus(),
@@ -45,15 +45,14 @@ public class TestTypesController
     }
 
     @PutMapping(EndpointURI.TESTTYPE)
-    public ResponseEntity<Object> updateTestTypes(@RequestBody TestTypesRequest testTypesRequest)
-    {
+    public ResponseEntity<Object> updateTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (!testTypesService.isExistsTestTypeById(testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(
                     RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
                     statusCodeBundle.getTestTypeIdNotFoundMessage()));
         if (testTypesService.isExistsTestTypesByNameIgnoreCaseAndIdNot(
-                testTypesRequest.getName(),testTypesRequest.getId()))
+                testTypesRequest.getName(), testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(
                     RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeAlReadyExistCode(),
@@ -69,8 +68,7 @@ public class TestTypesController
     }
 
     @DeleteMapping(EndpointURI.TESTTYPE_BY_ID)
-    public ResponseEntity<Object> deleteTestTypeById(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> deleteTestTypeById(@PathVariable Long id) {
         if (!testTypesService.isExistsTestTypeById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
@@ -82,8 +80,7 @@ public class TestTypesController
     }
 
     @GetMapping(EndpointURI.TESTTYPE_BY_ID)
-    public ResponseEntity<Object> getTestTypeById(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getTestTypeById(@PathVariable Long id) {
         if (!testTypesService.isExistsTestTypeById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
@@ -101,8 +98,7 @@ public class TestTypesController
                                                                 @RequestParam(name = "size") int size,
                                                                 @RequestParam(name = "direction") String direction,
                                                                 @RequestParam(name = "sortField") String sortField,
-                                                                TestTypesSearch testTypesSearch)
-    {
+                                                                TestTypesSearch testTypesSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
 
@@ -114,8 +110,7 @@ public class TestTypesController
     }
 
     @PostMapping("/test")
-    public ResponseEntity<Object> importEmployees(@RequestParam("file") MultipartFile file) throws IOException
-    {
+    public ResponseEntity<Object> importEmployees(@RequestParam("file") MultipartFile file) throws IOException {
        /* if (!employeeService.importEmployeesFromCsv(file))
         {
 
