@@ -10,6 +10,11 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,13 +23,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
-
     @Autowired
     private ProjectRepository projectRepository;
 
@@ -34,17 +42,18 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(projectRequest, project);
         projectRepository.save(project);
     }
+
     @Override
     public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest:projectRequestList
-             ) {
+        for (ProjectRequest projectRequest : projectRequestList
+        ) {
 
-                Project project = new Project();
-                BeanUtils.copyProperties(projectRequest, project);
-                projectRepository.save(project);
-
+            Project project = new Project();
+            BeanUtils.copyProperties(projectRequest, project);
+            projectRepository.save(project);
         }
     }
+
     @Override
     public boolean existByProjectName(String projectName) {
         return projectRepository.existsByNameIgnoreCase(projectName);
@@ -62,7 +71,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public boolean isUpdateProjectCodeExist(String projectCode, Long projectId) {
-        return projectRepository.existsByCodeIgnoreCaseAndIdNot(projectCode,projectId);
+        return projectRepository.existsByCodeIgnoreCaseAndIdNot(projectCode, projectId);
     }
 
     @Override
@@ -82,10 +91,10 @@ public class ProjectServiceImpl implements ProjectService {
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
-            booleanBuilder.and(QProject.project.name.eq(projectSearch.getName()));
+            booleanBuilder.and(QProject.project.name.containsIgnoreCase(projectSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(projectSearch.getCode())) {
-            booleanBuilder.and(QProject.project.code.eq(projectSearch.getCode()));
+            booleanBuilder.and(QProject.project.code.containsIgnoreCase(projectSearch.getCode()));
         }
         List<ProjectResponse> projectResponseList = new ArrayList<>();
         Page<Project> projectPage = projectRepository.findAll(booleanBuilder, pageable);
@@ -106,29 +115,78 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectRequest> importProjectFile(MultipartFile multipartFile) {
-        List<ProjectRequest> projectRequestList=new ArrayList<>();
-        try {
-            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(multipartFile.getInputStream()));
-            String line;
-            while ((line=bufferedReader.readLine())!=null)
-            {
-                String data[]=line.split(",");
-                ProjectRequest projectRequest=new ProjectRequest();
-                projectRequest.setCode(data[0]);
-                projectRequest.setDescription(data[1]);
-               projectRequest.setName(data[2]);
+    public List<ProjectRequest> csvToProjectRequest(InputStream inputStream) {
+        List<ProjectRequest> projectRequestList = new ArrayList<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
-             projectRequestList.add(projectRequest);
+            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+
+            for (CSVRecord csvRecord : csvRecords) {
+                ProjectRequest projectRequest = new ProjectRequest();
+                projectRequest.setCode(csvRecord.get("Code"));
+                projectRequest.setDescription(csvRecord.get("description"));
+                projectRequest.setName(csvRecord.get("name"));
+                projectRequestList.add(projectRequest);
             }
-        }
-        catch (Exception e)
-        {
-            System.out.println(e+"not save");
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
         return projectRequestList;
     }
 
+    @Override
+    public boolean hasExcelFormat(MultipartFile multipartFile) {
+        try {
+            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+            workbook.close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
+    @Override
+    public List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
+        List<ProjectRequest> projectRequestList = new ArrayList<>();
+        try {
+            Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
+            Sheet sheet = workbook.getSheetAt(0);
+            DataFormatter dataFormatter = new DataFormatter();
+            Row headerRow = sheet.getRow(0);
+            Map<String, Integer> columnMap = getColumnMap(headerRow);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                ProjectRequest projectRequest = new ProjectRequest();
+                projectRequest.setCode(dataFormatter.formatCellValue(row.getCell(columnMap.get("code"))));
+                projectRequest.setDescription(dataFormatter.formatCellValue(row.getCell(columnMap.get("description"))));
+                projectRequest.setName(dataFormatter.formatCellValue(row.getCell(columnMap.get("name"))));
+                projectRequestList.add(projectRequest);
+            }
+            workbook.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
+        }
+        return projectRequestList;
+    }
 
+    private Map<String, Integer> getColumnMap(Row headerRow) {
+        Map<String, Integer> columnMap = new HashMap<>();
+
+        for (Cell cell : headerRow) {
+            String cellValue = cell.getStringCellValue().toLowerCase();
+            int columnIndex = cell.getColumnIndex();
+            columnMap.put(cellValue, columnIndex);
+        }
+
+        return columnMap;
+    }
+
+    @Override
+    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
+        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
+        errorList.add(value);
+        errorMessages.put(key, errorList);
+    }
 }

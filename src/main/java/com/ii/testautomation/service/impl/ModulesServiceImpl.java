@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ModulesServiceImplementation implements ModulesService {
+public class ModulesServiceImpl implements ModulesService {
+
     @Autowired
     private ModulesRepository modulesRepository;
     @Autowired
@@ -79,6 +80,7 @@ public class ModulesServiceImplementation implements ModulesService {
         for (Modules modules : modulesPage) {
             ModulesResponse modulesResponse = new ModulesResponse();
             modulesResponse.setProjectId(modules.getProject().getId());
+            modulesResponse.setProjectName(modules.getProject().getName());
             BeanUtils.copyProperties(modules, modulesResponse);
             modulesResponseList.add(modulesResponse);
 
@@ -116,5 +118,8 @@ public class ModulesServiceImplementation implements ModulesService {
         modulesRepository.deleteById(id);
     }
 
-
+    @Override
+    public boolean existsModuleByProjectId(Long projectId) {
+        return modulesRepository.existsByProjectId(projectId);
+    }
 }

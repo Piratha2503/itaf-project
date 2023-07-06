@@ -1,38 +1,49 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SubModulesRequest;
-import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.entities.MainModules;
-import com.ii.testautomation.entities.Project;
-import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.QSubModules;
+import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.repositories.SubModulesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SubModulesServiceImpl implements SubModulesService {
     @Autowired
     private SubModulesRepository subModulesRepository;
+
     @Override
     public void saveSubModules(SubModulesRequest subModulesRequest) {
-        SubModules subModules=new SubModules();
-        MainModules mainModules=new MainModules();
+        SubModules subModules = new SubModules();
+        MainModules mainModules = new MainModules();
         mainModules.setId(subModulesRequest.getMain_module_Id());
         subModules.setMainModule(mainModules);
-        BeanUtils.copyProperties(subModulesRequest,subModules);
+        BeanUtils.copyProperties(subModulesRequest, subModules);
         subModulesRepository.save(subModules);
     }
 
@@ -48,12 +59,12 @@ public class SubModulesServiceImpl implements SubModulesService {
 
     @Override
     public boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId) {
-        return subModulesRepository.existsByNameIgnoreCaseAndIdNot(subModuleName,subModuleId);
+        return subModulesRepository.existsByNameIgnoreCaseAndIdNot(subModuleName, subModuleId);
     }
 
     @Override
     public boolean isUpdateSubModulePrefixExits(String subModulePrefix, Long subModuleId) {
-        return subModulesRepository.existsByPrefixIgnoreCaseAndIdNot(subModulePrefix,subModuleId);
+        return subModulesRepository.existsByPrefixIgnoreCaseAndIdNot(subModulePrefix, subModuleId);
     }
 
     @Override
@@ -63,24 +74,24 @@ public class SubModulesServiceImpl implements SubModulesService {
 
     @Override
     public SubModulesResponse getSubModuleById(Long subModuleId) {
-        SubModules subModules=subModulesRepository.findById(subModuleId).get();
-        SubModulesResponse subModulesResponse=new SubModulesResponse();
+        SubModules subModules = subModulesRepository.findById(subModuleId).get();
+        SubModulesResponse subModulesResponse = new SubModulesResponse();
         subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
         subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
-        BeanUtils.copyProperties(subModules,subModulesResponse);
+        BeanUtils.copyProperties(subModules, subModulesResponse);
         return subModulesResponse;
     }
 
     @Override
     public List<SubModulesResponse> getAllSubModuleByMainModuleId(Long mainModuleId) {
-        List<SubModules> subModulesList=subModulesRepository.findAllSubModulesByMainModuleId(mainModuleId);
-        List<SubModulesResponse> subModulesResponseList=new ArrayList<>();
-        for (SubModules subModules:subModulesList
-             ) {
-            SubModulesResponse subModulesResponse=new SubModulesResponse();
+        List<SubModules> subModulesList = subModulesRepository.findAllSubModulesByMainModuleId(mainModuleId);
+        List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
+        for (SubModules subModules : subModulesList
+        ) {
+            SubModulesResponse subModulesResponse = new SubModulesResponse();
             subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-            BeanUtils.copyProperties(subModules,subModulesResponse);
+            BeanUtils.copyProperties(subModules, subModulesResponse);
             subModulesResponseList.add(subModulesResponse);
         }
         return subModulesResponseList;
@@ -90,10 +101,10 @@ public class SubModulesServiceImpl implements SubModulesService {
     public List<SubModulesResponse> multiSearchSubModule(Pageable pageable, PaginatedContentResponse.Pagination pagination, SubModuleSearch subModuleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(subModuleSearch.getMainModuleName())) {
-            booleanBuilder.and(QSubModules.subModules.mainModule.name.eq(subModuleSearch.getMainModuleName()));
+            booleanBuilder.and(QSubModules.subModules.mainModule.name.containsIgnoreCase(subModuleSearch.getMainModuleName()));
         }
         if (Utils.isNotNullAndEmpty(subModuleSearch.getMainModulePrefix())) {
-            booleanBuilder.and(QSubModules.subModules.mainModule.prefix.eq(subModuleSearch.getMainModulePrefix()));
+            booleanBuilder.and(QSubModules.subModules.mainModule.prefix.containsIgnoreCase(subModuleSearch.getMainModulePrefix()));
         }
         if (Utils.isNotNullAndEmpty(subModuleSearch.getName())) {
             booleanBuilder.and(QSubModules.subModules.name.eq(subModuleSearch.getName()));
@@ -103,16 +114,16 @@ public class SubModulesServiceImpl implements SubModulesService {
         }
 
         List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
-        Page<SubModules> subModulesPage = subModulesRepository.findAll(booleanBuilder,pageable);
+        Page<SubModules> subModulesPage = subModulesRepository.findAll(booleanBuilder, pageable);
 
         pagination.setTotalRecords(subModulesPage.getTotalElements());
         pagination.setPageSize(subModulesPage.getTotalPages());
-        for (SubModules subModules:subModulesPage) {
-           SubModulesResponse subModulesResponse=new SubModulesResponse();
-           subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-           subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
-           BeanUtils.copyProperties(subModules,subModulesResponse);
-           subModulesResponseList.add(subModulesResponse);
+        for (SubModules subModules : subModulesPage) {
+            SubModulesResponse subModulesResponse = new SubModulesResponse();
+            subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
+            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            BeanUtils.copyProperties(subModules, subModulesResponse);
+            subModulesResponseList.add(subModulesResponse);
         }
         return subModulesResponseList;
     }
@@ -120,5 +131,102 @@ public class SubModulesServiceImpl implements SubModulesService {
     @Override
     public void deleteSubModuleById(Long subModuleId) {
         subModulesRepository.deleteById(subModuleId);
+    }
+
+    @Override
+    public boolean existsByMainModuleId(Long mainModuleId) {
+        return subModulesRepository.existsByMainModuleId(mainModuleId);
+    }
+
+    @Override
+    public List<SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
+        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+
+            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+
+            for (CSVRecord csvRecord : csvRecords) {
+                SubModulesRequest subModulesRequest = new SubModulesRequest();
+                subModulesRequest.setName(csvRecord.get("name"));
+                subModulesRequest.setPrefix(csvRecord.get("prefix"));
+                subModulesRequest.setMain_module_Id(Long.parseLong(csvRecord.get("main_module_id")));
+                subModulesRequestList.add(subModulesRequest);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
+        }
+        return subModulesRequestList;
+    }
+
+    @Override
+    public boolean hasExcelFormat(MultipartFile multipartFile) {
+        try {
+            Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+            workbook.close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile) {
+        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
+        try {
+            Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
+            Sheet sheet = workbook.getSheetAt(0);
+            DataFormatter dataFormatter = new DataFormatter();
+            Row headerRow = sheet.getRow(0);
+            Map<String, Integer> columnMap = getColumnMap(headerRow);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                SubModulesRequest subModulesRequest = new SubModulesRequest();
+                subModulesRequest.setMain_module_Id(getLongCellValue(row.getCell(columnMap.get("main_module_id"))));
+                subModulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
+                subModulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
+                subModulesRequestList.add(subModulesRequest);
+            }
+            workbook.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
+        }
+        return subModulesRequestList;
+    }
+
+    private String getStringCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.STRING);
+        return cell.getStringCellValue();
+    }
+
+    private Long getLongCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.NUMERIC);
+        return (long) cell.getNumericCellValue();
+    }
+
+    private Map<String, Integer> getColumnMap(Row headerRow) {
+        Map<String, Integer> columnMap = new HashMap<>();
+
+        for (Cell cell : headerRow) {
+            String cellValue = cell.getStringCellValue().toLowerCase();
+            int columnIndex = cell.getColumnIndex();
+            columnMap.put(cellValue, columnIndex);
+        }
+
+        return columnMap;
+    }
+
+    @Override
+    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
+        List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
+        errorList.add(value);
+        errorMessages.put(key, errorList);
     }
 }

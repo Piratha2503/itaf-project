@@ -8,34 +8,39 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface ProjectService {
-
-    public void saveProject(ProjectRequest projectRequest);
+    void saveProject(ProjectRequest projectRequest);
 
     void saveProjectList(List<ProjectRequest> projectRequestList);
 
-    public boolean existByProjectName(String projectName);
+    boolean existByProjectName(String projectName);
 
-    public boolean existByProjectCode(String projectCode);
+    boolean existByProjectCode(String projectCode);
 
-    public boolean isUpdateProjectNameExist(String projectName, Long projectId);
+    boolean isUpdateProjectNameExist(String projectName, Long projectId);
 
-    public boolean isUpdateProjectCodeExist(String projectCode, Long projectId);
+    boolean isUpdateProjectCodeExist(String projectCode, Long projectId);
 
-    public boolean existByProjectId(Long projectId);
+    boolean existByProjectId(Long projectId);
 
+    ProjectResponse getProjectById(Long projectId);
 
-    public ProjectResponse getProjectById(Long projectId);
+    List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch);
 
+    void deleteProject(Long projectId);
 
-    List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination,
-                                             ProjectSearch projectSearch);
+    List<ProjectRequest> csvToProjectRequest(InputStream inputStream);
 
-    public void deleteProject(Long projectId);
+    public boolean hasExcelFormat(MultipartFile multipartFile);
 
-    public List<ProjectRequest> importProjectFile(MultipartFile multipartFile);
+    List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile);
 
-
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 }
+
+
+

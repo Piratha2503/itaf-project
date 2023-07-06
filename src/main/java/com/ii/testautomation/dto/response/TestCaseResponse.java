@@ -3,12 +3,12 @@ package com.ii.testautomation.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
-public class SubModulesResponse {
+@Getter
+public class TestCaseResponse {
     private Long id;
     private String name;
-    private String prefix;
-    private String mainModuleName;
-    private String mainModulePrefix;
+    private String description;
+    private Long subModuleId;
+    private String subModuleName;
 }
