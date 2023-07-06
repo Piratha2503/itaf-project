@@ -52,8 +52,7 @@ public class MainModulesController {
         mainModulesService.saveMainModules(mainModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessMessageInsert()));
-    }
+                statusCodeBundle.getSuccessMessageInsert()));}
 
     @DeleteMapping(EndpointURI.MAINMODULE_BY_ID)
     public ResponseEntity<Object> deleteMainModules(@PathVariable Long id) {
@@ -70,8 +69,7 @@ public class MainModulesController {
         mainModulesService.deleteMainModules(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessMessageDelete()));
-    }
+                statusCodeBundle.getSuccessMessageDelete()));}
 
     @PutMapping(EndpointURI.MAINMODULE)
     public ResponseEntity<Object> updateMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
@@ -95,10 +93,7 @@ public class MainModulesController {
         mainModulesService.saveMainModules(mainModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessUpdateMessage()));
-
-
-    }
+                statusCodeBundle.getSuccessUpdateMessage()));}
 
     @GetMapping(EndpointURI.MAINMODULE_BY_ID)
     public ResponseEntity<Object> getMainModulesByMainModuleId(@PathVariable Long id) {
@@ -111,8 +106,7 @@ public class MainModulesController {
                 mainModulesService.getByMainModulesId(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));
-    }
+                statusCodeBundle.getSuccessViewAllMessage()));}
 
     @GetMapping(EndpointURI.MAINMODULE_BY_MODULEID)
     public ResponseEntity<Object> getMainModulesByModuleId(@PathVariable Long id) {
@@ -129,23 +123,20 @@ public class MainModulesController {
                 mainModulesService.getMainModulesByModuleId(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));
-    }
+                statusCodeBundle.getSuccessViewAllMessage()));}
 
     @GetMapping(EndpointURI.MAINMODULE_BY_NAME)
-    public ResponseEntity<Object> getMainModulesByName(@RequestParam("name") String name)
-    {
+    public ResponseEntity<Object> getMainModulesByName(@RequestParam("name") String name) {
         if (!mainModulesService.isExistMainModulesName(name))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getMainModulesNotExistCode(),statusCodeBundle.getMainModuleNotExistsMessage()));
+                    statusCodeBundle.getMainModulesNotExistCode(), statusCodeBundle.getMainModuleNotExistsMessage()));
 
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,mainModulesService.getByMainModulesName(name),
-                RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));
-    }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.getByMainModulesName(name),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getSuccessViewAllMessage()));}
 
     @GetMapping(EndpointURI.MAINMODULEPAGE)
-    public ResponseEntity<Object> SearchMainModuleswithpage(@RequestParam(name = "page") int page,
+    public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page,
                                                             @RequestParam(name = "size") int size,
                                                             @RequestParam(name = "direction") String direction,
                                                             @RequestParam(name = "sortField") String sortField,
@@ -156,80 +147,54 @@ public class MainModulesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.SearchMainModulesWithPagination(pageable, pagination, mainModuleSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));
-    }
+                statusCodeBundle.getSuccessViewAllMessage()));}
 
+    @PostMapping(EndpointURI.MAINMODULE_IMPORT)
+    public ResponseEntity<Object> importMainModules(@RequestParam MultipartFile multipartFile) {
 
-    @PostMapping("/bulkInsert")
-    public ResponseEntity<Object> importMainModules(@RequestParam MultipartFile multipartFile)
-    {
+        Map<String, List<Integer>> errorMessages = new HashMap<>();
+        List<MainModulesRequest> mainModulesRequestList;
 
-       Map<String, List<Integer>> errorMessages = new HashMap<>();
-       List<MainModulesRequest> mainModulesRequestList;
+        try {
+            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+                mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());}
+            else if (mainModulesService.hasExcelFormat(multipartFile)) {
+                mainModulesRequestList = mainModulesService.excelProcess(multipartFile);}
+            else {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));}
 
-        try
-        {
-            if (multipartFile.getOriginalFilename().endsWith(".csv"))
-            {
-                mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());
-
-            }
-           else if (mainModulesService.hasExcelFormat(multipartFile))
-            {
-                mainModulesRequestList = mainModulesService.excelProcess(multipartFile);
-            }
-        else
-         {
-              return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
-         }
-
-           for(int rowIndex = 2; rowIndex <= mainModulesRequestList.size() + 1; rowIndex++)
-           {
+            for (int rowIndex = 2; rowIndex <= mainModulesRequestList.size() + 1; rowIndex++) {
                 MainModulesRequest mainModulesRequest = mainModulesRequestList.get(rowIndex - 2);
 
-               if (!Utils.isNotNullAndEmpty(mainModulesRequest.getName())) {
-                   mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
-               }
-               if (!Utils.isNotNullAndEmpty(mainModulesRequest.getModuleId().toString())) {
-                  mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
-                }
-               if (!Utils.isNotNullAndEmpty(mainModulesRequest.getPrefix())) {
-                   mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
-               }
+                if (!Utils.isNotNullAndEmpty(mainModulesRequest.getName())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);}
+                if (!Utils.isNotNullAndEmpty(mainModulesRequest.getModuleId().toString())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);}
+                if (!Utils.isNotNullAndEmpty(mainModulesRequest.getPrefix())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);}
                 if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
-               }
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);}
                 if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
-                }
-           }
-
-            if (!errorMessages.isEmpty())
-           {
-               return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getProjectFileImportValidationMessage(),
-                        errorMessages));
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);}
             }
-            else
-            {
-                for (MainModulesRequest mainModulesRequest : mainModulesRequestList)
-                {
+            if (!errorMessages.isEmpty()) {
+                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(),
+                        statusCodeBundle.getBulkImportFailureMessage(),
+                        errorMessages));
+            } else {
+                for (MainModulesRequest mainModulesRequest : mainModulesRequestList) {
                     mainModulesService.saveMainModules(mainModulesRequest);
-               }
+                }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),
-                       statusCodeBundle.getSaveProjectSuccessMessage()));
+                        statusCodeBundle.getBulkImportMessage()));
             }
-       }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getSaveProjectValidationMessage()));
+                    statusCodeBundle.getBulkImportFailureMessage()));
         }
 
     }
-
-
 }

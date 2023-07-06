@@ -27,16 +27,14 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-public class TestTypesController
-{
+public class TestTypesController {
     @Autowired
     private TestTypesService testTypesService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(EndpointURI.TESTTYPE)
-    public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest)
-    {
+    public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(
                     RequestStatus.FAILURE.getStatus(),
@@ -52,15 +50,14 @@ public class TestTypesController
     }
 
     @PutMapping(EndpointURI.TESTTYPE)
-    public ResponseEntity<Object> updateTestTypes(@RequestBody TestTypesRequest testTypesRequest)
-    {
+    public ResponseEntity<Object> updateTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (!testTypesService.isExistsTestTypeById(testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(
                     RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
                     statusCodeBundle.getTestTypeIdNotFoundMessage()));
         if (testTypesService.isExistsTestTypesByNameIgnoreCaseAndIdNot(
-                testTypesRequest.getName(),testTypesRequest.getId()))
+                testTypesRequest.getName(), testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(
                     RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeAlReadyExistCode(),
@@ -70,14 +67,10 @@ public class TestTypesController
         return ResponseEntity.ok(new BaseResponse(
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getUpdateTestTypeSuccessMessage()));
-
-
-    }
+                statusCodeBundle.getUpdateTestTypeSuccessMessage())); }
 
     @DeleteMapping(EndpointURI.TESTTYPE_BY_ID)
-    public ResponseEntity<Object> deleteTestTypeById(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> deleteTestTypeById(@PathVariable Long id) {
         if (!testTypesService.isExistsTestTypeById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
@@ -85,12 +78,10 @@ public class TestTypesController
         testTypesService.deleteTestTypeById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getDeleteTestTypesSuccessMessage()));
-    }
+                statusCodeBundle.getDeleteTestTypesSuccessMessage()));}
 
     @GetMapping(EndpointURI.TESTTYPE_BY_ID)
-    public ResponseEntity<Object> getTestTypeById(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getTestTypeById(@PathVariable Long id) {
         if (!testTypesService.isExistsTestTypeById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
@@ -100,16 +91,14 @@ public class TestTypesController
                 testTypesService.getTestTypeById(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getViewTestTypeforIdSuccessMessage()));
-    }
+                statusCodeBundle.getViewTestTypeforIdSuccessMessage()));}
 
     @GetMapping(EndpointURI.TESTTYPES_SEARCH)
     public ResponseEntity<Object> SearchTestTypesWithPagination(@RequestParam(name = "page") int page,
                                                                 @RequestParam(name = "size") int size,
                                                                 @RequestParam(name = "direction") String direction,
                                                                 @RequestParam(name = "sortField") String sortField,
-                                                                TestTypesSearch testTypesSearch)
-    {
+                                                                TestTypesSearch testTypesSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
 
@@ -117,34 +106,25 @@ public class TestTypesController
                 testTypesService.SearchTestTypesWithPagination(pageable, pagination, testTypesSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));
-    }
+                statusCodeBundle.getSuccessViewAllMessage()));}
 
-    @PostMapping("/bulkInserttest")
-    public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile)
-    {
+    @PostMapping(EndpointURI.TESTTYPE_IMPORT)
+    public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile) {
 
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<TestTypesRequest> testTypesRequestList;
 
-        try
-        {
-            if (multipartFile.getOriginalFilename().endsWith(".csv"))
-            {
+        try {
+            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 testTypesRequestList = testTypesService.csvProcess(multipartFile.getInputStream());
 
-            }
-            else if (testTypesService.hasExcelFormat(multipartFile))
-            {
+            } else if (testTypesService.hasExcelFormat(multipartFile)) {
                 testTypesRequestList = testTypesService.excelProcess(multipartFile);
-            }
-            else
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+            } else {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
 
-            for(int rowIndex = 2; rowIndex <= testTypesRequestList.size() + 1; rowIndex++)
-            {
+            for (int rowIndex = 2; rowIndex <= testTypesRequestList.size() + 1; rowIndex++) {
                 TestTypesRequest testTypesRequest = testTypesRequestList.get(rowIndex - 2);
 
                 if (!Utils.isNotNullAndEmpty(testTypesRequest.getName())) {
@@ -158,29 +138,23 @@ public class TestTypesController
                 }
             }
 
-            if (!errorMessages.isEmpty())
-            {
+            if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getProjectFileImportValidationMessage(),
+                        statusCodeBundle.getBulkImportFailureMessage(),
                         errorMessages));
-            }
-            else
-            {
-                for (TestTypesRequest testTypesRequest : testTypesRequestList)
-                {
+            } else {
+                for (TestTypesRequest testTypesRequest : testTypesRequestList) {
                     testTypesService.saveTestTypes(testTypesRequest);
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getSaveProjectSuccessMessage()));
+                        statusCodeBundle.getBulkImportMessage()));
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getSaveProjectValidationMessage()));
+                    statusCodeBundle.getBulkImportFailureMessage()));
         }
 
     }

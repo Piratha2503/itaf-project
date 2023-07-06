@@ -181,19 +181,19 @@ code.validation.mainModule.alreadyExists=30000
     private String TestTypeNotExistCode;
     @Value("${code.validation.testTypes.notExists}")
     private String testTypesNotExistCode;
-    @Value("${message.failure.alreadyexistTestTypeid}")
+    @Value("${message.failure.alreadyExistTestTypeId}")
     private String TestTypeIdAlReadyExistMessage;
-    @Value("${message.failure.alreadyexistTestTypename}")
+    @Value("${message.failure.alreadyExistTestTypename}")
     private String TestTypeNameAlReadyExistMessage;
-    @Value("${message.failure.TestTypeidNotFound}")
+    @Value("${message.failure.TestTypeIdNotFound}")
     private String TestTypeIdNotFoundMessage;
     @Value("${message.success.insertTestTypes}")
     private String insertTestTypesSuccessMessage;
     @Value("${message.success.updateTestTypes}")
     private String updateTestTypeSuccessMessage;
-    @Value("${message.success.viewTestTypeforId}")
+    @Value("${message.success.viewTestTypeForId}")
     private String viewTestTypeforIdSuccessMessage;
-    @Value("${message.success.viewallTestTypes}")
+    @Value("${message.success.viewAllTestTypes}")
     private String viewAllTestTypesSuccessMessage;
     @Value("${message.success.deleteTestTypes}")
     private String deleteTestTypesSuccessMessage;
@@ -202,10 +202,12 @@ code.validation.mainModule.alreadyExists=30000
 
 
     // Bulk Code & Msg
-    @Value("${code.bulkimport.success}")
+    @Value("${message.bulkImport.success}")
     private String BulkImportCode;
-    @Value("${message.bulkimport.success}")
+    @Value("${message.bulkImport.success}")
     private String BulkImportMessage;
+    @Value("${message.bulkImport.failure}")
+    private String BulkImportFailureMessage;
 
     @Value("${message.validation.module.assigned}")
     private String getValidationModuleAssignedMessage;
