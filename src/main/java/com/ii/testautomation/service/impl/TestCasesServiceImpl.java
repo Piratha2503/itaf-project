@@ -1,6 +1,5 @@
 package com.ii.testautomation.service.impl;
 
-import com.ii.testautomation.dto.request.ModulesRequest;
 import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
@@ -135,18 +134,18 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public List<TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
-        List<TestCaseRequest> testCaseRequestList=new ArrayList<>();
+        List<TestCaseRequest> testCaseRequestList = new ArrayList<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-             CSVParser csvParser= new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
-            Iterable<CSVRecord> csvRecords=csvParser.getRecords();
-            for (CSVRecord csvRecord:csvRecords) {
-                TestCaseRequest testCaseRequest=new TestCaseRequest();
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+            for (CSVRecord csvRecord : csvRecords) {
+                TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(csvRecord.get("description"));
                 testCaseRequest.setName(csvRecord.get("name"));
                 testCaseRequest.setSubModuleId(Long.parseLong(csvRecord.get("submodule_id")));
                 testCaseRequestList.add(testCaseRequest);
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
         return testCaseRequestList;
@@ -162,8 +161,8 @@ public class TestCasesServiceImpl implements TestCasesService {
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
-               TestCaseRequest testCaseRequest=new TestCaseRequest();
-               testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
+                TestCaseRequest testCaseRequest = new TestCaseRequest();
+                testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testCaseRequest.setSubModuleId(getLongCellValue(row.getCell(columnMap.get("submodule_id"))));
                 testCaseRequestList.add(testCaseRequest);
@@ -174,7 +173,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseRequestList;
     }
-
 
     @Override
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
@@ -199,16 +197,16 @@ public class TestCasesServiceImpl implements TestCasesService {
         return (long) cell.getNumericCellValue();
     }
 
-        private Map<String, Integer> getColumnMap(Row headerRow) {
-            Map<String, Integer> columnMap = new HashMap<>();
+    private Map<String, Integer> getColumnMap(Row headerRow) {
+        Map<String, Integer> columnMap = new HashMap<>();
 
-            for (Cell cell : headerRow) {
-                String cellValue = cell.getStringCellValue().toLowerCase();
-                int columnIndex = cell.getColumnIndex();
-                columnMap.put(cellValue, columnIndex);
-            }
-
-            return columnMap;
+        for (Cell cell : headerRow) {
+            String cellValue = cell.getStringCellValue().toLowerCase();
+            int columnIndex = cell.getColumnIndex();
+            columnMap.put(cellValue, columnIndex);
         }
+
+        return columnMap;
+    }
 
 }

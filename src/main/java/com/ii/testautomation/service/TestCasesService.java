@@ -29,8 +29,11 @@ public interface TestCasesService {
     public void DeleteTestCaseById(Long id);
 
     public boolean existsBySubModuleId(Long subModuleId);
+
     public boolean hasExcelFormat(MultipartFile multipartFile);
+
     public List<TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
+
     public List<TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
