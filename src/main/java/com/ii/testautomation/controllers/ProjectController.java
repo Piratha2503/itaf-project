@@ -61,12 +61,20 @@ public class ProjectController {
         List<ProjectRequest> projectRequestList;
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
+                if (!projectService.isCSVHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
+                }
+
             } else if (projectService.hasExcelFormat(multipartFile)) {
-                projectRequestList = projectService.excelToProjectRequest(multipartFile);
+                if (!projectService.isExcelHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    projectRequestList = projectService.excelToProjectRequest(multipartFile);
+                }
             } else {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
             for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
                 ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
@@ -81,10 +89,10 @@ public class ProjectController {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
                 }
                 if (projectService.existByProjectName(projectRequest.getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistRowMessage(), rowIndex);
                 }
                 if (projectService.existByProjectCode(projectRequest.getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistRowMessage(), rowIndex);
                 }
             }
 
