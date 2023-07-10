@@ -36,14 +36,20 @@ public class StatusCodeBundle {
     @Value("${code.validation.project.dependent}")
     private String projectIdDependentCode;
     //Project Message
+    @Value("${message.validation.project.header.notExits}")
+    private String projectHeaderNotExistsMessage;
     @Value("${message.validation.project.notExits}")
     private String projectNotExistsMessage;
     @Value("${message.validation.project.dependent}")
     private String projectIdDependentMessage;
     @Value("${message.validation.project.code.alreadyExists}")
     private String projectCodeAlReadyExistMessage;
+    @Value("${message.validation.project.code.row.alreadyExists}")
+    private String projectCodeAlReadyExistRowMessage;
     @Value("${message.validation.project.Name.alreadyExists}")
     private String projectNameAlReadyExistMessage;
+    @Value("${message.validation.project.Name.row.alreadyExists}")
+    private String projectNameAlReadyExistRowMessage;
     @Value("${message.validation.project.file}")
     private String projectFileImportValidationMessage;
     @Value("${message.validation.project.file.name.empty}")
@@ -275,6 +281,4 @@ public class StatusCodeBundle {
     private String TestGroupFileImportValidationMessage;
     @Value("${message.validation.testGroup.file.name.empty}")
     private String TestGroupNameEmptyMessage;
-
-
 }
