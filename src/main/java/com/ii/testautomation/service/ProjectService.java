@@ -40,7 +40,9 @@ public interface ProjectService {
     List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
     public boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }
 

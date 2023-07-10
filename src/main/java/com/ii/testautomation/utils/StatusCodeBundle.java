@@ -36,14 +36,20 @@ public class StatusCodeBundle {
     @Value("${code.validation.project.dependent}")
     private String projectIdDependentCode;
     //Project Message
+    @Value("${message.validation.header.notExits}")
+    private String headerNotExistsMessage;
     @Value("${message.validation.project.notExits}")
     private String projectNotExistsMessage;
     @Value("${message.validation.project.dependent}")
     private String projectIdDependentMessage;
     @Value("${message.validation.project.code.alreadyExists}")
     private String projectCodeAlReadyExistMessage;
+    @Value("${message.validation.project.code.row.alreadyExists}")
+    private String projectCodeAlReadyExistRowMessage;
     @Value("${message.validation.project.Name.alreadyExists}")
     private String projectNameAlReadyExistMessage;
+    @Value("${message.validation.project.Name.row.alreadyExists}")
+    private String projectNameAlReadyExistRowMessage;
     @Value("${message.validation.project.file}")
     private String projectFileImportValidationMessage;
     @Value("${message.validation.project.file.name.empty}")
@@ -104,18 +110,44 @@ public class StatusCodeBundle {
     //MainModules
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
-
     @Value("${message.validation.mainModule.notExists}")
     private String mainModuleNotExistsMessage;
-
     @Value("${code.validation.project.alreadyExists}")
     private String AlreadyExistCode;
-
-    @Value("${message.failure.moduleidnotassignedwithMainmod}")
+    @Value("${message.failure.module.IdNotAssigned}")
     private String ModuleIdNotAssigned;
-
-    @Value("${Message.validation.IdAsignedwithAnotherTable}")
+    @Value("${Message.validation.module.IdAssignedWithAnotherTable}")
     private String IdAsignedwithanotherTable;
+    @Value("${message.success.mainModules.save}")
+    private String SuccessMessageInsert;
+    @Value("${message.success.mainModules.delete}")
+    private String SuccessMessageDelete;
+    @Value("${message.success.mainModules.update}")
+    private String SuccessUpdateMessage;
+    @Value("${message.success.mainModules.view}")
+    private String SuccessViewAllMessage;
+    @Value("${message.failure.mainModules.nameAlreadyExist}")
+    private String NameAlreadyExist;
+    @Value("${message.failure.mainModules.prefixAlreadyExist}")
+    private String PrefixAlreadyExist;
+    @Value("${message.failure.module.IdNotFound}")
+    private String ModuleIdNotFound;
+    @Value("${message.failure.mainModulesIdNotFound}")
+    private String MainIdnotFound;
+
+    /*
+    *
+=Main Module Successfully Updated
+=Main Module Successfully Deleted
+=Main Module Successfully View
+=Module Id Not Found
+=Module Id Does not Assigned in Main Modules
+=This Main Module Id Assign in Another Table
+=Prefix Already Exist
+=Main Module Name Already Exist
+=Main Module Id Not Found
+code.validation.mainModule.alreadyExists=30000
+    * */
 
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
@@ -127,16 +159,7 @@ public class StatusCodeBundle {
     @Value("${message.success.update.module}")
     private String updateModuleSuccessMessage;
 
-    @Value("${message.success.insertmain}")
-    private String SuccessMessageInsert;
-    @Value("${message.success.deletemain}")
-    private String SuccessMessageDelete;
-    @Value("${message.success.updatemain}")
-    private String SuccessUpdateMessage;
-    @Value("${message.success.viewallmain}")
-    private String SuccessViewAllMessage;
-
-    //Modules Message
+   //Modules Message
 
     @Value("${message.validation.module.name.alreadyExists}")
     private String moduleNameAllReadyExistsMessage;
@@ -144,16 +167,6 @@ public class StatusCodeBundle {
     private String saveModuleSuccessMessage;
     @Value("${message.validation.module.prefix.alreadyExists}")
     private String modulePrefixAllReadyExistsMessage;
-    @Value("${message.failure.alreadyexistname}")
-    private String NameAlreadyExist;
-    @Value("${message.failure.alreadyexistpreix}")
-    private String PrefixAlreadyExist;
-    @Value("${message.failure.noid}")
-    private String ModuleIdNotFound;
-    @Value("${message.failure.MainIdnotFound}")
-    private String MainIdnotFound;
-
-
     @Value("${message.validation.module.notExists}")
     private String moduleNotExistsMessage;
     @Value("${message.validation.module.notHaveProject}")
@@ -170,45 +183,37 @@ public class StatusCodeBundle {
     // Test Types Codes & Messages //
     @Value("${code.validation.testtype.alreadyExists}")
     private String TestTypeAlReadyExistCode;
-
     @Value("${code.validation.testtype.notExists}")
     private String TestTypeNotExistCode;
-
-    @Value("${message.failure.alreadyexistTestTypeid}")
+    @Value("${code.validation.testTypes.notExists}")
+    private String testTypesNotExistCode;
+    @Value("${message.failure.alreadyExistTestTypeId}")
     private String TestTypeIdAlReadyExistMessage;
-
-    @Value("${message.failure.alreadyexistTestTypename}")
+    @Value("${message.failure.alreadyExistTestTypename}")
     private String TestTypeNameAlReadyExistMessage;
-
-    @Value("${message.failure.TestTypeidNotFound}")
+    @Value("${message.failure.TestTypeIdNotFound}")
     private String TestTypeIdNotFoundMessage;
-
     @Value("${message.success.insertTestTypes}")
     private String insertTestTypesSuccessMessage;
-
     @Value("${message.success.updateTestTypes}")
     private String updateTestTypeSuccessMessage;
-
-    @Value("${message.success.viewTestTypeforId}")
+    @Value("${message.success.viewTestTypeForId}")
     private String viewTestTypeforIdSuccessMessage;
-
-    @Value("${message.success.viewallTestTypes}")
+    @Value("${message.success.viewAllTestTypes}")
     private String viewAllTestTypesSuccessMessage;
-
     @Value("${message.success.deleteTestTypes}")
     private String deleteTestTypesSuccessMessage;
+    @Value("${message.validation.testTypes.notExists}")
+    private String testTypesNotExistsMessage;
+
 
     // Bulk Code & Msg
-    @Value("${code.bulkimport.success}")
+    @Value("${message.bulkImport.success}")
     private String BulkImportCode;
-    @Value("${message.bulkimport.success}")
+    @Value("${message.bulkImport.success}")
     private String BulkImportMessage;
-
-    /*
-     = Module Id Does not Assigned in Main Modules
-
-     */
-
+    @Value("${message.bulkImport.failure}")
+    private String BulkImportFailureMessage;
 
     @Value("${message.validation.module.assigned}")
     private String getValidationModuleAssignedMessage;
@@ -240,13 +245,6 @@ public class StatusCodeBundle {
     @Value("${message.validation.testCase.assigned}")
     private String getValidationTestCaseAssignedMessage;
 
-    //TestTypes Code
-    @Value("${code.validation.testTypes.notExists}")
-    private String testTypesNotExistCode;
-    //TestType Message
-    @Value("${message.validation.testTypes.notExists}")
-    private String testTypesNotExistsMessage;
-
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
@@ -275,6 +273,4 @@ public class StatusCodeBundle {
     private String TestGroupFileImportValidationMessage;
     @Value("${message.validation.testGroup.file.name.empty}")
     private String TestGroupNameEmptyMessage;
-
-
 }

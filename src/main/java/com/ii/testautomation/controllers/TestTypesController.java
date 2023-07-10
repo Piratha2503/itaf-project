@@ -5,11 +5,13 @@ import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestTypesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -62,10 +67,7 @@ public class TestTypesController {
         return ResponseEntity.ok(new BaseResponse(
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getUpdateTestTypeSuccessMessage()));
-
-
-    }
+                statusCodeBundle.getUpdateTestTypeSuccessMessage())); }
 
     @DeleteMapping(EndpointURI.TESTTYPE_BY_ID)
     public ResponseEntity<Object> deleteTestTypeById(@PathVariable Long id) {
@@ -76,8 +78,7 @@ public class TestTypesController {
         testTypesService.deleteTestTypeById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getDeleteTestTypesSuccessMessage()));
-    }
+                statusCodeBundle.getDeleteTestTypesSuccessMessage()));}
 
     @GetMapping(EndpointURI.TESTTYPE_BY_ID)
     public ResponseEntity<Object> getTestTypeById(@PathVariable Long id) {
@@ -90,8 +91,7 @@ public class TestTypesController {
                 testTypesService.getTestTypeById(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getViewTestTypeforIdSuccessMessage()));
-    }
+                statusCodeBundle.getViewTestTypeforIdSuccessMessage()));}
 
     @GetMapping(EndpointURI.TESTTYPES_SEARCH)
     public ResponseEntity<Object> SearchTestTypesWithPagination(@RequestParam(name = "page") int page,
@@ -106,26 +106,57 @@ public class TestTypesController {
                 testTypesService.SearchTestTypesWithPagination(pageable, pagination, testTypesSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));
-    }
+                statusCodeBundle.getSuccessViewAllMessage()));}
 
-    @PostMapping("/test")
-    public ResponseEntity<Object> importEmployees(@RequestParam("file") MultipartFile file) throws IOException {
-       /* if (!employeeService.importEmployeesFromCsv(file))
-        {
+    @PostMapping(EndpointURI.TESTTYPE_IMPORT)
+    public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile) {
 
-            logger.info("Cannot Import Employee");
+        Map<String, List<Integer>> errorMessages = new HashMap<>();
+        List<TestTypesRequest> testTypesRequestList;
 
+        try {
+            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+                testTypesRequestList = testTypesService.csvProcess(multipartFile.getInputStream());
+
+            } else if (testTypesService.hasExcelFormat(multipartFile)) {
+                testTypesRequestList = testTypesService.excelProcess(multipartFile);
+            } else {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+            }
+
+            for (int rowIndex = 2; rowIndex <= testTypesRequestList.size() + 1; rowIndex++) {
+                TestTypesRequest testTypesRequest = testTypesRequestList.get(rowIndex - 2);
+
+                if (!Utils.isNotNullAndEmpty(testTypesRequest.getName())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
+                }
+                if (!Utils.isNotNullAndEmpty(testTypesRequest.getDescription())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
+                }
+                if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+                }
+            }
+
+            if (!errorMessages.isEmpty()) {
+                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(),
+                        statusCodeBundle.getBulkImportFailureMessage(),
+                        errorMessages));
+            } else {
+                for (TestTypesRequest testTypesRequest : testTypesRequestList) {
+                    testTypesService.saveTestTypes(testTypesRequest);
+                }
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                        statusCodeBundle.getCommonSuccessCode(),
+                        statusCodeBundle.getBulkImportMessage()));
+            }
+        } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getBulkImportFailureMessage()));
+        }
 
-                    validationFailureResponseCode.getEmployeecanNotImportCsvCode(),
-
-                    validationFailureResponseCode.getEmployeecanNotImportCsvMessage()));
-
-        }*/
-        testTypesService.importfromFile(file);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getInsertTestTypesSuccessMessage()));
     }
+
 }
