@@ -28,8 +28,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-public class ProjectController
-{
+public class ProjectController {
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -60,24 +59,25 @@ public class ProjectController
     public ResponseEntity<Object> importProjectFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<ProjectRequest> projectRequestList;
-        try
-        {
-            if (multipartFile.getOriginalFilename().endsWith(".csv"))
-            {
-                projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
-            }
-            else if (projectService.hasExcelFormat(multipartFile))
-            {
-                projectRequestList = projectService.excelToProjectRequest(multipartFile);
-            }
-            else
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+        try {
+            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+                if (!projectService.isCSVHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
+                }
+
+            } else if (projectService.hasExcelFormat(multipartFile)) {
+                if (!projectService.isExcelHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    projectRequestList = projectService.excelToProjectRequest(multipartFile);
+                }
+            } else {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
 
-            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++)
-            {
+            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
                 ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
 
                 if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
@@ -90,10 +90,10 @@ public class ProjectController
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
                 }
                 if (projectService.existByProjectName(projectRequest.getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistRowMessage(), rowIndex);
                 }
                 if (projectService.existByProjectCode(projectRequest.getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistRowMessage(), rowIndex);
                 }
             }
 
@@ -102,11 +102,8 @@ public class ProjectController
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getProjectFileImportValidationMessage(),
                         errorMessages));
-            }
-            else
-            {
-                for (ProjectRequest projectRequest : projectRequestList)
-                {
+            } else {
+                for (ProjectRequest projectRequest : projectRequestList) {
                     projectService.saveProject(projectRequest);
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
