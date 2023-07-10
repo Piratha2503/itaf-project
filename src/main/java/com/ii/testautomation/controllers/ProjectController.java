@@ -61,14 +61,20 @@ public class ProjectController {
         List<ProjectRequest> projectRequestList;
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
+                if (!projectService.isCSVHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), "check the header"));
+                } else {
+                    projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
+                }
             } else if (projectService.hasExcelFormat(multipartFile)) {
-                projectRequestList = projectService.excelToProjectRequest(multipartFile);
+                if (!projectService.isExcelHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), "check the header"));
+                } else {
+                    projectRequestList = projectService.excelToProjectRequest(multipartFile);
+                }
             } else {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-
             for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
                 ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
 
