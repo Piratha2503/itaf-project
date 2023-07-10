@@ -62,14 +62,14 @@ public class ProjectController {
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 if (!projectService.isCSVHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getProjectHeaderNotExistsMessage()));
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 } else {
                     projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
                 }
 
             } else if (projectService.hasExcelFormat(multipartFile)) {
                 if (!projectService.isExcelHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getProjectHeaderNotExistsMessage()));
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 } else {
                     projectRequestList = projectService.excelToProjectRequest(multipartFile);
                 }

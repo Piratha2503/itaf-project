@@ -36,8 +36,8 @@ public class StatusCodeBundle {
     @Value("${code.validation.project.dependent}")
     private String projectIdDependentCode;
     //Project Message
-    @Value("${message.validation.project.header.notExits}")
-    private String projectHeaderNotExistsMessage;
+    @Value("${message.validation.header.notExits}")
+    private String headerNotExistsMessage;
     @Value("${message.validation.project.notExits}")
     private String projectNotExistsMessage;
     @Value("${message.validation.project.dependent}")
