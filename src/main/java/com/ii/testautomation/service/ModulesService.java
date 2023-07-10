@@ -39,7 +39,7 @@ public interface ModulesService {
 
     public List<ModulesRequest> csvToModulesRequest(InputStream inputStream);
 
-    public List<ModulesRequest> excelToModulesRequest(MultipartFile multipartFile);
+    public List<ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
 
     public void addToErrorMessages (Map< String, List < Integer >> errorMessages, String key, int value);
 }

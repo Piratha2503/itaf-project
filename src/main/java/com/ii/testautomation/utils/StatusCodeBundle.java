@@ -143,9 +143,9 @@ public class StatusCodeBundle {
     //Modules Code
     //Modules Message
     @Value("${message.validation.module.file.prefix.empty}")
-    private String moduleNameEmptyMessage;
-    @Value("${message.validation.module.file.name.empty}")
     private String modulePrefixEmptyMessage;
+    @Value("${message.validation.module.file.name.empty}")
+    private String moduleNameEmptyMessage;
     @Value("${message.validation.module.name.alreadyExists}")
     private String moduleNameAlReadyExistsMessage;
     @Value("${message.success.save.module}")
@@ -213,6 +213,8 @@ public class StatusCodeBundle {
     @Value("${code.validation.testCases.alreadyExists}")
     private String testCasesAlreadyExistsCode;
     //TestCase Message
+    @Value("${message.validation.testcase.file.name.empty}")
+    private String testCaseNameEmptyMessage;
     @Value("${message.validation.testCases.notExists}")
     private String testCasesNotExistsMessage;
     @Value("${message.validation.testCases.name.alreadyExists}")
@@ -233,6 +235,12 @@ public class StatusCodeBundle {
     private String getTestCaseNotHaveSubModuleIdMessage;
     @Value("${message.validation.testCase.assigned}")
     private String getValidationTestCaseAssignedMessage;
+    @Value("${message.validation.testcase.file.error}")
+    private  String testCaseFileErrorMessage;
+    @Value("${message.validation.save.testcase}")
+    private  String testCaseValidationSaveMessage;
+    @Value(("${message.validation.testcase.notExists.subIdField}"))
+    private String testCaseSubModuleIdEmptyMessage;
 
     //TestTypes Code
     @Value("${code.validation.testTypes.notExists}")
