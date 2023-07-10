@@ -1,11 +1,13 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
+import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ModulesService;
@@ -13,14 +15,21 @@ import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin

@@ -28,10 +28,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TestGroupingServiceImpl implements TestGroupingService {
@@ -172,8 +169,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             for (CSVRecord csvRecord : csvRecords) {
                 TestGroupingRequest testGroupingRequest = new TestGroupingRequest();
                 testGroupingRequest.setName(csvRecord.get("name"));
-                testGroupingRequest.setTestCaseId(Long.parseLong(csvRecord.get("testCaseId")));
-                testGroupingRequest.setTestTypeId(Long.parseLong(csvRecord.get("testTypeId")));
+                testGroupingRequest.setTestCaseId(Long.parseLong(csvRecord.get("test_case_id")));
+                testGroupingRequest.setTestTypeId(Long.parseLong(csvRecord.get("test_type_id")));
                 testGroupingRequestList.add(testGroupingRequest);
             }
 
@@ -239,6 +236,44 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
+    }
+
+    @Override
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row headerRow = sheet.getRow(0);
+            String[] actualHeaders = new String[headerRow.getLastCellNum()];
+            for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+                Cell cell = headerRow.getCell(i);
+                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
+            }
+            String[] expectedHeader = {"name", "test_case_id", "test_type_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    @Override
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
+            String line = reader.readLine();
+            String[] actualHeaders = line.split(",");
+            for (int i = 0; i < actualHeaders.length; i++) {
+                actualHeaders[i] = actualHeaders[i].toLowerCase();
+            }
+            String[] expectedHeader = {"name", "test_case_id", "test_type_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 
