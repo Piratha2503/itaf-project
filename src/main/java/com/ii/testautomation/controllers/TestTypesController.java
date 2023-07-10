@@ -33,7 +33,7 @@ public class TestTypesController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-    @PostMapping(EndpointURI.TESTTYPE)
+    @PostMapping(EndpointURI.TEST_TYPE)
     public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(
@@ -49,7 +49,7 @@ public class TestTypesController {
 
     }
 
-    @PutMapping(EndpointURI.TESTTYPE)
+    @PutMapping(EndpointURI.TEST_TYPE)
     public ResponseEntity<Object> updateTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (!testTypesService.isExistsTestTypeById(testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(
@@ -69,7 +69,7 @@ public class TestTypesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateTestTypeSuccessMessage())); }
 
-    @DeleteMapping(EndpointURI.TESTTYPE_BY_ID)
+    @DeleteMapping(EndpointURI.TEST_TYPE_BY_ID)
     public ResponseEntity<Object> deleteTestTypeById(@PathVariable Long id) {
         if (!testTypesService.isExistsTestTypeById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -80,7 +80,7 @@ public class TestTypesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getDeleteTestTypesSuccessMessage()));}
 
-    @GetMapping(EndpointURI.TESTTYPE_BY_ID)
+    @GetMapping(EndpointURI.TEST_TYPE_BY_ID)
     public ResponseEntity<Object> getTestTypeById(@PathVariable Long id) {
         if (!testTypesService.isExistsTestTypeById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -93,7 +93,7 @@ public class TestTypesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getViewTestTypeforIdSuccessMessage()));}
 
-    @GetMapping(EndpointURI.TESTTYPES_SEARCH)
+    @GetMapping(EndpointURI.TEST_TYPES_SEARCH)
     public ResponseEntity<Object> SearchTestTypesWithPagination(@RequestParam(name = "page") int page,
                                                                 @RequestParam(name = "size") int size,
                                                                 @RequestParam(name = "direction") String direction,
@@ -108,7 +108,7 @@ public class TestTypesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));}
 
-    @PostMapping(EndpointURI.TESTTYPE_IMPORT)
+    @PostMapping(EndpointURI.TEST_TYPE_IMPORT)
     public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile) {
 
         Map<String, List<Integer>> errorMessages = new HashMap<>();

@@ -29,12 +29,13 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 public class MainModulesController {
+
     @Autowired
     private MainModulesService mainModulesService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-    @PostMapping(EndpointURI.MAINMODULE)
+    @PostMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
 
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
@@ -54,7 +55,7 @@ public class MainModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessMessageInsert()));}
 
-    @DeleteMapping(EndpointURI.MAINMODULE_BY_ID)
+    @DeleteMapping(EndpointURI.MAIN_MODULE_BY_ID)
     public ResponseEntity<Object> deleteMainModules(@PathVariable Long id) {
         if (!mainModulesService.isExistMainModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -71,7 +72,7 @@ public class MainModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessMessageDelete()));}
 
-    @PutMapping(EndpointURI.MAINMODULE)
+    @PutMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> updateMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
         if (!mainModulesService.isExistMainModulesId(mainModulesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -95,7 +96,7 @@ public class MainModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessUpdateMessage()));}
 
-    @GetMapping(EndpointURI.MAINMODULE_BY_ID)
+    @GetMapping(EndpointURI.MAIN_MODULE_BY_ID)
     public ResponseEntity<Object> getMainModulesByMainModuleId(@PathVariable Long id) {
         if (!mainModulesService.isExistMainModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -108,7 +109,7 @@ public class MainModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));}
 
-    @GetMapping(EndpointURI.MAINMODULE_BY_MODULEID)
+    @GetMapping(EndpointURI.MAIN_MODULE_BY_MODULE_ID)
     public ResponseEntity<Object> getMainModulesByModuleId(@PathVariable Long id) {
         if (!mainModulesService.isExistModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -125,22 +126,13 @@ public class MainModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));}
 
-    @GetMapping(EndpointURI.MAINMODULE_BY_NAME)
-    public ResponseEntity<Object> getMainModulesByName(@RequestParam("name") String name) {
-        if (!mainModulesService.isExistMainModulesName(name))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getMainModulesNotExistCode(), statusCodeBundle.getMainModuleNotExistsMessage()));
-
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.getByMainModulesName(name),
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));}
-
-    @GetMapping(EndpointURI.MAINMODULEPAGE)
+    @GetMapping(EndpointURI.MAIN_MODULE_PAGE)
     public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page,
                                                             @RequestParam(name = "size") int size,
                                                             @RequestParam(name = "direction") String direction,
                                                             @RequestParam(name = "sortField") String sortField,
-                                                            MainModuleSearch mainModuleSearch) {
+                                                            MainModuleSearch mainModuleSearch)
+    {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
 
@@ -149,7 +141,7 @@ public class MainModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSuccessViewAllMessage()));}
 
-    @PostMapping(EndpointURI.MAINMODULE_IMPORT)
+    @PostMapping(EndpointURI.MAIN_MODULE_IMPORT)
     public ResponseEntity<Object> importMainModules(@RequestParam MultipartFile multipartFile) {
 
         Map<String, List<Integer>> errorMessages = new HashMap<>();
@@ -197,4 +189,6 @@ public class MainModulesController {
         }
 
     }
+
+
 }
