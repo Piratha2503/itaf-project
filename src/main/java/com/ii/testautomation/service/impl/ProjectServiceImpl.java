@@ -179,43 +179,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         return columnMap;
     }
-    @Override
-    public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
-        try (InputStream inputStream = multipartFile.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
-            Sheet sheet = workbook.getSheetAt(0);
-            Row headerRow = sheet.getRow(0);
-            String[] actualHeaders = new String[headerRow.getLastCellNum()];
-            for (int i = 0; i < headerRow.getLastCellNum(); i++) {
-                Cell cell = headerRow.getCell(i);
-                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
-            }
-            String[] expectedHeader = {"code", "name", "description"};
-            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
-            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
-            return expectedHeaderSet.equals(actualHeaderSet);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-
-    @Override
-    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
-            String line = reader.readLine();
-            String[] actualHeaders = line.split(",");
-            for (int i = 0; i < actualHeaders.length; i++) {
-                actualHeaders[i] = actualHeaders[i].toLowerCase();
-            }
-            String[] expectedHeader = {"code", "name", "description"};
-            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
-            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
-            return expectedHeaderSet.equals(actualHeaderSet);
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
@@ -254,6 +217,7 @@ public class ProjectServiceImpl implements ProjectService {
             return false;
         }
     }
+
 
     @Override
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
