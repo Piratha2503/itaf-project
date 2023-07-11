@@ -121,13 +121,13 @@ public class StatusCodeBundle {
     @Value("${Message.validation.module.Id.AssignedWithAnotherTable}")
     private String IdAsignedwithanotherTable;
     @Value("${message.success.mainModules.save}")
-    private String SuccessMessageInsert;
+    private String SuccessMessageInsertMainModules;
     @Value("${message.success.mainModules.delete}")
-    private String SuccessMessageDelete;
+    private String SuccessMessageDeleteMainModules;
     @Value("${message.success.mainModules.update}")
-    private String SuccessUpdateMessage;
+    private String SuccessUpdateMessageMainModules;
     @Value("${message.success.mainModules.view}")
-    private String SuccessViewAllMessage;
+    private String SuccessViewAllMessageMainModules;
     @Value("${message.failure.mainModules.name.AlreadyExist}")
     private String NameAlreadyExist;
     @Value("${message.failure.mainModules.prefix.AlreadyExist}")
@@ -135,7 +135,7 @@ public class StatusCodeBundle {
     @Value("${message.failure.module.Id.NotFound}")
     private String ModuleIdNotFound;
     @Value("${message.failure.mainModulesId.NotFound}")
-    private String MainIdnotFound;
+    private String MainModulesIdNotFound;
 
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
@@ -195,15 +195,6 @@ public class StatusCodeBundle {
     private String deleteTestTypesSuccessMessage;
     @Value("${message.validation.testTypes.notExists}")
     private String testTypesNotExistsMessage;
-
-
-    // Bulk Code & Msg
-    @Value("${message.bulkImport.success}")
-    private String BulkImportCode;
-    @Value("${message.bulkImport.success}")
-    private String BulkImportMessage;
-    @Value("${message.bulkImport.failure}")
-    private String BulkImportFailureMessage;
 
     @Value("${message.validation.module.assigned}")
     private String getValidationModuleAssignedMessage;

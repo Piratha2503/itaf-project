@@ -106,7 +106,7 @@ public class TestTypesController {
                 testTypesService.SearchTestTypesWithPagination(pageable, pagination, testTypesSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));}
+                statusCodeBundle.getSuccessViewAllMessageMainModules()));}
 
     @PostMapping(EndpointURI.TEST_TYPE_IMPORT)
     public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile) {
@@ -141,7 +141,7 @@ public class TestTypesController {
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getBulkImportFailureMessage(),
+                        statusCodeBundle.getFileFailureMessage(),
                         errorMessages));
             } else {
                 for (TestTypesRequest testTypesRequest : testTypesRequestList) {
@@ -149,12 +149,12 @@ public class TestTypesController {
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getBulkImportMessage()));
+                        statusCodeBundle.getInsertTestTypesSuccessMessage()));
             }
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getBulkImportFailureMessage()));
+                    statusCodeBundle.getFileFailureMessage()));
         }
 
     }
