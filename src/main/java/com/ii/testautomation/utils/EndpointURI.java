@@ -26,7 +26,7 @@ public final class EndpointURI {
 
     // URLs for SubModules
     public static final String SUBMODULE = BASE_API_PATH + "subModules";
-    public static final String SUBMODULE_IMPORT = BASE_API_PATH + SUBMODULE + "import";
+    public static final String SUBMODULE_IMPORT = SUBMODULE + "/import";
     public static final String SUBMODULES_SEARCH = BASE_API_PATH + SEARCH + SLASH + "subModules";
     public static final String SUBMODULE_BY_ID = SUBMODULE + ID;
     public static final String SUBMODULE_BY_MAIN_MODULE_ID = SUBMODULE + "/mainModuleId" + ID;

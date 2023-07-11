@@ -70,9 +70,17 @@ public class SubModulesController {
         List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                subModulesRequestList = subModulesService.csvToSubModuleRequest(inputStream);
+                if (!subModulesService.isCSVHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    subModulesRequestList = subModulesService.csvToSubModuleRequest(multipartFile.getInputStream());
+                }
             } else if (subModulesService.hasExcelFormat(multipartFile)) {
-                subModulesRequestList = subModulesService.excelToSubModuleRequest(multipartFile);
+                if (!subModulesService.isExcelHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    subModulesRequestList = subModulesService.excelToSubModuleRequest(multipartFile);
+                }
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
