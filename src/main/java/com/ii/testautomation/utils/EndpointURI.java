@@ -7,7 +7,7 @@ public final class EndpointURI {
     private static final String BASE_API_PATH = "/api/v1/";
     private static final String SLASH = "/";
     private static final String SEARCH = "search";
-    private static final String SEARCHWITHPAGE = "page";
+    private static final String SEARCH_WITH_PAGE = "page";
     private static final String ID = "/{id}";
 
     // URLs for Project
@@ -19,7 +19,7 @@ public final class EndpointURI {
     // URL for Main Modules
     public static final String MAIN_MODULE = BASE_API_PATH + "Mainmodule";
     public static final String MAIN_MODULE_IMPORT = BASE_API_PATH + "import";
-    public static final String MAIN_MODULE_PAGE = BASE_API_PATH + SEARCHWITHPAGE + SLASH + "MainModules";
+    public static final String MAIN_MODULE_PAGE = BASE_API_PATH + SEARCH_WITH_PAGE + SLASH + "MainModules";
     public static final String MAIN_MODULE_BY_NAME = MAIN_MODULE + "/byname";
     public static final String MAIN_MODULE_BY_ID = MAIN_MODULE + ID;
     public static final String MAIN_MODULE_BY_MODULE_ID = BASE_API_PATH + "getByModuleId" + ID;
@@ -38,7 +38,7 @@ public final class EndpointURI {
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectId" + ID;
     // URLs for Test Types
 
-    public static final String TEST_TYPE = BASE_API_PATH + "Testtype";
+    public static final String TEST_TYPE = BASE_API_PATH + "testType";
     public static final String TEST_TYPE_IMPORT = BASE_API_PATH + TEST_TYPE + "import";
     public static final String TEST_TYPES_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testTypes";
     public static final String TEST_TYPE_BY_ID = TEST_TYPE + ID;
