@@ -40,6 +40,8 @@ public interface ModulesService {
     public List<ModulesRequest> csvToModulesRequest(InputStream inputStream);
 
     public List<ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
     public void addToErrorMessages (Map< String, List < Integer >> errorMessages, String key, int value);
 }

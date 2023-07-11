@@ -35,6 +35,8 @@ public interface TestCasesService {
     public List<TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
 
     public List<TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 

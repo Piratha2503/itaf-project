@@ -27,10 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TestCasesServiceImpl implements TestCasesService {
@@ -172,6 +169,43 @@ public class TestCasesServiceImpl implements TestCasesService {
             throw new RuntimeException("Failed to Parse Excel File: " + e.getMessage());
         }
         return testCaseRequestList;
+    }
+
+    @Override
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row headerRow = sheet.getRow(0);
+            String[] actualHeaders = new String[headerRow.getLastCellNum()];
+            for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+                Cell cell = headerRow.getCell(i);
+                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
+            }
+            String[] expectedHeader = {"description", "name", "submodule_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
+            String line = reader.readLine();
+            String[] actualHeaders = line.split(",");
+            for (int i = 0; i < actualHeaders.length; i++) {
+                actualHeaders[i] = actualHeaders[i].toLowerCase();
+            }
+            String[] expectedHeader = {"description", "name", "submodule_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

@@ -154,9 +154,19 @@ public class ModulesController {
         List<ModulesRequest> modulesRequestList = new ArrayList<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                modulesRequestList = modulesService.csvToModulesRequest(inputStream);
+                if(!modulesService.isCSVHeaderMatch(multipartFile)){
+                   return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
+                           statusCodeBundle.getHeaderNotExistsMessage()));
+                }else{
+                    modulesRequestList = modulesService.csvToModulesRequest(inputStream);
+                }
             } else if (modulesService.hasExcelFormat(multipartFile)) {
-                modulesRequestList = modulesService.excelToModuleRequest(multipartFile);
+                if(!modulesService.isExcelHeaderMatch(multipartFile)){
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+                            statusCodeBundle.getHeaderNotExistsMessage()));
+                }else{
+                    modulesRequestList = modulesService.excelToModuleRequest(multipartFile);
+                }
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));

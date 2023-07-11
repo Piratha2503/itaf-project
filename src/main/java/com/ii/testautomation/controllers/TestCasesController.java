@@ -88,9 +88,20 @@ public class TestCasesController {
         List<TestCaseRequest> testCaseRequestList;
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream());
+                if(!testCasesService.isCSVHeaderMatch(multipartFile)){
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                            statusCodeBundle.getFailureCode(),statusCodeBundle.getHeaderNotExistsMessage()));
+                }else{
+                    testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream());
+                }
+
             } else if (testCasesService.hasExcelFormat(multipartFile)) {
-                testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile);
+                if(!testCasesService.isExcelHeaderMatch(multipartFile)){
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                            statusCodeBundle.getFailureCode(),statusCodeBundle.getHeaderNotExistsMessage()));
+                }else{
+                    testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile);
+                }
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
