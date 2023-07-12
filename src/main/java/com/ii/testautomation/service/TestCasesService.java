@@ -5,8 +5,11 @@ import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface TestCasesService {
     public void saveTestCase(TestCaseRequest testCaseRequest);
@@ -26,4 +29,15 @@ public interface TestCasesService {
     public void DeleteTestCaseById(Long id);
 
     public boolean existsBySubModuleId(Long subModuleId);
+
+    public boolean hasExcelFormat(MultipartFile multipartFile);
+
+    public List<TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
+
+    public List<TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
 }
