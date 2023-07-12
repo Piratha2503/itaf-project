@@ -28,7 +28,8 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-public class MainModulesController {
+public class MainModulesController
+{
 
     @Autowired
     private MainModulesService mainModulesService;
@@ -155,6 +156,9 @@ public class MainModulesController {
 
                 mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());}
             else if (mainModulesService.hasExcelFormat(multipartFile)) {
+                if (mainModulesService.isExcelHeaderMatch(multipartFile))
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+
                 mainModulesRequestList = mainModulesService.excelProcess(multipartFile);}
             else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));}

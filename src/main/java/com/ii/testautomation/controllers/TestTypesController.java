@@ -122,6 +122,9 @@ public class TestTypesController {
                 testTypesRequestList = testTypesService.csvProcess(multipartFile.getInputStream());
 
             } else if (testTypesService.hasExcelFormat(multipartFile)) {
+                if (testTypesService.isExcelHeaderMatch(multipartFile))
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+
                 testTypesRequestList = testTypesService.excelProcess(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
