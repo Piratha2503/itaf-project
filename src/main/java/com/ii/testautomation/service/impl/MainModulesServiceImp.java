@@ -29,10 +29,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MainModulesServiceImp implements MainModulesService
@@ -97,8 +94,8 @@ public class MainModulesServiceImp implements MainModulesService
 
         return mainModulesResponseList;
     }
-    @Override
 
+    @Override
     // Search
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch)
     {
@@ -254,6 +251,25 @@ public class MainModulesServiceImp implements MainModulesService
         }
 
         return columnMap;
+    }
+    @Override
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row headerRow = sheet.getRow(0);
+            String[] actualHeaders = new String[headerRow.getLastCellNum()];
+            for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+                Cell cell = headerRow.getCell(i);
+                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
+            }
+            String[] expectedHeader = {"name", "prefix", "module_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
 

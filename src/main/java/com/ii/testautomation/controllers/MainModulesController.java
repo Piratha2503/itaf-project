@@ -66,7 +66,7 @@ public class MainModulesController {
         if (mainModulesService.isExistsSubmodulesByMainModule(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getIdAsignedwithanotherTable()));
+                    statusCodeBundle.getIdAssignedWithAnotherTable()));
 
         mainModulesService.deleteMainModules(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
@@ -150,6 +150,9 @@ public class MainModulesController {
 
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+                if (mainModulesService.isExcelHeaderMatch(multipartFile))
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+
                 mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());}
             else if (mainModulesService.hasExcelFormat(multipartFile)) {
                 mainModulesRequestList = mainModulesService.excelProcess(multipartFile);}

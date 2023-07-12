@@ -32,5 +32,5 @@ public interface TestTypesService
     public List<TestTypesRequest> csvProcess(InputStream inputStream);
     public List<TestTypesRequest> excelProcess(MultipartFile multipartFile);
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
-
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
 }

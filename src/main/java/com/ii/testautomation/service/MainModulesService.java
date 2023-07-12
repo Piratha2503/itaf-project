@@ -37,6 +37,7 @@ public interface MainModulesService
     public List<MainModulesRequest> csvProcess(InputStream inputStream);
     public List<MainModulesRequest> excelProcess(MultipartFile multipartFile);
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
 
 }

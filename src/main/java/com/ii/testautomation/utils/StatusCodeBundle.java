@@ -115,7 +115,7 @@ public class StatusCodeBundle {
     @Value("${message.failure.module.Id.NotAssigned}")
     private String ModuleIdNotAssigned;
     @Value("${Message.validation.module.Id.AssignedWithAnotherTable}")
-    private String IdAsignedwithanotherTable;
+    private String IdAssignedWithAnotherTable;
     @Value("${message.success.mainModules.save}")
     private String SuccessMessageInsertMainModules;
     @Value("${message.success.mainModules.delete}")
