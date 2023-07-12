@@ -89,10 +89,10 @@ public class ProjectController {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
                 }
                 if (projectService.existByProjectName(projectRequest.getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistRowMessage(), rowIndex);
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
                 }
                 if (projectService.existByProjectCode(projectRequest.getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistRowMessage(), rowIndex);
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
                 }
             }
 

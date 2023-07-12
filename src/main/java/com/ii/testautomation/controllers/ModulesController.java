@@ -1,6 +1,7 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
+import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;

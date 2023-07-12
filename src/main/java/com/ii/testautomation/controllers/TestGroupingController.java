@@ -70,9 +70,17 @@ public class TestGroupingController {
         List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             if (testGroupingService.hasCsvFormat(multipartFile)) {
-                testGroupingRequestList = testGroupingService.csvToTestGroupingRequest(multipartFile.getInputStream());
+                if (!testGroupingService.isCSVHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    testGroupingRequestList = testGroupingService.csvToTestGroupingRequest(multipartFile.getInputStream());
+                }
             } else if (testGroupingService.hasExcelFormat(multipartFile)) {
-                testGroupingRequestList = testGroupingService.excelToTestGroupingRequest(multipartFile);
+                if (!testGroupingService.isExcelHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    testGroupingRequestList = testGroupingService.excelToTestGroupingRequest(multipartFile);
+                }
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));

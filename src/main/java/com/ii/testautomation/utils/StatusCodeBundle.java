@@ -44,12 +44,8 @@ public class StatusCodeBundle {
     private String projectIdDependentMessage;
     @Value("${message.validation.project.code.alreadyExists}")
     private String projectCodeAlReadyExistMessage;
-    @Value("${message.validation.project.code.row.alreadyExists}")
-    private String projectCodeAlReadyExistRowMessage;
     @Value("${message.validation.project.Name.alreadyExists}")
     private String projectNameAlReadyExistMessage;
-    @Value("${message.validation.project.Name.row.alreadyExists}")
-    private String projectNameAlReadyExistRowMessage;
     @Value("${message.validation.project.file}")
     private String projectFileImportValidationMessage;
     @Value("${message.validation.project.file.name.empty}")
@@ -157,6 +153,9 @@ code.validation.mainModule.alreadyExists=30000
     //Modules Message
     @Value("${message.success.update.module}")
     private String updateModuleSuccessMessage;
+
+    //Modules Message
+
     @Value("${message.validation.module.file.prefix.empty}")
     private String modulePrefixEmptyMessage;
     @Value("${message.validation.module.file.name.empty}")
