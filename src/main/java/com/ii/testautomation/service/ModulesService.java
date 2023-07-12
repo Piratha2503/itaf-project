@@ -1,12 +1,16 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
+import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface ModulesService {
     public void saveModule(ModulesRequest modulesRequest);
@@ -31,4 +35,13 @@ public interface ModulesService {
 
     public boolean existsModuleByProjectId(Long projectId);
 
+    public boolean hasExcelFormat(MultipartFile multipartFile);
+
+    public List<ModulesRequest> csvToModulesRequest(InputStream inputStream);
+
+    public List<ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    public void addToErrorMessages (Map< String, List < Integer >> errorMessages, String key, int value);
 }
