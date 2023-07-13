@@ -103,7 +103,7 @@ public class TestGroupingController {
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getSubModuleFileImportValidationMessage(),
+                        statusCodeBundle.getTestGroupFileImportValidationMessage(),
                         errorMessages));
             } else {
                 for (TestGroupingRequest testGroupingRequest : testGroupingRequestList) {
