@@ -191,12 +191,6 @@ public class ModulesController {
                 }
             }
             if (!errorMessages.isEmpty()) {
-                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getSubModuleFileImportValidationMessage(),
-                        errorMessages));
-            }
-            if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getModuleFileErrorMessage(), errorMessages));
             } else {

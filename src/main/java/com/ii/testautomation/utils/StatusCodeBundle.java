@@ -31,8 +31,6 @@ public class StatusCodeBundle {
     private String projectAlReadyExistCode;
     @Value("${code.validation.project.notExists}")
     private String projectNotExistCode;
-    @Value("${code.validation.project.file.empty}")
-    private String projectFileEmptyCode;
     @Value("${code.validation.project.dependent}")
     private String projectIdDependentCode;
     //Project Message
