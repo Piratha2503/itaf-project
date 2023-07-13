@@ -94,7 +94,7 @@ public class ModulesController {
         }
         if (mainModulesService.existsMainModuleByModuleId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(), statusCodeBundle.getGetValidationModuleAssignedMessage()));
+                    statusCodeBundle.getModuleDependentCode(), statusCodeBundle.getGetValidationModuleAssignedMessage()));
         }
         modulesService.deleteModuleById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
@@ -189,12 +189,6 @@ public class ModulesController {
                 if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(), rowIndex);
                 }
-            }
-            if (!errorMessages.isEmpty()) {
-                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getSubModuleFileImportValidationMessage(),
-                        errorMessages));
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),

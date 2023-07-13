@@ -148,6 +148,8 @@ code.validation.mainModule.alreadyExists=30000
     private String moduleAlReadyExistsCode;
     @Value("${code.validation.module.notExists}")
     private String moduleNotExistsCode;
+    @Value("${code.validation.module.dependent}")
+    private String moduleDependentCode;
     //Modules Message
     @Value("${message.success.update.module}")
     private String updateModuleSuccessMessage;
@@ -225,6 +227,8 @@ code.validation.mainModule.alreadyExists=30000
     private String testCasesNotExistCode;
     @Value("${code.validation.testCases.alreadyExists}")
     private String testCasesAlreadyExistsCode;
+    @Value("${code.validation.testcases.dependent}")
+    private String testCasesDependentCode;
     //TestCase Message
     @Value("${message.validation.testcase.file.name.empty}")
     private String testCaseNameEmptyMessage;
