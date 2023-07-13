@@ -11,27 +11,33 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-public interface TestTypesService
-{
-    // CRUD Functions
+public interface TestTypesService {
+
     public void saveTestTypes(TestTypesRequest testTypesRequest);
+
     public void deleteTestTypeById(Long id);
 
-    // Get Functions
     public TestTypesResponse getTestTypeById(Long id);
+
     public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
 
-     // Checking Functions
     public boolean isExistsTestTypeByName(String name);
+
     public boolean isExistsTestTypeById(Long id);
+
     public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
+
     public boolean existsByTestTypesId(Long id);
 
-    // Bulk Import
     public boolean hasExcelFormat(MultipartFile multipartFile);
+
     public List<TestTypesRequest> csvProcess(InputStream inputStream);
+
     public List<TestTypesRequest> excelProcess(MultipartFile multipartFile);
+
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
     public boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }

@@ -166,6 +166,8 @@ public class MainModulesController {
             for (int rowIndex = 2; rowIndex <= mainModulesRequestList.size() + 1; rowIndex++) {
                 MainModulesRequest mainModulesRequest = mainModulesRequestList.get(rowIndex - 2);
 
+                if (mainModulesRequestList.contains(mainModulesRequest.getName()))
+
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getName())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
                 }
