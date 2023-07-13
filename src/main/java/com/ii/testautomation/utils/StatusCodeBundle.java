@@ -267,8 +267,6 @@ code.validation.mainModule.alreadyExists=30000
     private String testCaseFileErrorMessage;
     @Value("${message.validation.save.testcase}")
     private String testCaseValidationSaveMessage;
-    @Value(("${message.validation.testcase.notExists.subIdField}"))
-    private String testCaseSubModuleIdEmptyMessage;
     @Value("${message.validation.testcase.name.duplicate}")
     private String testCaseNameDuplicateMessage;
     //TestGrouping Code

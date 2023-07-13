@@ -176,7 +176,7 @@ public class ModulesController {
                 if (!Utils.isNotNullAndEmpty(modulesRequest.getName())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
                 } else if (modulesNames.contains(modulesRequest.getName())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameDuplicateMessage(), rowIndex);
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameDuplicateMessage(), rowIndex);
                 } else {
                     modulesNames.add(modulesRequest.getName());
                 }
