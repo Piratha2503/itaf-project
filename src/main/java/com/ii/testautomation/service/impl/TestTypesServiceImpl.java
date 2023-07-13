@@ -181,6 +181,24 @@ public class TestTypesServiceImpl implements TestTypesService
             return false;
         }
     }
+
+    @Override
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
+            String line = reader.readLine();
+            String[] actualHeaders = line.split(",");
+            for (int i = 0; i < actualHeaders.length; i++) {
+                actualHeaders[i] = actualHeaders[i].toLowerCase();
+            }
+            String[] expectedHeader = {"name", "description"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 

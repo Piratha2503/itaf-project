@@ -30,7 +30,6 @@ import java.util.Map;
 @CrossOrigin
 public class MainModulesController
 {
-
     @Autowired
     private MainModulesService mainModulesService;
     @Autowired
@@ -58,7 +57,8 @@ public class MainModulesController
                 statusCodeBundle.getSuccessMessageInsertMainModules()));}
 
     @DeleteMapping(EndpointURI.MAIN_MODULE_BY_ID)
-    public ResponseEntity<Object> deleteMainModules(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteMainModules(@PathVariable Long id)
+    {
         if (!mainModulesService.isExistMainModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
@@ -75,7 +75,8 @@ public class MainModulesController
                 statusCodeBundle.getSuccessMessageDeleteMainModules()));}
 
     @PutMapping(EndpointURI.MAIN_MODULE)
-    public ResponseEntity<Object> updateMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
+    public ResponseEntity<Object> updateMainModules(@RequestBody MainModulesRequest mainModulesRequest)
+    {
         if (!mainModulesService.isExistMainModulesId(mainModulesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
@@ -99,7 +100,8 @@ public class MainModulesController
                 statusCodeBundle.getSuccessUpdateMessageMainModules()));}
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_ID)
-    public ResponseEntity<Object> getMainModulesByMainModuleId(@PathVariable Long id) {
+    public ResponseEntity<Object> getMainModulesByMainModuleId(@PathVariable Long id)
+    {
         if (!mainModulesService.isExistMainModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
@@ -112,7 +114,8 @@ public class MainModulesController
                 statusCodeBundle.getSuccessViewAllMessageMainModules()));}
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_MODULE_ID)
-    public ResponseEntity<Object> getMainModulesByModuleId(@PathVariable Long id) {
+    public ResponseEntity<Object> getMainModulesByModuleId(@PathVariable Long id)
+    {
         if (!mainModulesService.isExistModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
@@ -144,21 +147,20 @@ public class MainModulesController
                 statusCodeBundle.getSuccessViewAllMessageMainModules()));}
 
     @PostMapping(EndpointURI.MAIN_MODULE_IMPORT)
-    public ResponseEntity<Object> importMainModules(@RequestParam MultipartFile multipartFile) {
+    public ResponseEntity<Object> importMainModules(@RequestParam MultipartFile multipartFile)
+    {
 
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<MainModulesRequest> mainModulesRequestList;
 
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if (mainModulesService.isExcelHeaderMatch(multipartFile))
+                if (mainModulesService.isCSVHeaderMatch(multipartFile))
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-
                 mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());}
             else if (mainModulesService.hasExcelFormat(multipartFile)) {
                 if (mainModulesService.isExcelHeaderMatch(multipartFile))
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-
                 mainModulesRequestList = mainModulesService.excelProcess(multipartFile);}
             else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));}
@@ -180,7 +182,7 @@ public class MainModulesController
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getFileFailureMessage(),
+                        statusCodeBundle.getMainModulesNotSavedMessage(),
                         errorMessages));
             } else {
                 for (MainModulesRequest mainModulesRequest : mainModulesRequestList) {

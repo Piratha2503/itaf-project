@@ -153,11 +153,13 @@ public class MainModulesServiceImp implements MainModulesService
     public boolean existsMainModuleByModuleId(Long id) {return mainModulesRepository.existsByModulesId(id);}
 
     @Override
-    public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId) {
+    public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId)
+    {
         return mainModulesRepository.existsByNameIgnoreCaseAndIdNot(mainModuleName, mainModuleId);
     }
     @Override
-    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
+    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId)
+    {
         return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix,mainModuleId);
     }
 
@@ -227,6 +229,42 @@ public class MainModulesServiceImp implements MainModulesService
         errorMessages.put(key, errorList);
     }
 
+    @Override
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row headerRow = sheet.getRow(0);
+            String[] actualHeaders = new String[headerRow.getLastCellNum()];
+            for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+                Cell cell = headerRow.getCell(i);
+                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
+            }
+            String[] expectedHeader = {"name", "prefix", "module_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    @Override
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
+            String line = reader.readLine();
+            String[] actualHeaders = line.split(",");
+            for (int i = 0; i < actualHeaders.length; i++) {
+                actualHeaders[i] = actualHeaders[i].toLowerCase();
+            }
+            String[] expectedHeader = {"name", "prefix", "module_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;
@@ -251,25 +289,6 @@ public class MainModulesServiceImp implements MainModulesService
         }
 
         return columnMap;
-    }
-    @Override
-    public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
-        try (InputStream inputStream = multipartFile.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
-            Sheet sheet = workbook.getSheetAt(0);
-            Row headerRow = sheet.getRow(0);
-            String[] actualHeaders = new String[headerRow.getLastCellNum()];
-            for (int i = 0; i < headerRow.getLastCellNum(); i++) {
-                Cell cell = headerRow.getCell(i);
-                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
-            }
-            String[] expectedHeader = {"name", "prefix", "module_id"};
-            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
-            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
-            return expectedHeaderSet.equals(actualHeaderSet);
-        } catch (Exception e) {
-            return false;
-        }
     }
 }
 

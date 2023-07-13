@@ -17,7 +17,6 @@ public class StatusCodeBundle {
     // Common Success code
     @Value("${code.success.common}")
     private String commonSuccessCode;
-
     @Value("${code.failure.common}")
     private String failureCode;
     @Value("${code.failure.file}")
@@ -132,6 +131,8 @@ public class StatusCodeBundle {
     private String ModuleIdNotFound;
     @Value("${message.failure.mainModulesId.NotFound}")
     private String MainModulesIdNotFound;
+    @Value("${message.validation.NotSave.mainModules}")
+    private String mainModulesNotSavedMessage;
 
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
@@ -143,7 +144,6 @@ public class StatusCodeBundle {
     private String updateModuleSuccessMessage;
 
     //Modules Message
-
     @Value("${message.validation.module.file.prefix.empty}")
     private String modulePrefixEmptyMessage;
     @Value("${message.validation.module.file.name.empty}")
@@ -178,7 +178,7 @@ public class StatusCodeBundle {
     // Test Types Codes
     @Value("${code.validation.testType.alreadyExists}")
     private String TestTypeAlReadyExistCode;
-    @Value("${code.validation.testType.notExists}")
+    @Value("${code.validation.testTypes.notExists}")
     private String TestTypeNotExistCode;
     @Value("${code.validation.testTypes.notExists}")
     private String testTypesNotExistCode;
@@ -202,6 +202,8 @@ public class StatusCodeBundle {
     private String deleteTestTypesSuccessMessage;
     @Value("${message.validation.testTypes.notExists}")
     private String testTypesNotExistsMessage;
+    @Value("${message.validation.NotSave.TestTypes}")
+    private String testTypesNotSavedMessage;
 
    //TestCases code
     @Value("${code.validation.testCases.notExists}")

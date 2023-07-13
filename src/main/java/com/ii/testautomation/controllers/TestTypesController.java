@@ -122,7 +122,7 @@ public class TestTypesController {
                 testTypesRequestList = testTypesService.csvProcess(multipartFile.getInputStream());
 
             } else if (testTypesService.hasExcelFormat(multipartFile)) {
-                if (testTypesService.isExcelHeaderMatch(multipartFile))
+                if (testTypesService.isCSVHeaderMatch(multipartFile))
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
 
                 testTypesRequestList = testTypesService.excelProcess(multipartFile);
@@ -147,7 +147,7 @@ public class TestTypesController {
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getFileFailureMessage(),
+                        statusCodeBundle.getTestTypesNotSavedMessage(),
                         errorMessages));
             } else {
                 for (TestTypesRequest testTypesRequest : testTypesRequestList) {

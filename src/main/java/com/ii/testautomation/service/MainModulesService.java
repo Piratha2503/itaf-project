@@ -40,4 +40,5 @@ public interface MainModulesService
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
 
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }
