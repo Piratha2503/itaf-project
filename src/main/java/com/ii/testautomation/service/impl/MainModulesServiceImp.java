@@ -62,7 +62,6 @@ public class MainModulesServiceImp implements MainModulesService {
         BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
-
     @Override
     public List<MainModulesResponse> getMainModulesByModuleId(Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
@@ -76,7 +75,6 @@ public class MainModulesServiceImp implements MainModulesService {
 
         return mainModulesResponseList;
     }
-
     @Override
     public List<MainModulesResponse> getByMainModulesName(String name) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
@@ -120,27 +118,22 @@ public class MainModulesServiceImp implements MainModulesService {
     public boolean isExistModulesId(Long id) {
         return modulesRepository.existsById(id);
     }
-
     @Override
     public boolean isExistMainModulesName(String name) {
         return mainModulesRepository.existsByNameIgnoreCase(name);
     }
-
     @Override
     public boolean isExistPrefix(String prefix) {
         return mainModulesRepository.existsByPrefix(prefix);
     }
-
     @Override
     public boolean isExistMainModulesId(Long id) {
         return mainModulesRepository.existsById(id);
     }
-
     @Override
     public boolean isExistsSubmodulesByMainModule(Long id) {
         return subModulesRepository.existsByMainModuleId(id);
     }
-
     @Override
     public boolean existsMainModuleByModuleId(Long id) {
         return mainModulesRepository.existsByModulesId(id);
@@ -150,7 +143,6 @@ public class MainModulesServiceImp implements MainModulesService {
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId) {
         return mainModulesRepository.existsByNameIgnoreCaseAndIdNot(mainModuleName, mainModuleId);
     }
-
     @Override
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
         return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix, mainModuleId);
@@ -167,7 +159,6 @@ public class MainModulesServiceImp implements MainModulesService {
             return false;
         }
     }
-
     @Override
     public List<MainModulesRequest> csvProcess(InputStream inputStream) {
         List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
@@ -189,7 +180,6 @@ public class MainModulesServiceImp implements MainModulesService {
         }
         return mainModulesRequestList;
     }
-
     @Override
     public List<MainModulesRequest> excelProcess(MultipartFile multipartFile) {
         List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
@@ -213,7 +203,6 @@ public class MainModulesServiceImp implements MainModulesService {
         }
         return mainModulesRequestList;
     }
-
     @Override
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
         List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
@@ -265,7 +254,6 @@ public class MainModulesServiceImp implements MainModulesService {
         cell.setCellType(CellType.STRING);
         return cell.getStringCellValue();
     }
-
     private Long getLongCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;
@@ -273,7 +261,6 @@ public class MainModulesServiceImp implements MainModulesService {
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
     }
-
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 
