@@ -64,6 +64,11 @@ public class StatusCodeBundle {
     private String deleteProjectSuccessMessage;
     @Value("${message.validation.save.project}")
     private String saveProjectValidationMessage;
+    @Value("${message.validation.project.name.duplicate}")
+    private String projectNameDuplicateMessage;
+    @Value("${message.validation.project.code.duplicate}")
+    private String projectCodeDuplicateMessage;
+
     //SubModules Code
     @Value("${code.validation.subModules.alreadyExists}")
     private String subModulesAlReadyExistCode;
@@ -100,7 +105,10 @@ public class StatusCodeBundle {
     private String getSubModuleNotHaveMainModuleId;
     @Value("${message.validation.subModules.dependent}")
     private String subModulesDependentMessage;
-
+    @Value("${message.validation.subModule.name.duplicate}")
+    private String subModuleNameDuplicateMessage;
+    @Value("${message.validation.subModule.prefix.duplicate}")
+    private String subModulePrefixDuplicateMessage;
     //MainModules
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
@@ -283,4 +291,6 @@ code.validation.mainModule.alreadyExists=30000
     private String TestGroupFileImportValidationMessage;
     @Value("${message.validation.testGroup.file.name.empty}")
     private String TestGroupNameEmptyMessage;
+    @Value("${message.validation.testGrouping.name.duplicate}")
+    private String testGroupingNameDuplicateMessage;
 }

@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -68,6 +65,7 @@ public class TestGroupingController {
     public ResponseEntity<Object> importTestGroupingFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
+        Set<String> testGroupingNames = new HashSet<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             if (testGroupingService.hasCsvFormat(multipartFile)) {
                 if (!testGroupingService.isCSVHeaderMatch(multipartFile)) {
@@ -89,6 +87,10 @@ public class TestGroupingController {
                 TestGroupingRequest testGroupingRequest = testGroupingRequestList.get(rowIndex - 2);
                 if (!Utils.isNotNullAndEmpty(testGroupingRequest.getName())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupNameEmptyMessage(), rowIndex);
+                } else if (testGroupingNames.contains(testGroupingRequest.getName())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameDuplicateMessage(), rowIndex);
+                } else {
+                    testGroupingNames.add(testGroupingRequest.getName());
                 }
                 if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), rowIndex);

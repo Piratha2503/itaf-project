@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -68,6 +65,8 @@ public class SubModulesController {
     public ResponseEntity<Object> importSubModuleFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
+        Set<String> subModuleNames = new HashSet<>();
+        Set<String> subModulePrefixes = new HashSet<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 if (!subModulesService.isCSVHeaderMatch(multipartFile)) {
@@ -90,9 +89,17 @@ public class SubModulesController {
 
                 if (!Utils.isNotNullAndEmpty(subModulesRequest.getName())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNameEmptyMessage(), rowIndex);
+                } else if (subModuleNames.contains(subModulesRequest.getName())) {
+                    subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNameDuplicateMessage(), rowIndex);
+                } else {
+                    subModuleNames.add(subModulesRequest.getName());
                 }
                 if (!Utils.isNotNullAndEmpty(subModulesRequest.getPrefix())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixEmptyMessage(), rowIndex);
+                } else if (subModulePrefixes.contains(subModulesRequest.getPrefix())) {
+                    subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixDuplicateMessage(), rowIndex);
+                } else {
+                    subModulePrefixes.add(subModulesRequest.getName());
                 }
                 if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixAlReadyExistMessage(), rowIndex);

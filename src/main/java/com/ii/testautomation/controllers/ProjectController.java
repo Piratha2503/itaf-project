@@ -22,9 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -59,6 +57,8 @@ public class ProjectController {
     public ResponseEntity<Object> importProjectFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<ProjectRequest> projectRequestList;
+        Set<String> projectNames = new HashSet<>();
+        Set<String> projectCodes = new HashSet<>();
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 if (!projectService.isCSVHeaderMatch(multipartFile)) {
@@ -66,7 +66,6 @@ public class ProjectController {
                 } else {
                     projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
                 }
-
             } else if (projectService.hasExcelFormat(multipartFile)) {
                 if (!projectService.isExcelHeaderMatch(multipartFile)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
@@ -76,21 +75,34 @@ public class ProjectController {
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
+
             for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
                 ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
 
                 if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
+                } else if (projectNames.contains(projectRequest.getName())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameDuplicateMessage(), rowIndex);
+                } else {
+                    projectNames.add(projectRequest.getName());
                 }
+
                 if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
+                } else if (projectCodes.contains(projectRequest.getCode())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeDuplicateMessage(), rowIndex);
+                } else {
+                    projectCodes.add(projectRequest.getCode());
                 }
+
                 if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
                 }
+
                 if (projectService.existByProjectName(projectRequest.getName())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
                 }
+
                 if (projectService.existByProjectCode(projectRequest.getCode())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
                 }
@@ -115,6 +127,68 @@ public class ProjectController {
                     statusCodeBundle.getSaveProjectValidationMessage()));
         }
     }
+
+//    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
+//    public ResponseEntity<Object> importProjectFile(@RequestParam MultipartFile multipartFile) {
+//        Map<String, List<Integer>> errorMessages = new HashMap<>();
+//        List<ProjectRequest> projectRequestList;
+//        try {
+//            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+//                if (!projectService.isCSVHeaderMatch(multipartFile)) {
+//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+//                } else {
+//                    projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
+//                }
+//
+//            } else if (projectService.hasExcelFormat(multipartFile)) {
+//                if (!projectService.isExcelHeaderMatch(multipartFile)) {
+//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+//                } else {
+//                    projectRequestList = projectService.excelToProjectRequest(multipartFile);
+//                }
+//            } else {
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+//            }
+//            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
+//                ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
+//
+//                if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
+//                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
+//                }
+//                if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
+//                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
+//                }
+//                if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
+//                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
+//                }
+//                if (projectService.existByProjectName(projectRequest.getName())) {
+//                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+//                }
+//                if (projectService.existByProjectCode(projectRequest.getCode())) {
+//                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
+//                }
+//
+//            }
+//
+//            if (!errorMessages.isEmpty()) {
+//                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
+//                        statusCodeBundle.getFailureCode(),
+//                        statusCodeBundle.getProjectFileImportValidationMessage(),
+//                        errorMessages));
+//            } else {
+//                for (ProjectRequest projectRequest : projectRequestList) {
+//                    projectService.saveProject(projectRequest);
+//                }
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+//                        statusCodeBundle.getCommonSuccessCode(),
+//                        statusCodeBundle.getSaveProjectSuccessMessage()));
+//            }
+//        } catch (IOException e) {
+//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                    statusCodeBundle.getFailureCode(),
+//                    statusCodeBundle.getSaveProjectValidationMessage()));
+//        }
+//    }
 
 
     @PutMapping(value = EndpointURI.PROJECT)
@@ -155,8 +229,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllProjectSuccessMessage()));
     }
-
-
 
 
     @GetMapping(value = EndpointURI.PROJECT_BY_ID)
