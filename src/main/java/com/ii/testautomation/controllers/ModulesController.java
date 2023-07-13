@@ -94,7 +94,7 @@ public class ModulesController {
         }
         if (mainModulesService.existsMainModuleByModuleId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(), statusCodeBundle.getGetValidationModuleAssignedMessage()));
+                    statusCodeBundle.getModuleDependentCode(), statusCodeBundle.getGetValidationModuleAssignedMessage()));
         }
         modulesService.deleteModuleById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
