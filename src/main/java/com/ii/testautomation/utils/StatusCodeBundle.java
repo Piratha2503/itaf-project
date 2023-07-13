@@ -194,7 +194,10 @@ code.validation.mainModule.alreadyExists=30000
     private String moduleFileErrorMessage;
     @Value("${message.validation.module.file.projectId.empty}")
     private String moduleProjectIdEmptyMessage;
-
+    @Value("${message.validation.module.name.duplicate}")
+    private String moduleNameDuplicateMessage;
+    @Value("${message.validation.module.prefix.duplicate}")
+    private String modulePrefixDuplicateMessage;
     // Test Types Codes & Messages //
     @Value("${code.validation.testtype.alreadyExists}")
     private String TestTypeAlReadyExistCode;
@@ -266,7 +269,8 @@ code.validation.mainModule.alreadyExists=30000
     private String testCaseValidationSaveMessage;
     @Value(("${message.validation.testcase.notExists.subIdField}"))
     private String testCaseSubModuleIdEmptyMessage;
-
+    @Value("${message.validation.testcase.name.duplicate}")
+    private String testCaseNameDuplicateMessage;
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;

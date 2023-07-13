@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -86,20 +84,21 @@ public class TestCasesController {
     public ResponseEntity<Object> testCaseImport(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<TestCaseRequest> testCaseRequestList;
+        Set<String> testCasesNames = new HashSet<>();
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if(!testCasesService.isCSVHeaderMatch(multipartFile)){
+                if (!testCasesService.isCSVHeaderMatch(multipartFile)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                            statusCodeBundle.getFailureCode(),statusCodeBundle.getHeaderNotExistsMessage()));
-                }else{
+                            statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
                     testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream());
                 }
 
             } else if (testCasesService.hasExcelFormat(multipartFile)) {
-                if(!testCasesService.isExcelHeaderMatch(multipartFile)){
+                if (!testCasesService.isExcelHeaderMatch(multipartFile)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                            statusCodeBundle.getFailureCode(),statusCodeBundle.getHeaderNotExistsMessage()));
-                }else{
+                            statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
                     testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile);
                 }
             } else {
@@ -110,6 +109,10 @@ public class TestCasesController {
                 TestCaseRequest testCaseRequest = testCaseRequestList.get(rowIndex - 2);
                 if (!Utils.isNotNullAndEmpty(testCaseRequest.getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), rowIndex);
+                } else if (testCasesNames.contains(testCaseRequest.getName())) {
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameDuplicateMessage(), rowIndex);
+                } else {
+                    testCasesNames.add(testCaseRequest.getName());
                 }
                 if (testCasesService.existsByTestCasesName(testCaseRequest.getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), rowIndex);
