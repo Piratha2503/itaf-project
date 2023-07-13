@@ -32,8 +32,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 @Service
-public class MainModulesServiceImp implements MainModulesService
-{
+public class MainModulesServiceImp implements MainModulesService {
     @Autowired
     private MainModulesRepository mainModulesRepository;
     @Autowired
@@ -43,52 +42,49 @@ public class MainModulesServiceImp implements MainModulesService
 
     // CRUD
     @Override
-    public void saveMainModules(MainModulesRequest mainModulesRequest)
-    {
+    public void saveMainModules(MainModulesRequest mainModulesRequest) {
         MainModules mainModules = new MainModules();
         Modules modules1 = modulesRepository.findById(mainModulesRequest.getModuleId()).get();
         mainModules.setModules(modules1);
-        BeanUtils.copyProperties(mainModulesRequest,mainModules);
+        BeanUtils.copyProperties(mainModulesRequest, mainModules);
         mainModulesRepository.save(mainModules);
     }
-    public void deleteMainModules(Long id)
-    {
+
+    public void deleteMainModules(Long id) {
         mainModulesRepository.deleteById(id);
     }
+
     @Override
-    public MainModulesResponse getByMainModulesId(Long id)
-    {
+    public MainModulesResponse getByMainModulesId(Long id) {
         MainModulesResponse mainModulesResponse = new MainModulesResponse();
         MainModules mainModules = mainModulesRepository.findById(id).get();
         mainModulesResponse.setModules(mainModules.getModules());
-        BeanUtils.copyProperties(mainModules,mainModulesResponse);
+        BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
+
     @Override
-    public List<MainModulesResponse> getMainModulesByModuleId(Long id)
-    {
+    public List<MainModulesResponse> getMainModulesByModuleId(Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(id);
 
-        for (MainModules mainModules : mainModulesList)
-        {
-            MainModulesResponse mainModulesResponse =new MainModulesResponse();
-            BeanUtils.copyProperties(mainModules,mainModulesResponse);
+        for (MainModules mainModules : mainModulesList) {
+            MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
 
         return mainModulesResponseList;
     }
+
     @Override
-    public List<MainModulesResponse> getByMainModulesName(String name)
-    {
+    public List<MainModulesResponse> getByMainModulesName(String name) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         List<MainModules> mainModulesList = mainModulesRepository.findAllByNameIgnoreCase(name);
 
-        for (MainModules mainModules: mainModulesList)
-        {
+        for (MainModules mainModules : mainModulesList) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
-            BeanUtils.copyProperties(mainModules,mainModulesResponse);
+            BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
 
@@ -97,15 +93,12 @@ public class MainModulesServiceImp implements MainModulesService
 
     @Override
     // Search
-    public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch)
-    {
+    public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (Utils.isNotNullAndEmpty(mainModuleSearch.getName()))
-        {
+        if (Utils.isNotNullAndEmpty(mainModuleSearch.getName())) {
             booleanBuilder.and(QMainModules.mainModules.name.containsIgnoreCase(mainModuleSearch.getName()));
         }
-        if (Utils.isNotNullAndEmpty(mainModuleSearch.getPrefix()))
-        {
+        if (Utils.isNotNullAndEmpty(mainModuleSearch.getPrefix())) {
             booleanBuilder.and(QMainModules.mainModules.prefix.containsIgnoreCase(mainModuleSearch.getPrefix()));
         }
 
@@ -114,8 +107,7 @@ public class MainModulesServiceImp implements MainModulesService
 
         pagination.setTotalRecords(mainModulesPage.getTotalElements());
         pagination.setPageSize(mainModulesPage.getTotalPages());
-        for (MainModules mainModules : mainModulesPage)
-        {
+        for (MainModules mainModules : mainModulesPage) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
@@ -125,40 +117,43 @@ public class MainModulesServiceImp implements MainModulesService
 
     // Checking Functions
     @Override
-    public boolean isExistModulesId(Long id)
-    {
+    public boolean isExistModulesId(Long id) {
         return modulesRepository.existsById(id);
     }
+
     @Override
-    public boolean isExistMainModulesName(String name)
-    {
+    public boolean isExistMainModulesName(String name) {
         return mainModulesRepository.existsByNameIgnoreCase(name);
     }
+
     @Override
-    public boolean isExistPrefix(String prefix)
-    {
+    public boolean isExistPrefix(String prefix) {
         return mainModulesRepository.existsByPrefix(prefix);
     }
+
     @Override
-    public boolean isExistMainModulesId(Long id)
-    {
+    public boolean isExistMainModulesId(Long id) {
         return mainModulesRepository.existsById(id);
     }
+
     @Override
-    public boolean isExistsSubmodulesByMainModule(Long id)
-    {
+    public boolean isExistsSubmodulesByMainModule(Long id) {
         return subModulesRepository.existsByMainModuleId(id);
     }
+
     @Override
-    public boolean existsMainModuleByModuleId(Long id) {return mainModulesRepository.existsByModulesId(id);}
+    public boolean existsMainModuleByModuleId(Long id) {
+        return mainModulesRepository.existsByModulesId(id);
+    }
 
     @Override
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId) {
         return mainModulesRepository.existsByNameIgnoreCaseAndIdNot(mainModuleName, mainModuleId);
     }
+
     @Override
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
-        return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix,mainModuleId);
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix, mainModuleId);
     }
 
     // Bulk Import
@@ -172,6 +167,7 @@ public class MainModulesServiceImp implements MainModulesService
             return false;
         }
     }
+
     @Override
     public List<MainModulesRequest> csvProcess(InputStream inputStream) {
         List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
@@ -180,8 +176,7 @@ public class MainModulesServiceImp implements MainModulesService
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
-            for (CSVRecord csvRecord : csvRecords)
-            {
+            for (CSVRecord csvRecord : csvRecords) {
                 MainModulesRequest MainModulesRequest = new MainModulesRequest();
                 MainModulesRequest.setModuleId(Long.parseLong(csvRecord.get("ModuleId")));
                 MainModulesRequest.setPrefix(csvRecord.get("prefix"));
@@ -189,12 +184,12 @@ public class MainModulesServiceImp implements MainModulesService
                 mainModulesRequestList.add(MainModulesRequest);
             }
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
         return mainModulesRequestList;
     }
+
     @Override
     public List<MainModulesRequest> excelProcess(MultipartFile multipartFile) {
         List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
@@ -204,8 +199,7 @@ public class MainModulesServiceImp implements MainModulesService
             DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
-            for (Row row : sheet)
-            {
+            for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
                 MainModulesRequest MainModulesRequest = new MainModulesRequest();
                 MainModulesRequest.setModuleId(getLongCellValue(row.getCell(columnMap.get("module_id"))));
@@ -219,39 +213,14 @@ public class MainModulesServiceImp implements MainModulesService
         }
         return mainModulesRequestList;
     }
+
     @Override
-    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value)
-    {
+    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
         List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
         errorList.add(value);
         errorMessages.put(key, errorList);
     }
 
-    private String getStringCellValue(Cell cell) {
-        if (cell == null || cell.getCellType() == CellType.BLANK) {
-            return null;
-        }
-        cell.setCellType(CellType.STRING);
-        return cell.getStringCellValue();
-    }
-    private Long getLongCellValue(Cell cell) {
-        if (cell == null || cell.getCellType() == CellType.BLANK) {
-            return null;
-        }
-        cell.setCellType(CellType.NUMERIC);
-        return (long) cell.getNumericCellValue();
-    }
-    private Map<String, Integer> getColumnMap(Row headerRow) {
-        Map<String, Integer> columnMap = new HashMap<>();
-
-        for (Cell cell : headerRow) {
-            String cellValue = cell.getStringCellValue().toLowerCase();
-            int columnIndex = cell.getColumnIndex();
-            columnMap.put(cellValue, columnIndex);
-        }
-
-        return columnMap;
-    }
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
         try (InputStream inputStream = multipartFile.getInputStream();
@@ -270,6 +239,51 @@ public class MainModulesServiceImp implements MainModulesService
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
+            String line = reader.readLine();
+            String[] actualHeaders = line.split(",");
+            for (int i = 0; i < actualHeaders.length; i++) {
+                actualHeaders[i] = actualHeaders[i].toLowerCase();
+            }
+            String[] expectedHeader = {"name", "prefix", "module_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private String getStringCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.STRING);
+        return cell.getStringCellValue();
+    }
+
+    private Long getLongCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.NUMERIC);
+        return (long) cell.getNumericCellValue();
+    }
+
+    private Map<String, Integer> getColumnMap(Row headerRow) {
+        Map<String, Integer> columnMap = new HashMap<>();
+
+        for (Cell cell : headerRow) {
+            String cellValue = cell.getStringCellValue().toLowerCase();
+            int columnIndex = cell.getColumnIndex();
+            columnMap.put(cellValue, columnIndex);
+        }
+
+        return columnMap;
     }
 }
 

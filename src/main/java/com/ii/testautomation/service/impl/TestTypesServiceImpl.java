@@ -28,41 +28,35 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 @Service
-public class TestTypesServiceImpl implements TestTypesService
-{
+public class TestTypesServiceImpl implements TestTypesService {
     @Autowired
     private TestTypesRepository testTypesRepository;
 
     // CRUD
     @Override
-    public void saveTestTypes(TestTypesRequest testTypesRequest)
-    {
+    public void saveTestTypes(TestTypesRequest testTypesRequest) {
         TestTypes testTypes = new TestTypes();
-        BeanUtils.copyProperties(testTypesRequest,testTypes);
+        BeanUtils.copyProperties(testTypesRequest, testTypes);
         testTypesRepository.save(testTypes);
     }
 
     @Override
-    public void deleteTestTypeById(Long id)
-    {
+    public void deleteTestTypeById(Long id) {
         testTypesRepository.deleteById(id);
     }
 
     @Override
-    public TestTypesResponse getTestTypeById(Long id)
-    {
+    public TestTypesResponse getTestTypeById(Long id) {
         TestTypes testTypes = testTypesRepository.findById(id).get();
         TestTypesResponse testTypesResponse = new TestTypesResponse();
-        BeanUtils.copyProperties(testTypes,testTypesResponse);
+        BeanUtils.copyProperties(testTypes, testTypesResponse);
         return testTypesResponse;
     }
 
     @Override
-    public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch)
-    {
+    public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (Utils.isNotNullAndEmpty(testTypesSearch.getName()))
-        {
+        if (Utils.isNotNullAndEmpty(testTypesSearch.getName())) {
             booleanBuilder.and(QTestTypes.testTypes.name.containsIgnoreCase(testTypesSearch.getName()));
         }
         List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
@@ -70,8 +64,7 @@ public class TestTypesServiceImpl implements TestTypesService
 
         pagination.setTotalRecords(testTypesPage.getTotalElements());
         pagination.setPageSize(testTypesPage.getTotalPages());
-        for (TestTypes testTypes : testTypesPage)
-        {
+        for (TestTypes testTypes : testTypesPage) {
             TestTypesResponse testTypesResponse = new TestTypesResponse();
             BeanUtils.copyProperties(testTypes, testTypesResponse);
             testTypesResponseList.add(testTypesResponse);
@@ -82,9 +75,15 @@ public class TestTypesServiceImpl implements TestTypesService
 
     // Check
     @Override
-    public boolean isExistsTestTypeByName(String name) {return testTypesRepository.existsByName(name);    }
+    public boolean isExistsTestTypeByName(String name) {
+        return testTypesRepository.existsByName(name);
+    }
+
     @Override
-    public boolean isExistsTestTypeById(Long id) {return testTypesRepository.existsById(id);}
+    public boolean isExistsTestTypeById(Long id) {
+        return testTypesRepository.existsById(id);
+    }
+
     @Override
     public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id) {
         return testTypesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
@@ -97,8 +96,7 @@ public class TestTypesServiceImpl implements TestTypesService
 
     // Bulk Import
     @Override
-    public boolean hasExcelFormat(MultipartFile multipartFile)
-    {
+    public boolean hasExcelFormat(MultipartFile multipartFile) {
         try {
             Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
             workbook.close();
@@ -107,32 +105,30 @@ public class TestTypesServiceImpl implements TestTypesService
             return false;
         }
     }
+
     @Override
-    public List<TestTypesRequest> csvProcess(InputStream inputStream)
-    {
+    public List<TestTypesRequest> csvProcess(InputStream inputStream) {
         List<TestTypesRequest> testTypesRequestList = new ArrayList<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
-            for (CSVRecord csvRecord : csvRecords)
-            {
+            for (CSVRecord csvRecord : csvRecords) {
                 TestTypesRequest testTypesRequest = new TestTypesRequest();
                 testTypesRequest.setDescription(csvRecord.get("description"));
                 testTypesRequest.setName(csvRecord.get("name"));
                 testTypesRequestList.add(testTypesRequest);
             }
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
         return testTypesRequestList;
     }
+
     @Override
-    public List<TestTypesRequest> excelProcess(MultipartFile multipartFile)
-    {
+    public List<TestTypesRequest> excelProcess(MultipartFile multipartFile) {
         List<TestTypesRequest> testTypesRequestList = new ArrayList<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
@@ -140,8 +136,7 @@ public class TestTypesServiceImpl implements TestTypesService
             DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
-            for (Row row : sheet)
-            {
+            for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
                 TestTypesRequest testTypesRequest = new TestTypesRequest();
                 testTypesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
@@ -154,9 +149,9 @@ public class TestTypesServiceImpl implements TestTypesService
         }
         return testTypesRequestList;
     }
+
     @Override
-    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value)
-    {
+    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
         List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
         errorList.add(value);
         errorMessages.put(key, errorList);
@@ -181,6 +176,24 @@ public class TestTypesServiceImpl implements TestTypesService
             return false;
         }
     }
+
+    @Override
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
+            String line = reader.readLine();
+            String[] actualHeaders = line.split(",");
+            for (int i = 0; i < actualHeaders.length; i++) {
+                actualHeaders[i] = actualHeaders[i].toLowerCase();
+            }
+            String[] expectedHeader = {"name", "description"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 

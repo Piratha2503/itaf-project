@@ -30,7 +30,6 @@ public interface MainModulesService
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
     public boolean isExistsSubmodulesByMainModule(Long id);
     public boolean existsMainModuleByModuleId(Long id);
-    //public boolean existsByMainModuleId(Long id);
 
     // Bulk Import
     public boolean hasExcelFormat(MultipartFile multipartFile);
@@ -38,6 +37,5 @@ public interface MainModulesService
     public List<MainModulesRequest> excelProcess(MultipartFile multipartFile);
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
-
-
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }

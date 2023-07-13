@@ -20,7 +20,6 @@ public final class EndpointURI {
     public static final String MAIN_MODULE = BASE_API_PATH + "Mainmodule";
     public static final String MAIN_MODULE_IMPORT = BASE_API_PATH + "import";
     public static final String MAIN_MODULE_PAGE = BASE_API_PATH + SEARCH_WITH_PAGE + SLASH + "MainModules";
-    public static final String MAIN_MODULE_BY_NAME = MAIN_MODULE + "/byname";
     public static final String MAIN_MODULE_BY_ID = MAIN_MODULE + ID;
     public static final String MAIN_MODULE_BY_MODULE_ID = BASE_API_PATH + "getByModuleId" + ID;
 

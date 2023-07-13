@@ -25,20 +25,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @CrossOrigin
-public class MainModulesController
-{
-
+public class MainModulesController {
     @Autowired
     private MainModulesService mainModulesService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(EndpointURI.MAIN_MODULE)
-    public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest)
-    {
+    public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
 
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -55,7 +51,8 @@ public class MainModulesController
         mainModulesService.saveMainModules(mainModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessMessageInsertMainModules()));}
+                statusCodeBundle.getSuccessMessageInsertMainModules()));
+    }
 
     @DeleteMapping(EndpointURI.MAIN_MODULE_BY_ID)
     public ResponseEntity<Object> deleteMainModules(@PathVariable Long id) {
@@ -72,7 +69,8 @@ public class MainModulesController
         mainModulesService.deleteMainModules(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessMessageDeleteMainModules()));}
+                statusCodeBundle.getSuccessMessageDeleteMainModules()));
+    }
 
     @PutMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> updateMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
@@ -96,7 +94,8 @@ public class MainModulesController
         mainModulesService.saveMainModules(mainModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessUpdateMessageMainModules()));}
+                statusCodeBundle.getSuccessUpdateMessageMainModules()));
+    }
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_ID)
     public ResponseEntity<Object> getMainModulesByMainModuleId(@PathVariable Long id) {
@@ -109,7 +108,8 @@ public class MainModulesController
                 mainModulesService.getByMainModulesId(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessageMainModules()));}
+                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+    }
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_MODULE_ID)
     public ResponseEntity<Object> getMainModulesByModuleId(@PathVariable Long id) {
@@ -126,22 +126,23 @@ public class MainModulesController
                 mainModulesService.getMainModulesByModuleId(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessageMainModules()));}
+                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+    }
 
     @GetMapping(EndpointURI.MAIN_MODULE_PAGE)
     public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page,
                                                             @RequestParam(name = "size") int size,
                                                             @RequestParam(name = "direction") String direction,
                                                             @RequestParam(name = "sortField") String sortField,
-                                                            MainModuleSearch mainModuleSearch)
-    {
+                                                            MainModuleSearch mainModuleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
 
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.SearchMainModulesWithPagination(pageable, pagination, mainModuleSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessageMainModules()));}
+                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+    }
 
     @PostMapping(EndpointURI.MAIN_MODULE_IMPORT)
     public ResponseEntity<Object> importMainModules(@RequestParam MultipartFile multipartFile) {
@@ -151,36 +152,40 @@ public class MainModulesController
 
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+                if (mainModulesService.isCSVHeaderMatch(multipartFile))
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());
+            } else if (mainModulesService.hasExcelFormat(multipartFile)) {
                 if (mainModulesService.isExcelHeaderMatch(multipartFile))
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-
-                mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());}
-            else if (mainModulesService.hasExcelFormat(multipartFile)) {
-                if (mainModulesService.isExcelHeaderMatch(multipartFile))
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-
-                mainModulesRequestList = mainModulesService.excelProcess(multipartFile);}
-            else {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));}
+                mainModulesRequestList = mainModulesService.excelProcess(multipartFile);
+            } else {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+            }
 
             for (int rowIndex = 2; rowIndex <= mainModulesRequestList.size() + 1; rowIndex++) {
                 MainModulesRequest mainModulesRequest = mainModulesRequestList.get(rowIndex - 2);
 
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getName())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);}
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
+                }
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getModuleId().toString())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);}
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
+                }
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getPrefix())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);}
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
+                }
                 if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);}
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+                }
                 if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);}
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
+                }
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getFileFailureMessage(),
+                        statusCodeBundle.getMainModulesNotSavedMessage(),
                         errorMessages));
             } else {
                 for (MainModulesRequest mainModulesRequest : mainModulesRequestList) {
@@ -197,6 +202,4 @@ public class MainModulesController
         }
 
     }
-
-
 }
