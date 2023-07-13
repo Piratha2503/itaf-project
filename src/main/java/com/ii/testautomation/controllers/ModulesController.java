@@ -26,10 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -153,6 +150,8 @@ public class ModulesController {
     public ResponseEntity<Object> importModuleFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<ModulesRequest> modulesRequestList = new ArrayList<>();
+        Set<String> modulesNames = new HashSet<>();
+        Set<String> modulesPrefix = new HashSet<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 if(!modulesService.isCSVHeaderMatch(multipartFile)){
@@ -176,9 +175,18 @@ public class ModulesController {
                 ModulesRequest modulesRequest = modulesRequestList.get(rowIndex - 2);
                 if (!Utils.isNotNullAndEmpty(modulesRequest.getName())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
+                } else if (modulesNames.contains(modulesRequest.getName())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameDuplicateMessage(), rowIndex);
+                } else {
+                    modulesNames.add(modulesRequest.getName());
                 }
+
                 if (!Utils.isNotNullAndEmpty(modulesRequest.getPrefix())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixEmptyMessage(), rowIndex);
+                } else if (modulesPrefix.contains(modulesRequest.getPrefix())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixDuplicateMessage(), rowIndex);
+                } else {
+                    modulesPrefix.add(modulesRequest.getPrefix());
                 }
                 if (modulesService.isModuleExistsByName(modulesRequest.getName())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameAlReadyExistsMessage(), rowIndex);
