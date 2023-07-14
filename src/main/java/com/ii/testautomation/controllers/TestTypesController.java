@@ -120,13 +120,13 @@ public class TestTypesController {
 
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if (testTypesService.isExcelHeaderMatch(multipartFile))
+                if (testTypesService.isCSVHeaderMatch(multipartFile))
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
 
                 testTypesRequestList = testTypesService.csvProcess(multipartFile.getInputStream());
 
             } else if (testTypesService.hasExcelFormat(multipartFile)) {
-                if (testTypesService.isCSVHeaderMatch(multipartFile))
+                if (testTypesService.isExcelHeaderMatch(multipartFile))
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
 
                 testTypesRequestList = testTypesService.excelProcess(multipartFile);
