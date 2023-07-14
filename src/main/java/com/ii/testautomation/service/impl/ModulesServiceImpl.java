@@ -41,8 +41,8 @@ public class ModulesServiceImpl implements ModulesService {
     @Override
     public void saveModule(ModulesRequest modulesRequest) {
         Modules modules = new Modules();
-        Project project = new Project();
-        project.setId(modulesRequest.getProject_id());
+        Project project = projectRepository.findById(modulesRequest.getProject_id()).get();
+        //project.setId(modulesRequest.getProject_id());
         modules.setProject(project);
         BeanUtils.copyProperties(modulesRequest, modules);
         modulesRepository.save(modules);
@@ -59,7 +59,8 @@ public class ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public boolean existsByModulesId(Long id) {
+    public boolean existsByModulesId(Long id)
+    {
         return modulesRepository.existsById(id);
     }
 

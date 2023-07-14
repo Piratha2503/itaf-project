@@ -53,6 +53,10 @@ public class ModulesController {
                     statusCodeBundle.getModuleAlReadyExistsCode(),
                     statusCodeBundle.getModulePrefixAlReadyExistsMessage()));
         }
+        if(!projectService.existByProjectId(modulesRequest.getProject_id())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
         modulesService.saveModule(modulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
@@ -173,6 +177,9 @@ public class ModulesController {
             }
             for (int rowIndex = 2; rowIndex <= modulesRequestList.size() + 1; rowIndex++) {
                 ModulesRequest modulesRequest = modulesRequestList.get(rowIndex - 2);
+
+               // long counts = (modulesRequestList.stream().filter(request->request.getName().equals(modulesRequest.getName().count());
+
                 if (!Utils.isNotNullAndEmpty(modulesRequest.getName())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
                 } else if (modulesNames.contains(modulesRequest.getName())) {
@@ -197,6 +204,7 @@ public class ModulesController {
                 if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(), rowIndex);
                 }
+
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
