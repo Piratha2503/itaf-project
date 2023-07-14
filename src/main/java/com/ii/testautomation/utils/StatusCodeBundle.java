@@ -182,21 +182,13 @@ public class StatusCodeBundle {
     private String moduleFileErrorMessage;
     @Value("${message.validation.module.file.projectId.empty}")
     private String moduleProjectIdEmptyMessage;
-
-
-
-
-
-
-
-
-    // Test Types Codes
     @Value("${message.validation.module.name.duplicate}")
     private String moduleNameDuplicateMessage;
     @Value("${message.validation.module.prefix.duplicate}")
     private String modulePrefixDuplicateMessage;
-    // Test Types Codes & Messages //
-    @Value("${code.validation.testtype.alreadyExists}")
+
+    // Test Types Codes
+    @Value("${code.validation.testType.alreadyExists}")
     private String TestTypeAlReadyExistCode;
     @Value("${code.validation.testTypes.notExists}")
     private String TestTypeNotExistCode;

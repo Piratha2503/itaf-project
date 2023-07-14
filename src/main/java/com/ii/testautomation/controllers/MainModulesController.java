@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -153,11 +154,11 @@ public class MainModulesController {
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
                 if (mainModulesService.isCSVHeaderMatch(multipartFile))
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                   return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());
             } else if (mainModulesService.hasExcelFormat(multipartFile)) {
                 if (mainModulesService.isExcelHeaderMatch(multipartFile))
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                  return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 mainModulesRequestList = mainModulesService.excelProcess(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
@@ -166,11 +167,10 @@ public class MainModulesController {
             for (int rowIndex = 2; rowIndex <= mainModulesRequestList.size() + 1; rowIndex++) {
                 MainModulesRequest mainModulesRequest = mainModulesRequestList.get(rowIndex - 2);
 
-                if (mainModulesRequestList.contains(mainModulesRequest.getName()))
-
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getName())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
                 }
+
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getModuleId().toString())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
                 }
@@ -183,8 +183,11 @@ public class MainModulesController {
                 if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
                 }
+
+
             }
             if (!errorMessages.isEmpty()) {
+
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getMainModulesNotSavedMessage(),
