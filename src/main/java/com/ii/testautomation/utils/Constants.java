@@ -11,10 +11,6 @@ public class Constants {
   public static final String TEST_GROUPING  = "testGrouping";
   public static final String MODULE ="module";
   public static final String MODULES="modules";
-  public static final String SKIPPED_MSG = "Following Rows Skipped";
-
-
-  //Main Module
   public static final String MAINMODULES = "mainModules";
 
   public static final String TESTCASE="testcase";
