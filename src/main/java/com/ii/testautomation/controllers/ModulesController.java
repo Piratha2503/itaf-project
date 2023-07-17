@@ -177,9 +177,6 @@ public class ModulesController {
             }
             for (int rowIndex = 2; rowIndex <= modulesRequestList.size() + 1; rowIndex++) {
                 ModulesRequest modulesRequest = modulesRequestList.get(rowIndex - 2);
-
-               // long counts = (modulesRequestList.stream().filter(request->request.getName().equals(modulesRequest.getName().count());
-
                 if (!Utils.isNotNullAndEmpty(modulesRequest.getName())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
                 } else if (modulesNames.contains(modulesRequest.getName())) {
