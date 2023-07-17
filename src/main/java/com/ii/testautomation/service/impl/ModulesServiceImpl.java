@@ -145,6 +145,7 @@ public class ModulesServiceImpl implements ModulesService {
                 ModulesRequest modulesRequest = new ModulesRequest();
                 modulesRequest.setName(csvRecord.get("name"));
                 modulesRequest.setPrefix(csvRecord.get("prefix"));
+                if(modulesRequest.getProject_id().)
                 modulesRequest.setProject_id(Long.parseLong(csvRecord.get("project_id")));
                 modulesRequestsList.add(modulesRequest);
             }

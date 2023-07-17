@@ -198,10 +198,12 @@ public class ModulesController {
                 if (modulesService.isModuleExistsByPrefix(modulesRequest.getPrefix())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(), rowIndex);
                 }
-                if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
+                if(modulesRequest.getProject_id()==null){
+                    return ResponseEntity.ok("project Id Null");
+                }
+              if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(), rowIndex);
                 }
-
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
