@@ -208,7 +208,7 @@ public class MainModulesController {
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getFileFailureMessage()));
+                    statusCodeBundle.getMainModulesNotSavedMessage()));
         }
 
     }
