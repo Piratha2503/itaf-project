@@ -33,7 +33,7 @@ public class TestTypesController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-    @PostMapping(EndpointURI.TESTTYPE)
+    @PostMapping(EndpointURI.TEST_TYPE)
     public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(
@@ -49,7 +49,7 @@ public class TestTypesController {
 
     }
 
-    @PutMapping(EndpointURI.TESTTYPE)
+    @PutMapping(EndpointURI.TEST_TYPE)
     public ResponseEntity<Object> updateTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (!testTypesService.isExistsTestTypeById(testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(
@@ -67,9 +67,10 @@ public class TestTypesController {
         return ResponseEntity.ok(new BaseResponse(
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getUpdateTestTypeSuccessMessage())); }
+                statusCodeBundle.getUpdateTestTypeSuccessMessage()));
+    }
 
-    @DeleteMapping(EndpointURI.TESTTYPE_BY_ID)
+    @DeleteMapping(EndpointURI.TEST_TYPE_BY_ID)
     public ResponseEntity<Object> deleteTestTypeById(@PathVariable Long id) {
         if (!testTypesService.isExistsTestTypeById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -78,9 +79,10 @@ public class TestTypesController {
         testTypesService.deleteTestTypeById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getDeleteTestTypesSuccessMessage()));}
+                statusCodeBundle.getDeleteTestTypesSuccessMessage()));
+    }
 
-    @GetMapping(EndpointURI.TESTTYPE_BY_ID)
+    @GetMapping(EndpointURI.TEST_TYPE_BY_ID)
     public ResponseEntity<Object> getTestTypeById(@PathVariable Long id) {
         if (!testTypesService.isExistsTestTypeById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -91,9 +93,10 @@ public class TestTypesController {
                 testTypesService.getTestTypeById(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getViewTestTypeforIdSuccessMessage()));}
+                statusCodeBundle.getViewTestTypeforIdSuccessMessage()));
+    }
 
-    @GetMapping(EndpointURI.TESTTYPES_SEARCH)
+    @GetMapping(EndpointURI.TEST_TYPES_SEARCH)
     public ResponseEntity<Object> SearchTestTypesWithPagination(@RequestParam(name = "page") int page,
                                                                 @RequestParam(name = "size") int size,
                                                                 @RequestParam(name = "direction") String direction,
@@ -106,9 +109,10 @@ public class TestTypesController {
                 testTypesService.SearchTestTypesWithPagination(pageable, pagination, testTypesSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessage()));}
+                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+    }
 
-    @PostMapping(EndpointURI.TESTTYPE_IMPORT)
+    @PostMapping(EndpointURI.TEST_TYPE_IMPORT)
     public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile) {
 
         Map<String, List<Integer>> errorMessages = new HashMap<>();
@@ -116,9 +120,15 @@ public class TestTypesController {
 
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+                if (testTypesService.isCSVHeaderMatch(multipartFile))
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+
                 testTypesRequestList = testTypesService.csvProcess(multipartFile.getInputStream());
 
             } else if (testTypesService.hasExcelFormat(multipartFile)) {
+                if (testTypesService.isExcelHeaderMatch(multipartFile))
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+
                 testTypesRequestList = testTypesService.excelProcess(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
@@ -141,7 +151,7 @@ public class TestTypesController {
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getBulkImportFailureMessage(),
+                        statusCodeBundle.getTestTypesNotSavedMessage(),
                         errorMessages));
             } else {
                 for (TestTypesRequest testTypesRequest : testTypesRequestList) {
@@ -149,14 +159,12 @@ public class TestTypesController {
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getBulkImportMessage()));
+                        statusCodeBundle.getInsertTestTypesSuccessMessage()));
             }
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getBulkImportFailureMessage()));
+                    statusCodeBundle.getFileFailureMessage()));
         }
-
     }
-
 }
