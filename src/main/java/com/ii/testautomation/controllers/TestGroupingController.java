@@ -94,18 +94,16 @@ public class TestGroupingController {
                 }
                 if (testGroupingRequest.getTestTypeId() == null) {
                     testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestTypeIdEmptyMessage(), rowIndex);
+                } else if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), rowIndex);
                 }
                 if (testGroupingRequest.getTestCaseId() == null) {
                     testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestCaseIdEmptyMessage(), rowIndex);
+                } else if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), rowIndex);
                 }
                 if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), rowIndex);
-                }
-                if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), rowIndex);
-                }
-                if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), rowIndex);
                 }
             }
             if (!errorMessages.isEmpty()) {

@@ -103,15 +103,14 @@ public class SubModulesController {
                 }
                 if (subModulesRequest.getMain_module_Id() == null) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleMainModuleIdEmptyMessage(), rowIndex);
+                } else  if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
+                    subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModuleNotExistsMessage(), rowIndex);
                 }
                 if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixAlReadyExistMessage(), rowIndex);
                 }
                 if (subModulesService.existsBySubModulesName(subModulesRequest.getName())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNameAlReadyExistMessage(), rowIndex);
-                }
-                if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
-                    subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModuleNotExistsMessage(), rowIndex);
                 }
             }
             if (!errorMessages.isEmpty()) {
