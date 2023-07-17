@@ -101,6 +101,9 @@ public class SubModulesController {
                 } else {
                     subModulePrefixes.add(subModulesRequest.getName());
                 }
+                if (subModulesRequest.getMain_module_Id() == null) {
+                    subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleMainModuleIdEmptyMessage(), rowIndex);
+                }
                 if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixAlReadyExistMessage(), rowIndex);
                 }

@@ -33,6 +33,7 @@ import java.util.*;
 public class TestCasesServiceImpl implements TestCasesService {
     @Autowired
     private TestCasesRepository testCasesRepository;
+
     @Override
     public void saveTestCase(TestCaseRequest testCaseRequest) {
         TestCases testCases = new TestCases();
@@ -45,6 +46,9 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public boolean existsByTestCasesId(Long id) {
+        if (id == null) {
+            return false;
+        }
         return testCasesRepository.existsById(id);
     }
 

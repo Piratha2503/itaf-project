@@ -80,8 +80,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public List<TestGroupingResponse> getALlTestGroupingByTestCaseId(Long testCaseId) {
         List<TestGrouping> testGroupingList = testGroupingRepository.findAllTestGroupingByTestCasesId(testCaseId);
         List<TestGroupingResponse> testGroupingResponses = new ArrayList<>();
-        for (TestGrouping testGrouping : testGroupingList
-        ) {
+        for (TestGrouping testGrouping : testGroupingList) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestCasesName(testGrouping.getTestCases().getName());
             testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
@@ -98,8 +97,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public List<TestGroupingResponse> getALlTestGroupingByTestTypeId(Long testTypeId) {
         List<TestGrouping> testGroupingList = testGroupingRepository.findAllTestGroupingByTestTypeId(testTypeId);
         List<TestGroupingResponse> testGroupingResponses = new ArrayList<>();
-        for (TestGrouping testGrouping : testGroupingList
-        ) {
+        for (TestGrouping testGrouping : testGroupingList) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestCasesName(testGrouping.getTestCases().getName());
             testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
@@ -129,8 +127,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         pagination.setTotalRecords(testGroupings.getTotalElements());
         pagination.setPageSize(testGroupings.getTotalPages());
-        for (TestGrouping testGrouping : testGroupings
-        ) {
+        for (TestGrouping testGrouping : testGroupings) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestCasesName(testGrouping.getTestCases().getName());
             testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
@@ -161,16 +158,23 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public List<TestGroupingRequest> csvToTestGroupingRequest(InputStream inputStream) {
         List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
             for (CSVRecord csvRecord : csvRecords) {
                 TestGroupingRequest testGroupingRequest = new TestGroupingRequest();
                 testGroupingRequest.setName(csvRecord.get("name"));
-                testGroupingRequest.setTestCaseId(Long.parseLong(csvRecord.get("test_case_id")));
-                testGroupingRequest.setTestTypeId(Long.parseLong(csvRecord.get("test_type_id")));
+                if (!csvRecord.get("test_case_id").isEmpty()) {
+                    testGroupingRequest.setTestCaseId(Long.parseLong(csvRecord.get("test_case_id")));
+                } else {
+                    testGroupingRequest.setTestCaseId(null);
+                }
+                if (!csvRecord.get("test_type_id").isEmpty()) {
+                    testGroupingRequest.setTestTypeId(Long.parseLong(csvRecord.get("test_type_id")));
+                } else {
+                    testGroupingRequest.setTestTypeId(null);
+                }
                 testGroupingRequestList.add(testGroupingRequest);
             }
 
@@ -224,8 +228,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
-        try (InputStream inputStream = multipartFile.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
+        try (InputStream inputStream = multipartFile.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
             String[] actualHeaders = new String[headerRow.getLastCellNum()];

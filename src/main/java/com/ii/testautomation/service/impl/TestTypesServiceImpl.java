@@ -92,6 +92,9 @@ public class TestTypesServiceImpl implements TestTypesService {
 
     @Override
     public boolean existsByTestTypesId(Long id) {
+        if (id == null) {
+            return false;
+        }
         return testTypesRepository.existsById(id);
     }
 

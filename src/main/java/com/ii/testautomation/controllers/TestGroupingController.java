@@ -92,6 +92,12 @@ public class TestGroupingController {
                 } else {
                     testGroupingNames.add(testGroupingRequest.getName());
                 }
+                if (testGroupingRequest.getTestTypeId() == null) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestTypeIdEmptyMessage(), rowIndex);
+                }
+                if (testGroupingRequest.getTestCaseId() == null) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestCaseIdEmptyMessage(), rowIndex);
+                }
                 if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), rowIndex);
                 }

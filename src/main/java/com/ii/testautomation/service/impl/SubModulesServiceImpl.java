@@ -147,7 +147,11 @@ public class SubModulesServiceImpl implements SubModulesService {
                 SubModulesRequest subModulesRequest = new SubModulesRequest();
                 subModulesRequest.setName(csvRecord.get("name"));
                 subModulesRequest.setPrefix(csvRecord.get("prefix"));
-                subModulesRequest.setMain_module_Id(Long.parseLong(csvRecord.get("main_module_id")));
+                if (!csvRecord.get("main_module_id").isEmpty()) {
+                    subModulesRequest.setMain_module_Id(Long.parseLong(csvRecord.get("main_module_id")));
+                } else {
+                    subModulesRequest.setMain_module_Id(null);
+                }
                 subModulesRequestList.add(subModulesRequest);
             }
 

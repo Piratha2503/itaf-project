@@ -59,7 +59,8 @@ public class ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public boolean existsByModulesId(Long id) {
+    public boolean existsByModulesId(Long id)
+    {
         return modulesRepository.existsById(id);
     }
 

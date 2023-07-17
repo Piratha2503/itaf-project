@@ -131,6 +131,9 @@ public class MainModulesServiceImp implements MainModulesService {
 
     @Override
     public boolean isExistMainModulesId(Long id) {
+        if (id == null) {
+            return false;
+        }
         return mainModulesRepository.existsById(id);
     }
 
@@ -170,8 +173,7 @@ public class MainModulesServiceImp implements MainModulesService {
     @Override
     public List<MainModulesRequest> csvProcess(InputStream inputStream) {
         List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
@@ -226,8 +228,7 @@ public class MainModulesServiceImp implements MainModulesService {
 
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
-        try (InputStream inputStream = multipartFile.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
+        try (InputStream inputStream = multipartFile.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
             String[] actualHeaders = new String[headerRow.getLastCellNum()];
