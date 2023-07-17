@@ -84,6 +84,8 @@ public class StatusCodeBundle {
     private String subModuleNameEmptyMessage;
     @Value("${message.validation.subModule.file.prefix.empty}")
     private String subModulePrefixEmptyMessage;
+    @Value("${message.validation.subModule.file.main_module_id.empty}")
+    private String subModuleMainModuleIdEmptyMessage;
     @Value("${message.validation.subModule.Name.alreadyExists}")
     private String subModuleNameAlReadyExistMessage;
     @Value("${message.validation.subModule.prefix.alreadyExists}")
@@ -281,6 +283,10 @@ public class StatusCodeBundle {
     private String TestGroupFileImportValidationMessage;
     @Value("${message.validation.testGroup.file.name.empty}")
     private String TestGroupNameEmptyMessage;
+    @Value("${message.validation.testGroup.file.test_case_id.empty}")
+    private String TestGroupTestCaseIdEmptyMessage;
+    @Value("${message.validation.testGroup.file.test_type_id.empty}")
+    private String TestGroupTestTypeIdEmptyMessage;
     @Value("${message.validation.testGrouping.name.duplicate}")
     private String testGroupingNameDuplicateMessage;
 }

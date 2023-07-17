@@ -62,6 +62,7 @@ public class MainModulesServiceImp implements MainModulesService {
         BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
+
     @Override
     public List<MainModulesResponse> getMainModulesByModuleId(Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
@@ -75,6 +76,7 @@ public class MainModulesServiceImp implements MainModulesService {
 
         return mainModulesResponseList;
     }
+
     @Override
     public List<MainModulesResponse> getByMainModulesName(String name) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
@@ -118,22 +120,30 @@ public class MainModulesServiceImp implements MainModulesService {
     public boolean isExistModulesId(Long id) {
         return modulesRepository.existsById(id);
     }
+
     @Override
     public boolean isExistMainModulesName(String name) {
         return mainModulesRepository.existsByNameIgnoreCase(name);
     }
+
     @Override
     public boolean isExistPrefix(String prefix) {
         return mainModulesRepository.existsByPrefix(prefix);
     }
+
     @Override
     public boolean isExistMainModulesId(Long id) {
+        if (id == null) {
+            return false;
+        }
         return mainModulesRepository.existsById(id);
     }
+
     @Override
     public boolean isExistsSubmodulesByMainModule(Long id) {
         return subModulesRepository.existsByMainModuleId(id);
     }
+
     @Override
     public boolean existsMainModuleByModuleId(Long id) {
         return mainModulesRepository.existsByModulesId(id);
@@ -143,6 +153,7 @@ public class MainModulesServiceImp implements MainModulesService {
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId) {
         return mainModulesRepository.existsByNameIgnoreCaseAndIdNot(mainModuleName, mainModuleId);
     }
+
     @Override
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
         return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix, mainModuleId);
@@ -159,11 +170,11 @@ public class MainModulesServiceImp implements MainModulesService {
             return false;
         }
     }
+
     @Override
     public List<MainModulesRequest> csvProcess(InputStream inputStream) {
         List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
@@ -180,6 +191,7 @@ public class MainModulesServiceImp implements MainModulesService {
         }
         return mainModulesRequestList;
     }
+
     @Override
     public List<MainModulesRequest> excelProcess(MultipartFile multipartFile) {
         List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
@@ -203,6 +215,7 @@ public class MainModulesServiceImp implements MainModulesService {
         }
         return mainModulesRequestList;
     }
+
     @Override
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
         List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
@@ -212,8 +225,7 @@ public class MainModulesServiceImp implements MainModulesService {
 
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
-        try (InputStream inputStream = multipartFile.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
+        try (InputStream inputStream = multipartFile.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
             String[] actualHeaders = new String[headerRow.getLastCellNum()];
@@ -254,6 +266,7 @@ public class MainModulesServiceImp implements MainModulesService {
         cell.setCellType(CellType.STRING);
         return cell.getStringCellValue();
     }
+
     private Long getLongCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;
@@ -261,6 +274,7 @@ public class MainModulesServiceImp implements MainModulesService {
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
     }
+
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 

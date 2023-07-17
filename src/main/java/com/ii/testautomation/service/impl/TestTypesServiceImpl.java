@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,6 +92,9 @@ public class TestTypesServiceImpl implements TestTypesService {
 
     @Override
     public boolean existsByTestTypesId(Long id) {
+        if (id == null) {
+            return false;
+        }
         return testTypesRepository.existsById(id);
     }
 
