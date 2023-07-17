@@ -5,6 +5,7 @@ import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.entities.QTestTypes;
 import com.ii.testautomation.entities.TestTypes;
+import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestTypesService;
@@ -32,6 +33,8 @@ import java.util.*;
 public class TestTypesServiceImpl implements TestTypesService {
     @Autowired
     private TestTypesRepository testTypesRepository;
+    @Autowired
+    private TestGroupingRepository testGroupingRepository;
 
     @Override
     public void saveTestTypes(TestTypesRequest testTypesRequest) {
@@ -191,6 +194,11 @@ public class TestTypesServiceImpl implements TestTypesService {
         }
     }
 
+    @Override
+    public boolean existsTestGroupingByTestTypeId(Long id) {
+        return testGroupingRepository.existsByTestTypeId(id);
+    }
+
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 
@@ -218,6 +226,4 @@ public class TestTypesServiceImpl implements TestTypesService {
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
     }
-
-
 }

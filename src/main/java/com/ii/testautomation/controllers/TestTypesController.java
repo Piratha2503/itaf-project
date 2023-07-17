@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -76,6 +74,10 @@ public class TestTypesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
                     statusCodeBundle.getTestTypeIdNotFoundMessage()));
+        if (testTypesService.existsTestGroupingByTestTypeId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestTypeDependentCode(),
+                    statusCodeBundle.getTestTypeDependentMessage()));
         testTypesService.deleteTestTypeById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
@@ -117,6 +119,7 @@ public class TestTypesController {
 
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         List<TestTypesRequest> testTypesRequestList;
+        Set<String> testTypeNames = new HashSet<>();
 
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
@@ -138,13 +141,17 @@ public class TestTypesController {
                 TestTypesRequest testTypesRequest = testTypesRequestList.get(rowIndex - 2);
 
                 if (!Utils.isNotNullAndEmpty(testTypesRequest.getName())) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeNameEmptyMessage(), rowIndex);
+                } else if (testTypeNames.contains(testTypesRequest.getName())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeNameDuplicateMessage(), rowIndex);
+                } else {
+                    testTypeNames.add(testTypesRequest.getName());
                 }
                 if (!Utils.isNotNullAndEmpty(testTypesRequest.getDescription())) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeDescriptionEmptyMessage(), rowIndex);
                 }
                 if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName())) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeNameAlReadyExistMessage(), rowIndex);
                 }
             }
 

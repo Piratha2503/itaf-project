@@ -121,6 +121,8 @@ public class StatusCodeBundle {
     private String ModuleIdNotAssigned;
     @Value("${Message.validation.module.Id.AssignedWithAnotherTable}")
     private String IdAssignedWithAnotherTable;
+    @Value("${code.validation.mainModule.dependent}")
+    private String IdAssignedWithAnotherTableCode;
     @Value("${message.success.mainModules.save}")
     private String SuccessMessageInsertMainModules;
     @Value("${message.success.mainModules.delete}")
@@ -143,7 +145,10 @@ public class StatusCodeBundle {
     private String mainModulesNameFiledEmptyMessage;
     @Value("${message.validation.mainModule.PrefixEmpty}")
     private String mainModulesPrefixFiledEmptyMessage;
-
+    @Value("${message.validation.mainModule.PrefixDuplicate}")
+    private String mainModulesPrefixDuplicateMessage;
+    @Value("${message.validation.mainModule.NameDuplicate}")
+    private String mainModulesNameDuplicateMessage;
 
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
@@ -155,8 +160,6 @@ public class StatusCodeBundle {
     //Modules Message
     @Value("${message.success.update.module}")
     private String updateModuleSuccessMessage;
-
-    //Modules Message
     @Value("${message.validation.module.file.prefix.empty}")
     private String modulePrefixEmptyMessage;
     @Value("${message.validation.module.file.name.empty}")
@@ -199,6 +202,8 @@ public class StatusCodeBundle {
     private String TestTypeNotExistCode;
     @Value("${code.validation.testTypes.notExists}")
     private String testTypesNotExistCode;
+    @Value("${code.validation.testType.dependent}")
+    private String testTypeDependentCode;
 
     //Test Type Messages
     @Value("${message.failure.alreadyExist.TestTypeId}")
@@ -221,6 +226,14 @@ public class StatusCodeBundle {
     private String testTypesNotExistsMessage;
     @Value("${message.validation.NotSave.TestTypes}")
     private String testTypesNotSavedMessage;
+    @Value("${Message.validation.testType.Id.AssignedWithAnotherTable}")
+    private String testTypeDependentMessage;
+    @Value("${message.validation.testType.NameDuplicate}")
+    private String testTypeNameDuplicateMessage;
+    @Value("${message.validation.testType.NameEmpty}")
+    private String testTypeNameEmptyMessage;
+    @Value("${message.validation.testType.DescriptionEmpty}")
+    private String testTypeDescriptionEmptyMessage;
 
    //TestCases code
     @Value("${code.validation.testCases.notExists}")
