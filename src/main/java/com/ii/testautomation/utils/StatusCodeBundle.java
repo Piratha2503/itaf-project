@@ -230,11 +230,11 @@ public class StatusCodeBundle {
     private String testTypesNotSavedMessage;
     @Value("${Message.validation.testType.Id.AssignedWithAnotherTable}")
     private String testTypeDependentMessage;
-    @Value("${message.validation.testType.NameDuplicate}")
+    @Value("${message.validation.testType.Name.Duplicate}")
     private String testTypeNameDuplicateMessage;
-    @Value("${message.validation.testType.NameEmpty}")
+    @Value("${message.validation.testType.Name.Empty}")
     private String testTypeNameEmptyMessage;
-    @Value("${message.validation.testType.DescriptionEmpty}")
+    @Value("${message.validation.testType.Description.Empty}")
     private String testTypeDescriptionEmptyMessage;
 
    //TestCases code
