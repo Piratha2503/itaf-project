@@ -24,6 +24,8 @@ public class StatusCodeBundle {
     // Common File Failure Message
     @Value("${message.file.failure.common}")
     private String fileFailureMessage;
+    @Value("${message.validation.header.notExits}")
+    private String headerNotExistsMessage;
 
     //Project Code
     @Value("${code.validation.project.alreadyExists}")
@@ -33,8 +35,6 @@ public class StatusCodeBundle {
     @Value("${code.validation.project.dependent}")
     private String projectIdDependentCode;
     //Project Message
-    @Value("${message.validation.header.notExits}")
-    private String headerNotExistsMessage;
     @Value("${message.validation.project.notExits}")
     private String projectNotExistsMessage;
     @Value("${message.validation.project.dependent}")
