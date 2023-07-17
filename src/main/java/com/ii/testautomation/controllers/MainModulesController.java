@@ -152,11 +152,11 @@ public class MainModulesController {
 
         try {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if (mainModulesService.isCSVHeaderMatch(multipartFile))
+                if (!mainModulesService.isCSVHeaderMatch(multipartFile))
                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());
             } else if (mainModulesService.hasExcelFormat(multipartFile)) {
-                if (mainModulesService.isExcelHeaderMatch(multipartFile))
+                if (!mainModulesService.isExcelHeaderMatch(multipartFile))
                   return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 mainModulesRequestList = mainModulesService.excelProcess(multipartFile);
             } else {
@@ -167,11 +167,11 @@ public class MainModulesController {
                 MainModulesRequest mainModulesRequest = mainModulesRequestList.get(rowIndex - 2);
 
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getName())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameFiledEmptyMessage(), rowIndex);
                 }
 
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getModuleId().toString())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixFiledEmptyMessage(), rowIndex);
                 }
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getPrefix())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);

@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +33,6 @@ public class TestTypesServiceImpl implements TestTypesService {
     @Autowired
     private TestTypesRepository testTypesRepository;
 
-    // CRUD
     @Override
     public void saveTestTypes(TestTypesRequest testTypesRequest) {
         TestTypes testTypes = new TestTypes();
@@ -72,8 +72,6 @@ public class TestTypesServiceImpl implements TestTypesService {
         return testTypesResponseList;
     }
 
-
-    // Check
     @Override
     public boolean isExistsTestTypeByName(String name) {
         return testTypesRepository.existsByName(name);
@@ -94,7 +92,6 @@ public class TestTypesServiceImpl implements TestTypesService {
         return testTypesRepository.existsById(id);
     }
 
-    // Bulk Import
     @Override
     public boolean hasExcelFormat(MultipartFile multipartFile) {
         try {

@@ -139,6 +139,11 @@ public class StatusCodeBundle {
     private String MainModulesIdNotFound;
     @Value("${message.validation.NotSave.mainModules}")
     private String mainModulesNotSavedMessage;
+    @Value("${message.validation.mainModule.NameEmpty}")
+    private String mainModulesNameFiledEmptyMessage;
+    @Value("${message.validation.mainModule.PrefixEmpty}")
+    private String mainModulesPrefixFiledEmptyMessage;
+
 
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
