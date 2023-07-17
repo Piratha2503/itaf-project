@@ -141,6 +141,8 @@ public class MainModulesServiceImp implements MainModulesService {
 
     @Override
     public boolean existsMainModuleByModuleId(Long id) {
+        if (id == null)
+            return false;
         return mainModulesRepository.existsByModulesId(id);
     }
 
@@ -175,7 +177,11 @@ public class MainModulesServiceImp implements MainModulesService {
 
             for (CSVRecord csvRecord : csvRecords) {
                 MainModulesRequest MainModulesRequest = new MainModulesRequest();
-                MainModulesRequest.setModuleId(Long.parseLong(csvRecord.get("ModuleId")));
+
+                if (csvRecord.get("module_id").isEmpty() || csvRecord.get("module_id").isBlank()) {
+                    MainModulesRequest.setModuleId(null);}
+                else MainModulesRequest.setModuleId(Long.parseLong(csvRecord.get("module_id")));
+
                 MainModulesRequest.setPrefix(csvRecord.get("prefix"));
                 MainModulesRequest.setName(csvRecord.get("name"));
                 mainModulesRequestList.add(MainModulesRequest);

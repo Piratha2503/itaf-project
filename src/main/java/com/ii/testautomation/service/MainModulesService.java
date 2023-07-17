@@ -21,8 +21,6 @@ public interface MainModulesService {
 
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch);
 
-    public List<MainModulesResponse> getByMainModulesName(String name);
-
     public boolean isExistMainModulesId(Long id);
 
     public boolean isExistMainModulesName(String name);

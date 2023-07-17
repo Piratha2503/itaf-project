@@ -132,9 +132,9 @@ public class StatusCodeBundle {
     @Value("${message.success.mainModules.view}")
     private String SuccessViewAllMessageMainModules;
     @Value("${message.failure.mainModules.name.AlreadyExist}")
-    private String NameAlreadyExist;
+    private String mainModulesNameAlreadyExistMessage;
     @Value("${message.failure.mainModules.prefix.AlreadyExist}")
-    private String PrefixAlreadyExist;
+    private String mainModulesPrefixAlreadyExistMessage;
     @Value("${message.failure.module.Id.NotFound}")
     private String ModuleIdNotFound;
     @Value("${message.failure.mainModulesId.NotFound}")
