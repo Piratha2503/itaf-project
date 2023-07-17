@@ -53,6 +53,10 @@ public class ModulesController {
                     statusCodeBundle.getModuleAlReadyExistsCode(),
                     statusCodeBundle.getModulePrefixAlReadyExistsMessage()));
         }
+        if(!projectService.existByProjectId(modulesRequest.getProject_id())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
         modulesService.saveModule(modulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
@@ -197,6 +201,7 @@ public class ModulesController {
                 if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(), rowIndex);
                 }
+
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
