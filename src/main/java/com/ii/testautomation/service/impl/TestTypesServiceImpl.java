@@ -5,6 +5,7 @@ import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.entities.QTestTypes;
 import com.ii.testautomation.entities.TestTypes;
+import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestTypesService;
@@ -32,8 +33,9 @@ import java.util.*;
 public class TestTypesServiceImpl implements TestTypesService {
     @Autowired
     private TestTypesRepository testTypesRepository;
+    @Autowired
+    private TestGroupingRepository testGroupingRepository;
 
-    // CRUD
     @Override
     public void saveTestTypes(TestTypesRequest testTypesRequest) {
         TestTypes testTypes = new TestTypes();
@@ -73,8 +75,6 @@ public class TestTypesServiceImpl implements TestTypesService {
         return testTypesResponseList;
     }
 
-
-    // Check
     @Override
     public boolean isExistsTestTypeByName(String name) {
         return testTypesRepository.existsByName(name);
@@ -98,7 +98,6 @@ public class TestTypesServiceImpl implements TestTypesService {
         return testTypesRepository.existsById(id);
     }
 
-    // Bulk Import
     @Override
     public boolean hasExcelFormat(MultipartFile multipartFile) {
         try {
@@ -225,6 +224,4 @@ public class TestTypesServiceImpl implements TestTypesService {
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
     }
-
-
 }

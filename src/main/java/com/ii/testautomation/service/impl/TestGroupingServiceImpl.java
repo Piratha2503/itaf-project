@@ -226,22 +226,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRequestList;
     }
 
-    private String getStringCellValue(Cell cell) {
-        if (cell == null || cell.getCellType() == CellType.BLANK) {
-            return null;
-        }
-        cell.setCellType(CellType.STRING);
-        return cell.getStringCellValue();
-    }
-
-    private Long getLongCellValue(Cell cell) {
-        if (cell == null || cell.getCellType() == CellType.BLANK) {
-            return null;
-        }
-        cell.setCellType(CellType.NUMERIC);
-        return (long) cell.getNumericCellValue();
-    }
-
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
         try (InputStream inputStream = multipartFile.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
@@ -261,7 +245,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
-
     @Override
     public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
@@ -279,7 +262,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
-
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 
@@ -289,6 +271,22 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             columnMap.put(cellValue, columnIndex);
         }
         return columnMap;
+    }
+
+    private String getStringCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.STRING);
+        return cell.getStringCellValue();
+    }
+
+    private Long getLongCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return null;
+        }
+        cell.setCellType(CellType.NUMERIC);
+        return (long) cell.getNumericCellValue();
     }
 
     @Override
