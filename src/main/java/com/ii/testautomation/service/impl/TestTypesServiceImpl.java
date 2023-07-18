@@ -197,11 +197,6 @@ public class TestTypesServiceImpl implements TestTypesService {
         }
     }
 
-    @Override
-    public boolean existsTestGroupingByTestTypeId(Long id) {
-        return testGroupingRepository.existsByTestTypeId(id);
-    }
-
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 

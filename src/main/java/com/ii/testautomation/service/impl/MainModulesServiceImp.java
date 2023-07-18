@@ -121,11 +121,6 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public boolean isExistsSubmodulesByMainModule(Long id) {
-        return subModulesRepository.existsByMainModuleId(id);
-    }
-
-    @Override
     public boolean existsMainModuleByModuleId(Long id) {
         if (id == null)
             return false;

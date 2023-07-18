@@ -7,6 +7,7 @@ import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.service.TestTypesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
@@ -30,6 +31,8 @@ public class TestTypesController {
     private TestTypesService testTypesService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
+    @Autowired
+    private TestGroupingService testGroupingService;
 
     @PostMapping(EndpointURI.TEST_TYPE)
     public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
@@ -74,7 +77,7 @@ public class TestTypesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
                     statusCodeBundle.getTestTypeIdNotFoundMessage()));
-        if (testTypesService.existsTestGroupingByTestTypeId(id))
+        if (testGroupingService.existsByTestTypesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeDependentCode(),
                     statusCodeBundle.getTestTypeDependentMessage()));

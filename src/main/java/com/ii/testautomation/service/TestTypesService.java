@@ -40,6 +40,4 @@ public interface TestTypesService {
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
     public boolean isCSVHeaderMatch(MultipartFile multipartFile);
-
-    public boolean existsTestGroupingByTestTypeId(Long id);
 }

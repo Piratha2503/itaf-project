@@ -33,8 +33,6 @@ public interface MainModulesService {
 
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
 
-    public boolean isExistsSubmodulesByMainModule(Long id);
-
     public boolean existsMainModuleByModuleId(Long id);
 
     public boolean hasExcelFormat(MultipartFile multipartFile);
