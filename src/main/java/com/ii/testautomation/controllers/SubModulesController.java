@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 @RestController
@@ -64,11 +63,11 @@ public class SubModulesController {
     @PostMapping(value = EndpointURI.SUBMODULE_IMPORT)
     public ResponseEntity<Object> importSubModuleFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
+        List<SubModulesRequest> subModulesRequestList;
         Set<String> subModuleNames = new HashSet<>();
         Set<String> subModulePrefixes = new HashSet<>();
-        try (InputStream inputStream = multipartFile.getInputStream()) {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+        try {
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                 if (!subModulesService.isCSVHeaderMatch(multipartFile)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 } else {
@@ -103,7 +102,7 @@ public class SubModulesController {
                 }
                 if (subModulesRequest.getMain_module_Id() == null) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleMainModuleIdEmptyMessage(), rowIndex);
-                } else  if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
+                } else if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModuleNotExistsMessage(), rowIndex);
                 }
                 if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix())) {
@@ -200,7 +199,7 @@ public class SubModulesController {
                                                                  @RequestParam(name = "sortField") String sortField,
                                                                  SubModuleSearch subModuleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULES, subModulesService.multiSearchSubModule(pageable, pagination, subModuleSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),

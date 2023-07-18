@@ -127,7 +127,6 @@ public class ModulesController {
                 statusCodeBundle.getGetModuleByIdSuccessMessage()));
     }
 
-
     @GetMapping(value = EndpointURI.MODULES_BY_ID)
     public ResponseEntity<BaseResponse> getAllModulesByProjectId(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {

@@ -60,7 +60,7 @@ public class ProjectController {
         Set<String> projectNames = new HashSet<>();
         Set<String> projectCodes = new HashSet<>();
         try {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                 if (!projectService.isCSVHeaderMatch(multipartFile)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 } else {
@@ -160,7 +160,7 @@ public class ProjectController {
                                                  @RequestParam(name = "sortField") String sortField,
                                                  ProjectSearch projectSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.PROJECTS, projectService.multiSearchProject(pageable, pagination, projectSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),

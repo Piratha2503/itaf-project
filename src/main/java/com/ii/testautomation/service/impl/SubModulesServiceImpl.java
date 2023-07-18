@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -138,7 +139,7 @@ public class SubModulesServiceImpl implements SubModulesService {
     @Override
     public List<SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
         List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -178,7 +179,6 @@ public class SubModulesServiceImpl implements SubModulesService {
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-            DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {

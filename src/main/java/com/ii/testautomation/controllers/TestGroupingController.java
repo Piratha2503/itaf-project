@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 @RestController
@@ -64,9 +63,9 @@ public class TestGroupingController {
     @PostMapping(value = EndpointURI.TEST_GROUPING_IMPORT)
     public ResponseEntity<Object> importTestGroupingFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
+        List<TestGroupingRequest> testGroupingRequestList;
         Set<String> testGroupingNames = new HashSet<>();
-        try (InputStream inputStream = multipartFile.getInputStream()) {
+        try {
             if (testGroupingService.hasCsvFormat(multipartFile)) {
                 if (!testGroupingService.isCSVHeaderMatch(multipartFile)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
@@ -162,7 +161,7 @@ public class TestGroupingController {
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingService.getTestGroupingById(id),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingById(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetTestGroupingSuccessMessage()
@@ -212,7 +211,7 @@ public class TestGroupingController {
                                                                     @RequestParam(name = "sortField") String sortField,
                                                                     TestGroupingSearch testGroupingSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingService.multiSearchTestGrouping(pageable,
                 pagination, testGroupingSearch),
                 RequestStatus.SUCCESS.getStatus(),
