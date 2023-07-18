@@ -167,7 +167,6 @@ public class ProjectController {
                 statusCodeBundle.getGetAllProjectSuccessMessage()));
     }
 
-
     @GetMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> getProjectById(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {

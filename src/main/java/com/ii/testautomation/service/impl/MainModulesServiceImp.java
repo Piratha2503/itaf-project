@@ -40,7 +40,6 @@ public class MainModulesServiceImp implements MainModulesService {
     @Autowired
     private SubModulesRepository subModulesRepository;
 
-    // CRUD
     @Override
     public void saveMainModules(MainModulesRequest mainModulesRequest) {
         MainModules mainModules = new MainModules();
@@ -50,6 +49,7 @@ public class MainModulesServiceImp implements MainModulesService {
         mainModulesRepository.save(mainModules);
     }
 
+    @Override
     public void deleteMainModules(Long id) {
         mainModulesRepository.deleteById(id);
     }
@@ -78,21 +78,6 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public List<MainModulesResponse> getByMainModulesName(String name) {
-        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
-        List<MainModules> mainModulesList = mainModulesRepository.findAllByNameIgnoreCase(name);
-
-        for (MainModules mainModules : mainModulesList) {
-            MainModulesResponse mainModulesResponse = new MainModulesResponse();
-            BeanUtils.copyProperties(mainModules, mainModulesResponse);
-            mainModulesResponseList.add(mainModulesResponse);
-        }
-
-        return mainModulesResponseList;
-    }
-
-    @Override
-    // Search
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(mainModuleSearch.getName())) {
@@ -115,7 +100,6 @@ public class MainModulesServiceImp implements MainModulesService {
         return mainModulesResponseList;
     }
 
-    // Checking Functions
     @Override
     public boolean isExistModulesId(Long id) {
         return modulesRepository.existsById(id);
@@ -133,19 +117,13 @@ public class MainModulesServiceImp implements MainModulesService {
 
     @Override
     public boolean isExistMainModulesId(Long id) {
-        if (id == null) {
-            return false;
-        }
         return mainModulesRepository.existsById(id);
     }
 
     @Override
-    public boolean isExistsSubmodulesByMainModule(Long id) {
-        return subModulesRepository.existsByMainModuleId(id);
-    }
-
-    @Override
     public boolean existsMainModuleByModuleId(Long id) {
+        if (id == null)
+            return false;
         return mainModulesRepository.existsByModulesId(id);
     }
 
@@ -159,7 +137,6 @@ public class MainModulesServiceImp implements MainModulesService {
         return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix, mainModuleId);
     }
 
-    // Bulk Import
     @Override
     public boolean hasExcelFormat(MultipartFile multipartFile) {
         try {
@@ -179,11 +156,15 @@ public class MainModulesServiceImp implements MainModulesService {
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
             for (CSVRecord csvRecord : csvRecords) {
-                MainModulesRequest MainModulesRequest = new MainModulesRequest();
-                MainModulesRequest.setModuleId(Long.parseLong(csvRecord.get("ModuleId")));
-                MainModulesRequest.setPrefix(csvRecord.get("prefix"));
-                MainModulesRequest.setName(csvRecord.get("name"));
-                mainModulesRequestList.add(MainModulesRequest);
+                MainModulesRequest mainModulesRequest = new MainModulesRequest();
+
+                if (csvRecord.get("module_id").isEmpty() || csvRecord.get("module_id").isBlank()) {
+                    mainModulesRequest.setModuleId(null);
+                } else mainModulesRequest.setModuleId(Long.parseLong(csvRecord.get("module_id")));
+
+                mainModulesRequest.setPrefix(csvRecord.get("prefix"));
+                mainModulesRequest.setName(csvRecord.get("name"));
+                mainModulesRequestList.add(mainModulesRequest);
             }
 
         } catch (IOException e) {
@@ -203,11 +184,11 @@ public class MainModulesServiceImp implements MainModulesService {
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
-                MainModulesRequest MainModulesRequest = new MainModulesRequest();
-                MainModulesRequest.setModuleId(getLongCellValue(row.getCell(columnMap.get("module_id"))));
-                MainModulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
-                MainModulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
-                mainModulesRequestList.add(MainModulesRequest);
+                MainModulesRequest mainModulesRequest = new MainModulesRequest();
+                mainModulesRequest.setModuleId(getLongCellValue(row.getCell(columnMap.get("module_id"))));
+                mainModulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
+                mainModulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
+                mainModulesRequestList.add(mainModulesRequest);
             }
             workbook.close();
         } catch (IOException e) {
