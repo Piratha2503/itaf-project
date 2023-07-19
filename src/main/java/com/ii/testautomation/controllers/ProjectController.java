@@ -60,24 +60,19 @@ public class ProjectController {
         Set<String> projectNames = new HashSet<>();
         Set<String> projectCodes = new HashSet<>();
         try {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if (!projectService.isCSVHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
-                }
+            if (!projectService.isCSVHeaderMatch(multipartFile) && !projectService.isExcelHeaderMatch(multipartFile)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
+                projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
             } else if (projectService.hasExcelFormat(multipartFile)) {
-                if (!projectService.isExcelHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    projectRequestList = projectService.excelToProjectRequest(multipartFile);
-                }
+                projectRequestList = projectService.excelToProjectRequest(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
 
-            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
-                ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
+            int rowIndex = 2;
+            for (ProjectRequest projectRequest : projectRequestList) {
 
                 if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
@@ -106,28 +101,31 @@ public class ProjectController {
                 if (projectService.existByProjectCode(projectRequest.getCode())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
                 }
+                rowIndex++;
             }
-
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getProjectFileImportValidationMessage(),
                         errorMessages));
+            } else if (projectRequestList.isEmpty()) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getProjectFileEmptyMessage()));
             } else {
                 for (ProjectRequest projectRequest : projectRequestList) {
-                    projectService.saveProject(projectRequest);
+                        projectService.saveProject(projectRequest);
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),
                         statusCodeBundle.getSaveProjectSuccessMessage()));
             }
+
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSaveProjectValidationMessage()));
         }
     }
-
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestBody ProjectRequest projectRequest) {
         if (!projectService.existByProjectId(projectRequest.getId())) {
@@ -160,13 +158,12 @@ public class ProjectController {
                                                  @RequestParam(name = "sortField") String sortField,
                                                  ProjectSearch projectSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.PROJECTS, projectService.multiSearchProject(pageable, pagination, projectSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllProjectSuccessMessage()));
     }
-
 
     @GetMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> getProjectById(@PathVariable Long id) {

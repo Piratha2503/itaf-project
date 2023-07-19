@@ -47,6 +47,8 @@ public class StatusCodeBundle {
     private String projectFileImportValidationMessage;
     @Value("${message.validation.project.file.name.empty}")
     private String projectNameEmptyMessage;
+    @Value("${message.validation.project.file.empty}")
+    private String projectFileEmptyMessage;
     @Value("${message.validation.project.file.code.empty}")
     private String projectCodeEmptyMessage;
     @Value("${message.validation.project.file.description.empty}")
@@ -80,6 +82,8 @@ public class StatusCodeBundle {
     private String saveSubModuleValidationMessage;
     @Value("${message.validation.subModule.file}")
     private String subModuleFileImportValidationMessage;
+    @Value("${message.validation.subModules.file.empty}")
+    private String subModulesFileEmptyMessage;
     @Value("${message.validation.subModule.file.name.empty}")
     private String subModuleNameEmptyMessage;
     @Value("${message.validation.subModule.file.prefix.empty}")
@@ -123,6 +127,8 @@ public class StatusCodeBundle {
     private String ModuleIdNotAssigned;
     @Value("${Message.validation.module.Id.AssignedWithAnotherTable}")
     private String IdAssignedWithAnotherTable;
+    @Value("${code.validation.mainModule.dependent}")
+    private String IdAssignedWithAnotherTableCode;
     @Value("${message.success.mainModules.save}")
     private String SuccessMessageInsertMainModules;
     @Value("${message.success.mainModules.delete}")
@@ -132,15 +138,23 @@ public class StatusCodeBundle {
     @Value("${message.success.mainModules.view}")
     private String SuccessViewAllMessageMainModules;
     @Value("${message.failure.mainModules.name.AlreadyExist}")
-    private String NameAlreadyExist;
+    private String mainModulesNameAlreadyExistMessage;
     @Value("${message.failure.mainModules.prefix.AlreadyExist}")
-    private String PrefixAlreadyExist;
+    private String mainModulesPrefixAlreadyExistMessage;
     @Value("${message.failure.module.Id.NotFound}")
     private String ModuleIdNotFound;
     @Value("${message.failure.mainModulesId.NotFound}")
     private String MainModulesIdNotFound;
     @Value("${message.validation.NotSave.mainModules}")
     private String mainModulesNotSavedMessage;
+    @Value("${message.validation.mainModule.NameEmpty}")
+    private String mainModulesNameFiledEmptyMessage;
+    @Value("${message.validation.mainModule.PrefixEmpty}")
+    private String mainModulesPrefixFiledEmptyMessage;
+    @Value("${message.validation.mainModule.PrefixDuplicate}")
+    private String mainModulesPrefixDuplicateMessage;
+    @Value("${message.validation.mainModule.NameDuplicate}")
+    private String mainModulesNameDuplicateMessage;
 
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
@@ -196,6 +210,8 @@ public class StatusCodeBundle {
     private String TestTypeNotExistCode;
     @Value("${code.validation.testTypes.notExists}")
     private String testTypesNotExistCode;
+    @Value("${code.validation.testType.dependent}")
+    private String testTypeDependentCode;
 
     //Test Type Messages
     @Value("${message.failure.alreadyExist.TestTypeId}")
@@ -218,6 +234,14 @@ public class StatusCodeBundle {
     private String testTypesNotExistsMessage;
     @Value("${message.validation.NotSave.TestTypes}")
     private String testTypesNotSavedMessage;
+    @Value("${Message.validation.testType.Id.AssignedWithAnotherTable}")
+    private String testTypeDependentMessage;
+    @Value("${message.validation.testType.Name.Duplicate}")
+    private String testTypeNameDuplicateMessage;
+    @Value("${message.validation.testType.Name.Empty}")
+    private String testTypeNameEmptyMessage;
+    @Value("${message.validation.testType.Description.Empty}")
+    private String testTypeDescriptionEmptyMessage;
 
    //TestCases code
     @Value("${code.validation.testCases.notExists}")
@@ -273,6 +297,8 @@ public class StatusCodeBundle {
     private String getTestGroupingSuccessMessage;
     @Value("${message.success.getAll.testGrouping}")
     private String getAllTestGroupingSuccessMessage;
+    @Value("${message.validation.testGrouping.file.empty}")
+    private String testGroupingFileEmptyMessage;
     @Value("${message.validation.get.testGrouping.notHave.testCase}")
     private String getTestGroupingNotHaveTestCaseId;
     @Value("${message.validation.get.testGrouping.notHave.testType}")

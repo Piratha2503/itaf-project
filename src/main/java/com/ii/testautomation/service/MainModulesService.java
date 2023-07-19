@@ -21,8 +21,6 @@ public interface MainModulesService {
 
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch);
 
-    public List<MainModulesResponse> getByMainModulesName(String name);
-
     public boolean isExistMainModulesId(Long id);
 
     public boolean isExistMainModulesName(String name);
@@ -34,8 +32,6 @@ public interface MainModulesService {
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
 
     public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
-
-    public boolean isExistsSubmodulesByMainModule(Long id);
 
     public boolean existsMainModuleByModuleId(Long id);
 

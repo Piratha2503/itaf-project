@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 @RestController
@@ -64,9 +63,9 @@ public class TestGroupingController {
     @PostMapping(value = EndpointURI.TEST_GROUPING_IMPORT)
     public ResponseEntity<Object> importTestGroupingFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
+        List<TestGroupingRequest> testGroupingRequestList;
         Set<String> testGroupingNames = new HashSet<>();
-        try (InputStream inputStream = multipartFile.getInputStream()) {
+        try {
             if (testGroupingService.hasCsvFormat(multipartFile)) {
                 if (!testGroupingService.isCSVHeaderMatch(multipartFile)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
@@ -94,18 +93,16 @@ public class TestGroupingController {
                 }
                 if (testGroupingRequest.getTestTypeId() == null) {
                     testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestTypeIdEmptyMessage(), rowIndex);
+                } else if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), rowIndex);
                 }
                 if (testGroupingRequest.getTestCaseId() == null) {
                     testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestCaseIdEmptyMessage(), rowIndex);
+                } else if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), rowIndex);
                 }
                 if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), rowIndex);
-                }
-                if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), rowIndex);
-                }
-                if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), rowIndex);
                 }
             }
             if (!errorMessages.isEmpty()) {
@@ -113,6 +110,9 @@ public class TestGroupingController {
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getTestGroupFileImportValidationMessage(),
                         errorMessages));
+            }else if(testGroupingRequestList.isEmpty()) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getTestGroupingFileEmptyMessage()));
             } else {
                 for (TestGroupingRequest testGroupingRequest : testGroupingRequestList) {
                     testGroupingService.saveTestGrouping(testGroupingRequest);
@@ -214,7 +214,7 @@ public class TestGroupingController {
                                                                     @RequestParam(name = "sortField") String sortField,
                                                                     TestGroupingSearch testGroupingSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingService.multiSearchTestGrouping(pageable,
                 pagination, testGroupingSearch),
                 RequestStatus.SUCCESS.getStatus(),
