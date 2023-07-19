@@ -110,6 +110,9 @@ public class TestGroupingController {
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getTestGroupFileImportValidationMessage(),
                         errorMessages));
+            }else if(testGroupingRequestList.isEmpty()) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getTestGroupingFileEmptyMessage()));
             } else {
                 for (TestGroupingRequest testGroupingRequest : testGroupingRequestList) {
                     testGroupingService.saveTestGrouping(testGroupingRequest);
@@ -161,7 +164,7 @@ public class TestGroupingController {
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingById(id),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingService.getTestGroupingById(id),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetTestGroupingSuccessMessage()

@@ -117,6 +117,9 @@ public class SubModulesController {
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getSubModuleFileImportValidationMessage(),
                         errorMessages));
+            }else if(subModulesRequestList.isEmpty()) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getProjectFileEmptyMessage()));
             } else {
                 for (SubModulesRequest subModulesRequest : subModulesRequestList) {
                     subModulesService.saveSubModules(subModulesRequest);
