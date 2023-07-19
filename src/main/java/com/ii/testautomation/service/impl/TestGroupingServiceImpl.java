@@ -157,8 +157,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public List<TestGroupingRequest> csvToTestGroupingRequest(InputStream inputStream) {
-        List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
+    public Map<Integer, TestGroupingRequest> csvToTestGroupingRequest(InputStream inputStream) {
+        Map<Integer, TestGroupingRequest> testGroupingRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -176,7 +176,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 } else {
                     testGroupingRequest.setTestTypeId(null);
                 }
-                testGroupingRequestList.add(testGroupingRequest);
+                testGroupingRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, testGroupingRequest);
             }
 
         } catch (IOException e) {
@@ -204,8 +204,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public List<TestGroupingRequest> excelToTestGroupingRequest(MultipartFile multipartFile) {
-        List<TestGroupingRequest> testGroupingRequestList = new ArrayList<>();
+    public Map<Integer, TestGroupingRequest> excelToTestGroupingRequest(MultipartFile multipartFile) {
+        Map<Integer, TestGroupingRequest> testGroupingRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -217,7 +217,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 testGroupingRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testGroupingRequest.setTestTypeId(getLongCellValue(row.getCell(columnMap.get("test_type_id"))));
                 testGroupingRequest.setTestCaseId(getLongCellValue(row.getCell(columnMap.get("test_case_id"))));
-                testGroupingRequestList.add(testGroupingRequest);
+                testGroupingRequestList.put(row.getRowNum() + 1, testGroupingRequest);
             }
             workbook.close();
         } catch (IOException e) {

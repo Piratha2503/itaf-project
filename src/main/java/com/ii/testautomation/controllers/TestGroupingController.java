@@ -63,7 +63,7 @@ public class TestGroupingController {
     @PostMapping(value = EndpointURI.TEST_GROUPING_IMPORT)
     public ResponseEntity<Object> importTestGroupingFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        List<TestGroupingRequest> testGroupingRequestList;
+        Map<Integer, TestGroupingRequest> testGroupingRequestList;
         Set<String> testGroupingNames = new HashSet<>();
         try {
             if (testGroupingService.hasCsvFormat(multipartFile)) {
@@ -82,27 +82,27 @@ public class TestGroupingController {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-            for (int rowIndex = 2; rowIndex <= testGroupingRequestList.size() + 1; rowIndex++) {
-                TestGroupingRequest testGroupingRequest = testGroupingRequestList.get(rowIndex - 2);
-                if (!Utils.isNotNullAndEmpty(testGroupingRequest.getName())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupNameEmptyMessage(), rowIndex);
-                } else if (testGroupingNames.contains(testGroupingRequest.getName())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameDuplicateMessage(), rowIndex);
+            for (Map.Entry<Integer, TestGroupingRequest> entry : testGroupingRequestList.entrySet()) {
+
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupNameEmptyMessage(), entry.getKey());
+                } else if (testGroupingNames.contains(entry.getValue().getName())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameDuplicateMessage(), entry.getKey());
                 } else {
-                    testGroupingNames.add(testGroupingRequest.getName());
+                    testGroupingNames.add(entry.getValue().getName());
                 }
-                if (testGroupingRequest.getTestTypeId() == null) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestTypeIdEmptyMessage(), rowIndex);
-                } else if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), rowIndex);
+                if (entry.getValue().getTestTypeId() == null) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestTypeIdEmptyMessage(), entry.getKey());
+                } else if (!testTypesService.existsByTestTypesId(entry.getValue().getTestTypeId())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), entry.getKey());
                 }
-                if (testGroupingRequest.getTestCaseId() == null) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestCaseIdEmptyMessage(), rowIndex);
-                } else if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), rowIndex);
+                if (entry.getValue().getTestCaseId() == null) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestCaseIdEmptyMessage(), entry.getKey());
+                } else if (!testCasesService.existsByTestCasesId(entry.getValue().getTestCaseId())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), entry.getKey());
                 }
-                if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), rowIndex);
+                if (testGroupingService.existsByTestGroupingName(entry.getValue().getName())) {
+                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), entry.getKey());
                 }
             }
             if (!errorMessages.isEmpty()) {
@@ -110,12 +110,12 @@ public class TestGroupingController {
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getTestGroupFileImportValidationMessage(),
                         errorMessages));
-            }else if(testGroupingRequestList.isEmpty()) {
+            } else if (testGroupingRequestList.isEmpty()) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getTestGroupingFileEmptyMessage()));
             } else {
-                for (TestGroupingRequest testGroupingRequest : testGroupingRequestList) {
-                    testGroupingService.saveTestGrouping(testGroupingRequest);
+                for (Map.Entry<Integer, TestGroupingRequest> entry : testGroupingRequestList.entrySet()) {
+                    testGroupingService.saveTestGrouping(entry.getValue());
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),

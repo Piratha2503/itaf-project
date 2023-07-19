@@ -114,8 +114,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectRequest> csvToProjectRequest(InputStream inputStream) {
-        List<ProjectRequest> projectRequestList = new ArrayList<>();
+    public Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream) {
+        Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
@@ -126,7 +126,7 @@ public class ProjectServiceImpl implements ProjectService {
                 projectRequest.setCode(csvRecord.get("code"));
                 projectRequest.setDescription(csvRecord.get("description"));
                 projectRequest.setName(csvRecord.get("name"));
-                projectRequestList.add(projectRequest);
+                projectRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, projectRequest);
             }
 
         } catch (IOException e) {
@@ -147,8 +147,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
-        List<ProjectRequest> projectRequestList = new ArrayList<>();
+    public Map<Integer, ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
+        Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -161,7 +161,7 @@ public class ProjectServiceImpl implements ProjectService {
                 projectRequest.setCode(dataFormatter.formatCellValue(row.getCell(columnMap.get("code"))));
                 projectRequest.setDescription(dataFormatter.formatCellValue(row.getCell(columnMap.get("description"))));
                 projectRequest.setName(dataFormatter.formatCellValue(row.getCell(columnMap.get("name"))));
-                projectRequestList.add(projectRequest);
+                projectRequestList.put(row.getRowNum() + 1, projectRequest);
             }
             workbook.close();
         } catch (IOException e) {
