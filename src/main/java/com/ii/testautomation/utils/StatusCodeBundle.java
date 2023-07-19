@@ -150,10 +150,10 @@ public class StatusCodeBundle {
     @Value("${code.validation.module.dependent}")
     private String moduleDependentCode;
     //Modules Message
+    @Value("${message.validation.module.file.empty}")
+    private String moduleFileEmptyMessage;
     @Value("${message.success.update.module}")
     private String updateModuleSuccessMessage;
-
-    //Modules Message
     @Value("${message.validation.module.file.prefix.empty}")
     private String modulePrefixEmptyMessage;
     @Value("${message.validation.module.file.name.empty}")
@@ -255,6 +255,8 @@ public class StatusCodeBundle {
     private String testCaseValidationSaveMessage;
     @Value("${message.validation.testcase.name.duplicate}")
     private String testCaseNameDuplicateMessage;
+    @Value("${message.validation.testcase.file.submoduleId.empty}")
+    private String testcaseSubModuleIdEmptyMessage;
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
