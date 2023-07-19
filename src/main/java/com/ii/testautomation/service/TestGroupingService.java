@@ -34,9 +34,9 @@ public interface TestGroupingService {
 
     public boolean existsByTestTypesId(Long testTypeId);
 
-    List<TestGroupingRequest> csvToTestGroupingRequest(InputStream inputStream);
+    Map<Integer, TestGroupingRequest> csvToTestGroupingRequest(InputStream inputStream);
 
-    List<TestGroupingRequest> excelToTestGroupingRequest(MultipartFile multipartFile);
+    Map<Integer, TestGroupingRequest> excelToTestGroupingRequest(MultipartFile multipartFile);
 
     public boolean hasExcelFormat(MultipartFile multipartFile);
 

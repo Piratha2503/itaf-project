@@ -34,11 +34,11 @@ public interface SubModulesService {
 
     boolean existsByMainModuleId(Long mainModuleId);
 
-    List<SubModulesRequest> csvToSubModuleRequest(InputStream inputStream);
+    Map<Integer, SubModulesRequest> csvToSubModuleRequest(InputStream inputStream);
 
-    List<SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile);
+    Map<Integer, SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
