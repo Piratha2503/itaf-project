@@ -138,8 +138,8 @@ public class ModulesServiceImpl implements ModulesService {
 
 
     @Override
-    public List<ModulesRequest> csvToModulesRequest(InputStream inputStream) {
-        List<ModulesRequest> modulesRequestsList = new ArrayList<>();
+    public Map<Integer,ModulesRequest> csvToModulesRequest(InputStream inputStream) {
+        Map<Integer,ModulesRequest> modulesRequestsList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
@@ -152,7 +152,7 @@ public class ModulesServiceImpl implements ModulesService {
                 }else{
                     modulesRequest.setProject_id(null);
                 }
-                modulesRequestsList.add(modulesRequest);
+                modulesRequestsList.put(Math.toIntExact(csvRecord.getRecordNumber()+1),modulesRequest);
             }
 
         } catch (IOException e) {
@@ -173,8 +173,8 @@ public class ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public List<ModulesRequest> excelToModuleRequest(MultipartFile multipartFile) {
-        List<ModulesRequest> modulesRequestList = new ArrayList<>();
+    public Map<Integer,ModulesRequest> excelToModuleRequest(MultipartFile multipartFile) {
+        Map<Integer,ModulesRequest> modulesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -186,7 +186,7 @@ public class ModulesServiceImpl implements ModulesService {
                 modulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 modulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
                 modulesRequest.setProject_id(getLongCellValue(row.getCell(columnMap.get("project_id"))));
-                modulesRequestList.add(modulesRequest);
+                modulesRequestList.put(row.getRowNum()+1, modulesRequest);
             }
             workbook.close();
         } catch (IOException e) {

@@ -134,8 +134,8 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public List<TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
-        List<TestCaseRequest> testCaseRequestList = new ArrayList<>();
+    public Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
+        Map<Integer,TestCaseRequest> testCaseRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -148,7 +148,7 @@ public class TestCasesServiceImpl implements TestCasesService {
                 }else{
                     testCaseRequest.setSubModuleId(null);
                 }
-                testCaseRequestList.add(testCaseRequest);
+                testCaseRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()+1),testCaseRequest);
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
@@ -157,8 +157,8 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public List<TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile) {
-        List<TestCaseRequest> testCaseRequestList = new ArrayList<>();
+    public Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile) {
+        Map<Integer,TestCaseRequest> testCaseRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -170,7 +170,7 @@ public class TestCasesServiceImpl implements TestCasesService {
                 testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testCaseRequest.setSubModuleId(getLongCellValue(row.getCell(columnMap.get("submodule_id"))));
-                testCaseRequestList.add(testCaseRequest);
+                testCaseRequestList.put(row.getRowNum()+1, testCaseRequest);
             }
             workbook.close();
         } catch (IOException e) {

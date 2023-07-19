@@ -76,17 +76,17 @@ public class TestCasesController {
     @GetMapping(value = EndpointURI.TESTCASES)
     public ResponseEntity<Object> getAllWithMultiSearch(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, TestCaseSearch testCaseSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.multiSearchTestCase(pageable, pagination, testCaseSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestCasesSuccessMessage()));
     }
 
     @PostMapping(EndpointURI.TESTCASE_IMPORT)
     public ResponseEntity<Object> testCaseImport(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        List<TestCaseRequest> testCaseRequestList;
+        Map<Integer,TestCaseRequest> testCaseRequestList;
         Set<String> testCasesNames = new HashSet<>();
         try {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                 if (!testCasesService.isCSVHeaderMatch(multipartFile)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                             statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
@@ -105,29 +105,28 @@ public class TestCasesController {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-            for (int rowIndex = 2; rowIndex <= testCaseRequestList.size() + 1; rowIndex++) {
-                TestCaseRequest testCaseRequest = testCaseRequestList.get(rowIndex - 2);
-                if (!Utils.isNotNullAndEmpty(testCaseRequest.getName())) {
-                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), rowIndex);
-                } else if (testCasesNames.contains(testCaseRequest.getName())) {
-                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameDuplicateMessage(), rowIndex);
+            for (Map.Entry<Integer,TestCaseRequest> entry:testCaseRequestList.entrySet()) {
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), entry.getKey());
+                } else if (testCasesNames.contains(entry.getValue().getName())) {
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameDuplicateMessage(), entry.getKey());
                 } else {
-                    testCasesNames.add(testCaseRequest.getName());
+                    testCasesNames.add(entry.getValue().getName());
                 }
-                if (testCasesService.existsByTestCasesName(testCaseRequest.getName())) {
-                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), rowIndex);
+                if (testCasesService.existsByTestCasesName(entry.getValue().getName())) {
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), entry.getKey());
                 }
-                if(testCaseRequest.getSubModuleId()==null){
-                    testCasesService.addToErrorMessages(errorMessages,statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(),rowIndex);
-                } else if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
-                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNotExistsMessage(), rowIndex);
+                if(entry.getValue().getSubModuleId()==null){
+                    testCasesService.addToErrorMessages(errorMessages,statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(),entry.getKey());
+                } else if (!subModulesService.existsBySubModuleId(entry.getValue().getSubModuleId())) {
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNotExistsMessage(), entry.getKey());
                 }
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestCaseFileErrorMessage(), errorMessages));
             } else {
-                for (TestCaseRequest testCaseRequest : testCaseRequestList) {
-                    testCasesService.saveTestCase(testCaseRequest);
+                for (Map.Entry<Integer,TestCaseRequest> entry:testCaseRequestList.entrySet()) {
+                    testCasesService.saveTestCase(entry.getValue());
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestCaseSuccessMessage()));
             }
