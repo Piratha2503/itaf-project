@@ -1,7 +1,6 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
-import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;
@@ -28,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+@SuppressWarnings("ALL")
 @RestController
 @CrossOrigin
 public class ModulesController {
@@ -53,8 +53,8 @@ public class ModulesController {
                     statusCodeBundle.getModuleAlReadyExistsCode(),
                     statusCodeBundle.getModulePrefixAlReadyExistsMessage()));
         }
-        if(!projectService.existByProjectId(modulesRequest.getProject_id())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),
+        if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getProjectNotExistsMessage()));
         }
         modulesService.saveModule(modulesRequest);
@@ -158,17 +158,17 @@ public class ModulesController {
         Set<String> modulesPrefix = new HashSet<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if(!modulesService.isCSVHeaderMatch(multipartFile)){
-                   return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
-                           statusCodeBundle.getHeaderNotExistsMessage()));
-                }else{
+                if (!modulesService.isCSVHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
+                            statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
                     modulesRequestList = modulesService.csvToModulesRequest(inputStream);
                 }
             } else if (modulesService.hasExcelFormat(multipartFile)) {
-                if(!modulesService.isExcelHeaderMatch(multipartFile)){
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+                if (!modulesService.isExcelHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                             statusCodeBundle.getHeaderNotExistsMessage()));
-                }else{
+                } else {
                     modulesRequestList = modulesService.excelToModuleRequest(multipartFile);
                 }
             } else {
@@ -176,6 +176,7 @@ public class ModulesController {
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
             for (int rowIndex = 2; rowIndex <= modulesRequestList.size() + 1; rowIndex++) {
+
                 ModulesRequest modulesRequest = modulesRequestList.get(rowIndex - 2);
                 if (!Utils.isNotNullAndEmpty(modulesRequest.getName())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
@@ -198,17 +199,19 @@ public class ModulesController {
                 if (modulesService.isModuleExistsByPrefix(modulesRequest.getPrefix())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(), rowIndex);
                 }
-                if(modulesRequest.getProject_id()==null){
-                    return ResponseEntity.ok("project Id Null");
-                }
-              if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
+                if (modulesRequest.getProject_id() == null) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(), rowIndex);
+                }else if(!projectService.existByProjectId(modulesRequest.getProject_id())) {
+                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNotExistsMessage(), rowIndex);
                 }
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getModuleFileErrorMessage(), errorMessages));
-            } else {
+            } else if(modulesRequestList.isEmpty()) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(),statusCodeBundle.getModuleFileEmptyMessage()));
+            }else{
                 for (ModulesRequest modulesRequest : modulesRequestList) {
                     modulesService.saveModule(modulesRequest);
                 }

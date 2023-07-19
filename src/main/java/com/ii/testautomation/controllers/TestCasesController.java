@@ -117,7 +117,9 @@ public class TestCasesController {
                 if (testCasesService.existsByTestCasesName(testCaseRequest.getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), rowIndex);
                 }
-                if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
+                if(testCaseRequest.getSubModuleId()==null){
+                    testCasesService.addToErrorMessages(errorMessages,statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(),rowIndex);
+                } else if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNotExistsMessage(), rowIndex);
                 }
             }

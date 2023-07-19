@@ -28,8 +28,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@SuppressWarnings("ALL")
 @Service
 public class ModulesServiceImpl implements ModulesService {
 
@@ -138,15 +140,18 @@ public class ModulesServiceImpl implements ModulesService {
     @Override
     public List<ModulesRequest> csvToModulesRequest(InputStream inputStream) {
         List<ModulesRequest> modulesRequestsList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
 
                 ModulesRequest modulesRequest = new ModulesRequest();
                 modulesRequest.setName(csvRecord.get("name"));
                 modulesRequest.setPrefix(csvRecord.get("prefix"));
-                if(modulesRequest.getProject_id().)
-                modulesRequest.setProject_id(Long.parseLong(csvRecord.get("project_id")));
+                if(!csvRecord.get("project_id").isEmpty()) {
+                    modulesRequest.setProject_id(Long.parseLong(csvRecord.get("project_id")));
+                }else{
+                    modulesRequest.setProject_id(null);
+                }
                 modulesRequestsList.add(modulesRequest);
             }
 

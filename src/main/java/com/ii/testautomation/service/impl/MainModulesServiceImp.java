@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
+@SuppressWarnings("ALL")
 @Service
 public class MainModulesServiceImp implements MainModulesService {
     @Autowired
@@ -198,7 +199,7 @@ public class MainModulesServiceImp implements MainModulesService {
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-            DataFormatter dataFormatter = new DataFormatter();
+            //DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
