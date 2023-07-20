@@ -122,7 +122,7 @@ public class ModulesController {
         Set<String> modulesNames = new HashSet<>();
         Set<String> modulesPrefix = new HashSet<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            if (!modulesService.isCSVHeaderMatch(multipartFile)) {
+            if (!modulesService.isCSVHeaderMatch(multipartFile)&&(!modulesService.isExcelHeaderMatch(multipartFile))) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
             }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {

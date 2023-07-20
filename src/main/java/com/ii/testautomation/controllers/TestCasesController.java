@@ -86,22 +86,15 @@ public class TestCasesController {
         Map<Integer,TestCaseRequest> testCaseRequestList;
         Set<String> testCasesNames = new HashSet<>();
         try {
-            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-                if (!testCasesService.isCSVHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                            statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
+            if (!testCasesService.isCSVHeaderMatch(multipartFile)&&(!testCasesService.isExcelHeaderMatch(multipartFile))) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
+                if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                     testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream());
-                }
-
-            } else if (testCasesService.hasExcelFormat(multipartFile)) {
-                if (!testCasesService.isExcelHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                            statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
+                } else if (testCasesService.hasExcelFormat(multipartFile)) {
                     testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile);
-                }
-            } else {
+                } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
