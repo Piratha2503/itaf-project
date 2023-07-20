@@ -118,21 +118,21 @@ public class ModulesController {
     @PostMapping(value = EndpointURI.MODULE_IMPORT)
     public ResponseEntity<Object> importModuleFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        Map<Integer,ModulesRequest> modulesRequestList;
+        Map<Integer, ModulesRequest> modulesRequestList;
         Set<String> modulesNames = new HashSet<>();
         Set<String> modulesPrefix = new HashSet<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            if (!modulesService.isCSVHeaderMatch(multipartFile)&&(!modulesService.isExcelHeaderMatch(multipartFile))) {
+            if (!modulesService.isCSVHeaderMatch(multipartFile) && (!modulesService.isExcelHeaderMatch(multipartFile))) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
             }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-                    modulesRequestList = modulesService.csvToModulesRequest(inputStream);
+                modulesRequestList = modulesService.csvToModulesRequest(inputStream);
             } else if (modulesService.hasExcelFormat(multipartFile)) {
                 modulesRequestList = modulesService.excelToModuleRequest(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-            for (Map.Entry<Integer,ModulesRequest> entry: modulesRequestList.entrySet()) {
+            for (Map.Entry<Integer, ModulesRequest> entry : modulesRequestList.entrySet()) {
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), entry.getKey());
                 } else if (modulesNames.contains(entry.getValue().getName())) {
@@ -142,31 +142,31 @@ public class ModulesController {
                 }
 
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getPrefix())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixEmptyMessage(),entry.getKey());
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixEmptyMessage(), entry.getKey());
                 } else if (modulesPrefix.contains(entry.getValue().getPrefix())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixDuplicateMessage(), entry.getKey());
                 } else {
                     modulesPrefix.add(entry.getValue().getPrefix());
                 }
                 if (modulesService.isModuleExistsByName(entry.getValue().getName())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameAlReadyExistsMessage(),entry.getKey());
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameAlReadyExistsMessage(), entry.getKey());
                 }
                 if (modulesService.isModuleExistsByPrefix(entry.getValue().getPrefix())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(),entry.getKey());
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(), entry.getKey());
                 }
                 if (entry.getValue().getProject_id() == null) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(),entry.getKey());
-                }else if(!projectService.existByProjectId(entry.getValue().getProject_id())) {
-                        modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNotExistsMessage(), entry.getKey());
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(), entry.getKey());
+                } else if (!projectService.existByProjectId(entry.getValue().getProject_id())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNotExistsMessage(), entry.getKey());
                 }
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleFileErrorMessage(), errorMessages));
-            } else if(modulesRequestList.isEmpty()) {
+            } else if (modulesRequestList.isEmpty()) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(),statusCodeBundle.getModuleFileEmptyMessage()));
-            }else{
-                for (Map.Entry<Integer,ModulesRequest>entry:modulesRequestList.entrySet()){
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getModuleFileEmptyMessage()));
+            } else {
+                for (Map.Entry<Integer, ModulesRequest> entry : modulesRequestList.entrySet()) {
                     modulesService.saveModule(entry.getValue());
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveModuleSuccessMessage()));

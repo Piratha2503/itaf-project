@@ -243,7 +243,7 @@ public class StatusCodeBundle {
     @Value("${message.validation.testType.Description.Empty}")
     private String testTypeDescriptionEmptyMessage;
 
-   //TestCases code
+    //TestCases code
     @Value("${code.validation.testCases.notExists}")
     private String testCasesNotExistCode;
     @Value("${code.validation.testCases.alreadyExists}")

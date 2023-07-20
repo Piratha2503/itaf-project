@@ -83,22 +83,22 @@ public class TestCasesController {
     @PostMapping(EndpointURI.TESTCASE_IMPORT)
     public ResponseEntity<Object> testCaseImport(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        Map<Integer,TestCaseRequest> testCaseRequestList;
+        Map<Integer, TestCaseRequest> testCaseRequestList;
         Set<String> testCasesNames = new HashSet<>();
         try {
-            if (!testCasesService.isCSVHeaderMatch(multipartFile)&&(!testCasesService.isExcelHeaderMatch(multipartFile))) {
+            if (!testCasesService.isCSVHeaderMatch(multipartFile) && (!testCasesService.isExcelHeaderMatch(multipartFile))) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
             }
-                if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-                    testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream());
-                } else if (testCasesService.hasExcelFormat(multipartFile)) {
-                    testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile);
-                } else {
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
+                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream());
+            } else if (testCasesService.hasExcelFormat(multipartFile)) {
+                testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile);
+            } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-            for (Map.Entry<Integer,TestCaseRequest> entry:testCaseRequestList.entrySet()) {
+            for (Map.Entry<Integer, TestCaseRequest> entry : testCaseRequestList.entrySet()) {
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), entry.getKey());
                 } else if (testCasesNames.contains(entry.getValue().getName())) {
@@ -109,24 +109,23 @@ public class TestCasesController {
                 if (testCasesService.existsByTestCasesName(entry.getValue().getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), entry.getKey());
                 }
-                if(entry.getValue().getSubModuleId()==null){
-                    testCasesService.addToErrorMessages(errorMessages,statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(),entry.getKey());
+                if (entry.getValue().getSubModuleId() == null) {
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(), entry.getKey());
                 } else if (!subModulesService.existsBySubModuleId(entry.getValue().getSubModuleId())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNotExistsMessage(), entry.getKey());
                 }
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestCaseFileErrorMessage(), errorMessages));
-            }else if(testCaseRequestList.isEmpty()){
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+            } else if (testCaseRequestList.isEmpty()) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getTestcaseFileEmptyMessage()));
             } else {
-                for (Map.Entry<Integer,TestCaseRequest> entry:testCaseRequestList.entrySet()) {
+                for (Map.Entry<Integer, TestCaseRequest> entry : testCaseRequestList.entrySet()) {
                     testCasesService.saveTestCase(entry.getValue());
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestCaseSuccessMessage()));
             }
-
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestCaseValidationSaveMessage()));
         }
@@ -144,7 +143,6 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseBySubModuleIdSuccessMessage()));
 
     }
-
 
     @DeleteMapping(value = EndpointURI.TESTCASE_BY_ID)
     public ResponseEntity<Object> DeleteTestCaseById(@PathVariable Long id) {
