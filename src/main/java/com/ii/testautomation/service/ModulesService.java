@@ -37,9 +37,9 @@ public interface ModulesService {
 
     public boolean hasExcelFormat(MultipartFile multipartFile);
 
-    public List<ModulesRequest> csvToModulesRequest(InputStream inputStream);
+    public Map<Integer,ModulesRequest> csvToModulesRequest(InputStream inputStream);
 
-    public List<ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
+    public Map<Integer,ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
     public boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
