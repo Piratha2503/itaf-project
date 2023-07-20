@@ -128,7 +128,6 @@ public class ProjectServiceImpl implements ProjectService {
                 projectRequest.setName(csvRecord.get("name"));
                 projectRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, projectRequest);
             }
-
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
@@ -178,7 +177,6 @@ public class ProjectServiceImpl implements ProjectService {
             int columnIndex = cell.getColumnIndex();
             columnMap.put(cellValue, columnIndex);
         }
-
         return columnMap;
     }
 
