@@ -117,6 +117,9 @@ public class TestCasesController {
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestCaseFileErrorMessage(), errorMessages));
+            }else if(testCaseRequestList.isEmpty()){
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+                        statusCodeBundle.getTestcaseFileEmptyMessage()));
             } else {
                 for (Map.Entry<Integer,TestCaseRequest> entry:testCaseRequestList.entrySet()) {
                     testCasesService.saveTestCase(entry.getValue());
@@ -141,6 +144,7 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseBySubModuleIdSuccessMessage()));
 
     }
+
 
     @DeleteMapping(value = EndpointURI.TESTCASE_BY_ID)
     public ResponseEntity<Object> DeleteTestCaseById(@PathVariable Long id) {

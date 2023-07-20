@@ -281,6 +281,8 @@ public class StatusCodeBundle {
     private String testCaseNameDuplicateMessage;
     @Value("${message.validation.testcase.file.submoduleId.empty}")
     private String testcaseSubModuleIdEmptyMessage;
+    @Value("${message.validation.testcase.file.empty}")
+    private String testcaseFileEmptyMessage;
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
