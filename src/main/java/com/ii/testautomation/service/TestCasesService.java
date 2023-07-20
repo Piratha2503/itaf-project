@@ -32,9 +32,9 @@ public interface TestCasesService {
 
     public boolean hasExcelFormat(MultipartFile multipartFile);
 
-    public List<TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
+    public Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
 
-    public List<TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
+    public Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
     public boolean isCSVHeaderMatch(MultipartFile multipartFile);
 

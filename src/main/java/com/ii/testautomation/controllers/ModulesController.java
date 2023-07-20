@@ -1,7 +1,6 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
-import com.ii.testautomation.dto.request.SubModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;
@@ -89,7 +88,7 @@ public class ModulesController {
     @GetMapping(value = EndpointURI.MODULES)
     public ResponseEntity<Object> getAllModules(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, ModuleSearch moduleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES, modulesService.multiSearchModules(pageable, pagination, moduleSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllModuleSuccessMessage()));
 
     }
@@ -119,58 +118,56 @@ public class ModulesController {
     @PostMapping(value = EndpointURI.MODULE_IMPORT)
     public ResponseEntity<Object> importModuleFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        List<ModulesRequest> modulesRequestList = new ArrayList<>();
+        Map<Integer, ModulesRequest> modulesRequestList;
         Set<String> modulesNames = new HashSet<>();
         Set<String> modulesPrefix = new HashSet<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if (!modulesService.isCSVHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    modulesRequestList = modulesService.csvToModulesRequest(inputStream);
-                }
+            if (!modulesService.isCSVHeaderMatch(multipartFile) && (!modulesService.isExcelHeaderMatch(multipartFile))) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
+                modulesRequestList = modulesService.csvToModulesRequest(inputStream);
             } else if (modulesService.hasExcelFormat(multipartFile)) {
-                if (!modulesService.isExcelHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    modulesRequestList = modulesService.excelToModuleRequest(multipartFile);
-                }
+                modulesRequestList = modulesService.excelToModuleRequest(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-            for (int rowIndex = 2; rowIndex <= modulesRequestList.size() + 1; rowIndex++) {
-                ModulesRequest modulesRequest = modulesRequestList.get(rowIndex - 2);
-                if (!Utils.isNotNullAndEmpty(modulesRequest.getName())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
-                } else if (modulesNames.contains(modulesRequest.getName())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameDuplicateMessage(), rowIndex);
+            for (Map.Entry<Integer, ModulesRequest> entry : modulesRequestList.entrySet()) {
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), entry.getKey());
+                } else if (modulesNames.contains(entry.getValue().getName())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameDuplicateMessage(), entry.getKey());
                 } else {
-                    modulesNames.add(modulesRequest.getName());
+                    modulesNames.add(entry.getValue().getName());
                 }
 
-                if (!Utils.isNotNullAndEmpty(modulesRequest.getPrefix())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixEmptyMessage(), rowIndex);
-                } else if (modulesPrefix.contains(modulesRequest.getPrefix())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixDuplicateMessage(), rowIndex);
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getPrefix())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixEmptyMessage(), entry.getKey());
+                } else if (modulesPrefix.contains(entry.getValue().getPrefix())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixDuplicateMessage(), entry.getKey());
                 } else {
-                    modulesPrefix.add(modulesRequest.getPrefix());
+                    modulesPrefix.add(entry.getValue().getPrefix());
                 }
-                if (modulesService.isModuleExistsByName(modulesRequest.getName())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameAlReadyExistsMessage(), rowIndex);
+                if (modulesService.isModuleExistsByName(entry.getValue().getName())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameAlReadyExistsMessage(), entry.getKey());
                 }
-                if (modulesService.isModuleExistsByPrefix(modulesRequest.getPrefix())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(), rowIndex);
+                if (modulesService.isModuleExistsByPrefix(entry.getValue().getPrefix())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(), entry.getKey());
                 }
-                if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
-                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(), rowIndex);
+                if (entry.getValue().getProject_id() == null) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleProjectIdEmptyMessage(), entry.getKey());
+                } else if (!projectService.existByProjectId(entry.getValue().getProject_id())) {
+                    modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNotExistsMessage(), entry.getKey());
                 }
-
             }
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleFileErrorMessage(), errorMessages));
+            } else if (modulesRequestList.isEmpty()) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getModuleFileEmptyMessage()));
             } else {
-                for (ModulesRequest modulesRequest : modulesRequestList) {
-                    modulesService.saveModule(modulesRequest);
+                for (Map.Entry<Integer, ModulesRequest> entry : modulesRequestList.entrySet()) {
+                    modulesService.saveModule(entry.getValue());
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveModuleSuccessMessage()));
             }
