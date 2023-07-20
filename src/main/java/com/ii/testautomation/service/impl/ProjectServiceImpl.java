@@ -42,17 +42,6 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest : projectRequestList
-        ) {
-
-            Project project = new Project();
-            BeanUtils.copyProperties(projectRequest, project);
-            projectRepository.save(project);
-        }
-    }
-
-    @Override
     public boolean existByProjectName(String projectName) {
         return projectRepository.existsByNameIgnoreCase(projectName);
     }
@@ -131,7 +120,6 @@ public class ProjectServiceImpl implements ProjectService {
                 projectRequest.setName(csvRecord.get("name"));
                 projectRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, projectRequest);
             }
-
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
@@ -181,7 +169,6 @@ public class ProjectServiceImpl implements ProjectService {
             int columnIndex = cell.getColumnIndex();
             columnMap.put(cellValue, columnIndex);
         }
-
         return columnMap;
     }
 
