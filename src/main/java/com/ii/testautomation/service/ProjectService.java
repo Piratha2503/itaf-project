@@ -15,8 +15,6 @@ import java.util.Map;
 public interface ProjectService {
     void saveProject(ProjectRequest projectRequest);
 
-    void saveProjectList(List<ProjectRequest> projectRequestList);
-
     boolean existByProjectName(String projectName);
 
     boolean existByProjectCode(String projectCode);

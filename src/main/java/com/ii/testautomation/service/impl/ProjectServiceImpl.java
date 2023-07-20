@@ -42,17 +42,6 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest : projectRequestList
-        ) {
-
-            Project project = new Project();
-            BeanUtils.copyProperties(projectRequest, project);
-            projectRepository.save(project);
-        }
-    }
-
-    @Override
     public boolean existByProjectName(String projectName) {
         return projectRepository.existsByNameIgnoreCase(projectName);
     }
