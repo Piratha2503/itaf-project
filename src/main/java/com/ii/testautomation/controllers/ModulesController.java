@@ -122,19 +122,13 @@ public class ModulesController {
         Set<String> modulesNames = new HashSet<>();
         Set<String> modulesPrefix = new HashSet<>();
         try (InputStream inputStream = multipartFile.getInputStream()) {
+            if (!modulesService.isCSVHeaderMatch(multipartFile)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-                if (!modulesService.isCSVHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-
-                } else {
                     modulesRequestList = modulesService.csvToModulesRequest(inputStream);
-                }
             } else if (modulesService.hasExcelFormat(multipartFile)) {
-                if (!modulesService.isExcelHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    modulesRequestList = modulesService.excelToModuleRequest(multipartFile);
-                }
+                modulesRequestList = modulesService.excelToModuleRequest(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
