@@ -22,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -90,7 +91,6 @@ public class MainModulesServiceImp implements MainModulesService {
 
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         Page<MainModules> mainModulesPage = mainModulesRepository.findAll(booleanBuilder, pageable);
-
         pagination.setTotalRecords(mainModulesPage.getTotalElements());
         pagination.setPageSize(mainModulesPage.getTotalPages());
         for (MainModules mainModules : mainModulesPage) {
@@ -239,6 +239,27 @@ public class MainModulesServiceImp implements MainModulesService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
+        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+        List <List<MainModules>> mainMainmoduleList = new ArrayList<>();
+        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(id);
+        for (Modules modules : modulesList)
+        {
+            mainMainmoduleList.add(mainModulesRepository.findAllByModulesId(modules.getId()));
+        }
+        for (List<MainModules> mainModulesList1 : mainMainmoduleList)
+        {
+            for (MainModules mainModules : mainModulesList1)
+            {
+                MainModulesResponse mainModulesResponse = new MainModulesResponse();
+                BeanUtils.copyProperties(mainModules,mainModulesResponse);
+                mainModulesResponseList.add(mainModulesResponse);
+            }
+        }
+        return mainModulesResponseList;
     }
 
     private String getStringCellValue(Cell cell) {
