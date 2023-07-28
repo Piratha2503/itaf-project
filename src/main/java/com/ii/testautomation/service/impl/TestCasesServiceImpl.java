@@ -3,9 +3,11 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
+import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.TestCases;
+import com.ii.testautomation.repositories.ModulesRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestCasesService;
@@ -97,7 +99,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseResponseList;
     }
-
     @Override
     public List<TestCaseResponse> getAllTestCaseBySubModuleId(Long subModuleId) {
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
@@ -111,7 +112,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseResponseList;
     }
-
     @Override
     public void DeleteTestCaseById(Long id) {
         testCasesRepository.deleteById(id);
@@ -121,7 +121,6 @@ public class TestCasesServiceImpl implements TestCasesService {
     public boolean existsBySubModuleId(Long subModuleId) {
         return testCasesRepository.existsBySubModuleId(subModuleId);
     }
-
     @Override
     public boolean hasExcelFormat(MultipartFile multipartFile) {
         try {
@@ -134,8 +133,8 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
-        Map<Integer,TestCaseRequest> testCaseRequestList = new HashMap<>();
+    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
+        Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -143,12 +142,12 @@ public class TestCasesServiceImpl implements TestCasesService {
                 TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(csvRecord.get("description"));
                 testCaseRequest.setName(csvRecord.get("name"));
-                if(!csvRecord.get("submodule_id").isEmpty()) {
+                if (!csvRecord.get("submodule_id").isEmpty()) {
                     testCaseRequest.setSubModuleId(Long.parseLong(csvRecord.get("submodule_id")));
-                }else{
+                } else {
                     testCaseRequest.setSubModuleId(null);
                 }
-                testCaseRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()+1),testCaseRequest);
+                testCaseRequestList.put(Math.toIntExact(csvRecord.getRecordNumber() + 1), testCaseRequest);
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
@@ -157,8 +156,8 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile) {
-        Map<Integer,TestCaseRequest> testCaseRequestList = new HashMap<>();
+    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile) {
+        Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -170,7 +169,7 @@ public class TestCasesServiceImpl implements TestCasesService {
                 testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testCaseRequest.setSubModuleId(getLongCellValue(row.getCell(columnMap.get("submodule_id"))));
-                testCaseRequestList.put(row.getRowNum()+1, testCaseRequest);
+                testCaseRequestList.put(row.getRowNum() + 1, testCaseRequest);
             }
             workbook.close();
         } catch (IOException e) {
@@ -178,7 +177,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseRequestList;
     }
-
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
         try (InputStream inputStream = multipartFile.getInputStream();
@@ -198,7 +196,6 @@ public class TestCasesServiceImpl implements TestCasesService {
             return false;
         }
     }
-
     @Override
     public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
@@ -222,6 +219,25 @@ public class TestCasesServiceImpl implements TestCasesService {
         errorList.add(value);
         errorMessages.put(key, errorList);
     }
+    @Override
+    public List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId) {
+        List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
+        List<TestCases> testCasesList = testCasesRepository.findBySubModule_MainModule_Modules_Project_Id(projectId);
+        for (TestCases testCases : testCasesList) {
+            TestCaseResponse testCaseResponse = new TestCaseResponse();
+            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
+            BeanUtils.copyProperties(testCases, testCaseResponse);
+            testCaseResponseList.add(testCaseResponse);
+        }
+        return testCaseResponseList;
+
+    }
+
+    @Override
+    public boolean existsTestCaseByProjectId(Long projectId) {
+        return testCasesRepository.existsBySubModule_MainModule_Modules_Project_id(projectId);
+    }
 
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
@@ -230,7 +246,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         cell.setCellType(CellType.STRING);
         return cell.getStringCellValue();
     }
-
     private Long getLongCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;
@@ -238,7 +253,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
     }
-
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 

@@ -31,9 +31,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("deprecation")
 @Service
-public class ModulesServiceImpl implements ModulesService {
+public class
+ModulesServiceImpl implements ModulesService {
 
     @Autowired
     private ModulesRepository modulesRepository;

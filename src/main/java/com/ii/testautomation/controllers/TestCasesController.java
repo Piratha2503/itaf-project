@@ -8,6 +8,7 @@ import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.service.TestGroupingService;
@@ -37,6 +38,8 @@ public class TestCasesController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private TestGroupingService testGroupingService;
+    @Autowired
+    private ProjectService projectService;
 
     @PostMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
@@ -142,6 +145,21 @@ public class TestCasesController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseBySubModuleIdSuccessMessage()));
 
+    }
+
+    @GetMapping(value = EndpointURI.TESTCASE_BY_PROJECT_ID)
+    public ResponseEntity<Object> getAllTestCasesByProjectId(@PathVariable Long id) {
+        if (!projectService.existByProjectId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        if(!testCasesService.existsTestCaseByProjectId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),statusCodeBundle.getGetTestCaseNotHaveProjectId()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestcasesByProjectId(id),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getGetAllTestCasesSuccessGivenProjectId()));
     }
 
     @DeleteMapping(value = EndpointURI.TESTCASE_BY_ID)

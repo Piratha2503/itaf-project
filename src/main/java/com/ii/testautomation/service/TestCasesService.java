@@ -40,4 +40,6 @@ public interface TestCasesService {
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
+    List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId);
+    boolean existsTestCaseByProjectId(Long projectId);
 }

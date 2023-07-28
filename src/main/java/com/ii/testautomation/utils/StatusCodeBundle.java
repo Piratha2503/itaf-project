@@ -287,6 +287,10 @@ public class StatusCodeBundle {
     private String testcaseSubModuleIdEmptyMessage;
     @Value("${message.validation.testcase.file.empty}")
     private String testcaseFileEmptyMessage;
+    @Value("${message.success.testcase.byProjectId}")
+    private String getAllTestCasesSuccessGivenProjectId;
+    @Value("${message.validation.testCase.getProject.notHave}")
+    private String getTestCaseNotHaveProjectId;
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
