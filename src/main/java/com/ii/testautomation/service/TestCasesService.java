@@ -12,32 +12,35 @@ import java.util.List;
 import java.util.Map;
 
 public interface TestCasesService {
-     void saveTestCase(TestCaseRequest testCaseRequest);
+    void saveTestCase(TestCaseRequest testCaseRequest);
 
-     boolean existsByTestCasesId(Long id);
+    boolean existsByTestCasesId(Long id);
 
     boolean existsByTestCasesName(String testCaseName);
 
-     TestCaseResponse getById(Long id);
+    TestCaseResponse getById(Long id);
 
-     boolean isUpdateTestCaseNameExists(Long id, String name);
+    boolean isUpdateTestCaseNameExists(Long id, String name);
 
-     List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch);
+    List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch);
 
     List<TestCaseResponse> getAllTestCaseBySubModuleId(Long subModuleId);
 
-     void DeleteTestCaseById(Long id);
+    void DeleteTestCaseById(Long id);
 
     boolean existsBySubModuleId(Long subModuleId);
 
-     boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
-     Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
+    Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
 
-    Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
+    Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
+
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
-     boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
-     List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId);
+
+    List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId);
 }

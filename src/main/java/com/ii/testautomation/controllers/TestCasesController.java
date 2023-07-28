@@ -146,14 +146,15 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseBySubModuleIdSuccessMessage()));
 
     }
+
     @GetMapping(value = EndpointURI.TESTCASE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getAllTestCasesByProjectId(@PathVariable Long id){
-        if(!projectService.existByProjectId(id)){
+    public ResponseEntity<Object> getAllTestCasesByProjectId(@PathVariable Long id) {
+        if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
+                    statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES,testCasesService.getAllTestcasesByProjectId(id),
-                RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestcasesByProjectId(id),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllTestCasesSuccessGivenProjectId()));
     }
 
