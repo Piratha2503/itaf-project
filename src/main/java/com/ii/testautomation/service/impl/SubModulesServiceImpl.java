@@ -131,11 +131,28 @@ public class SubModulesServiceImpl implements SubModulesService {
         subModulesRepository.deleteById(subModuleId);
     }
 
+
     @Override
     public boolean existsByMainModuleId(Long mainModuleId) {
         return subModulesRepository.existsByMainModuleId(mainModuleId);
     }
 
+    @Override
+    public List<SubModulesResponse> getSubModulesByProjectId(Long id) {
+        List<SubModulesResponse> subModulesResponseList=new ArrayList<>();
+        List<SubModules> subModulesList=subModulesRepository.findByMainModule_Modules_Project_Id(id);
+        for (SubModules subModules : subModulesList
+        ){
+            SubModulesResponse subModulesResponse=new SubModulesResponse();
+            subModulesResponse.setId(subModules.getId());
+            subModulesResponse.setName(subModules.getName());
+            subModulesResponse.setPrefix(subModules.getPrefix());
+            subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
+            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponseList.add(subModulesResponse);
+        }
+        return subModulesResponseList;
+    }
     @Override
     public Map<Integer, SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
         Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();

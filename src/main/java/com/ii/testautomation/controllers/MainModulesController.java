@@ -9,6 +9,7 @@ import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ModulesService;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
@@ -28,6 +29,7 @@ import java.util.*;
 @RestController
 @CrossOrigin
 public class MainModulesController {
+
     @Autowired
     private MainModulesService mainModulesService;
     @Autowired
@@ -36,116 +38,82 @@ public class MainModulesController {
     private SubModulesService subModulesService;
     @Autowired
     private ModulesService modulesService;
+    @Autowired
+    private ProjectService projectService;
 
     @PostMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
 
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getModuleIdNotFound()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
         if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getAlreadyExistCode(),
-                    statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
         if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getAlreadyExistCode(),
-                    statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
         mainModulesService.saveMainModules(mainModulesRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessMessageInsertMainModules()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessMessageInsertMainModules()));
     }
 
     @DeleteMapping(EndpointURI.MAIN_MODULE_BY_ID)
     public ResponseEntity<Object> deleteMainModules(@PathVariable Long id) {
         if (!mainModulesService.isExistMainModulesId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getMainModulesIdNotFound()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesIdNotFound()));
 
         if (subModulesService.existsByMainModuleId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getIdAssignedWithAnotherTableCode(),
-                    statusCodeBundle.getIdAssignedWithAnotherTable()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getIdAssignedWithAnotherTableCode(), statusCodeBundle.getIdAssignedWithAnotherTable()));
 
         mainModulesService.deleteMainModules(id);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessMessageDeleteMainModules()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessMessageDeleteMainModules()));
     }
 
     @PutMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> updateMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
         if (!mainModulesService.isExistMainModulesId(mainModulesRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getMainModulesIdNotFound()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesIdNotFound()));
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getModuleIdNotFound()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
         if (mainModulesService.isUpdateMainModulesNameExist(mainModulesRequest.getName(), mainModulesRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getAlreadyExistCode(),
-                    statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
         if (mainModulesService.isUpdateMainModulesPrefixExist(mainModulesRequest.getPrefix(), mainModulesRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getAlreadyExistCode(),
-                    statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
 
         mainModulesService.saveMainModules(mainModulesRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessUpdateMessageMainModules()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessUpdateMessageMainModules()));
     }
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_ID)
     public ResponseEntity<Object> getMainModulesByMainModuleId(@PathVariable Long id) {
         if (!mainModulesService.isExistMainModulesId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getMainModulesIdNotFound()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesIdNotFound()));
 
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,
-                mainModulesService.getByMainModulesId(id),
-                RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.getByMainModulesId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_MODULE_ID)
     public ResponseEntity<Object> getMainModulesByModuleId(@PathVariable Long id) {
         if (!mainModulesService.isExistModulesId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getModuleIdNotFound()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
         if (mainModulesService.getMainModulesByModuleId(id).isEmpty())
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getModuleIdNotAssigned()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotAssigned()));
 
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,
-                mainModulesService.getMainModulesByModuleId(id),
-                RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.getMainModulesByModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
 
+    @GetMapping(EndpointURI.MAIN_MODULE_BY_PROJECT_ID)
+    public ResponseEntity<Object> getMainModulesByProjectId(@PathVariable Long id)
+    {
+        if (!projectService.existByProjectId(id))
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,mainModulesService.getMainModulesByProjectId(id),
+                statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+    }
     @GetMapping(EndpointURI.MAIN_MODULE_PAGE)
-    public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page,
-                                                            @RequestParam(name = "size") int size,
-                                                            @RequestParam(name = "direction") String direction,
-                                                            @RequestParam(name = "sortField") String sortField,
-                                                            MainModuleSearch mainModuleSearch) {
+    public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, MainModuleSearch mainModuleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
 
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.SearchMainModulesWithPagination(pageable, pagination, mainModuleSearch),
-                RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.SearchMainModulesWithPagination(pageable, pagination, mainModuleSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
 
     @PostMapping(EndpointURI.MAIN_MODULE_IMPORT)
@@ -179,7 +147,6 @@ public class MainModulesController {
                 } else {
                     mainModuleNames.add(mainModulesRequest.getName());
                 }
-
                 if ((mainModulesRequest.getModuleId()) == null) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
                 } else if (!modulesService.existsByModulesId(mainModulesRequest.getModuleId())) {
@@ -192,6 +159,7 @@ public class MainModulesController {
                 } else {
                     mainModulePrefixes.add(mainModulesRequest.getPrefix());
                 }
+
                 if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), rowIndex);
                 }
@@ -201,22 +169,15 @@ public class MainModulesController {
             }
             if (!errorMessages.isEmpty()) {
 
-                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getMainModulesNotSavedMessage(),
-                        errorMessages));
+                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesNotSavedMessage(), errorMessages));
             } else {
                 for (MainModulesRequest mainModulesRequest : mainModulesRequestList) {
                     mainModulesService.saveMainModules(mainModulesRequest);
                 }
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                        statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getSuccessMessageInsertMainModules()));
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessMessageInsertMainModules()));
             }
         } catch (IOException e) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getMainModulesNotSavedMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesNotSavedMessage()));
         }
 
     }

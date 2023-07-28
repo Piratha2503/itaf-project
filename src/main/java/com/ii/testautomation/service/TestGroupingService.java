@@ -1,6 +1,7 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -47,4 +48,5 @@ public interface TestGroupingService {
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
     public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    List<TestGroupingResponse> getTestGroupingByProjectId(Long id);
 }

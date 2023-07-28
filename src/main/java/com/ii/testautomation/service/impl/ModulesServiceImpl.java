@@ -91,6 +91,7 @@ ModulesServiceImpl implements ModulesService {
         Page<Modules> modulesPage = modulesRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(modulesPage.getTotalElements());
         pagination.setPageSize(modulesPage.getTotalPages());
+
         for (Modules modules : modulesPage) {
             ModulesResponse modulesResponse = new ModulesResponse();
             modulesResponse.setProjectId(modules.getProject().getId());
