@@ -7,7 +7,6 @@ import com.ii.testautomation.entities.QTestGrouping;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
-import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
@@ -36,9 +35,6 @@ import java.util.*;
 public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private TestGroupingRepository testGroupingRepository;
-    @Autowired
-    private ProjectRepository projectRepository;
-
     @Override
     public void saveTestGrouping(TestGroupingRequest testGroupingRequest) {
         TestGrouping testGrouping = new TestGrouping();
@@ -158,7 +154,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsByTestTypesId(Long testTypeId) {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
-
+    @Override
+    public boolean existsByProjectId(Long projectId) {
+        return testGroupingRepository.existsByTestCases_SubModule_MainModule_Modules_ProjectId(projectId);
+    }
     @Override
     public Map<Integer, TestGroupingRequest> csvToTestGroupingRequest(InputStream inputStream) {
         Map<Integer, TestGroupingRequest> testGroupingRequestList = new HashMap<>();
@@ -272,8 +271,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         for (TestGrouping testGrouping : testGroupingList
         ){
             TestGroupingResponse testGroupingResponse=new TestGroupingResponse();
-            testGroupingResponse.setId(testGrouping.getId());
-            testGroupingResponse.setName(testGrouping.getName());
+            BeanUtils.copyProperties(testGrouping,testGroupingResponse);
             testGroupingResponse.setTestCasesName(testGrouping.getTestCases().getName());
             testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
             testGroupingResponse.setSubModuleName(testGrouping.getTestCases().getSubModule().getName());

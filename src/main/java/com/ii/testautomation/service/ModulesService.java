@@ -13,35 +13,37 @@ import java.util.List;
 import java.util.Map;
 
 public interface ModulesService {
-    public void saveModule(ModulesRequest modulesRequest);
+    void saveModule(ModulesRequest modulesRequest);
 
-    public boolean isModuleExistsByName(String name);
+    boolean isModuleExistsByName(String name);
 
-    public boolean isModuleExistsByPrefix(String prefix);
+    boolean isModuleExistsByPrefix(String prefix);
 
-    public boolean existsByModulesId(Long id);
+    boolean existsByModulesId(Long id);
 
-    public boolean isUpdateModuleNameExists(String name, Long id);
+    boolean isUpdateModuleNameExists(String name, Long id);
 
-    public boolean isUpdateModulePrefixExists(String prefix, Long id);
+    boolean isUpdateModulePrefixExists(String prefix, Long id);
 
-    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch);
+    List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch);
 
-    public ModulesResponse getModuleById(Long id);
+    ModulesResponse getModuleById(Long id);
 
-    public List<ModulesResponse> getAllModuleByProjectId(Long projectId);
+    List<ModulesResponse> getAllModuleByProjectId(Long projectId);
 
-    public void deleteModuleById(Long id);
+    void deleteModuleById(Long id);
 
-    public boolean existsModuleByProjectId(Long projectId);
+    boolean existsModuleByProjectId(Long projectId);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
-    public Map<Integer,ModulesRequest> csvToModulesRequest(InputStream inputStream);
+    Map<Integer, ModulesRequest> csvToModulesRequest(InputStream inputStream);
 
-    public Map<Integer,ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
-    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
-    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    Map<Integer, ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
 
-    public void addToErrorMessages (Map< String, List < Integer >> errorMessages, String key, int value);
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 }

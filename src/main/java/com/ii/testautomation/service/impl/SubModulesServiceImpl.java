@@ -144,15 +144,19 @@ public class SubModulesServiceImpl implements SubModulesService {
         for (SubModules subModules : subModulesList
         ){
             SubModulesResponse subModulesResponse=new SubModulesResponse();
-            subModulesResponse.setId(subModules.getId());
-            subModulesResponse.setName(subModules.getName());
-            subModulesResponse.setPrefix(subModules.getPrefix());
+            BeanUtils.copyProperties(subModules,subModulesResponse);
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
             subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
             subModulesResponseList.add(subModulesResponse);
         }
         return subModulesResponseList;
     }
+
+    @Override
+    public boolean existsByProjectId(Long projectId) {
+        return subModulesRepository.existsByMainModule_Modules_ProjectId(projectId);
+    }
+
     @Override
     public Map<Integer, SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
         Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();

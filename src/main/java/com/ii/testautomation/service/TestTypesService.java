@@ -13,31 +13,31 @@ import java.util.Map;
 
 public interface TestTypesService {
 
-    public void saveTestTypes(TestTypesRequest testTypesRequest);
+    void saveTestTypes(TestTypesRequest testTypesRequest);
 
-    public void deleteTestTypeById(Long id);
+    void deleteTestTypeById(Long id);
 
-    public TestTypesResponse getTestTypeById(Long id);
+    TestTypesResponse getTestTypeById(Long id);
 
-    public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
+    List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
 
-    public boolean isExistsTestTypeByName(String name);
+    boolean isExistsTestTypeByName(String name);
 
-    public boolean isExistsTestTypeById(Long id);
+    boolean isExistsTestTypeById(Long id);
 
-    public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
+    boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
 
-    public boolean existsByTestTypesId(Long id);
+    boolean existsByTestTypesId(Long id);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
-    public List<TestTypesRequest> csvProcess(InputStream inputStream);
+    List<TestTypesRequest> csvProcess(InputStream inputStream);
 
-    public List<TestTypesRequest> excelProcess(MultipartFile multipartFile);
+    List<TestTypesRequest> excelProcess(MultipartFile multipartFile);
 
-    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
-    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
-    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }
