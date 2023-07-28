@@ -22,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
+@SuppressWarnings("ALL")
 @Service
 public class MainModulesServiceImp implements MainModulesService {
     @Autowired
@@ -192,7 +194,7 @@ public class MainModulesServiceImp implements MainModulesService {
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-            DataFormatter dataFormatter = new DataFormatter();
+            //DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
@@ -251,6 +253,27 @@ public class MainModulesServiceImp implements MainModulesService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
+        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+        List <List<MainModules>> mainMainmoduleList = new ArrayList<>();
+        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(id);
+        for (Modules modules : modulesList)
+        {
+            mainMainmoduleList.add(mainModulesRepository.findAllByModulesId(modules.getId()));
+        }
+        for (List<MainModules> mainModulesList1 : mainMainmoduleList)
+        {
+            for (MainModules mainModules : mainModulesList1)
+            {
+                MainModulesResponse mainModulesResponse = new MainModulesResponse();
+                BeanUtils.copyProperties(mainModules,mainModulesResponse);
+                mainModulesResponseList.add(mainModulesResponse);
+            }
+        }
+        return mainModulesResponseList;
     }
 
     private String getStringCellValue(Cell cell) {

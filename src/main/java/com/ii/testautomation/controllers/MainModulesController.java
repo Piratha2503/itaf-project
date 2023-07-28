@@ -102,6 +102,13 @@ public class MainModulesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.getMainModulesByModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
 
+    @GetMapping(EndpointURI.MAIN_MODULE_BY_PROJECT_ID)
+    public ResponseEntity<Object> getMainModulesByProjectId(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,mainModulesService.getMainModulesByProjectId(id),
+                statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+    }
     @GetMapping(EndpointURI.MAIN_MODULE_PAGE)
     public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, MainModuleSearch mainModuleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);

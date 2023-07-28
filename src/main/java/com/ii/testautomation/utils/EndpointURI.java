@@ -23,6 +23,7 @@ public final class EndpointURI {
     public static final String MAIN_MODULE_BY_ID = MAIN_MODULE + ID;
     public static final String MAIN_MODULE_BY_MODULE_ID = BASE_API_PATH + "getByModuleId" + ID;
     public static final String MAIN_MODULE_BY_PROJECT_ID = BASE_API_PATH + "getByProjectId" + ID;
+
     // URLs for SubModules
     public static final String SUBMODULE = BASE_API_PATH + "subModules";
     public static final String SUBMODULE_IMPORT = SUBMODULE + "/import";

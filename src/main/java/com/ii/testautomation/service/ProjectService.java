@@ -15,8 +15,6 @@ import java.util.Map;
 public interface ProjectService {
     void saveProject(ProjectRequest projectRequest);
 
-    void saveProjectList(List<ProjectRequest> projectRequestList);
-
     boolean existByProjectName(String projectName);
 
     boolean existByProjectCode(String projectCode);
@@ -33,11 +31,11 @@ public interface ProjectService {
 
     void deleteProject(Long projectId);
 
-    List<ProjectRequest> csvToProjectRequest(InputStream inputStream);
+    Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream);
 
     public boolean hasExcelFormat(MultipartFile multipartFile);
 
-    List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile);
+    Map<Integer, ProjectRequest> excelToProjectRequest(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 

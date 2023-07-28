@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -38,17 +39,6 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
         projectRepository.save(project);
-    }
-
-    @Override
-    public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest : projectRequestList
-        ) {
-
-            Project project = new Project();
-            BeanUtils.copyProperties(projectRequest, project);
-            projectRepository.save(project);
-        }
     }
 
     @Override
@@ -73,12 +63,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public boolean existByProjectId(Long projectId) {
+        if(projectId==null){
+            return false;
+        }
         return projectRepository.existsById(projectId);
     }
 
     @Override
     public ProjectResponse getProjectById(Long projectId) {
-        Project project = projectRepository.findById(projectId).get();
+        Project project;
+        project = projectRepository.findById(projectId).get();
         ProjectResponse projectResponse = new ProjectResponse();
         BeanUtils.copyProperties(project, projectResponse);
         return projectResponse;
@@ -112,9 +106,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectRequest> csvToProjectRequest(InputStream inputStream) {
-        List<ProjectRequest> projectRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+    public Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream) {
+        Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -124,9 +118,8 @@ public class ProjectServiceImpl implements ProjectService {
                 projectRequest.setCode(csvRecord.get("code"));
                 projectRequest.setDescription(csvRecord.get("description"));
                 projectRequest.setName(csvRecord.get("name"));
-                projectRequestList.add(projectRequest);
+                projectRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, projectRequest);
             }
-
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
@@ -145,8 +138,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
-        List<ProjectRequest> projectRequestList = new ArrayList<>();
+    public Map<Integer, ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
+        Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -159,7 +152,7 @@ public class ProjectServiceImpl implements ProjectService {
                 projectRequest.setCode(dataFormatter.formatCellValue(row.getCell(columnMap.get("code"))));
                 projectRequest.setDescription(dataFormatter.formatCellValue(row.getCell(columnMap.get("description"))));
                 projectRequest.setName(dataFormatter.formatCellValue(row.getCell(columnMap.get("name"))));
-                projectRequestList.add(projectRequest);
+                projectRequestList.put(row.getRowNum() + 1, projectRequest);
             }
             workbook.close();
         } catch (IOException e) {
@@ -176,7 +169,6 @@ public class ProjectServiceImpl implements ProjectService {
             int columnIndex = cell.getColumnIndex();
             columnMap.put(cellValue, columnIndex);
         }
-
         return columnMap;
     }
 

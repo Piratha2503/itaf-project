@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -136,9 +137,9 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
 
     @Override
-    public List<SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
-        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+    public Map<Integer, SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
+        Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -152,7 +153,7 @@ public class SubModulesServiceImpl implements SubModulesService {
                 } else {
                     subModulesRequest.setMain_module_Id(null);
                 }
-                subModulesRequestList.add(subModulesRequest);
+                subModulesRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, subModulesRequest);
             }
 
         } catch (IOException e) {
@@ -173,12 +174,11 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
 
     @Override
-    public List<SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile) {
-        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
+    public Map<Integer, SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile) {
+        Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-            DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
@@ -187,7 +187,7 @@ public class SubModulesServiceImpl implements SubModulesService {
                 subModulesRequest.setMain_module_Id(getLongCellValue(row.getCell(columnMap.get("main_module_id"))));
                 subModulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
                 subModulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
-                subModulesRequestList.add(subModulesRequest);
+                subModulesRequestList.put(row.getRowNum() + 1, subModulesRequest);
             }
             workbook.close();
         } catch (IOException e) {

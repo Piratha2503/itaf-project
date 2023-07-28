@@ -28,8 +28,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@SuppressWarnings("ALL")
 @Service
 public class ModulesServiceImpl implements ModulesService {
 
@@ -137,17 +139,21 @@ public class ModulesServiceImpl implements ModulesService {
 
 
     @Override
-    public List<ModulesRequest> csvToModulesRequest(InputStream inputStream) {
-        List<ModulesRequest> modulesRequestsList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+    public Map<Integer,ModulesRequest> csvToModulesRequest(InputStream inputStream) {
+        Map<Integer,ModulesRequest> modulesRequestsList = new HashMap<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
 
                 ModulesRequest modulesRequest = new ModulesRequest();
                 modulesRequest.setName(csvRecord.get("name"));
                 modulesRequest.setPrefix(csvRecord.get("prefix"));
-                modulesRequest.setProject_id(Long.parseLong(csvRecord.get("project_id")));
-                modulesRequestsList.add(modulesRequest);
+                if(!csvRecord.get("project_id").isEmpty()) {
+                    modulesRequest.setProject_id(Long.parseLong(csvRecord.get("project_id")));
+                }else{
+                    modulesRequest.setProject_id(null);
+                }
+                modulesRequestsList.put(Math.toIntExact(csvRecord.getRecordNumber()+1),modulesRequest);
             }
 
         } catch (IOException e) {
@@ -168,8 +174,8 @@ public class ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public List<ModulesRequest> excelToModuleRequest(MultipartFile multipartFile) {
-        List<ModulesRequest> modulesRequestList = new ArrayList<>();
+    public Map<Integer,ModulesRequest> excelToModuleRequest(MultipartFile multipartFile) {
+        Map<Integer,ModulesRequest> modulesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -181,7 +187,7 @@ public class ModulesServiceImpl implements ModulesService {
                 modulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 modulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
                 modulesRequest.setProject_id(getLongCellValue(row.getCell(columnMap.get("project_id"))));
-                modulesRequestList.add(modulesRequest);
+                modulesRequestList.put(row.getRowNum()+1, modulesRequest);
             }
             workbook.close();
         } catch (IOException e) {

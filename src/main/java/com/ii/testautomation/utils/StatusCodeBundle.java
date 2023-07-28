@@ -47,6 +47,8 @@ public class StatusCodeBundle {
     private String projectFileImportValidationMessage;
     @Value("${message.validation.project.file.name.empty}")
     private String projectNameEmptyMessage;
+    @Value("${message.validation.project.file.empty}")
+    private String projectFileEmptyMessage;
     @Value("${message.validation.project.file.code.empty}")
     private String projectCodeEmptyMessage;
     @Value("${message.validation.project.file.description.empty}")
@@ -80,6 +82,8 @@ public class StatusCodeBundle {
     private String saveSubModuleValidationMessage;
     @Value("${message.validation.subModule.file}")
     private String subModuleFileImportValidationMessage;
+    @Value("${message.validation.subModules.file.empty}")
+    private String subModulesFileEmptyMessage;
     @Value("${message.validation.subModule.file.name.empty}")
     private String subModuleNameEmptyMessage;
     @Value("${message.validation.subModule.file.prefix.empty}")
@@ -160,6 +164,8 @@ public class StatusCodeBundle {
     @Value("${code.validation.module.dependent}")
     private String moduleDependentCode;
     //Modules Message
+    @Value("${message.validation.module.file.empty}")
+    private String moduleFileEmptyMessage;
     @Value("${message.success.update.module}")
     private String updateModuleSuccessMessage;
     @Value("${message.validation.module.file.prefix.empty}")
@@ -237,7 +243,7 @@ public class StatusCodeBundle {
     @Value("${message.validation.testType.Description.Empty}")
     private String testTypeDescriptionEmptyMessage;
 
-   //TestCases code
+    //TestCases code
     @Value("${code.validation.testCases.notExists}")
     private String testCasesNotExistCode;
     @Value("${code.validation.testCases.alreadyExists}")
@@ -273,6 +279,10 @@ public class StatusCodeBundle {
     private String testCaseValidationSaveMessage;
     @Value("${message.validation.testcase.name.duplicate}")
     private String testCaseNameDuplicateMessage;
+    @Value("${message.validation.testcase.file.submoduleId.empty}")
+    private String testcaseSubModuleIdEmptyMessage;
+    @Value("${message.validation.testcase.file.empty}")
+    private String testcaseFileEmptyMessage;
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
@@ -289,6 +299,8 @@ public class StatusCodeBundle {
     private String getTestGroupingSuccessMessage;
     @Value("${message.success.getAll.testGrouping}")
     private String getAllTestGroupingSuccessMessage;
+    @Value("${message.validation.testGrouping.file.empty}")
+    private String testGroupingFileEmptyMessage;
     @Value("${message.validation.get.testGrouping.notHave.testCase}")
     private String getTestGroupingNotHaveTestCaseId;
     @Value("${message.validation.get.testGrouping.notHave.testType}")

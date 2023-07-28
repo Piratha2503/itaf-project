@@ -56,66 +56,61 @@ public class ProjectController {
     @PostMapping(value = EndpointURI.PROJECT_IMPORT)
     public ResponseEntity<Object> importProjectFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        List<ProjectRequest> projectRequestList;
+        Map<Integer, ProjectRequest> projectRequestList;
         Set<String> projectNames = new HashSet<>();
         Set<String> projectCodes = new HashSet<>();
         try {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if (!projectService.isCSVHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
-                }
+            if (!projectService.isCSVHeaderMatch(multipartFile) && !projectService.isExcelHeaderMatch(multipartFile)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
+                projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
             } else if (projectService.hasExcelFormat(multipartFile)) {
-                if (!projectService.isExcelHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    projectRequestList = projectService.excelToProjectRequest(multipartFile);
-                }
+                projectRequestList = projectService.excelToProjectRequest(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
 
-            for (int rowIndex = 2; rowIndex <= projectRequestList.size() + 1; rowIndex++) {
-                ProjectRequest projectRequest = projectRequestList.get(rowIndex - 2);
-
-                if (!Utils.isNotNullAndEmpty(projectRequest.getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), rowIndex);
-                } else if (projectNames.contains(projectRequest.getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameDuplicateMessage(), rowIndex);
+            for (Map.Entry<Integer, ProjectRequest> entry : projectRequestList.entrySet()) {
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), entry.getKey());
+                } else if (projectNames.contains(entry.getValue().getName())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameDuplicateMessage(), entry.getKey());
                 } else {
-                    projectNames.add(projectRequest.getName());
+                    projectNames.add(entry.getValue().getName());
                 }
 
-                if (!Utils.isNotNullAndEmpty(projectRequest.getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), rowIndex);
-                } else if (projectCodes.contains(projectRequest.getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeDuplicateMessage(), rowIndex);
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getCode())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), entry.getKey());
+                } else if (projectCodes.contains(entry.getValue().getCode())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeDuplicateMessage(), entry.getKey());
                 } else {
-                    projectCodes.add(projectRequest.getCode());
+                    projectCodes.add(entry.getValue().getCode());
                 }
 
-                if (!Utils.isNotNullAndEmpty(projectRequest.getDescription())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), rowIndex);
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getDescription())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), entry.getKey());
                 }
 
-                if (projectService.existByProjectName(projectRequest.getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), rowIndex);
+                if (projectService.existByProjectName(entry.getValue().getName())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), entry.getKey());
                 }
 
-                if (projectService.existByProjectCode(projectRequest.getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), rowIndex);
+                if (projectService.existByProjectCode(entry.getValue().getCode())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), entry.getKey());
                 }
             }
-
             if (!errorMessages.isEmpty()) {
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFailureCode(),
                         statusCodeBundle.getProjectFileImportValidationMessage(),
                         errorMessages));
+            } else if (projectRequestList.isEmpty()) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getProjectFileEmptyMessage()));
             } else {
-                for (ProjectRequest projectRequest : projectRequestList) {
-                    projectService.saveProject(projectRequest);
+                for (Map.Entry<Integer, ProjectRequest> entry : projectRequestList.entrySet()) {
+                    projectService.saveProject(entry.getValue());
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),
@@ -126,6 +121,7 @@ public class ProjectController {
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSaveProjectValidationMessage()));
         }
+
     }
 
     @PutMapping(value = EndpointURI.PROJECT)
@@ -160,7 +156,7 @@ public class ProjectController {
                                                  @RequestParam(name = "sortField") String sortField,
                                                  ProjectSearch projectSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.PROJECTS, projectService.multiSearchProject(pageable, pagination, projectSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
