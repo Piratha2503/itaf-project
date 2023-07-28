@@ -37,7 +37,6 @@ import java.util.*;
 public class TestCasesServiceImpl implements TestCasesService {
     @Autowired
     private TestCasesRepository testCasesRepository;
-    private ModulesRepository modulesRepository;
 
     @Override
     public void saveTestCase(TestCaseRequest testCaseRequest) {
@@ -226,11 +225,20 @@ public class TestCasesServiceImpl implements TestCasesService {
         errorMessages.put(key, errorList);
     }
 
-   // @Override
-//    public List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId) {
-//       return null;
-//
-//    }
+    @Override
+    public List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId) {
+        List<TestCaseResponse> testCaseResponseList=new ArrayList<>();
+        List<TestCases> testCasesList=testCasesRepository.findBySubModule_MainModule_Modules_Project_Id(projectId);
+        for (TestCases testCases:testCasesList) {
+            TestCaseResponse testCaseResponse=new TestCaseResponse();
+            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
+            BeanUtils.copyProperties(testCases,testCaseResponse);
+            testCaseResponseList.add(testCaseResponse);
+        }
+        return testCaseResponseList;
+
+    }
 
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
