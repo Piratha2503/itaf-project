@@ -233,6 +233,12 @@ public class TestCasesServiceImpl implements TestCasesService {
         return testCaseResponseList;
 
     }
+
+    @Override
+    public boolean existsTestCaseByProjectId(Long projectId) {
+        return testCasesRepository.existsBySubModule_MainModule_Modules_Project_id(projectId);
+    }
+
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;

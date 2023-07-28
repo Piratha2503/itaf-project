@@ -153,6 +153,10 @@ public class TestCasesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
+        if(!testCasesService.existsTestCaseByProjectId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),statusCodeBundle.getGetTestCaseNotHaveProjectId()));
+        }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestcasesByProjectId(id),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllTestCasesSuccessGivenProjectId()));
