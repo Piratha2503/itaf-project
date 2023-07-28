@@ -8,6 +8,7 @@ import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.utils.Constants;
@@ -35,7 +36,10 @@ public class SubModulesController {
     @Autowired
     private TestCasesService testCasesService;
     @Autowired
+    private ProjectService projectService;
+    @Autowired
     private StatusCodeBundle statusCodeBundle;
+
 
     @PostMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest) {
@@ -225,4 +229,16 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getDeleteSubModuleSuccessMessage()));
     }
+    @GetMapping(EndpointURI.SUBMODULE_BY_PROJECT_ID)
+    public ResponseEntity<Object> getSubModulesByProjectId(@PathVariable Long id)
+    {
+        if (!projectService.existByProjectId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,subModulesService.getSubModulesByProjectId(id),
+              RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getSubModulesByProjectId()));
+    }
+
 }

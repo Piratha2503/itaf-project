@@ -7,6 +7,7 @@ import com.ii.testautomation.entities.QTestGrouping;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
+import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
@@ -35,6 +36,8 @@ import java.util.*;
 public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private TestGroupingRepository testGroupingRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Override
     public void saveTestGrouping(TestGroupingRequest testGroupingRequest) {
@@ -260,6 +263,25 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public List<TestGroupingResponse> getTestGroupingByProjectId(Long id) {
+        List<TestGroupingResponse> testGroupingResponses=new ArrayList<>();
+        List<TestGrouping> testGroupingList=testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(id);
+        for (TestGrouping testGrouping : testGroupingList
+        ){
+            TestGroupingResponse testGroupingResponse=new TestGroupingResponse();
+            testGroupingResponse.setId(testGrouping.getId());
+            testGroupingResponse.setName(testGrouping.getName());
+            testGroupingResponse.setTestCasesName(testGrouping.getTestCases().getName());
+            testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
+            testGroupingResponse.setSubModuleName(testGrouping.getTestCases().getSubModule().getName());
+            testGroupingResponse.setMainModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getName());
+            testGroupingResponse.setModuleName(testGrouping.getTestCases().getSubModule().getMainModule().getModules().getName());
+            testGroupingResponses.add(testGroupingResponse);
+        }
+        return testGroupingResponses;
     }
 
     private Map<String, Integer> getColumnMap(Row headerRow) {
