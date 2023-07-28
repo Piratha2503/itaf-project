@@ -108,6 +108,8 @@ public class StatusCodeBundle {
     private String deleteSubModuleSuccessMessage;
     @Value("${message.validation.get.mainModule.notHave}")
     private String getSubModuleNotHaveMainModuleId;
+    @Value("${message.validation.get.project.notHave}")
+    private String getSubModuleNotHaveProjectId;
     @Value("${message.validation.subModules.dependent}")
     private String subModulesDependentMessage;
     @Value("${message.validation.subModule.name.duplicate}")
@@ -307,6 +309,8 @@ public class StatusCodeBundle {
     private String testGroupingFileEmptyMessage;
     @Value("${message.validation.get.testGrouping.notHave.testCase}")
     private String getTestGroupingNotHaveTestCaseId;
+    @Value("${message.validation.get.testGrouping.notHave.project}")
+    private String getTestGroupingNotHaveProjectId;
     @Value("${message.validation.get.testGrouping.notHave.testType}")
     private String getTestGroupingNotHaveTestTypeId;
     @Value("${message.validation.delete.testGrouping}")

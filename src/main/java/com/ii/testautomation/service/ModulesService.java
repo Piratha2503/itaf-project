@@ -17,31 +17,33 @@ public interface ModulesService {
 
     boolean isModuleExistsByName(String name);
 
-     boolean isModuleExistsByPrefix(String prefix);
+    boolean isModuleExistsByPrefix(String prefix);
 
     boolean existsByModulesId(Long id);
 
-     boolean isUpdateModuleNameExists(String name, Long id);
+    boolean isUpdateModuleNameExists(String name, Long id);
 
-     boolean isUpdateModulePrefixExists(String prefix, Long id);
+    boolean isUpdateModulePrefixExists(String prefix, Long id);
 
-     List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch);
+    List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch);
 
-     ModulesResponse getModuleById(Long id);
+    ModulesResponse getModuleById(Long id);
 
-     List<ModulesResponse> getAllModuleByProjectId(Long projectId);
+    List<ModulesResponse> getAllModuleByProjectId(Long projectId);
 
-     void deleteModuleById(Long id);
+    void deleteModuleById(Long id);
 
-     boolean existsModuleByProjectId(Long projectId);
+    boolean existsModuleByProjectId(Long projectId);
 
-     boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
-     Map<Integer,ModulesRequest> csvToModulesRequest(InputStream inputStream);
+    Map<Integer, ModulesRequest> csvToModulesRequest(InputStream inputStream);
 
-    Map<Integer,ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
-     boolean isExcelHeaderMatch(MultipartFile multipartFile);
-     boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    Map<Integer, ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
 
-     void addToErrorMessages (Map< String, List < Integer >> errorMessages, String key, int value);
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 }

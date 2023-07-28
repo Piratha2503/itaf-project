@@ -32,12 +32,10 @@ public interface TestCasesService {
 
     boolean hasExcelFormat(MultipartFile multipartFile);
 
-    Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
+    Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
 
-    Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
-
+    Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
-
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
