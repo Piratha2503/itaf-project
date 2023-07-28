@@ -9,6 +9,7 @@ import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ModulesService;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
@@ -37,6 +38,8 @@ public class MainModulesController {
     private SubModulesService subModulesService;
     @Autowired
     private ModulesService modulesService;
+    @Autowired
+    private ProjectService projectService;
 
     @PostMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
@@ -86,12 +89,6 @@ public class MainModulesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.getByMainModulesId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
 
-    @GetMapping(EndpointURI.MAIN_MODULE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getMainModulesByProjectId(@PathVariable Long id)
-    {
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,mainModulesService.getMainModulesByProjectId(),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getSuccessViewAllMessageMainModules()));
-    }
-
     @GetMapping(EndpointURI.MAIN_MODULE_BY_MODULE_ID)
     public ResponseEntity<Object> getMainModulesByModuleId(@PathVariable Long id) {
         if (!mainModulesService.isExistModulesId(id))
@@ -105,6 +102,8 @@ public class MainModulesController {
     @GetMapping(EndpointURI.MAIN_MODULE_BY_PROJECT_ID)
     public ResponseEntity<Object> getMainModulesByProjectId(@PathVariable Long id)
     {
+        if (!projectService.existByProjectId(id))
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,mainModulesService.getMainModulesByProjectId(id),
                 statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getSuccessViewAllMessageMainModules()));
