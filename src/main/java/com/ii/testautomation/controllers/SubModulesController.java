@@ -233,11 +233,17 @@ public class SubModulesController {
     public ResponseEntity<Object> getSubModulesByProjectId(@PathVariable Long id)
     {
         if (!projectService.existByProjectId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(),
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getProjectNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,subModulesService.getSubModulesByProjectId(id),
+        if (!subModulesService.existsByProjectId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getGetSubModuleNotHaveProjectId()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULES,subModulesService.getSubModulesByProjectId(id),
               RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getSubModulesByProjectId()));
     }
 

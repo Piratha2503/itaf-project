@@ -63,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public boolean existByProjectId(Long projectId) {
-        if(projectId==null){
+        if (projectId == null) {
             return false;
         }
         return projectRepository.existsById(projectId);

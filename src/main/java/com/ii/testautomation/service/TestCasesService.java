@@ -12,31 +12,31 @@ import java.util.List;
 import java.util.Map;
 
 public interface TestCasesService {
-    public void saveTestCase(TestCaseRequest testCaseRequest);
+    void saveTestCase(TestCaseRequest testCaseRequest);
 
-    public boolean existsByTestCasesId(Long id);
+    boolean existsByTestCasesId(Long id);
 
-    public boolean existsByTestCasesName(String testCaseName);
+    boolean existsByTestCasesName(String testCaseName);
 
-    public TestCaseResponse getById(Long id);
+    TestCaseResponse getById(Long id);
 
-    public boolean isUpdateTestCaseNameExists(Long id, String name);
+    boolean isUpdateTestCaseNameExists(Long id, String name);
 
-    public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch);
+    List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch);
 
-    public List<TestCaseResponse> getAllTestCaseBySubModuleId(Long subModuleId);
+    List<TestCaseResponse> getAllTestCaseBySubModuleId(Long subModuleId);
 
-    public void DeleteTestCaseById(Long id);
+    void DeleteTestCaseById(Long id);
 
-    public boolean existsBySubModuleId(Long subModuleId);
+    boolean existsBySubModuleId(Long subModuleId);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
-    public Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
+    Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
 
-    public Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
-    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
-    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 

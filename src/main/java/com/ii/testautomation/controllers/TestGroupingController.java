@@ -241,9 +241,15 @@ public class TestGroupingController {
     public ResponseEntity<Object> getTestGroupingByProjectId(@PathVariable Long id)
     {
         if (!projectService.existByProjectId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(),
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        if(!testGroupingService.existsByProjectId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS,testGroupingService.getTestGroupingByProjectId(id),
                 RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getTestGroupingByProjectId()));
