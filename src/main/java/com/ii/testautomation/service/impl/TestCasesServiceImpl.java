@@ -3,9 +3,11 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
+import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.TestCases;
+import com.ii.testautomation.repositories.ModulesRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestCasesService;
@@ -35,6 +37,7 @@ import java.util.*;
 public class TestCasesServiceImpl implements TestCasesService {
     @Autowired
     private TestCasesRepository testCasesRepository;
+    private ModulesRepository modulesRepository;
 
     @Override
     public void saveTestCase(TestCaseRequest testCaseRequest) {
@@ -222,6 +225,12 @@ public class TestCasesServiceImpl implements TestCasesService {
         errorList.add(value);
         errorMessages.put(key, errorList);
     }
+
+   // @Override
+//    public List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId) {
+//       return null;
+//
+//    }
 
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
