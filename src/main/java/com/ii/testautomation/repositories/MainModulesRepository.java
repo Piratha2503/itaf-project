@@ -14,4 +14,6 @@ public interface MainModulesRepository extends JpaRepository<MainModules,Long>, 
     boolean existsByPrefixIgnoreCaseAndIdNot(String mainModuleprefix, Long mainModuleId);
     List<MainModules> findAllByModulesId(Long id);
     List<MainModules> findAllByNameIgnoreCase(String name);
+
+    MainModules findByModulesId(Long id);
 }

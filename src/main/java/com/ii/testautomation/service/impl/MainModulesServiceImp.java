@@ -77,6 +77,20 @@ public class MainModulesServiceImp implements MainModulesService {
         return mainModulesResponseList;
     }
 
+
+    @Override
+    public List<MainModulesResponse> getMainModulesByProjectId(Long id)
+    {
+        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+
+        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(id);
+        for (Modules module : modulesList)
+        {
+            List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(module.getId());
+        }
+
+    }
+
     @Override
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -89,7 +103,6 @@ public class MainModulesServiceImp implements MainModulesService {
 
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         Page<MainModules> mainModulesPage = mainModulesRepository.findAll(booleanBuilder, pageable);
-
         pagination.setTotalRecords(mainModulesPage.getTotalElements());
         pagination.setPageSize(mainModulesPage.getTotalPages());
         for (MainModules mainModules : mainModulesPage) {
