@@ -114,6 +114,8 @@ public class StatusCodeBundle {
     private String subModuleNameDuplicateMessage;
     @Value("${message.validation.subModule.prefix.duplicate}")
     private String subModulePrefixDuplicateMessage;
+    @Value("${message.success.getSubModules.project}")
+    private String subModulesByProjectId;
     //MainModules
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
@@ -319,4 +321,6 @@ public class StatusCodeBundle {
     private String TestGroupTestTypeIdEmptyMessage;
     @Value("${message.validation.testGrouping.name.duplicate}")
     private String testGroupingNameDuplicateMessage;
+    @Value("${message.success.getTestGrouping.project}")
+    private String testGroupingByProjectId;
 }

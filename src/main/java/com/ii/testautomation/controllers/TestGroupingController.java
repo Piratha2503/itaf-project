@@ -7,6 +7,7 @@ import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.service.TestTypesService;
@@ -34,6 +35,8 @@ public class TestGroupingController {
     private TestTypesService testTypesService;
     @Autowired
     private TestCasesService testCasesService;
+    @Autowired
+    private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
@@ -233,5 +236,16 @@ public class TestGroupingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getDeleteTestGroupingSuccessMessage()));
 
+    }
+    @GetMapping(EndpointURI.TEST_GROUPING_BY_PROJECT_ID)
+    public ResponseEntity<Object> getTestGroupingByProjectId(@PathVariable Long id)
+    {
+        if (!projectService.existByProjectId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS,testGroupingService.getTestGroupingByProjectId(id),
+                RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getTestGroupingByProjectId()));
     }
 }

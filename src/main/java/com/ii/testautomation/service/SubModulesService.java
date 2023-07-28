@@ -45,4 +45,6 @@ public interface SubModulesService {
     public boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
     public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    List<SubModulesResponse> getSubModulesByProjectId(Long id);
 }
