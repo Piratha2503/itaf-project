@@ -4,7 +4,10 @@ import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.entities.QTestTypes;
+import com.ii.testautomation.entities.TestCases;
+import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
+import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TestTypesServiceImpl implements TestTypesService {
@@ -35,6 +39,7 @@ public class TestTypesServiceImpl implements TestTypesService {
     private TestTypesRepository testTypesRepository;
     @Autowired
     private TestGroupingRepository testGroupingRepository;
+
 
     @Override
     public void saveTestTypes(TestTypesRequest testTypesRequest) {
@@ -195,6 +200,21 @@ public class TestTypesServiceImpl implements TestTypesService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public List<TestTypesResponse> getTestTypesByProjectId(Long projectId) {
+        return testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(projectId).stream()
+                .map(TestGrouping::getTestType)
+                .distinct()
+                .map(this::mapToTestTypesResponse) // Convert TestTypes to TestTypesResponse
+                .collect(Collectors.toList());
+    }
+
+    private TestTypesResponse mapToTestTypesResponse(TestTypes testType) {
+        TestTypesResponse testTypesResponse=new TestTypesResponse();
+        BeanUtils.copyProperties(testType,testTypesResponse);
+        return testTypesResponse;
     }
 
     private Map<String, Integer> getColumnMap(Row headerRow) {

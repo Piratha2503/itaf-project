@@ -246,6 +246,8 @@ public class StatusCodeBundle {
     private String testTypeNameEmptyMessage;
     @Value("${message.validation.testType.Description.Empty}")
     private String testTypeDescriptionEmptyMessage;
+    @Value("${message.success.getType.project}")
+    private String testTypeByProjectId;
 
     //TestCases code
     @Value("${code.validation.testCases.notExists}")

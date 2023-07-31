@@ -75,7 +75,7 @@ public class SubModulesServiceImpl implements SubModulesService {
         SubModules subModules = subModulesRepository.findById(subModuleId).get();
         SubModulesResponse subModulesResponse = new SubModulesResponse();
         subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-        subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+        subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
         BeanUtils.copyProperties(subModules, subModulesResponse);
         return subModulesResponse;
     }
@@ -87,7 +87,7 @@ public class SubModulesServiceImpl implements SubModulesService {
         for (SubModules subModules : subModulesList
         ) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
-            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
             BeanUtils.copyProperties(subModules, subModulesResponse);
             subModulesResponseList.add(subModulesResponse);
@@ -119,7 +119,7 @@ public class SubModulesServiceImpl implements SubModulesService {
         for (SubModules subModules : subModulesPage) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             BeanUtils.copyProperties(subModules, subModulesResponse);
             subModulesResponseList.add(subModulesResponse);
         }
@@ -146,7 +146,7 @@ public class SubModulesServiceImpl implements SubModulesService {
             SubModulesResponse subModulesResponse=new SubModulesResponse();
             BeanUtils.copyProperties(subModules,subModulesResponse);
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             subModulesResponseList.add(subModulesResponse);
         }
         return subModulesResponseList;

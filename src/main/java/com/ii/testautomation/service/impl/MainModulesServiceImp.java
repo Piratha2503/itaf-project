@@ -32,15 +32,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
-@SuppressWarnings("ALL")
+
 @Service
 public class MainModulesServiceImp implements MainModulesService {
     @Autowired
     private MainModulesRepository mainModulesRepository;
     @Autowired
     private ModulesRepository modulesRepository;
-    @Autowired
-    private SubModulesRepository subModulesRepository;
 
     @Override
     public void saveMainModules(MainModulesRequest mainModulesRequest) {
@@ -75,7 +73,6 @@ public class MainModulesServiceImp implements MainModulesService {
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
-
         return mainModulesResponseList;
     }
 
@@ -180,7 +177,6 @@ public class MainModulesServiceImp implements MainModulesService {
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-            //DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
