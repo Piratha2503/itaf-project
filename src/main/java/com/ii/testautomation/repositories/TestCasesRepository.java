@@ -8,9 +8,9 @@ import java.util.List;
 
 
 public interface TestCasesRepository extends JpaRepository<TestCases, Long>, QuerydslPredicateExecutor<TestCases> {
-    boolean existsByNameIgnoreCase(String name);
+    boolean existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(String name,Long projectId);
 
-    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+    boolean existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(String name,Long projectId, Long id);
 
     List<TestCases> findAllTestCasesBySubModuleId(Long id);
 

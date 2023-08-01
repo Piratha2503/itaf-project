@@ -14,7 +14,7 @@ import java.util.Map;
 public interface TestGroupingService {
     void saveTestGrouping(TestGroupingRequest testGroupingRequest);
 
-    boolean existsByTestGroupingName(String testGroupingName);
+    public boolean existsByTestGroupingName(String testGroupingName,Long testCaseId);
 
     boolean existsByTestGroupingId(Long testGroupingId);
 

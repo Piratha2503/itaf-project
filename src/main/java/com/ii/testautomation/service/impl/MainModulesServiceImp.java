@@ -104,13 +104,14 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public boolean isExistMainModulesName(String name) {
-        return mainModulesRepository.existsByNameIgnoreCase(name);
+    public boolean isExistMainModulesName(String name,Long moduleId) {
+        Long projectId=modulesRepository.findById(moduleId).get().getProject().getId();
+        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectId(name,projectId);
     }
 
     @Override
-    public boolean isExistPrefix(String prefix) {
-        return mainModulesRepository.existsByPrefix(prefix);
+    public boolean isExistPrefix(String prefix,Long projectId) {
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectId(prefix,projectId);
     }
 
     @Override
@@ -127,12 +128,14 @@ public class MainModulesServiceImp implements MainModulesService {
 
     @Override
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId) {
-        return mainModulesRepository.existsByNameIgnoreCaseAndIdNot(mainModuleName, mainModuleId);
+        Long projectId=mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleName,projectId, mainModuleId);
     }
 
     @Override
-    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
-        return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix, mainModuleId);
+    public boolean isUpdateMainModulesPrefixExist(String mainModulePrefix, Long mainModuleId) {
+        Long projectId=mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectIdAndIdNot(mainModulePrefix,projectId, mainModuleId);
     }
 
     @Override

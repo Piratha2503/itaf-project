@@ -16,7 +16,7 @@ public interface TestCasesService {
 
     boolean existsByTestCasesId(Long id);
 
-    boolean existsByTestCasesName(String testCaseName);
+    boolean existsByTestCasesName(String testCaseName,Long subModulesId);
 
     TestCaseResponse getById(Long id);
 

@@ -52,13 +52,13 @@ ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public boolean isModuleExistsByName(String name) {
-        return modulesRepository.existsByNameIgnoreCase(name);
+    public boolean isModuleExistsByName(String name,Long projectId) {
+        return modulesRepository.existsByNameIgnoreCaseAndProjectId(name,projectId);
     }
 
     @Override
-    public boolean isModuleExistsByPrefix(String prefix) {
-        return modulesRepository.existsByPrefixIgnoreCase(prefix);
+    public boolean isModuleExistsByPrefix(String prefix,Long projectId) {
+        return modulesRepository.existsByPrefixIgnoreCaseAndProjectId(prefix,projectId);
     }
 
     @Override
@@ -69,12 +69,14 @@ ModulesServiceImpl implements ModulesService {
 
     @Override
     public boolean isUpdateModuleNameExists(String name, Long id) {
-        return modulesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+        Long projectId=modulesRepository.findById(id).get().getProject().getId();
+        return modulesRepository.existsByNameIgnoreCaseAndProjectIdAndIdNot(name,projectId, id);
     }
 
     @Override
     public boolean isUpdateModulePrefixExists(String prefix, Long id) {
-        return modulesRepository.existsByPrefixIgnoreCaseAndIdNot(prefix, id);
+        Long projectId=modulesRepository.findById(id).get().getProject().getId();
+        return modulesRepository.existsByPrefixIgnoreCaseAndProjectIdAndIdNot(prefix,projectId,id);
     }
 
     @Override

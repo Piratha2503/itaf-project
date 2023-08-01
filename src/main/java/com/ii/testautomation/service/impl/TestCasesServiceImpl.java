@@ -8,6 +8,7 @@ import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.repositories.ModulesRepository;
+import com.ii.testautomation.repositories.SubModulesRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestCasesService;
@@ -37,6 +38,8 @@ import java.util.*;
 public class TestCasesServiceImpl implements TestCasesService {
     @Autowired
     private TestCasesRepository testCasesRepository;
+    @Autowired
+    private SubModulesRepository subModulesRepository;
 
     @Override
     public void saveTestCase(TestCaseRequest testCaseRequest) {
@@ -57,8 +60,9 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public boolean existsByTestCasesName(String testCaseName) {
-        return testCasesRepository.existsByNameIgnoreCase(testCaseName);
+    public boolean existsByTestCasesName(String testCaseName,Long subModulesId) {
+        Long projectId=subModulesRepository.findById(subModulesId).get().getMainModule().getModules().getProject().getId();
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(testCaseName,projectId);
     }
 
     @Override
@@ -75,7 +79,8 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public boolean isUpdateTestCaseNameExists(Long id, String name) {
-        return testCasesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+        Long projectId=testCasesRepository.findById(id).get().getSubModule().getMainModule().getModules().getProject().getId();
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(name,projectId, id);
     }
 
     @Override
