@@ -69,12 +69,14 @@ ModulesServiceImpl implements ModulesService {
 
     @Override
     public boolean isUpdateModuleNameExists(String name, Long id) {
-        return modulesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+        Long projectId=modulesRepository.findById(id).get().getProject().getId();
+        return modulesRepository.existsByNameIgnoreCaseAndProjectIdAndIdNot(name,projectId, id);
     }
 
     @Override
     public boolean isUpdateModulePrefixExists(String prefix, Long id) {
-        return modulesRepository.existsByPrefixIgnoreCaseAndIdNot(prefix, id);
+        Long projectId=modulesRepository.findById(id).get().getProject().getId();
+        return modulesRepository.existsByPrefixIgnoreCaseAndProjectIdAndIdNot(prefix,projectId,id);
     }
 
     @Override
@@ -94,7 +96,6 @@ ModulesServiceImpl implements ModulesService {
 
         for (Modules modules : modulesPage) {
             ModulesResponse modulesResponse = new ModulesResponse();
-            modulesResponse.setProjectId(modules.getProject().getId());
             modulesResponse.setProjectName(modules.getProject().getName());
             BeanUtils.copyProperties(modules, modulesResponse);
             modulesResponseList.add(modulesResponse);
@@ -108,7 +109,6 @@ ModulesServiceImpl implements ModulesService {
     public ModulesResponse getModuleById(Long id) {
         ModulesResponse modulesResponse = new ModulesResponse();
         Modules module = modulesRepository.findById(id).get();
-        modulesResponse.setProjectId(module.getProject().getId());
         modulesResponse.setProjectName(module.getProject().getName());
         BeanUtils.copyProperties(module, modulesResponse);
         return modulesResponse;
@@ -120,7 +120,6 @@ ModulesServiceImpl implements ModulesService {
         List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
         for (Modules module : modulesList) {
             ModulesResponse modulesResponse = new ModulesResponse();
-            modulesResponse.setProjectId(module.getProject().getId());
             modulesResponse.setProjectName(module.getProject().getName());
             BeanUtils.copyProperties(module, modulesResponse);
             modulesResponseList.add(modulesResponse);

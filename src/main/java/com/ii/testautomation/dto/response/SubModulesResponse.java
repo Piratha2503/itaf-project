@@ -10,5 +10,5 @@ public class SubModulesResponse {
     private String name;
     private String prefix;
     private String mainModuleName;
-    private String mainModulePrefix;
+    private String moduleName;
 }

@@ -8,6 +8,7 @@ import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.repositories.ModulesRepository;
+import com.ii.testautomation.repositories.SubModulesRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestCasesService;
@@ -37,6 +38,8 @@ import java.util.*;
 public class TestCasesServiceImpl implements TestCasesService {
     @Autowired
     private TestCasesRepository testCasesRepository;
+    @Autowired
+    private SubModulesRepository subModulesRepository;
 
     @Override
     public void saveTestCase(TestCaseRequest testCaseRequest) {
@@ -57,15 +60,17 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public boolean existsByTestCasesName(String testCaseName) {
-        return testCasesRepository.existsByNameIgnoreCase(testCaseName);
+    public boolean existsByTestCasesName(String testCaseName,Long subModulesId) {
+        Long projectId=subModulesRepository.findById(subModulesId).get().getMainModule().getModules().getProject().getId();
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(testCaseName,projectId);
     }
 
     @Override
     public TestCaseResponse getById(Long id) {
         TestCaseResponse testCaseResponse = new TestCaseResponse();
         TestCases testCases = testCasesRepository.findById(id).get();
-        testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
+        testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
+        testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
         testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
         BeanUtils.copyProperties(testCases, testCaseResponse);
 
@@ -74,7 +79,8 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public boolean isUpdateTestCaseNameExists(Long id, String name) {
-        return testCasesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+        Long projectId=testCasesRepository.findById(id).get().getSubModule().getMainModule().getModules().getProject().getId();
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(name,projectId, id);
     }
 
     @Override
@@ -90,11 +96,12 @@ public class TestCasesServiceImpl implements TestCasesService {
         Page<TestCases> testCasesPage = testCasesRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(testCasesPage.getTotalElements());
         pagination.setPageSize(testCasesPage.getTotalPages());
-        for (TestCases testcases : testCasesPage) {
+        for (TestCases testCases : testCasesPage) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
-            testCaseResponse.setSubModuleId(testcases.getSubModule().getId());
-            testCaseResponse.setSubModuleName(testcases.getSubModule().getName());
-            BeanUtils.copyProperties(testcases, testCaseResponse);
+            testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
+            testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
+            testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
+            BeanUtils.copyProperties(testCases, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);
         }
         return testCaseResponseList;
@@ -105,7 +112,8 @@ public class TestCasesServiceImpl implements TestCasesService {
         List<TestCases> testCasesList = testCasesRepository.findAllTestCasesBySubModuleId(subModuleId);
         for (TestCases testCases : testCasesList) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
-            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
+            testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
+            testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
             BeanUtils.copyProperties(testCases, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);
@@ -225,7 +233,8 @@ public class TestCasesServiceImpl implements TestCasesService {
         List<TestCases> testCasesList = testCasesRepository.findBySubModule_MainModule_Modules_Project_Id(projectId);
         for (TestCases testCases : testCasesList) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
-            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
+            testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
+            testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
             BeanUtils.copyProperties(testCases, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);

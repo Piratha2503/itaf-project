@@ -23,9 +23,9 @@ public interface MainModulesService {
 
     boolean isExistMainModulesId(Long id);
 
-    boolean isExistMainModulesName(String name);
+    boolean isExistMainModulesName(String name,Long moduleId);
 
-    boolean isExistPrefix(String prefix);
+    boolean isExistPrefix(String prefix,Long projectId);
 
     boolean isExistModulesId(Long id);
 

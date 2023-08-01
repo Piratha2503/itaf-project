@@ -46,9 +46,9 @@ public class MainModulesController {
 
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
-        if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName()))
+        if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(),mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
-        if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix()))
+        if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(),mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
         mainModulesService.saveMainModules(mainModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessMessageInsertMainModules()));
@@ -160,10 +160,10 @@ public class MainModulesController {
                     mainModulePrefixes.add(mainModulesRequest.getPrefix());
                 }
 
-                if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName())) {
+                if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(),mainModulesRequest.getModuleId())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), rowIndex);
                 }
-                if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix())) {
+                if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(),mainModulesRequest.getModuleId())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixAlreadyExistMessage(), rowIndex);
                 }
             }

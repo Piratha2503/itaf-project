@@ -42,7 +42,7 @@ public class ModulesController {
 
     @PostMapping(value = EndpointURI.MODULE)
     public ResponseEntity<Object> saveModule(@RequestBody ModulesRequest modulesRequest) {
-        if (modulesService.isModuleExistsByName(modulesRequest.getName(), modulesRequest.getProject_id())) {
+        if (modulesService.isModuleExistsByName(modulesRequest.getName(),modulesRequest.getProject_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModuleNameAlReadyExistsMessage()));
         }
         if (modulesService.isModuleExistsByPrefix(modulesRequest.getPrefix(), modulesRequest.getProject_id())) {

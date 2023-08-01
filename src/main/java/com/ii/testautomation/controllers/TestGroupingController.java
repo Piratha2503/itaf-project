@@ -42,7 +42,7 @@ public class TestGroupingController {
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> saveTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
-        if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName())) {
+        if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName(),testGroupingRequest.getTestCaseId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestGroupingAlReadyExistCode(),
                     statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
@@ -104,7 +104,7 @@ public class TestGroupingController {
                 } else if (!testCasesService.existsByTestCasesId(entry.getValue().getTestCaseId())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), entry.getKey());
                 }
-                if (testGroupingService.existsByTestGroupingName(entry.getValue().getName())) {
+                if (testGroupingService.existsByTestGroupingName(entry.getValue().getName(),entry.getValue().getTestCaseId())) {
                     testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), entry.getKey());
                 }
             }

@@ -8,13 +8,13 @@ import java.util.List;
 
 
 public interface ModulesRepository extends JpaRepository<Modules, Long>, QuerydslPredicateExecutor<Modules> {
-    public boolean existsByNameIgnoreCaseAndProjectId(String name,Long id);
+    boolean existsByNameIgnoreCaseAndProjectId(String name, Long projectId);
 
-    public boolean existsByPrefixIgnoreCaseAndProjectId(String prefix,Long id);
+    public boolean existsByPrefixIgnoreCaseAndProjectId(String prefix,Long projectId);
 
-    public boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+    public boolean existsByNameIgnoreCaseAndProjectIdAndIdNot(String name, Long projectId,Long id);
 
-    public boolean existsByPrefixIgnoreCaseAndIdNot(String prefix, Long id);
+    public boolean existsByPrefixIgnoreCaseAndProjectIdAndIdNot(String prefix,Long projectId, Long id);
 
     public List<Modules> findAllModulesByProjectId(Long projectId);
 

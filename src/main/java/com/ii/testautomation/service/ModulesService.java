@@ -17,7 +17,7 @@ public interface ModulesService {
 
     boolean isModuleExistsByName(String name,Long projectId);
 
-    boolean isModuleExistsByPrefix(String prefix,Long id);
+    boolean isModuleExistsByPrefix(String prefix,Long projectId);
 
     boolean existsByModulesId(Long id);
 

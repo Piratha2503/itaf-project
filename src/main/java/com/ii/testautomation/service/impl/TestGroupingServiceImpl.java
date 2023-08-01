@@ -7,6 +7,7 @@ import com.ii.testautomation.entities.QTestGrouping;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
+import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
@@ -35,6 +36,8 @@ import java.util.*;
 public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private TestGroupingRepository testGroupingRepository;
+    @Autowired
+    private TestCasesRepository testCasesRepository;
     @Override
     public void saveTestGrouping(TestGroupingRequest testGroupingRequest) {
         TestGrouping testGrouping = new TestGrouping();
@@ -49,8 +52,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public boolean existsByTestGroupingName(String testGroupingName) {
-        return testGroupingRepository.existsByNameIgnoreCase(testGroupingName);
+    public boolean existsByTestGroupingName(String testGroupingName,Long testCaseId) {
+        Long projectId=testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName,projectId);
     }
 
     @Override
@@ -60,7 +64,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean isUpdateTestGroupingNameExits(String testGroupingName, Long testGroupingId) {
-        return testGroupingRepository.existsByNameIgnoreCaseAndIdNot(testGroupingName, testGroupingId);
+        Long projectId=testGroupingRepository.findById(testGroupingId).get().getTestCases().getSubModule().getMainModule().getModules().getProject().getId();
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(testGroupingName,projectId, testGroupingId);
     }
 
     @Override
