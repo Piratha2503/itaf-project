@@ -14,9 +14,9 @@ import java.util.Map;
 public interface SubModulesService {
     void saveSubModules(SubModulesRequest subModulesRequest);
 
-    boolean existsBySubModulesName(String subModuleName);
+    boolean existsBySubModulesName(String subModuleName,Long mainModuleId);
 
-    boolean existsBySubModulesPrefix(String subModulePrefix);
+    boolean existsBySubModulesPrefix(String subModulePrefix,Long mainModuleId);
 
     boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId);
 

@@ -46,8 +46,8 @@ public class TestCasesController {
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        if (testCasesService.existsByTestCasesName(testCaseRequest.getName())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
+        if (testCasesService.existsByTestCasesName(testCaseRequest.getName(),testCaseRequest.getSubModuleId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
         testCasesService.saveTestCase(testCaseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestCaseSuccessMessage()));
@@ -109,7 +109,7 @@ public class TestCasesController {
                 } else {
                     testCasesNames.add(entry.getValue().getName());
                 }
-                if (testCasesService.existsByTestCasesName(entry.getValue().getName())) {
+                if (testCasesService.existsByTestCasesName(entry.getValue().getName(),entry.getValue().getSubModuleId())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), entry.getKey());
                 }
                 if (entry.getValue().getSubModuleId() == null) {

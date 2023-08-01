@@ -6,6 +6,7 @@ import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.entities.MainModules;
 import com.ii.testautomation.entities.QSubModules;
 import com.ii.testautomation.entities.SubModules;
+import com.ii.testautomation.repositories.MainModulesRepository;
 import com.ii.testautomation.repositories.SubModulesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SubModulesService;
@@ -32,9 +33,11 @@ import java.util.*;
 
 @Service
 public class SubModulesServiceImpl implements SubModulesService {
+
     @Autowired
     private SubModulesRepository subModulesRepository;
-
+    @Autowired
+    private MainModulesRepository mainModulesRepository;
     @Override
     public void saveSubModules(SubModulesRequest subModulesRequest) {
         SubModules subModules = new SubModules();
@@ -46,23 +49,27 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
 
     @Override
-    public boolean existsBySubModulesName(String subModuleName) {
-        return subModulesRepository.existsByNameIgnoreCase(subModuleName);
+    public boolean existsBySubModulesName(String subModuleName,Long mainModuleId) {
+       Long projectId= mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName,projectId);
     }
 
     @Override
-    public boolean existsBySubModulesPrefix(String subModulePrefix) {
-        return subModulesRepository.existsByPrefixIgnoreCase(subModulePrefix);
+    public boolean existsBySubModulesPrefix(String subModulePrefix,Long mainModuleId) {
+        Long projectId= mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return subModulesRepository.existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectId(subModulePrefix,projectId);
     }
 
     @Override
     public boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId) {
-        return subModulesRepository.existsByNameIgnoreCaseAndIdNot(subModuleName, subModuleId);
+        Long projectId=subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
+        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectIdAndIdNot(subModuleName,projectId, subModuleId);
     }
 
     @Override
     public boolean isUpdateSubModulePrefixExits(String subModulePrefix, Long subModuleId) {
-        return subModulesRepository.existsByPrefixIgnoreCaseAndIdNot(subModulePrefix, subModuleId);
+        Long projectId=subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
+        return subModulesRepository.existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectIdAndIdNot(subModulePrefix,projectId, subModuleId);
     }
 
     @Override
@@ -75,7 +82,7 @@ public class SubModulesServiceImpl implements SubModulesService {
         SubModules subModules = subModulesRepository.findById(subModuleId).get();
         SubModulesResponse subModulesResponse = new SubModulesResponse();
         subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-        subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+        subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
         BeanUtils.copyProperties(subModules, subModulesResponse);
         return subModulesResponse;
     }
@@ -87,7 +94,7 @@ public class SubModulesServiceImpl implements SubModulesService {
         for (SubModules subModules : subModulesList
         ) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
-            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
             BeanUtils.copyProperties(subModules, subModulesResponse);
             subModulesResponseList.add(subModulesResponse);
@@ -119,7 +126,7 @@ public class SubModulesServiceImpl implements SubModulesService {
         for (SubModules subModules : subModulesPage) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             BeanUtils.copyProperties(subModules, subModulesResponse);
             subModulesResponseList.add(subModulesResponse);
         }
@@ -146,7 +153,7 @@ public class SubModulesServiceImpl implements SubModulesService {
             SubModulesResponse subModulesResponse=new SubModulesResponse();
             BeanUtils.copyProperties(subModules,subModulesResponse);
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             subModulesResponseList.add(subModulesResponse);
         }
         return subModulesResponseList;

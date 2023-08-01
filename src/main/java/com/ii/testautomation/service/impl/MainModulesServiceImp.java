@@ -32,15 +32,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
-@SuppressWarnings("ALL")
+
 @Service
 public class MainModulesServiceImp implements MainModulesService {
     @Autowired
     private MainModulesRepository mainModulesRepository;
     @Autowired
     private ModulesRepository modulesRepository;
-    @Autowired
-    private SubModulesRepository subModulesRepository;
 
     @Override
     public void saveMainModules(MainModulesRequest mainModulesRequest) {
@@ -75,7 +73,6 @@ public class MainModulesServiceImp implements MainModulesService {
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
-
         return mainModulesResponseList;
     }
 
@@ -107,13 +104,14 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public boolean isExistMainModulesName(String name) {
-        return mainModulesRepository.existsByNameIgnoreCase(name);
+    public boolean isExistMainModulesName(String name,Long moduleId) {
+        Long projectId=modulesRepository.findById(moduleId).get().getProject().getId();
+        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectId(name,projectId);
     }
 
     @Override
-    public boolean isExistPrefix(String prefix) {
-        return mainModulesRepository.existsByPrefix(prefix);
+    public boolean isExistPrefix(String prefix,Long projectId) {
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectId(prefix,projectId);
     }
 
     @Override
@@ -130,12 +128,14 @@ public class MainModulesServiceImp implements MainModulesService {
 
     @Override
     public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId) {
-        return mainModulesRepository.existsByNameIgnoreCaseAndIdNot(mainModuleName, mainModuleId);
+        Long projectId=mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleName,projectId, mainModuleId);
     }
 
     @Override
-    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId) {
-        return mainModulesRepository.existsByPrefixIgnoreCaseAndIdNot(mainModuleprefix, mainModuleId);
+    public boolean isUpdateMainModulesPrefixExist(String mainModulePrefix, Long mainModuleId) {
+        Long projectId=mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectIdAndIdNot(mainModulePrefix,projectId, mainModuleId);
     }
 
     @Override
@@ -180,7 +180,6 @@ public class MainModulesServiceImp implements MainModulesService {
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-            //DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
