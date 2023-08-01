@@ -15,9 +15,9 @@ import java.util.Map;
 public interface ModulesService {
     void saveModule(ModulesRequest modulesRequest);
 
-    boolean isModuleExistsByName(String name);
+    boolean isModuleExistsByName(String name,Long projectId);
 
-    boolean isModuleExistsByPrefix(String prefix);
+    boolean isModuleExistsByPrefix(String prefix,Long id);
 
     boolean existsByModulesId(Long id);
 

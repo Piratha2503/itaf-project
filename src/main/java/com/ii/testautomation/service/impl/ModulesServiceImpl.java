@@ -52,13 +52,13 @@ ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public boolean isModuleExistsByName(String name) {
-        return modulesRepository.existsByNameIgnoreCase(name);
+    public boolean isModuleExistsByName(String name,Long projectId) {
+        return modulesRepository.existsByNameIgnoreCaseAndProjectId(name,projectId);
     }
 
     @Override
-    public boolean isModuleExistsByPrefix(String prefix) {
-        return modulesRepository.existsByPrefixIgnoreCase(prefix);
+    public boolean isModuleExistsByPrefix(String prefix,Long projectId) {
+        return modulesRepository.existsByPrefixIgnoreCaseAndProjectId(prefix,projectId);
     }
 
     @Override

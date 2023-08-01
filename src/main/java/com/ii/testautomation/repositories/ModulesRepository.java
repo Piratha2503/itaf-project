@@ -8,9 +8,9 @@ import java.util.List;
 
 
 public interface ModulesRepository extends JpaRepository<Modules, Long>, QuerydslPredicateExecutor<Modules> {
-    public boolean existsByNameIgnoreCase(String name);
+    public boolean existsByNameIgnoreCaseAndProjectId(String name,Long id);
 
-    public boolean existsByPrefixIgnoreCase(String prefix);
+    public boolean existsByPrefixIgnoreCaseAndProjectId(String prefix,Long id);
 
     public boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 

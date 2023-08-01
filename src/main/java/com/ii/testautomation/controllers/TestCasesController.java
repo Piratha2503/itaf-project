@@ -47,7 +47,7 @@ public class TestCasesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
         }
         if (testCasesService.existsByTestCasesName(testCaseRequest.getName())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode() , statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
         testCasesService.saveTestCase(testCaseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestCaseSuccessMessage()));
