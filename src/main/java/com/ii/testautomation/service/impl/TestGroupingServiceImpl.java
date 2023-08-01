@@ -53,7 +53,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean existsByTestGroupingName(String testGroupingName,Long testCaseId) {
-        Long projectId=testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
+           Long projectId=testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName,projectId);
     }
 
