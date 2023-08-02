@@ -1,6 +1,5 @@
 package com.ii.testautomation.controllers;
 
-import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.enums.RequestStatus;

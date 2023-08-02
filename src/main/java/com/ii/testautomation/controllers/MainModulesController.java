@@ -1,7 +1,6 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.MainModulesRequest;
-import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.search.MainModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -145,11 +144,11 @@ public class MainModulesController {
                     mainModuleNames.add(entry.getValue().getPrefix());
                 }
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getPrefix())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameFiledEmptyMessage(), entry.getKey());
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixFiledEmptyMessage(), entry.getKey());
                 } else if (mainModuleNames.contains(entry.getValue().getPrefix())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameDuplicateMessage(), entry.getKey());
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixDuplicateMessage(), entry.getKey());
                 } else {
-                    mainModuleNames.add(entry.getValue().getPrefix());
+                    mainModulePrefixes.add(entry.getValue().getPrefix());
                 }
                 if (mainModulesService.isExistMainModulesName(entry.getValue().getName())) {
                         mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), entry.getKey());
