@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@SuppressWarnings("ALL")
 @Service
 public class SubModulesServiceImpl implements SubModulesService {
 
