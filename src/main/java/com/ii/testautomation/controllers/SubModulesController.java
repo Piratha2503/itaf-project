@@ -8,6 +8,7 @@ import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.utils.Constants;
@@ -35,16 +36,19 @@ public class SubModulesController {
     @Autowired
     private TestCasesService testCasesService;
     @Autowired
+    private ProjectService projectService;
+    @Autowired
     private StatusCodeBundle statusCodeBundle;
+
 
     @PostMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest) {
-        if (subModulesService.existsBySubModulesName(subModulesRequest.getName())) {
+        if (subModulesService.existsBySubModulesName(subModulesRequest.getName(),subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
         }
-        if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix())) {
+        if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix(),subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
@@ -104,11 +108,13 @@ public class SubModulesController {
                 } else if (!mainModulesService.isExistMainModulesId(entry.getValue().getMain_module_Id())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModuleNotExistsMessage(), entry.getKey());
                 }
-                if (subModulesService.existsBySubModulesPrefix(entry.getValue().getPrefix())) {
-                    subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixAlReadyExistMessage(), entry.getKey());
-                }
-                if (subModulesService.existsBySubModulesName(entry.getValue().getName())) {
-                    subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNameAlReadyExistMessage(), entry.getKey());
+                else {
+                    if (subModulesService.existsBySubModulesPrefix(entry.getValue().getPrefix(), entry.getValue().getMain_module_Id())) {
+                        subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixAlReadyExistMessage(), entry.getKey());
+                    }
+                    if (subModulesService.existsBySubModulesName(entry.getValue().getName(), entry.getValue().getMain_module_Id())) {
+                        subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNameAlReadyExistMessage(), entry.getKey());
+                    }
                 }
             }
             if (!errorMessages.isEmpty()) {
@@ -225,4 +231,22 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getDeleteSubModuleSuccessMessage()));
     }
+    @GetMapping(EndpointURI.SUBMODULE_BY_PROJECT_ID)
+    public ResponseEntity<Object> getSubModulesByProjectId(@PathVariable Long id)
+    {
+        if (!projectService.existByProjectId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        if (!subModulesService.existsByProjectId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getGetSubModuleNotHaveProjectId()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULES,subModulesService.getSubModulesByProjectId(id),
+              RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getSubModulesByProjectId()));
+    }
+
 }

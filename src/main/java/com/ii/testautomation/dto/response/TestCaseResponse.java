@@ -9,6 +9,7 @@ public class TestCaseResponse {
     private Long id;
     private String name;
     private String description;
-    private Long subModuleId;
     private String subModuleName;
+    private String moduleName;
+    private String mainModuleName;
 }

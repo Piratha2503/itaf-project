@@ -1,6 +1,7 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.TestTypesRequest;
+import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -185,5 +186,24 @@ public class TestTypesController {
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getFileFailureMessage()));
         }
+    }
+
+    @GetMapping(value = EndpointURI.TEST_TYPE_BY_PROJECT_ID)
+    public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id) {
+        if (!projectService.existByProjectId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        List<TestTypesResponse> testTypesResponse=testTypesService.getTestTypesByProjectId(id);
+        if(testTypesResponse.isEmpty())
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesResponse,
+                RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getTestTypeByProjectId()));
     }
 }

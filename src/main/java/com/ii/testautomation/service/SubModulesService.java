@@ -12,25 +12,25 @@ import java.util.List;
 import java.util.Map;
 
 public interface SubModulesService {
-    public void saveSubModules(SubModulesRequest subModulesRequest);
+    void saveSubModules(SubModulesRequest subModulesRequest);
 
-    public boolean existsBySubModulesName(String subModuleName);
+    boolean existsBySubModulesName(String subModuleName,Long mainModuleId);
 
-    public boolean existsBySubModulesPrefix(String subModulePrefix);
+    boolean existsBySubModulesPrefix(String subModulePrefix,Long mainModuleId);
 
-    public boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId);
+    boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId);
 
-    public boolean isUpdateSubModulePrefixExits(String subModulePrefix, Long subModuleId);
+    boolean isUpdateSubModulePrefixExits(String subModulePrefix, Long subModuleId);
 
-    public boolean existsBySubModuleId(Long subModuleId);
+    boolean existsBySubModuleId(Long subModuleId);
 
-    public SubModulesResponse getSubModuleById(Long subModuleId);
+    SubModulesResponse getSubModuleById(Long subModuleId);
 
-    public List<SubModulesResponse> getAllSubModuleByMainModuleId(Long id);
+    List<SubModulesResponse> getAllSubModuleByMainModuleId(Long id);
 
-    public List<SubModulesResponse> multiSearchSubModule(Pageable pageable, PaginatedContentResponse.Pagination pagination, SubModuleSearch subModuleSearch);
+    List<SubModulesResponse> multiSearchSubModule(Pageable pageable, PaginatedContentResponse.Pagination pagination, SubModuleSearch subModuleSearch);
 
-    public void deleteSubModuleById(Long subModuleId);
+    void deleteSubModuleById(Long subModuleId);
 
     boolean existsByMainModuleId(Long mainModuleId);
 
@@ -42,7 +42,11 @@ public interface SubModulesService {
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
-    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
-    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    List<SubModulesResponse> getSubModulesByProjectId(Long id);
+
+    boolean existsByProjectId(Long projectId);
 }

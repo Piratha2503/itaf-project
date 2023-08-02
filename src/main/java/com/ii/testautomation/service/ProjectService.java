@@ -1,6 +1,4 @@
 package com.ii.testautomation.service;
-
-
 import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
@@ -33,15 +31,15 @@ public interface ProjectService {
 
     Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
     Map<Integer, ProjectRequest> excelToProjectRequest(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
-    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
-    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }
 
 

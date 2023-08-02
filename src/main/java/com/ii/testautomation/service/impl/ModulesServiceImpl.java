@@ -31,9 +31,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("deprecation")
 @Service
-public class ModulesServiceImpl implements ModulesService {
+public class
+ModulesServiceImpl implements ModulesService {
 
     @Autowired
     private ModulesRepository modulesRepository;
@@ -51,13 +52,13 @@ public class ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public boolean isModuleExistsByName(String name) {
-        return modulesRepository.existsByNameIgnoreCase(name);
+    public boolean isModuleExistsByName(String name,Long projectId) {
+        return modulesRepository.existsByNameIgnoreCaseAndProjectId(name,projectId);
     }
 
     @Override
-    public boolean isModuleExistsByPrefix(String prefix) {
-        return modulesRepository.existsByPrefixIgnoreCase(prefix);
+    public boolean isModuleExistsByPrefix(String prefix,Long projectId) {
+        return modulesRepository.existsByPrefixIgnoreCaseAndProjectId(prefix,projectId);
     }
 
     @Override
@@ -68,12 +69,14 @@ public class ModulesServiceImpl implements ModulesService {
 
     @Override
     public boolean isUpdateModuleNameExists(String name, Long id) {
-        return modulesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+        Long projectId=modulesRepository.findById(id).get().getProject().getId();
+        return modulesRepository.existsByNameIgnoreCaseAndProjectIdAndIdNot(name,projectId, id);
     }
 
     @Override
     public boolean isUpdateModulePrefixExists(String prefix, Long id) {
-        return modulesRepository.existsByPrefixIgnoreCaseAndIdNot(prefix, id);
+        Long projectId=modulesRepository.findById(id).get().getProject().getId();
+        return modulesRepository.existsByPrefixIgnoreCaseAndProjectIdAndIdNot(prefix,projectId,id);
     }
 
     @Override
@@ -93,7 +96,6 @@ public class ModulesServiceImpl implements ModulesService {
 
         for (Modules modules : modulesPage) {
             ModulesResponse modulesResponse = new ModulesResponse();
-            modulesResponse.setProjectId(modules.getProject().getId());
             modulesResponse.setProjectName(modules.getProject().getName());
             BeanUtils.copyProperties(modules, modulesResponse);
             modulesResponseList.add(modulesResponse);
@@ -107,7 +109,6 @@ public class ModulesServiceImpl implements ModulesService {
     public ModulesResponse getModuleById(Long id) {
         ModulesResponse modulesResponse = new ModulesResponse();
         Modules module = modulesRepository.findById(id).get();
-        modulesResponse.setProjectId(module.getProject().getId());
         modulesResponse.setProjectName(module.getProject().getName());
         BeanUtils.copyProperties(module, modulesResponse);
         return modulesResponse;
@@ -119,7 +120,6 @@ public class ModulesServiceImpl implements ModulesService {
         List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
         for (Modules module : modulesList) {
             ModulesResponse modulesResponse = new ModulesResponse();
-            modulesResponse.setProjectId(module.getProject().getId());
             modulesResponse.setProjectName(module.getProject().getName());
             BeanUtils.copyProperties(module, modulesResponse);
             modulesResponseList.add(modulesResponse);

@@ -108,12 +108,16 @@ public class StatusCodeBundle {
     private String deleteSubModuleSuccessMessage;
     @Value("${message.validation.get.mainModule.notHave}")
     private String getSubModuleNotHaveMainModuleId;
+    @Value("${message.validation.get.project.notHave}")
+    private String getSubModuleNotHaveProjectId;
     @Value("${message.validation.subModules.dependent}")
     private String subModulesDependentMessage;
     @Value("${message.validation.subModule.name.duplicate}")
     private String subModuleNameDuplicateMessage;
     @Value("${message.validation.subModule.prefix.duplicate}")
     private String subModulePrefixDuplicateMessage;
+    @Value("${message.success.getSubModules.project}")
+    private String subModulesByProjectId;
     //MainModules
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
@@ -246,6 +250,8 @@ public class StatusCodeBundle {
     private String testTypeDescriptionEmptyMessage;
     @Value("${message.validation.testType.DoesNot.mapped}")
     private String TestTypeNotMappedMessage;
+    @Value("${message.success.getType.project}")
+    private String testTypeByProjectId;
 
     //TestCases code
     @Value("${code.validation.testCases.notExists}")
@@ -259,6 +265,8 @@ public class StatusCodeBundle {
     private String testCaseNameEmptyMessage;
     @Value("${message.validation.testCases.notExists}")
     private String testCasesNotExistsMessage;
+    @Value("${message.validation.testCases.notExists.project}")
+    private String testCasesAndProjectNotExistsSameProjectMessage;
     @Value("${message.validation.testCases.name.alreadyExists}")
     private String testCaseNameAlreadyExistsMessage;
     @Value("${message.success.save.testcases}")
@@ -287,6 +295,10 @@ public class StatusCodeBundle {
     private String testcaseSubModuleIdEmptyMessage;
     @Value("${message.validation.testcase.file.empty}")
     private String testcaseFileEmptyMessage;
+    @Value("${message.success.testcase.byProjectId}")
+    private String getAllTestCasesSuccessGivenProjectId;
+    @Value("${message.validation.testCase.getProject.notHave}")
+    private String getTestCaseNotHaveProjectId;
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
@@ -307,6 +319,8 @@ public class StatusCodeBundle {
     private String testGroupingFileEmptyMessage;
     @Value("${message.validation.get.testGrouping.notHave.testCase}")
     private String getTestGroupingNotHaveTestCaseId;
+    @Value("${message.validation.get.testGrouping.notHave.project}")
+    private String getTestGroupingNotHaveProjectId;
     @Value("${message.validation.get.testGrouping.notHave.testType}")
     private String getTestGroupingNotHaveTestTypeId;
     @Value("${message.validation.delete.testGrouping}")
@@ -323,4 +337,6 @@ public class StatusCodeBundle {
     private String TestGroupTestTypeIdEmptyMessage;
     @Value("${message.validation.testGrouping.name.duplicate}")
     private String testGroupingNameDuplicateMessage;
+    @Value("${message.success.getTestGrouping.project}")
+    private String testGroupingByProjectId;
 }
