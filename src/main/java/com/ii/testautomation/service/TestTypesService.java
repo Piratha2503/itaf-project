@@ -3,6 +3,7 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
+import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +20,7 @@ public interface TestTypesService {
 
     TestTypesResponse getTestTypeById(Long id);
 
-    List<TestTypesResponse> getTestTypesByProjectId(Long id);
+    List<TestTypes> getTestTypesByProjectId(Long id);
 
     List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
 

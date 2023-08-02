@@ -106,13 +106,15 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public boolean isExistMainModulesName(String name, Long id) {
-        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectId(name,id);
+    public boolean isExistMainModulesName(String name, Long moduleId) {
+        Long projectId=modulesRepository.findById(moduleId).get().getProject().getId();
+        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectId(name,projectId);
     }
 
     @Override
-    public boolean isExistPrefix(String prefix, Long id) {
-        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectId(prefix,id);
+    public boolean isExistPrefix(String prefix, Long moduleId) {
+        Long projectId=modulesRepository.findById(moduleId).get().getProject().getId();
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectId(prefix,projectId);
     }
 
     @Override
@@ -128,13 +130,15 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId, Long projectId) {
-        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleName, mainModuleId,projectId);
+    public boolean isUpdateMainModulesNameExist(String mainModuleName,Long moduleId,Long mainModuleId) {
+        Long projectId=mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleName,projectId,mainModuleId);
     }
 
     @Override
-    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId,Long projectId) {
-        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleprefix, mainModuleId,projectId);
+    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long moduleId,Long mainModuleId) {
+        Long projectId=mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleprefix,projectId,mainModuleId);
     }
 
     @Override

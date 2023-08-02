@@ -37,9 +37,9 @@ public interface MainModulesService {
 
     boolean isExistModulesId(Long id);
 
-    boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId, Long projectId);
+    boolean isUpdateMainModulesNameExist(String mainModuleName,Long moduleId, Long mainModuleId);
 
-    boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId, Long projectId);
+    boolean isUpdateMainModulesPrefixExist(String mainModuleprefix,Long moduleId, Long mainModuleId);
 
     boolean existsMainModuleByModuleId(Long id);
 

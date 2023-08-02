@@ -1,7 +1,6 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.TestTypesRequest;
-import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -109,9 +108,7 @@ public class TestTypesController {
     {
         if (!projectService.existByProjectId(id)) return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
         else if (testTypesService.getTestTypesByProjectId(id).isEmpty()) return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getTestTypeNotMappedMessage()));
-        else return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesService.getTestTypesByProjectId(id),
-                    statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),
-                    statusCodeBundle.getViewTestTypeByProjectIdSuccessMessage()));
+        else return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesService.getTestTypesByProjectId(id),statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getViewTestTypeByProjectIdSuccessMessage()));
     }
 
     @GetMapping(EndpointURI.TEST_TYPES_SEARCH)

@@ -43,15 +43,15 @@ public class MainModulesController {
 
     @PostMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
-
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
-        if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(), mainModulesRequest.getProjectId()))
+        if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(), mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
-        if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(), mainModulesRequest.getProjectId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
+        if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(), mainModulesRequest.getModuleId()))
+          return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
         mainModulesService.saveMainModules(mainModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessMessageInsertMainModules()));
+
     }
 
     @DeleteMapping(EndpointURI.MAIN_MODULE_BY_ID)
@@ -72,9 +72,9 @@ public class MainModulesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesIdNotFound()));
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
-        if (mainModulesService.isUpdateMainModulesNameExist(mainModulesRequest.getName(), mainModulesRequest.getId(), mainModulesRequest.getProjectId()))
+        if (mainModulesService.isUpdateMainModulesNameExist(mainModulesRequest.getName(), mainModulesRequest.getId(), mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
-        if (mainModulesService.isUpdateMainModulesPrefixExist(mainModulesRequest.getPrefix(), mainModulesRequest.getId(), mainModulesRequest.getProjectId()))
+        if (mainModulesService.isUpdateMainModulesPrefixExist(mainModulesRequest.getPrefix(), mainModulesRequest.getId(), mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
 
         mainModulesService.saveMainModules(mainModulesRequest);
@@ -85,7 +85,6 @@ public class MainModulesController {
     public ResponseEntity<Object> getMainModulesByMainModuleId(@PathVariable Long id) {
         if (!mainModulesService.isExistMainModulesId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesIdNotFound()));
-
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.getByMainModulesId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
 
@@ -150,10 +149,10 @@ public class MainModulesController {
                 } else {
                     mainModulePrefixes.add(entry.getValue().getPrefix());
                 }
-                if (mainModulesService.isExistMainModulesName(entry.getValue().getName(),entry.getValue().getProjectId())) {
+                if (mainModulesService.isExistMainModulesName(entry.getValue().getName(),entry.getValue().getModuleId())) {
                         mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), entry.getKey());
                     }
-                if (mainModulesService.isExistPrefix(entry.getValue().getPrefix(),entry.getValue().getProjectId())) {
+                if (mainModulesService.isExistPrefix(entry.getValue().getPrefix(),entry.getValue().getModuleId())) {
                         mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixAlreadyExistMessage(), entry.getKey());
                     }
             }

@@ -58,9 +58,11 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public List<TestTypesResponse> getTestTypesByProjectId(Long id) {
+    public List<TestTypes> getTestTypesByProjectId(Long id) {
         List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
         List<TestTypes> testTypesList = testTypesRepository.findBymyProjectId(id);
+        return testTypesList;
+        /*
         for (TestTypes testTypes : testTypesList)
         {
             TestTypesResponse testTypesResponse = new TestTypesResponse();
@@ -68,6 +70,8 @@ public class TestTypesServiceImpl implements TestTypesService {
             testTypesResponseList.add(testTypesResponse);
         }
         return testTypesResponseList;
+
+         */
     }
 
 
