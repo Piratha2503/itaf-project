@@ -108,7 +108,7 @@ public class SubModulesController {
                 } else if (!mainModulesService.isExistMainModulesId(entry.getValue().getMain_module_Id())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModuleNotExistsMessage(), entry.getKey());
                 }
-                if (subModulesService.existsBySubModulesPrefix(entry.getValue().getPrefix(),entry.getValue().getMain_module_Id())) {
+                if (subModulesService. existsBySubModulesPrefix(entry.getValue().getPrefix(),entry.getValue().getMain_module_Id())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixAlReadyExistMessage(), entry.getKey());
                 }
                 if (subModulesService.existsBySubModulesName(entry.getValue().getName(),entry.getValue().getMain_module_Id())) {

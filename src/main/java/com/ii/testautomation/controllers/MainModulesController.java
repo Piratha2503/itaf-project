@@ -50,7 +50,7 @@ public class MainModulesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
         if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(),mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
-        mainModulesService.saveMainModules(mainModulesRequest);
+        mainModulesService. saveMainModules(mainModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessMessageInsertMainModules()));
     }
 
@@ -100,16 +100,16 @@ public class MainModulesController {
     }
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getMainModulesByProjectId(@PathVariable Long id)
-    {
-        if (!projectService.existByProjectId(id))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
+    public ResponseEntity<Object> getMainModulesByProjectId(@PathVariable Long id) {
+        if (!projectService.existByProjectId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+    }
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,mainModulesService.getMainModulesByProjectId(id),
                 statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
     @GetMapping(EndpointURI.MAIN_MODULE_PAGE)
-    public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, MainModuleSearch mainModuleSearch) {
+    public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "  ") String sortField, MainModuleSearch mainModuleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
 
