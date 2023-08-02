@@ -147,11 +147,6 @@ public class MainModulesController {
                 } else {
                     mainModuleNames.add(mainModulesRequest.getName());
                 }
-                if ((mainModulesRequest.getModuleId()) == null) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
-                } else if (!modulesService.existsByModulesId(mainModulesRequest.getModuleId())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleIdNotFound(), rowIndex);
-                }
                 if (!Utils.isNotNullAndEmpty(mainModulesRequest.getPrefix())) {
                     mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixFiledEmptyMessage(), rowIndex);
                 } else if (mainModulePrefixes.contains(mainModulesRequest.getPrefix())) {
@@ -160,11 +155,17 @@ public class MainModulesController {
                     mainModulePrefixes.add(mainModulesRequest.getPrefix());
                 }
 
-                if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(),mainModulesRequest.getModuleId())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), rowIndex);
-                }
-                if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(),mainModulesRequest.getModuleId())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixAlreadyExistMessage(), rowIndex);
+                if ((mainModulesRequest.getModuleId()) == null) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
+                } else if (!modulesService.existsByModulesId(mainModulesRequest.getModuleId())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleIdNotFound(), rowIndex);
+                } else {
+                    if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(), mainModulesRequest.getModuleId())) {
+                        mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), rowIndex);
+                    }
+                    if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(), mainModulesRequest.getModuleId())) {
+                        mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixAlreadyExistMessage(), rowIndex);
+                    }
                 }
             }
             if (!errorMessages.isEmpty()) {

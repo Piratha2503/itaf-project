@@ -40,125 +40,143 @@ public class TestGroupingController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-    @PostMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> saveTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
-        if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestCasesNotExistCode(),
-                    statusCodeBundle.getTestCasesNotExistsMessage()));
-        }
-        if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestTypesNotExistCode(),
-                    statusCodeBundle.getTestTypesNotExistsMessage()));
-        }
-        if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName(), testGroupingRequest.getTestCaseId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestGroupingAlReadyExistCode(),
-                    statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
-        }
-        testGroupingService.saveTestGrouping(testGroupingRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSaveTestGroupingSuccessMessage()));
-    }
+//    @PostMapping(value = EndpointURI.TEST_GROUPING)
+//    public ResponseEntity<Object> saveTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
+//        for (Long testCaseId : testGroupingRequest.getTestCaseId()
+//        ) {
+//            if (!testCasesService.existsByTestCasesId(testCaseId)) {
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                        statusCodeBundle.getTestCasesNotExistCode(),
+//                        statusCodeBundle.getTestCasesNotExistsMessage()));
+//            }
+//            if(!testCasesService.existsTestCaseByProjectId(testCaseId))
+//            {
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                        statusCodeBundle.getTestCasesNotExistCode(),
+//                        statusCodeBundle.getTestCasesNotExistsMessage()));
+//            }
+//            else if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName(), testCaseId)) {
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                        statusCodeBundle.getTestGroupingAlReadyExistCode(),
+//                        statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+//
+//            }
+//        }
+//        if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
+//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                    statusCodeBundle.getTestTypesNotExistCode(),
+//                    statusCodeBundle.getTestTypesNotExistsMessage()));
+//        }
+//        testGroupingService.saveTestGrouping(testGroupingRequest);
+//        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                statusCodeBundle.getCommonSuccessCode(),
+//                statusCodeBundle.getSaveTestGroupingSuccessMessage()));
+//    }
 
-    @PostMapping(value = EndpointURI.TEST_GROUPING_IMPORT)
-    public ResponseEntity<Object> importTestGroupingFile(@RequestParam MultipartFile multipartFile) {
-        Map<String, List<Integer>> errorMessages = new HashMap<>();
-        Map<Integer, TestGroupingRequest> testGroupingRequestList;
-        Set<String> testGroupingNames = new HashSet<>();
-        try {
-            if (testGroupingService.hasCsvFormat(multipartFile)) {
-                if (!testGroupingService.isCSVHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    testGroupingRequestList = testGroupingService.csvToTestGroupingRequest(multipartFile.getInputStream());
-                }
-            } else if (testGroupingService.hasExcelFormat(multipartFile)) {
-                if (!testGroupingService.isExcelHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    testGroupingRequestList = testGroupingService.excelToTestGroupingRequest(multipartFile);
-                }
-            } else {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
-            }
-            for (Map.Entry<Integer, TestGroupingRequest> entry : testGroupingRequestList.entrySet()) {
+//    @PostMapping(value = EndpointURI.TEST_GROUPING_IMPORT)
+//    public ResponseEntity<Object> importTestGroupingFile(@RequestParam MultipartFile multipartFile) {
+//        Map<String, List<Integer>> errorMessages = new HashMap<>();
+//        Map<Integer, TestGroupingRequest> testGroupingRequestList;
+//        Set<String> testGroupingNames = new HashSet<>();
+//        try {
+//            if (testGroupingService.hasCsvFormat(multipartFile)) {
+//                if (!testGroupingService.isCSVHeaderMatch(multipartFile)) {
+//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+//                } else {
+//                    testGroupingRequestList = testGroupingService.csvToTestGroupingRequest(multipartFile.getInputStream());
+//                }
+//            } else if (testGroupingService.hasExcelFormat(multipartFile)) {
+//                if (!testGroupingService.isExcelHeaderMatch(multipartFile)) {
+//                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+//                } else {
+//                    testGroupingRequestList = testGroupingService.excelToTestGroupingRequest(multipartFile);
+//                }
+//            } else {
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+//            }
+//            for (Map.Entry<Integer, TestGroupingRequest> entry : testGroupingRequestList.entrySet()) {
+//
+//                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
+//                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupNameEmptyMessage(), entry.getKey());
+//                } else if (testGroupingNames.contains(entry.getValue().getName())) {
+//                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameDuplicateMessage(), entry.getKey());
+//                } else {
+//                    testGroupingNames.add(entry.getValue().getName());
+//                }
+//                if (entry.getValue().getTestTypeId() == null) {
+//                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestTypeIdEmptyMessage(), entry.getKey());
+//                } else if (!testTypesService.existsByTestTypesId(entry.getValue().getTestTypeId())) {
+//                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), entry.getKey());
+//                }
+//                if (entry.getValue().getTestCaseId() == null) {
+//                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestCaseIdEmptyMessage(), entry.getKey());
+//                } else {
+//                    for (Long testCaseId : entry.getValue().getTestCaseId()) {
+//                        if (!testCasesService.existsByTestCasesId(testCaseId)) {
+//                            testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), entry.getKey());
+//                        }
+//                        else if (testGroupingService.existsByTestGroupingName(entry.getValue().getName(),testCaseId)) {
+//                            testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), entry.getKey());
+//                        }
+//                    }
+//                }
+//
+//            }
+//            if (!errorMessages.isEmpty()) {
+//                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
+//                        statusCodeBundle.getFailureCode(),
+//                        statusCodeBundle.getTestGroupFileImportValidationMessage(),
+//                        errorMessages));
+//            } else if (testGroupingRequestList.isEmpty()) {
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getTestGroupingFileEmptyMessage()));
+//            } else {
+//                for (Map.Entry<Integer, TestGroupingRequest> entry : testGroupingRequestList.entrySet()) {
+//                    testGroupingService.saveTestGrouping(entry.getValue());
+//                }
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+//                        statusCodeBundle.getCommonSuccessCode(),
+//                        statusCodeBundle.getSaveTestGroupingSuccessMessage()));
+//            }
+//
+//        } catch (IOException e) {
+//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                    statusCodeBundle.getFailureCode(),
+//                    statusCodeBundle.getSaveProjectValidationMessage()));
+//        }
+//    }
 
-                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupNameEmptyMessage(), entry.getKey());
-                } else if (testGroupingNames.contains(entry.getValue().getName())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameDuplicateMessage(), entry.getKey());
-                } else {
-                    testGroupingNames.add(entry.getValue().getName());
-                }
-                if (entry.getValue().getTestTypeId() == null) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestTypeIdEmptyMessage(), entry.getKey());
-                } else if (!testTypesService.existsByTestTypesId(entry.getValue().getTestTypeId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypesNotExistsMessage(), entry.getKey());
-                }
-                if (entry.getValue().getTestCaseId() == null) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupTestCaseIdEmptyMessage(), entry.getKey());
-                } else if (!testCasesService.existsByTestCasesId(entry.getValue().getTestCaseId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCasesNotExistsMessage(), entry.getKey());
-                }
-                if (testGroupingService.existsByTestGroupingName(entry.getValue().getName(), entry.getValue().getTestCaseId())) {
-                    testGroupingService.addToErrorMessages(errorMessages, statusCodeBundle.getTestGroupingNameAlReadyExistMessage(), entry.getKey());
-                }
-            }
-            if (!errorMessages.isEmpty()) {
-                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getTestGroupFileImportValidationMessage(),
-                        errorMessages));
-            } else if (testGroupingRequestList.isEmpty()) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getTestGroupingFileEmptyMessage()));
-            } else {
-                for (Map.Entry<Integer, TestGroupingRequest> entry : testGroupingRequestList.entrySet()) {
-                    testGroupingService.saveTestGrouping(entry.getValue());
-                }
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                        statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getSaveTestGroupingSuccessMessage()));
-            }
-
-        } catch (IOException e) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getSaveProjectValidationMessage()));
-        }
-    }
-
-    @PutMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
-        if (!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestGroupingNotExistCode(),
-                    statusCodeBundle.getTestGroupingNotExistsMessage()));
-        }
-        if (!testCasesService.existsByTestCasesId(testGroupingRequest.getTestCaseId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestCasesNotExistCode(),
-                    statusCodeBundle.getTestCasesNotExistsMessage()));
-        }
-        if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestTypesNotExistCode(),
-                    statusCodeBundle.getTestTypesNotExistsMessage()));
-        }
-        if (testGroupingService.isUpdateTestGroupingNameExits(testGroupingRequest.getName(), testGroupingRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestGroupingAlReadyExistCode(),
-                    statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
-        }
-        testGroupingService.saveTestGrouping(testGroupingRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSaveTestGroupingSuccessMessage()));
-    }
+//    @PutMapping(value = EndpointURI.TEST_GROUPING)
+//    public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
+//        if (!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())) {
+//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                    statusCodeBundle.getTestGroupingNotExistCode(),
+//                    statusCodeBundle.getTestGroupingNotExistsMessage()));
+//        }
+//        for (Long testCaseId : testGroupingRequest.getTestCaseId()
+//        ) {
+//            if (!testCasesService.existsByTestCasesId(testCaseId)) {
+//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                        statusCodeBundle.getTestCasesNotExistCode(),
+//                        statusCodeBundle.getTestCasesNotExistsMessage()));
+//            }
+//        }
+//        if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
+//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                    statusCodeBundle.getTestTypesNotExistCode(),
+//                    statusCodeBundle.getTestTypesNotExistsMessage()));
+//        }
+//        if (testGroupingService.isUpdateTestGroupingNameExits(testGroupingRequest.getName(), testGroupingRequest.getId())) {
+//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                    statusCodeBundle.getTestGroupingAlReadyExistCode(),
+//                    statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+//        }
+//        testGroupingService.saveTestGrouping(testGroupingRequest);
+//        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+//                statusCodeBundle.getCommonSuccessCode(),
+//                statusCodeBundle.getSaveTestGroupingSuccessMessage()));
+//    }
 
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
     public ResponseEntity<Object> getTestGroupingById(@PathVariable Long id) {

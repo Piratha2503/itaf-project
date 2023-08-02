@@ -207,7 +207,7 @@ public class TestTypesServiceImpl implements TestTypesService {
         return testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(projectId).stream()
                 .map(TestGrouping::getTestType)
                 .distinct()
-                .map(this::mapToTestTypesResponse) // Convert TestTypes to TestTypesResponse
+                .map(this::mapToTestTypesResponse)
                 .collect(Collectors.toList());
     }
 

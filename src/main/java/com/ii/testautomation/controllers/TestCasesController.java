@@ -109,13 +109,14 @@ public class TestCasesController {
                 } else {
                     testCasesNames.add(entry.getValue().getName());
                 }
-                if (testCasesService.existsByTestCasesName(entry.getValue().getName(),entry.getValue().getSubModuleId())) {
-                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), entry.getKey());
-                }
+
                 if (entry.getValue().getSubModuleId() == null) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(), entry.getKey());
                 } else if (!subModulesService.existsBySubModuleId(entry.getValue().getSubModuleId())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNotExistsMessage(), entry.getKey());
+                }
+                else if (testCasesService.existsByTestCasesName(entry.getValue().getName(),entry.getValue().getSubModuleId())) {
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), entry.getKey());
                 }
             }
             if (!errorMessages.isEmpty()) {
