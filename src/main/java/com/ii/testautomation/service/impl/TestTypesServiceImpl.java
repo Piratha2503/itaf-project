@@ -4,10 +4,7 @@ import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.entities.QTestTypes;
-import com.ii.testautomation.entities.TestCases;
-import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
-import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -30,9 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 @Service

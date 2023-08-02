@@ -51,7 +51,6 @@ public class TestTypesController {
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getInsertTestTypesSuccessMessage()));
-
     }
 
     @PutMapping(EndpointURI.TEST_TYPE)
@@ -186,24 +185,5 @@ public class TestTypesController {
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getFileFailureMessage()));
         }
-    }
-
-    @GetMapping(value = EndpointURI.TEST_TYPE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id) {
-        if (!projectService.existByProjectId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getProjectNotExistCode(),
-                    statusCodeBundle.getProjectNotExistsMessage()));
-        }
-        List<TestTypesResponse> testTypesResponse=testTypesService.getTestTypesByProjectId(id);
-        if(testTypesResponse.isEmpty())
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
-        }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesResponse,
-                RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getTestTypeByProjectId()));
     }
 }

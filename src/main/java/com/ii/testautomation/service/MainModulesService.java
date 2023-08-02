@@ -31,15 +31,15 @@ public interface MainModulesService {
 
     boolean isExistMainModulesId(Long id);
 
-    boolean isExistMainModulesName(String name);
+    boolean isExistMainModulesName(String name, Long id);
 
-    boolean isExistPrefix(String prefix);
+    boolean isExistPrefix(String prefix, Long id);
 
     boolean isExistModulesId(Long id);
 
-    boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
+    boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId, Long projectId);
 
-    boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
+    boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId, Long projectId);
 
     boolean existsMainModuleByModuleId(Long id);
 

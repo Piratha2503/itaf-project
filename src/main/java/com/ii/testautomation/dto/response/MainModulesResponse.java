@@ -11,5 +11,5 @@ public class MainModulesResponse
     private String name;
     private String prefix;
     private String ModulesName;
-    //private Modules modules;
+    private Modules modules;
 }
