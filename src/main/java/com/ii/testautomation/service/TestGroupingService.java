@@ -32,7 +32,7 @@ public interface TestGroupingService {
     void deleteTestGroupingById(Long testGroupingId);
 
     boolean existsByTestCasesId(Long testCaseId);
- //   public boolean allTestCasesInSameProject(Long testCaseId,Long projectId);
+  boolean allTestCasesInSameProject(List<Long> testCaseIds);
 
     boolean existsByTestTypesId(Long testTypeId);
 

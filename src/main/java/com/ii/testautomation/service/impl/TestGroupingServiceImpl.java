@@ -57,20 +57,22 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         BeanUtils.copyProperties(testGroupingRequest, testGrouping);
         testGroupingRepository.save(testGrouping);
     }
-//    @Override
-//    public boolean allTestCasesInSameProject(List<Long> testCaseIds, Long projectId) {
-//        Set<Long> uniqueProjectIds = new HashSet<>();
-//        for (Long testCaseId : testCaseIds) {
-//            Long testCasesProjectId = testGroupingRepository.findById(testCaseId).get().getTestCases();
-//            uniqueProjectIds.add(testCasesProjectId);
-//        }
-//
-//        return uniqueProjectIds.size() == 1 && uniqueProjectIds.contains(projectId);
-//    }
+    @Override
+    public boolean allTestCasesInSameProject(List<Long> testCaseIds) {
+        Set<Long> uniqueProjectIds = new HashSet<>();
+        for (Long testCaseId : testCaseIds) {
+            Long projectId=testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
+            if(!uniqueProjectIds.contains(projectId))
+            {
+                uniqueProjectIds.add(projectId);
+            }
+        }
+        return uniqueProjectIds.size() == 1 ;
+    }
     @Override
     public boolean existsByTestGroupingName(String testGroupingName, Long testCaseId) {
         Long projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(testGroupingName, projectId, testCaseId);
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName, projectId);
     }
 
     @Override

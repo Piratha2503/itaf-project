@@ -42,7 +42,7 @@ public class TestTypesServiceImpl implements TestTypesService {
 
 
     @Override
-    public void saveTestTypes(TestTypesRequest testTypesRequest) {
+    public void  saveTestTypes(TestTypesRequest testTypesRequest) {
         TestTypes testTypes = new TestTypes();
         BeanUtils.copyProperties(testTypesRequest, testTypes);
         testTypesRepository.save(testTypes);
