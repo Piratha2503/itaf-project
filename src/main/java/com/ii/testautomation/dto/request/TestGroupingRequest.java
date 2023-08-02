@@ -3,11 +3,13 @@ package com.ii.testautomation.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class TestGroupingRequest {
     private Long id;
     private String name;
-    private Long testCaseId;
+    private List<Long> testCaseId;
     private Long testTypeId;
 }

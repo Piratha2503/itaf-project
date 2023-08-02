@@ -261,6 +261,8 @@ public class StatusCodeBundle {
     private String testCaseNameEmptyMessage;
     @Value("${message.validation.testCases.notExists}")
     private String testCasesNotExistsMessage;
+    @Value("${message.validation.testCases.notExists.project}")
+    private String testCasesAndProjectNotExistsSameProjectMessage;
     @Value("${message.validation.testCases.name.alreadyExists}")
     private String testCaseNameAlreadyExistsMessage;
     @Value("${message.success.save.testcases}")

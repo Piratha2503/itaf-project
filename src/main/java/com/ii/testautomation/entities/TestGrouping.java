@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,9 +14,9 @@ public class TestGrouping {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToOne
+    @ManyToMany
     @JoinColumn(name ="testCases_id", nullable = false)
-    private TestCases testCases;
+    private List<TestCases> testCases;
     @ManyToOne
     @JoinColumn(name ="testType_id", nullable = false)
     private TestTypes testType;
