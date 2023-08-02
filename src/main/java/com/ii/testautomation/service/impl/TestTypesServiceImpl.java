@@ -4,6 +4,8 @@ import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.entities.QTestTypes;
+import com.ii.testautomation.entities.TestCases;
+import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.repositories.TestTypesRepository;
@@ -58,22 +60,19 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public List<TestTypes> getTestTypesByProjectId(Long id) {
+    public List<TestTypesResponse> getTestTypesByProjectId(Long id) {
+        List<TestGrouping> testGroupingList = testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(id);
         List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
-        List<TestTypes> testTypesList = testTypesRepository.findBymyProjectId(id);
-        return testTypesList;
-        /*
-        for (TestTypes testTypes : testTypesList)
+        for (TestGrouping testGrouping: testGroupingList)
         {
             TestTypesResponse testTypesResponse = new TestTypesResponse();
-            BeanUtils.copyProperties(testTypes,testTypesResponse);
+            BeanUtils.copyProperties(testGrouping.getTestType(),testTypesResponse);
             testTypesResponseList.add(testTypesResponse);
         }
+
         return testTypesResponseList;
 
-         */
     }
-
 
     @Override
     public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch) {

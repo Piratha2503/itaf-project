@@ -20,7 +20,7 @@ public interface TestTypesService {
 
     TestTypesResponse getTestTypeById(Long id);
 
-    List<TestTypes> getTestTypesByProjectId(Long id);
+    List<TestTypesResponse> getTestTypesByProjectId(Long id);
 
     List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
 
