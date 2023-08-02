@@ -45,7 +45,7 @@ public class ModulesController {
         if (modulesService.isModuleExistsByName(modulesRequest.getName(),modulesRequest.getProject_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModuleNameAlReadyExistsMessage()));
         }
-        if (modulesService.isModuleExistsByPrefix(modulesRequest.getPrefix(),modulesRequest.getProject_id())) {
+        if (modulesService.isModuleExistsByPrefix(modulesRequest.getPrefix(), modulesRequest.getProject_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModulePrefixAlReadyExistsMessage()));
         }
         if (!projectService.existByProjectId(modulesRequest.getProject_id())) {
