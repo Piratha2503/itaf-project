@@ -70,7 +70,6 @@ public class ProjectController {
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-
             for (Map.Entry<Integer, ProjectRequest> entry : projectRequestList.entrySet()) {
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), entry.getKey());
@@ -79,7 +78,6 @@ public class ProjectController {
                 } else {
                     projectNames.add(entry.getValue().getName());
                 }
-
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getCode())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), entry.getKey());
                 } else if (projectCodes.contains(entry.getValue().getCode())) {
@@ -87,15 +85,12 @@ public class ProjectController {
                 } else {
                     projectCodes.add(entry.getValue().getCode());
                 }
-
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getDescription())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), entry.getKey());
                 }
-
                 if (projectService.existByProjectName(entry.getValue().getName())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), entry.getKey());
                 }
-
                 if (projectService.existByProjectCode(entry.getValue().getCode())) {
                     projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), entry.getKey());
                 }
@@ -121,7 +116,6 @@ public class ProjectController {
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSaveProjectValidationMessage()));
         }
-
     }
 
     @PutMapping(value = EndpointURI.PROJECT)

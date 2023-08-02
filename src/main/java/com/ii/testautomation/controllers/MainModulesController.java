@@ -1,6 +1,7 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.MainModulesRequest;
+import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.search.MainModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -122,63 +123,52 @@ public class MainModulesController {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         Set<String> mainModuleNames = new HashSet<>();
         Set<String> mainModulePrefixes = new HashSet<>();
-        List<MainModulesRequest> mainModulesRequestList;
+        Map<Integer,MainModulesRequest> mainModulesRequestList;
 
         try {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if (!mainModulesService.isCSVHeaderMatch(multipartFile))
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            if (!mainModulesService.isCSVHeaderMatch(multipartFile) && !mainModulesService.isExcelHeaderMatch(multipartFile)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                 mainModulesRequestList = mainModulesService.csvProcess(multipartFile.getInputStream());
             } else if (mainModulesService.hasExcelFormat(multipartFile)) {
-                if (!mainModulesService.isExcelHeaderMatch(multipartFile))
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
                 mainModulesRequestList = mainModulesService.excelProcess(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-
-            for (int rowIndex = 2; rowIndex <= mainModulesRequestList.size() + 1; rowIndex++) {
-                MainModulesRequest mainModulesRequest = mainModulesRequestList.get(rowIndex - 2);
-
-                if (!Utils.isNotNullAndEmpty(mainModulesRequest.getName())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameFiledEmptyMessage(), rowIndex);
-                } else if (mainModuleNames.contains(mainModulesRequest.getName())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameDuplicateMessage(), rowIndex);
+            for (Map.Entry<Integer, MainModulesRequest> entry : mainModulesRequestList.entrySet()) {
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameFiledEmptyMessage(), entry.getKey());
+                } else if (mainModuleNames.contains(entry.getValue().getName())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameDuplicateMessage(), entry.getKey());
                 } else {
-                    mainModuleNames.add(mainModulesRequest.getName());
+                    mainModuleNames.add(entry.getValue().getPrefix());
                 }
-                if ((mainModulesRequest.getModuleId()) == null) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameEmptyMessage(), rowIndex);
-                } else if (!modulesService.existsByModulesId(mainModulesRequest.getModuleId())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleIdNotFound(), rowIndex);
-                }
-                if (!Utils.isNotNullAndEmpty(mainModulesRequest.getPrefix())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixFiledEmptyMessage(), rowIndex);
-                } else if (mainModulePrefixes.contains(mainModulesRequest.getPrefix())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixDuplicateMessage(), rowIndex);
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getPrefix())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameFiledEmptyMessage(), entry.getKey());
+                } else if (mainModuleNames.contains(entry.getValue().getPrefix())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameDuplicateMessage(), entry.getKey());
                 } else {
-                    mainModulePrefixes.add(mainModulesRequest.getPrefix());
+                    mainModuleNames.add(entry.getValue().getPrefix());
                 }
-
-                if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), rowIndex);
-                }
-                if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix())) {
-                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixAlreadyExistMessage(), rowIndex);
-                }
+                if (mainModulesService.isExistMainModulesName(entry.getValue().getName())) {
+                        mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), entry.getKey());
+                    }
+                if (mainModulesService.isExistPrefix(entry.getValue().getPrefix())) {
+                        mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixAlreadyExistMessage(), entry.getKey());
+                    }
             }
             if (!errorMessages.isEmpty()) {
 
                 return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesNotSavedMessage(), errorMessages));
             } else {
-                for (MainModulesRequest mainModulesRequest : mainModulesRequestList) {
-                    mainModulesService.saveMainModules(mainModulesRequest);
+                for (Map.Entry<Integer, MainModulesRequest> entry : mainModulesRequestList.entrySet()) {
+                    mainModulesService.saveMainModules(entry.getValue());
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessMessageInsertMainModules()));
             }
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMainModulesNotSavedMessage()));
         }
-
     }
 }

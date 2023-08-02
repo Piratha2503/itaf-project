@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.MainModulesRequest;
+import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.MainModulesResponse;
 import com.ii.testautomation.dto.search.MainModuleSearch;
 import com.ii.testautomation.entities.MainModules;
@@ -150,8 +151,8 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public List<MainModulesRequest> csvProcess(InputStream inputStream) {
-        List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
+    public Map<Integer, MainModulesRequest> csvProcess(InputStream inputStream) {
+        Map<Integer, MainModulesRequest> mainModulesRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -165,7 +166,7 @@ public class MainModulesServiceImp implements MainModulesService {
 
                 mainModulesRequest.setPrefix(csvRecord.get("prefix"));
                 mainModulesRequest.setName(csvRecord.get("name"));
-                mainModulesRequestList.add(mainModulesRequest);
+                mainModulesRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1,mainModulesRequest);
             }
 
         } catch (IOException e) {
@@ -175,8 +176,8 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public List<MainModulesRequest> excelProcess(MultipartFile multipartFile) {
-        List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
+    public Map<Integer, MainModulesRequest> excelProcess(MultipartFile multipartFile) {
+        Map<Integer, MainModulesRequest> mainModulesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -189,7 +190,7 @@ public class MainModulesServiceImp implements MainModulesService {
                 mainModulesRequest.setModuleId(getLongCellValue(row.getCell(columnMap.get("module_id"))));
                 mainModulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 mainModulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
-                mainModulesRequestList.add(mainModulesRequest);
+                mainModulesRequestList.put(row.getRowNum() + 1,mainModulesRequest);
             }
             workbook.close();
         } catch (IOException e) {
@@ -243,22 +244,14 @@ public class MainModulesServiceImp implements MainModulesService {
 
     @Override
     public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
-        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
-        List <List<MainModules>> mainMainmoduleList = new ArrayList<>();
-        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(id);
-        for (Modules modules : modulesList)
-        {
-            mainMainmoduleList.add(mainModulesRepository.findAllByModulesId(modules.getId()));
-        }
-        for (List<MainModules> mainModulesList1 : mainMainmoduleList)
-        {
-            for (MainModules mainModules : mainModulesList1)
-            {
-                MainModulesResponse mainModulesResponse = new MainModulesResponse();
-                BeanUtils.copyProperties(mainModules,mainModulesResponse);
-                mainModulesResponseList.add(mainModulesResponse);
-            }
-        }
+       List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+       List<MainModules> mainModulesList = mainModulesRepository.findByModules_ProjectId(id);
+       for (MainModules mainModules : mainModulesList)
+       {
+           MainModulesResponse mainModulesResponse = new MainModulesResponse();
+           BeanUtils.copyProperties(mainModules,mainModulesResponse);
+           mainModulesResponseList.add(mainModulesResponse);
+       }
         return mainModulesResponseList;
     }
 

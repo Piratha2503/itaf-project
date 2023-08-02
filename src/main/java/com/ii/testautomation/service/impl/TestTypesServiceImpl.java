@@ -57,6 +57,19 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
+    public List<TestTypesResponse> getTestTypesByProjectId(Long id) {
+        List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
+        List<TestTypes> testTypesList = testTypesRepository.findBymyProjectId(id);
+        for (TestTypes testTypes : testTypesList)
+        {
+            TestTypesResponse testTypesResponse = new TestTypesResponse();
+            BeanUtils.copyProperties(testTypes,testTypesResponse);
+            testTypesResponseList.add(testTypesResponse);
+        }
+        return testTypesResponseList;
+    }
+
+    @Override
     public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(testTypesSearch.getName())) {
@@ -110,8 +123,8 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public List<TestTypesRequest> csvProcess(InputStream inputStream) {
-        List<TestTypesRequest> testTypesRequestList = new ArrayList<>();
+    public Map<Integer,TestTypesRequest> csvProcess(InputStream inputStream) {
+        Map<Integer,TestTypesRequest> testTypesRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
@@ -121,7 +134,7 @@ public class TestTypesServiceImpl implements TestTypesService {
                 TestTypesRequest testTypesRequest = new TestTypesRequest();
                 testTypesRequest.setDescription(csvRecord.get("description"));
                 testTypesRequest.setName(csvRecord.get("name"));
-                testTypesRequestList.add(testTypesRequest);
+                testTypesRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1,testTypesRequest);
             }
 
         } catch (IOException e) {
@@ -131,8 +144,8 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public List<TestTypesRequest> excelProcess(MultipartFile multipartFile) {
-        List<TestTypesRequest> testTypesRequestList = new ArrayList<>();
+    public Map<Integer,TestTypesRequest> excelProcess(MultipartFile multipartFile) {
+        Map<Integer,TestTypesRequest> testTypesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -144,7 +157,7 @@ public class TestTypesServiceImpl implements TestTypesService {
                 TestTypesRequest testTypesRequest = new TestTypesRequest();
                 testTypesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testTypesRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
-                testTypesRequestList.add(testTypesRequest);
+                testTypesRequestList.put(row.getRowNum()+1,testTypesRequest);
             }
             workbook.close();
         } catch (IOException e) {

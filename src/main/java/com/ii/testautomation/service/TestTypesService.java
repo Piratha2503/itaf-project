@@ -13,31 +13,33 @@ import java.util.Map;
 
 public interface TestTypesService {
 
-    public void saveTestTypes(TestTypesRequest testTypesRequest);
+    void saveTestTypes(TestTypesRequest testTypesRequest);
 
-    public void deleteTestTypeById(Long id);
+    void deleteTestTypeById(Long id);
 
-    public TestTypesResponse getTestTypeById(Long id);
+    TestTypesResponse getTestTypeById(Long id);
 
-    public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
+    List<TestTypesResponse> getTestTypesByProjectId(Long id);
 
-    public boolean isExistsTestTypeByName(String name);
+    List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
 
-    public boolean isExistsTestTypeById(Long id);
+    Map<Integer, TestTypesRequest> csvProcess(InputStream inputStream);
 
-    public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
+    Map<Integer, TestTypesRequest> excelProcess(MultipartFile multipartFile);
 
-    public boolean existsByTestTypesId(Long id);
+    boolean isExistsTestTypeByName(String name);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean isExistsTestTypeById(Long id);
 
-    public List<TestTypesRequest> csvProcess(InputStream inputStream);
+    boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
 
-    public List<TestTypesRequest> excelProcess(MultipartFile multipartFile);
+    boolean existsByTestTypesId(Long id);
 
-    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
-    public boolean isExcelHeaderMatch(MultipartFile multipartFile);
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
-    public boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }
