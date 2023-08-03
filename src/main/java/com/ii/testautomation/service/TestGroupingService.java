@@ -1,9 +1,7 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
-import com.ii.testautomation.entities.Project;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +17,7 @@ public interface TestGroupingService {
 
     boolean existsByTestGroupingId(Long testGroupingId);
 
-    boolean isUpdateTestGroupingNameExits(String testGroupingName, Long testGroupingId);
+    boolean isUpdateTestGroupingNameExits(String testGroupingName,Long testCaseId ,Long testGroupingId);
 
      TestGroupingResponse getTestGroupingById(Long testGroupingId);
 

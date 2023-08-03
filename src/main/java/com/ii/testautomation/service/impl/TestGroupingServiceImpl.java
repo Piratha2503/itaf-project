@@ -1,7 +1,6 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.QTestGrouping;
 import com.ii.testautomation.entities.TestCases;
@@ -81,14 +80,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public boolean isUpdateTestGroupingNameExits(String testGroupingName, Long testGroupingId) {
-        for (TestCases testCases : testGroupingRepository.findById(testGroupingId).get().getTestCases()
-        ) {
-            Long projectId = testCases.getSubModule().getMainModule().getModules().getProject().getId();
-            if (testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(testGroupingName, projectId, testGroupingId))
-                return true;
-        }
-        return false;
+    public boolean isUpdateTestGroupingNameExits(String testGroupingName,Long testCaseId, Long testGroupingId) {
+        Long projectId=testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
+       return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(testGroupingName,projectId,testGroupingId);
     }
 
     @Override
