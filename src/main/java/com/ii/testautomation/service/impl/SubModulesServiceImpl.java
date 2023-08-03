@@ -117,12 +117,19 @@ public class SubModulesServiceImpl implements SubModulesService {
             booleanBuilder.and(QSubModules.subModules.mainModule.prefix.containsIgnoreCase(subModuleSearch.getMainModulePrefix()));
         }
         if (Utils.isNotNullAndEmpty(subModuleSearch.getName())) {
-            booleanBuilder.and(QSubModules.subModules.name.eq(subModuleSearch.getName()));
+            booleanBuilder.and(QSubModules.subModules.name.containsIgnoreCase(subModuleSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(subModuleSearch.getPrefix())) {
-            booleanBuilder.and(QSubModules.subModules.prefix.eq(subModuleSearch.getPrefix()));
+            booleanBuilder.and(QSubModules.subModules.prefix.containsIgnoreCase(subModuleSearch.getPrefix()));
         }
-
+        if(Utils.isNotNullAndEmpty(subModuleSearch.getModuleName()))
+        {
+            booleanBuilder.and(QSubModules.subModules.mainModule.modules.name.containsIgnoreCase(subModuleSearch.getModuleName()));
+        }
+        if(Utils.isNotNullAndEmpty(subModuleSearch.getModulePrefix()))
+        {
+            booleanBuilder.and(QSubModules.subModules.mainModule.modules.prefix.containsIgnoreCase(subModuleSearch.getModulePrefix()));
+        }
         List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
         Page<SubModules> subModulesPage = subModulesRepository.findAll(booleanBuilder, pageable);
 
