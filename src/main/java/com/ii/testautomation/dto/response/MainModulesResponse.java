@@ -10,6 +10,7 @@ public class MainModulesResponse
     private Long id;
     private String name;
     private String prefix;
-    private String ModulesName;
+    private String modulesName;
+    private Long moduleId;
     private Modules modules;
 }

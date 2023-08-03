@@ -59,6 +59,8 @@ public class MainModulesServiceImp implements MainModulesService {
     public MainModulesResponse getByMainModulesId(Long id) {
         MainModulesResponse mainModulesResponse = new MainModulesResponse();
         MainModules mainModules = mainModulesRepository.findById(id).get();
+        mainModulesResponse.setModuleId(mainModules.getModules().getId());
+        mainModulesResponse.setModulesName(mainModules.getModules().getName());
         mainModulesResponse.setModules(mainModules.getModules());
         BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
@@ -68,15 +70,16 @@ public class MainModulesServiceImp implements MainModulesService {
     public List<MainModulesResponse> getMainModulesByModuleId(Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(id);
-
         for (MainModules mainModules : mainModulesList) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            mainModulesResponse.setModuleId(mainModules.getModules().getId());
+            mainModulesResponse.setModulesName(mainModules.getModules().getName());
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
-
         return mainModulesResponseList;
     }
+
     @Override
     public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
@@ -84,6 +87,8 @@ public class MainModulesServiceImp implements MainModulesService {
         for (MainModules mainModules : mainModulesList)
         {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            mainModulesResponse.setModuleId(mainModules.getModules().getId());
+            mainModulesResponse.setModulesName(mainModules.getModules().getName());
             BeanUtils.copyProperties(mainModules,mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
