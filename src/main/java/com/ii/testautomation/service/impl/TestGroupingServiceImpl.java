@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("ALL")
 @Service
 public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired

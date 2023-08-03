@@ -30,9 +30,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
+@SuppressWarnings("ALL")
 @Service
 public class MainModulesServiceImp implements MainModulesService {
     @Autowired
@@ -58,7 +60,8 @@ public class MainModulesServiceImp implements MainModulesService {
     public MainModulesResponse getByMainModulesId(Long id) {
         MainModulesResponse mainModulesResponse = new MainModulesResponse();
         MainModules mainModules = mainModulesRepository.findById(id).get();
-        mainModulesResponse.setModules(mainModules.getModules());
+        //mainModulesResponse.setModules(mainModules.getModules());
+        mainModulesResponse.setModulesName(mainModules.getModules().getName());
         BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
@@ -70,6 +73,7 @@ public class MainModulesServiceImp implements MainModulesService {
 
         for (MainModules mainModules : mainModulesList) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            mainModulesResponse.setModulesName(mainModules.getModules().getName());
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
@@ -92,6 +96,7 @@ public class MainModulesServiceImp implements MainModulesService {
         pagination.setPageSize(mainModulesPage.getTotalPages());
         for (MainModules mainModules : mainModulesPage) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            mainModulesResponse.setModulesName(mainModules.getModules().getName());
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
@@ -152,7 +157,7 @@ public class MainModulesServiceImp implements MainModulesService {
     @Override
     public List<MainModulesRequest> csvProcess(InputStream inputStream) {
         List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
@@ -254,6 +259,7 @@ public class MainModulesServiceImp implements MainModulesService {
             for (MainModules mainModules : mainModulesList1)
             {
                 MainModulesResponse mainModulesResponse = new MainModulesResponse();
+                mainModulesResponse.setModulesName(mainModules.getModules().getName());
                 BeanUtils.copyProperties(mainModules,mainModulesResponse);
                 mainModulesResponseList.add(mainModulesResponse);
             }
