@@ -85,5 +85,4 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
 
-
 }
