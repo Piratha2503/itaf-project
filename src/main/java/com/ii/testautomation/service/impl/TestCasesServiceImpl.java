@@ -3,11 +3,9 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
-import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.TestCases;
-import com.ii.testautomation.repositories.ModulesRepository;
 import com.ii.testautomation.repositories.SubModulesRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -69,6 +67,11 @@ public class TestCasesServiceImpl implements TestCasesService {
     public TestCaseResponse getById(Long id) {
         TestCaseResponse testCaseResponse = new TestCaseResponse();
         TestCases testCases = testCasesRepository.findById(id).get();
+        testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
+        testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
+        testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
+        testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+        testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
         testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
         testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
         testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
@@ -92,12 +95,29 @@ public class TestCasesServiceImpl implements TestCasesService {
         if (Utils.isNotNullAndEmpty(testCaseSearch.getSubModuleName())) {
             booleanBuilder.and(QTestCases.testCases.subModule.name.containsIgnoreCase(testCaseSearch.getSubModuleName()));
         }
+        if (Utils.isNotNullAndEmpty(testCaseSearch.getMainModuleName())) {
+            booleanBuilder.and(QTestCases.testCases.subModule.mainModule.name.containsIgnoreCase(testCaseSearch.getMainModuleName()));
+        }
+        if (Utils.isNotNullAndEmpty(testCaseSearch.getModuleName())) {
+            booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
+            //booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
+           // booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
+        }
+//        if (Utils.isNotNullAndEmpty(testCaseSearch.getProjectName())) {
+//            booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName()));
+//        }
+
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         Page<TestCases> testCasesPage = testCasesRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(testCasesPage.getTotalElements());
         pagination.setPageSize(testCasesPage.getTotalPages());
         for (TestCases testCases : testCasesPage) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
+            testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
+            testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
+            testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
+            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
@@ -112,6 +132,11 @@ public class TestCasesServiceImpl implements TestCasesService {
         List<TestCases> testCasesList = testCasesRepository.findAllTestCasesBySubModuleId(subModuleId);
         for (TestCases testCases : testCasesList) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
+            testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
+            testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
+            testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
+            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
@@ -233,6 +258,11 @@ public class TestCasesServiceImpl implements TestCasesService {
         List<TestCases> testCasesList = testCasesRepository.findBySubModule_MainModule_Modules_Project_Id(projectId);
         for (TestCases testCases : testCasesList) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
+            testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
+            testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
+            testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
+            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());

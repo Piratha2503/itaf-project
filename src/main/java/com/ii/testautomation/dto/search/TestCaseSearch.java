@@ -8,4 +8,7 @@ import lombok.Setter;
 public class TestCaseSearch {
     private String name;
     private String subModuleName;
+    private String mainModuleName;
+    private String moduleName;
+    private String projectName;
 }
