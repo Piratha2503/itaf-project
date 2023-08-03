@@ -69,7 +69,6 @@ public class TestTypesServiceImpl implements TestTypesService {
             BeanUtils.copyProperties(testGrouping.getTestType(),testTypesResponse);
             testTypesResponseList.add(testTypesResponse);
         }
-
         return testTypesResponseList;
 
     }

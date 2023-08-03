@@ -77,6 +77,18 @@ public class MainModulesServiceImp implements MainModulesService {
 
         return mainModulesResponseList;
     }
+    @Override
+    public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
+        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+        List<MainModules> mainModulesList = mainModulesRepository.findByModules_ProjectId(id);
+        for (MainModules mainModules : mainModulesList)
+        {
+            MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            BeanUtils.copyProperties(mainModules,mainModulesResponse);
+            mainModulesResponseList.add(mainModulesResponse);
+        }
+        return mainModulesResponseList;
+    }
 
     @Override
     public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch) {
@@ -242,19 +254,6 @@ public class MainModulesServiceImp implements MainModulesService {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    @Override
-    public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
-       List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
-       List<MainModules> mainModulesList = mainModulesRepository.findByModules_ProjectId(id);
-       for (MainModules mainModules : mainModulesList)
-       {
-           MainModulesResponse mainModulesResponse = new MainModulesResponse();
-           BeanUtils.copyProperties(mainModules,mainModulesResponse);
-           mainModulesResponseList.add(mainModulesResponse);
-       }
-        return mainModulesResponseList;
     }
 
     private String getStringCellValue(Cell cell) {

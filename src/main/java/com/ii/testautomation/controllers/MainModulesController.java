@@ -48,10 +48,9 @@ public class MainModulesController {
         if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(), mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
         if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(), mainModulesRequest.getModuleId()))
-          return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
         mainModulesService.saveMainModules(mainModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessMessageInsertMainModules()));
-
     }
 
     @DeleteMapping(EndpointURI.MAIN_MODULE_BY_ID)
@@ -99,14 +98,14 @@ public class MainModulesController {
     }
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getMainModulesByProjectId(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getMainModulesByProjectId(@PathVariable Long id) {
         if (!projectService.existByProjectId(id))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES,mainModulesService.getMainModulesByProjectId(id),
-                statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.getMainModulesByProjectId(id),
+                statusCodeBundle.getCommonSuccessCode(), RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
+
     @GetMapping(EndpointURI.MAIN_MODULE_PAGE)
     public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, MainModuleSearch mainModuleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
@@ -121,7 +120,7 @@ public class MainModulesController {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         Set<String> mainModuleNames = new HashSet<>();
         Set<String> mainModulePrefixes = new HashSet<>();
-        Map<Integer,MainModulesRequest> mainModulesRequestList;
+        Map<Integer, MainModulesRequest> mainModulesRequestList;
 
         try {
             if (!mainModulesService.isCSVHeaderMatch(multipartFile) && !mainModulesService.isExcelHeaderMatch(multipartFile)) {
@@ -149,12 +148,12 @@ public class MainModulesController {
                 } else {
                     mainModulePrefixes.add(entry.getValue().getPrefix());
                 }
-                if (mainModulesService.isExistMainModulesName(entry.getValue().getName(),entry.getValue().getModuleId())) {
-                        mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), entry.getKey());
-                    }
-                if (mainModulesService.isExistPrefix(entry.getValue().getPrefix(),entry.getValue().getModuleId())) {
-                        mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixAlreadyExistMessage(), entry.getKey());
-                    }
+                if (mainModulesService.isExistMainModulesName(entry.getValue().getName(), entry.getValue().getModuleId())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesNameAlreadyExistMessage(), entry.getKey());
+                }
+                if (mainModulesService.isExistPrefix(entry.getValue().getPrefix(), entry.getValue().getModuleId())) {
+                    mainModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModulesPrefixAlreadyExistMessage(), entry.getKey());
+                }
             }
             if (!errorMessages.isEmpty()) {
 
