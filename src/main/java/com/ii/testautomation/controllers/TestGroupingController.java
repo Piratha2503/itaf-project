@@ -89,8 +89,6 @@ public class TestGroupingController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
-
-
     @DeleteMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
     public ResponseEntity<Object> deleteTestGroupingById(@PathVariable Long id) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
@@ -98,7 +96,6 @@ public class TestGroupingController {
         }
         testGroupingService.deleteTestGroupingById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestGroupingSuccessMessage()));
-
     }
 
 }
