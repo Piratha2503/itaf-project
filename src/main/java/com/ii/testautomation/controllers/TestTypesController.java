@@ -1,7 +1,6 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.TestTypesRequest;
-import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -51,7 +50,6 @@ public class TestTypesController {
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getInsertTestTypesSuccessMessage()));
-
     }
 
     @PutMapping(EndpointURI.TEST_TYPE)
@@ -105,6 +103,14 @@ public class TestTypesController {
                 statusCodeBundle.getViewTestTypeforIdSuccessMessage()));
     }
 
+    @GetMapping(EndpointURI.TEST_TYPE_BY_PROJECT_ID)
+    public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id)
+    {
+        if (!projectService.existByProjectId(id)) return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
+        else if (testTypesService.getTestTypesByProjectId(id).isEmpty()) return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getTestTypeNotMappedMessage()));
+        else return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesService.getTestTypesByProjectId(id),statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getViewTestTypeByProjectIdSuccessMessage()));
+    }
+
     @GetMapping(EndpointURI.TEST_TYPES_SEARCH)
     public ResponseEntity<Object> SearchTestTypesWithPagination(@RequestParam(name = "page") int page,
                                                                 @RequestParam(name = "size") int size,
@@ -125,38 +131,36 @@ public class TestTypesController {
     public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile) {
 
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        List<TestTypesRequest> testTypesRequestList;
+        Map<Integer,TestTypesRequest> testTypesRequestList;
         Set<String> testTypeNames = new HashSet<>();
 
         try {
-            if (multipartFile.getOriginalFilename().endsWith(".csv")) {
-                if (!testTypesService.isCSVHeaderMatch(multipartFile))
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            if (!projectService.isCSVHeaderMatch(multipartFile) && !projectService.isExcelHeaderMatch(multipartFile)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
+            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                 testTypesRequestList = testTypesService.csvProcess(multipartFile.getInputStream());
-            } else if (testTypesService.hasExcelFormat(multipartFile)) {
-                if (!testTypesService.isExcelHeaderMatch(multipartFile))
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-
+            } else if (projectService.hasExcelFormat(multipartFile)) {
                 testTypesRequestList = testTypesService.excelProcess(multipartFile);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
-
-            for (int rowIndex = 2; rowIndex <= testTypesRequestList.size() + 1; rowIndex++) {
-                TestTypesRequest testTypesRequest = testTypesRequestList.get(rowIndex - 2);
-
-                if (!Utils.isNotNullAndEmpty(testTypesRequest.getName())) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeNameEmptyMessage(), rowIndex);
-                } else if (testTypeNames.contains(testTypesRequest.getName())) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeNameDuplicateMessage(), rowIndex);
+            for (Map.Entry<Integer, TestTypesRequest> entry : testTypesRequestList.entrySet()) {
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), entry.getKey());
+                } else if (testTypeNames.contains(entry.getValue().getName())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameDuplicateMessage(), entry.getKey());
                 } else {
-                    testTypeNames.add(testTypesRequest.getName());
+                    testTypeNames.add(entry.getValue().getName());
                 }
-                if (!Utils.isNotNullAndEmpty(testTypesRequest.getDescription())) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeDescriptionEmptyMessage(), rowIndex);
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getDescription())) {
+                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), entry.getKey());
                 }
-                if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName())) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeNameAlReadyExistMessage(), rowIndex);
+                if (!Utils.isNotNullAndEmpty(entry.getValue().getDescription())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeDescriptionEmptyMessage(), entry.getKey());
+                }
+                if (testTypesService.isExistsTestTypeByName(entry.getValue().getName())) {
+                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeNameAlReadyExistMessage(), entry.getKey());
                 }
             }
 
@@ -166,8 +170,8 @@ public class TestTypesController {
                         statusCodeBundle.getTestTypesNotSavedMessage(),
                         errorMessages));
             } else {
-                for (TestTypesRequest testTypesRequest : testTypesRequestList) {
-                    testTypesService.saveTestTypes(testTypesRequest);
+                for (Map.Entry<Integer, TestTypesRequest> entry : testTypesRequestList.entrySet()) {
+                    testTypesService.saveTestTypes(entry.getValue());
                 }
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                         statusCodeBundle.getCommonSuccessCode(),
@@ -178,24 +182,5 @@ public class TestTypesController {
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getFileFailureMessage()));
         }
-    }
-
-    @GetMapping(value = EndpointURI.TEST_TYPE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id) {
-        if (!projectService.existByProjectId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getProjectNotExistCode(),
-                    statusCodeBundle.getProjectNotExistsMessage()));
-        }
-        List<TestTypesResponse> testTypesResponse=testTypesService.getTestTypesByProjectId(id);
-        if(testTypesResponse.isEmpty())
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
-        }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesResponse,
-                RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getTestTypeByProjectId()));
     }
 }

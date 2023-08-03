@@ -7,7 +7,6 @@ import com.ii.testautomation.entities.QTestTypes;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
-import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -30,9 +29,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 @Service
@@ -41,7 +38,6 @@ public class TestTypesServiceImpl implements TestTypesService {
     private TestTypesRepository testTypesRepository;
     @Autowired
     private TestGroupingRepository testGroupingRepository;
-
 
     @Override
     public void  saveTestTypes(TestTypesRequest testTypesRequest) {
@@ -61,6 +57,20 @@ public class TestTypesServiceImpl implements TestTypesService {
         TestTypesResponse testTypesResponse = new TestTypesResponse();
         BeanUtils.copyProperties(testTypes, testTypesResponse);
         return testTypesResponse;
+    }
+
+    @Override
+    public List<TestTypesResponse> getTestTypesByProjectId(Long id) {
+        List<TestGrouping> testGroupingList = testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(id);
+        List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
+        for (TestGrouping testGrouping: testGroupingList)
+        {
+            TestTypesResponse testTypesResponse = new TestTypesResponse();
+            BeanUtils.copyProperties(testGrouping.getTestType(),testTypesResponse);
+            testTypesResponseList.add(testTypesResponse);
+        }
+        return testTypesResponseList;
+
     }
 
     @Override
@@ -117,9 +127,9 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public List<TestTypesRequest> csvProcess(InputStream inputStream) {
-        List<TestTypesRequest> testTypesRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    public Map<Integer,TestTypesRequest> csvProcess(InputStream inputStream) {
+        Map<Integer,TestTypesRequest> testTypesRequestList = new HashMap<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -128,7 +138,7 @@ public class TestTypesServiceImpl implements TestTypesService {
                 TestTypesRequest testTypesRequest = new TestTypesRequest();
                 testTypesRequest.setDescription(csvRecord.get("description"));
                 testTypesRequest.setName(csvRecord.get("name"));
-                testTypesRequestList.add(testTypesRequest);
+                testTypesRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1,testTypesRequest);
             }
 
         } catch (IOException e) {
@@ -138,11 +148,12 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public List<TestTypesRequest> excelProcess(MultipartFile multipartFile) {
-        List<TestTypesRequest> testTypesRequestList = new ArrayList<>();
+    public Map<Integer,TestTypesRequest> excelProcess(MultipartFile multipartFile) {
+        Map<Integer,TestTypesRequest> testTypesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
+            DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
@@ -150,7 +161,7 @@ public class TestTypesServiceImpl implements TestTypesService {
                 TestTypesRequest testTypesRequest = new TestTypesRequest();
                 testTypesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testTypesRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
-                testTypesRequestList.add(testTypesRequest);
+                testTypesRequestList.put(row.getRowNum()+1,testTypesRequest);
             }
             workbook.close();
         } catch (IOException e) {
@@ -201,21 +212,6 @@ public class TestTypesServiceImpl implements TestTypesService {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    @Override
-    public List<TestTypesResponse> getTestTypesByProjectId(Long projectId) {
-        return testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(projectId).stream()
-                .map(TestGrouping::getTestType)
-                .distinct()
-                .map(this::mapToTestTypesResponse)
-                .collect(Collectors.toList());
-    }
-
-    private TestTypesResponse mapToTestTypesResponse(TestTypes testType) {
-        TestTypesResponse testTypesResponse=new TestTypesResponse();
-        BeanUtils.copyProperties(testType,testTypesResponse);
-        return testTypesResponse;
     }
 
     private Map<String, Integer> getColumnMap(Row headerRow) {
