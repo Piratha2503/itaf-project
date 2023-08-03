@@ -11,5 +11,4 @@ public class MainModulesRequest
     private Long id;
     private String name;
     private String prefix;
-   // private Long projectId;
 }
