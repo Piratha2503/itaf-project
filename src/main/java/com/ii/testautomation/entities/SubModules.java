@@ -1,5 +1,6 @@
 package com.ii.testautomation.entities;
 
+import com.ii.testautomation.utils.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-public class SubModules {
+public class SubModules extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
