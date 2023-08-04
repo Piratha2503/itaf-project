@@ -17,5 +17,8 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
 
     List<TestGrouping> findByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
 
+    List<TestGrouping> findAllTestGroupingByTestCasesId(Long testCaseId);
+
+    //List<TestGrouping> findByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
 
 }

@@ -300,6 +300,7 @@ public class StatusCodeBundle {
     private String testGroupingAlReadyExistCode;
     @Value("${code.validation.testGrouping.notExists}")
     private String testGroupingNotExistCode;
+    
     //TestGrouping Message
     @Value("${message.validation.testGrouping.Name.alreadyExists}")
     private String testGroupingNameAlReadyExistMessage;

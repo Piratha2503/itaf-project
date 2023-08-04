@@ -8,6 +8,7 @@ public class Constants {
   public static final String TESTTYPE = "testType";
   public static final String TESTTYPES = "testTypes";
   public static final String TEST_GROUPINGS = "testGroupings";
+  public static final String TEST_GROUPING = "testGrouping";
   public static final String MODULE ="module";
   public static final String MODULES="modules";
   public static final String MAINMODULES = "mainModules";
