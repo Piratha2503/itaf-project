@@ -22,7 +22,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,9 +29,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-
 
 @SuppressWarnings("ALL")
 @Service
@@ -41,6 +38,8 @@ public class MainModulesServiceImp implements MainModulesService {
     private MainModulesRepository mainModulesRepository;
     @Autowired
     private ModulesRepository modulesRepository;
+    @Autowired
+    private SubModulesRepository subModulesRepository;
 
     @Override
     public void saveMainModules(MainModulesRequest mainModulesRequest) {
@@ -60,8 +59,9 @@ public class MainModulesServiceImp implements MainModulesService {
     public MainModulesResponse getByMainModulesId(Long id) {
         MainModulesResponse mainModulesResponse = new MainModulesResponse();
         MainModules mainModules = mainModulesRepository.findById(id).get();
-        //mainModulesResponse.setModules(mainModules.getModules());
+        mainModulesResponse.setModuleId(mainModules.getModules().getId());
         mainModulesResponse.setModulesName(mainModules.getModules().getName());
+        mainModulesResponse.setModules(mainModules.getModules());
         BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
@@ -70,11 +70,26 @@ public class MainModulesServiceImp implements MainModulesService {
     public List<MainModulesResponse> getMainModulesByModuleId(Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(id);
-
         for (MainModules mainModules : mainModulesList) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            mainModulesResponse.setModuleId(mainModules.getModules().getId());
             mainModulesResponse.setModulesName(mainModules.getModules().getName());
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
+            mainModulesResponseList.add(mainModulesResponse);
+        }
+        return mainModulesResponseList;
+    }
+
+    @Override
+    public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
+        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+        List<MainModules> mainModulesList = mainModulesRepository.findByModules_ProjectId(id);
+        for (MainModules mainModules : mainModulesList)
+        {
+            MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            mainModulesResponse.setModuleId(mainModules.getModules().getId());
+            mainModulesResponse.setModulesName(mainModules.getModules().getName());
+            BeanUtils.copyProperties(mainModules,mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
         return mainModulesResponseList;
@@ -96,7 +111,6 @@ public class MainModulesServiceImp implements MainModulesService {
         pagination.setPageSize(mainModulesPage.getTotalPages());
         for (MainModules mainModules : mainModulesPage) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
-            mainModulesResponse.setModulesName(mainModules.getModules().getName());
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
@@ -109,13 +123,14 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public boolean isExistMainModulesName(String name,Long moduleId) {
+    public boolean isExistMainModulesName(String name, Long moduleId) {
         Long projectId=modulesRepository.findById(moduleId).get().getProject().getId();
         return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectId(name,projectId);
     }
 
     @Override
-    public boolean isExistPrefix(String prefix,Long projectId) {
+    public boolean isExistPrefix(String prefix, Long moduleId) {
+        Long projectId=modulesRepository.findById(moduleId).get().getProject().getId();
         return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectId(prefix,projectId);
     }
 
@@ -132,15 +147,15 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId) {
+    public boolean isUpdateMainModulesNameExist(String mainModuleName,Long mainModuleId) {
         Long projectId=mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
-        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleName,projectId, mainModuleId);
+        return mainModulesRepository.existsByNameIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleName,projectId,mainModuleId);
     }
 
     @Override
-    public boolean isUpdateMainModulesPrefixExist(String mainModulePrefix, Long mainModuleId) {
+    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix,Long mainModuleId) {
         Long projectId=mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
-        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectIdAndIdNot(mainModulePrefix,projectId, mainModuleId);
+        return mainModulesRepository.existsByPrefixIgnoreCaseAndModules_ProjectIdAndIdNot(mainModuleprefix,projectId,mainModuleId);
     }
 
     @Override
@@ -155,9 +170,9 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public List<MainModulesRequest> csvProcess(InputStream inputStream) {
-        List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+    public Map<Integer, MainModulesRequest> csvProcess(InputStream inputStream) {
+        Map<Integer, MainModulesRequest> mainModulesRequestList = new HashMap<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
@@ -170,7 +185,7 @@ public class MainModulesServiceImp implements MainModulesService {
 
                 mainModulesRequest.setPrefix(csvRecord.get("prefix"));
                 mainModulesRequest.setName(csvRecord.get("name"));
-                mainModulesRequestList.add(mainModulesRequest);
+                mainModulesRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1,mainModulesRequest);
             }
 
         } catch (IOException e) {
@@ -180,8 +195,8 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public List<MainModulesRequest> excelProcess(MultipartFile multipartFile) {
-        List<MainModulesRequest> mainModulesRequestList = new ArrayList<>();
+    public Map<Integer, MainModulesRequest> excelProcess(MultipartFile multipartFile) {
+        Map<Integer, MainModulesRequest> mainModulesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -193,7 +208,7 @@ public class MainModulesServiceImp implements MainModulesService {
                 mainModulesRequest.setModuleId(getLongCellValue(row.getCell(columnMap.get("module_id"))));
                 mainModulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 mainModulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
-                mainModulesRequestList.add(mainModulesRequest);
+                mainModulesRequestList.put(row.getRowNum() + 1,mainModulesRequest);
             }
             workbook.close();
         } catch (IOException e) {
@@ -243,28 +258,6 @@ public class MainModulesServiceImp implements MainModulesService {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    @Override
-    public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
-        List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
-        List <List<MainModules>> mainMainmoduleList = new ArrayList<>();
-        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(id);
-        for (Modules modules : modulesList)
-        {
-            mainMainmoduleList.add(mainModulesRepository.findAllByModulesId(modules.getId()));
-        }
-        for (List<MainModules> mainModulesList1 : mainMainmoduleList)
-        {
-            for (MainModules mainModules : mainModulesList1)
-            {
-                MainModulesResponse mainModulesResponse = new MainModulesResponse();
-                mainModulesResponse.setModulesName(mainModules.getModules().getName());
-                BeanUtils.copyProperties(mainModules,mainModulesResponse);
-                mainModulesResponseList.add(mainModulesResponse);
-            }
-        }
-        return mainModulesResponseList;
     }
 
     private String getStringCellValue(Cell cell) {
