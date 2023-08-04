@@ -12,5 +12,4 @@ public class MainModulesResponse
     private String prefix;
     private String modulesName;
     private Long moduleId;
-    private Modules modules;
 }

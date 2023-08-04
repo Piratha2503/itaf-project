@@ -61,7 +61,7 @@ public class MainModulesServiceImp implements MainModulesService {
         MainModules mainModules = mainModulesRepository.findById(id).get();
         mainModulesResponse.setModuleId(mainModules.getModules().getId());
         mainModulesResponse.setModulesName(mainModules.getModules().getName());
-        mainModulesResponse.setModules(mainModules.getModules());
+        //mainModulesResponse.setModules(mainModules.getModules());
         BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
@@ -104,13 +104,17 @@ public class MainModulesServiceImp implements MainModulesService {
         if (Utils.isNotNullAndEmpty(mainModuleSearch.getPrefix())) {
             booleanBuilder.and(QMainModules.mainModules.prefix.containsIgnoreCase(mainModuleSearch.getPrefix()));
         }
-
+        if (Utils.isNotNullAndEmpty(mainModuleSearch.getModulesName())) {
+            booleanBuilder.and(QMainModules.mainModules.modules.name.containsIgnoreCase(mainModuleSearch.getModulesName()));
+        }
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         Page<MainModules> mainModulesPage = mainModulesRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(mainModulesPage.getTotalElements());
         pagination.setPageSize(mainModulesPage.getTotalPages());
         for (MainModules mainModules : mainModulesPage) {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
+            mainModulesResponse.setModuleId(mainModules.getModules().getId());
+            mainModulesResponse.setModulesName(mainModules.getModules().getName());
             BeanUtils.copyProperties(mainModules, mainModulesResponse);
             mainModulesResponseList.add(mainModulesResponse);
         }
