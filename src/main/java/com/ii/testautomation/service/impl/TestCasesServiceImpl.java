@@ -283,6 +283,48 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
+    public List<TestCaseResponse> getAllTestCasesByModuleId(Long moduleId) {
+        List<TestCaseResponse> testCaseResponseList=new ArrayList<>();
+        List<TestCases> testCasesList=testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId);
+        for (TestCases testCases:testCasesList) {
+            TestCaseResponse testCaseResponse=new TestCaseResponse();
+            testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
+            testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
+            testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
+            testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
+            testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
+            testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
+            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
+            BeanUtils.copyProperties(testCases,testCaseResponse);
+            testCaseResponseList.add(testCaseResponse);
+
+        }
+        return testCaseResponseList;
+    }
+
+    @Override
+    public List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId) {
+        List<TestCaseResponse> testCaseResponseList=new ArrayList<>();
+        List<TestCases> testCasesList=testCasesRepository.findBySubModule_MainModule_Id(MainModuleId);
+        for (TestCases testCases:testCasesList) {
+            TestCaseResponse testCaseResponse=new TestCaseResponse();
+            testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
+            testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
+            testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
+            testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
+            testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
+            testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
+            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
+            BeanUtils.copyProperties(testCases,testCaseResponse);
+            testCaseResponseList.add(testCaseResponse);
+
+        }
+        return testCaseResponseList;
+    }
+
+    @Override
     public boolean existsTestCaseByProjectId(Long projectId) {
         return testCasesRepository.existsBySubModule_MainModule_Modules_Project_id(projectId);
     }
