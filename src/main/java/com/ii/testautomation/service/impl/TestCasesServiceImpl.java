@@ -108,7 +108,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             booleanBuilder.and(qMainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
         }
         if (Utils.isNotNullAndEmpty(testCaseSearch.getProjectName())) {
-            booleanBuilder.and(qTestCases.subModule.mainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName()));
+            booleanBuilder.and(qMainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName()));
         }
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         Page<TestCases> testCasesPage = testCasesRepository.findAll(booleanBuilder, pageable);
