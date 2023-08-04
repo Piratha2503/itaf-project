@@ -21,31 +21,33 @@ public interface MainModulesService {
 
     List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch);
 
+    Map<Integer, MainModulesRequest> csvProcess(InputStream inputStream);
+
+    Map<Integer, MainModulesRequest> excelProcess(MultipartFile multipartFile);
+
+    List<MainModulesResponse> getMainModulesByProjectId(Long id);
+
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
     boolean isExistMainModulesId(Long id);
 
-    boolean isExistMainModulesName(String name,Long moduleId);
+    boolean isExistMainModulesName(String name, Long id);
 
-    boolean isExistPrefix(String prefix,Long projectId);
+    boolean isExistPrefix(String prefix, Long id);
 
     boolean isExistModulesId(Long id);
 
-    boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
+    boolean isUpdateMainModulesNameExist(String mainModuleName,Long mainModuleId);
 
-    boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
+    boolean isUpdateMainModulesPrefixExist(String mainModuleprefix,Long mainModuleId);
 
     boolean existsMainModuleByModuleId(Long id);
 
     boolean hasExcelFormat(MultipartFile multipartFile);
 
-    List<MainModulesRequest> csvProcess(InputStream inputStream);
-
-    List<MainModulesRequest> excelProcess(MultipartFile multipartFile);
-
-    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
-
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
-    List<MainModulesResponse> getMainModulesByProjectId(Long id);
+
 }

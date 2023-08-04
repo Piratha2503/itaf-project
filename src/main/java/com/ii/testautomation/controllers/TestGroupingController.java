@@ -48,12 +48,11 @@ public class TestGroupingController {
             break;
         }
         if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName(), testcaseId)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
         }
         testGroupingService.saveTestGrouping(testGroupingRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
-
     @PutMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
         if (!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())) {
@@ -82,14 +81,13 @@ public class TestGroupingController {
             break;
         }
         if (testGroupingService.isUpdateTestGroupingNameExits(testGroupingRequest.getName(), testcaseId, testGroupingRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
         }
         testGroupingService.saveTestGrouping(testGroupingRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
-
 
     @DeleteMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
     public ResponseEntity<Object> deleteTestGroupingById(@PathVariable Long id) {
@@ -100,5 +98,4 @@ public class TestGroupingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestGroupingSuccessMessage()));
 
     }
-
 }
