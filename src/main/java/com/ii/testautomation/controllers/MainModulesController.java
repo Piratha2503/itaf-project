@@ -110,18 +110,15 @@ public class MainModulesController {
     public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, MainModuleSearch mainModuleSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
-
         return ResponseEntity.ok(new ContentResponse<>(Constants.MAINMODULES, mainModulesService.SearchMainModulesWithPagination(pageable, pagination, mainModuleSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
 
     @PostMapping(EndpointURI.MAIN_MODULE_IMPORT)
     public ResponseEntity<Object> importMainModules(@RequestParam MultipartFile multipartFile) {
-
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         Set<String> mainModuleNames = new HashSet<>();
         Set<String> mainModulePrefixes = new HashSet<>();
         Map<Integer, MainModulesRequest> mainModulesRequestList;
-
         try {
             if (!mainModulesService.isCSVHeaderMatch(multipartFile) && !mainModulesService.isExcelHeaderMatch(multipartFile)) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
