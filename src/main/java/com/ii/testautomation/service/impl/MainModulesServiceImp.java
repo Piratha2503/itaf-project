@@ -61,7 +61,7 @@ public class MainModulesServiceImp implements MainModulesService {
         MainModules mainModules = mainModulesRepository.findById(id).get();
         mainModulesResponse.setModuleId(mainModules.getModules().getId());
         mainModulesResponse.setModulesName(mainModules.getModules().getName());
-        mainModulesResponse.setModules(mainModules.getModules());
+        //mainModulesResponse.setModules(mainModules.getModules());
         BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
