@@ -1,6 +1,10 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.TestGroupingResponse;
+import com.ii.testautomation.dto.search.TestGroupingSearch;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,6 +24,8 @@ public interface TestGroupingService {
     boolean allTestCasesInSameProject(List<Long> testCaseIds);
 
     boolean existsByTestTypesId(Long testTypeId);
+
+    List<TestGroupingResponse> multiSearchTestGrouping(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch);
 
 
 }
