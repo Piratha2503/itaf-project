@@ -96,6 +96,7 @@ ModulesServiceImpl implements ModulesService {
 
         for (Modules modules : modulesPage) {
             ModulesResponse modulesResponse = new ModulesResponse();
+            modulesResponse.setProjectId(modules.getProject().getId());
             modulesResponse.setProjectName(modules.getProject().getName());
             BeanUtils.copyProperties(modules, modulesResponse);
             modulesResponseList.add(modulesResponse);
@@ -109,6 +110,7 @@ ModulesServiceImpl implements ModulesService {
     public ModulesResponse getModuleById(Long id) {
         ModulesResponse modulesResponse = new ModulesResponse();
         Modules module = modulesRepository.findById(id).get();
+        modulesResponse.setProjectId(module.getProject().getId());
         modulesResponse.setProjectName(module.getProject().getName());
         BeanUtils.copyProperties(module, modulesResponse);
         return modulesResponse;
@@ -120,6 +122,7 @@ ModulesServiceImpl implements ModulesService {
         List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
         for (Modules module : modulesList) {
             ModulesResponse modulesResponse = new ModulesResponse();
+            modulesResponse.setProjectId(module.getProject().getId());
             modulesResponse.setProjectName(module.getProject().getName());
             BeanUtils.copyProperties(module, modulesResponse);
             modulesResponseList.add(modulesResponse);

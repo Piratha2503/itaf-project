@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
 import com.ii.testautomation.entities.QTestCases;
+import com.ii.testautomation.entities.QMainModules;
 import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.repositories.SubModulesRepository;
@@ -12,6 +13,7 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -58,9 +60,9 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public boolean existsByTestCasesName(String testCaseName,Long subModulesId) {
-        Long projectId=subModulesRepository.findById(subModulesId).get().getMainModule().getModules().getProject().getId();
-        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(testCaseName,projectId);
+    public boolean existsByTestCasesName(String testCaseName, Long subModulesId) {
+        Long projectId = subModulesRepository.findById(subModulesId).get().getMainModule().getModules().getProject().getId();
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(testCaseName, projectId);
     }
 
     @Override
@@ -82,29 +84,32 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public boolean isUpdateTestCaseNameExists(Long id, String name) {
-        Long projectId=testCasesRepository.findById(id).get().getSubModule().getMainModule().getModules().getProject().getId();
-        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(name,projectId, id);
+        Long projectId = testCasesRepository.findById(id).get().getSubModule().getMainModule().getModules().getProject().getId();
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, id);
     }
 
     @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
+        QTestCases qTestCases = QTestCases.testCases;
+        QMainModules qMainModule= QMainModules.mainModules;
         if (Utils.isNotNullAndEmpty(testCaseSearch.getName())) {
-            booleanBuilder.and(QTestCases.testCases.name.containsIgnoreCase(testCaseSearch.getName()));
+            booleanBuilder.and(qTestCases.name.containsIgnoreCase(testCaseSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(testCaseSearch.getSubModuleName())) {
-            booleanBuilder.and(QTestCases.testCases.subModule.name.containsIgnoreCase(testCaseSearch.getSubModuleName()));
+            booleanBuilder.and(qTestCases.subModule.name.containsIgnoreCase(testCaseSearch.getSubModuleName()));
         }
         if (Utils.isNotNullAndEmpty(testCaseSearch.getMainModuleName())) {
-            booleanBuilder.and(QTestCases.testCases.subModule.mainModule.name.containsIgnoreCase(testCaseSearch.getMainModuleName()));
+            booleanBuilder.and(qTestCases.subModule.mainModule.name.containsIgnoreCase(testCaseSearch.getMainModuleName()));
         }
-        if (Utils.isNotNullAndEmpty(testCaseSearch.getModuleName())) {
-            booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
-     }
-     if (Utils.isNotNullAndEmpty(testCaseSearch.getProjectName())) {
-            booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName()));
-       }
 
+        if (Utils.isNotNullAndEmpty(testCaseSearch.getModuleName())) {
+
+            booleanBuilder.and(qMainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
+        }
+        if (Utils.isNotNullAndEmpty(testCaseSearch.getProjectName())) {
+            booleanBuilder.and(qTestCases.subModule.mainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName()));
+        }
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         Page<TestCases> testCasesPage = testCasesRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(testCasesPage.getTotalElements());
@@ -268,7 +273,48 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponseList.add(testCaseResponse);
         }
         return testCaseResponseList;
+    }
 
+    @Override
+    public List<TestCaseResponse> getAllTestCasesByModuleId(Long moduleId) {
+        List<TestCaseResponse> testCaseResponseList=new ArrayList<>();
+        List<TestCases> testCasesList=testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId);
+        for (TestCases testCases:testCasesList) {
+            TestCaseResponse testCaseResponse=new TestCaseResponse();
+            testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
+            testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
+            testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
+            testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
+            testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
+            testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
+            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
+            BeanUtils.copyProperties(testCases,testCaseResponse);
+            testCaseResponseList.add(testCaseResponse);
+
+        }
+        return testCaseResponseList;
+    }
+
+    @Override
+    public List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId) {
+        List<TestCaseResponse> testCaseResponseList=new ArrayList<>();
+        List<TestCases> testCasesList=testCasesRepository.findBySubModule_MainModule_Id(MainModuleId);
+        for (TestCases testCases:testCasesList) {
+            TestCaseResponse testCaseResponse=new TestCaseResponse();
+            testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
+            testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
+            testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
+            testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
+            testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
+            testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
+            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
+            BeanUtils.copyProperties(testCases,testCaseResponse);
+            testCaseResponseList.add(testCaseResponse);
+
+        }
+        return testCaseResponseList;
     }
 
     @Override
