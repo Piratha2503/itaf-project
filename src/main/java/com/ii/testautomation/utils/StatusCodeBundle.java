@@ -230,6 +230,8 @@ public class StatusCodeBundle {
     private String updateTestTypeSuccessMessage;
     @Value("${message.success.view.TestTypeForId}")
     private String viewTestTypeforIdSuccessMessage;
+    @Value("${message.success.getType.project}")
+    private String viewTestTypeByProjectIdSuccessMessage;
     @Value("${message.success.viewAll.TestTypes}")
     private String viewAllTestTypesSuccessMessage;
     @Value("${message.success.delete.TestTypes}")
@@ -246,6 +248,8 @@ public class StatusCodeBundle {
     private String testTypeNameEmptyMessage;
     @Value("${message.validation.testType.Description.Empty}")
     private String testTypeDescriptionEmptyMessage;
+    @Value("${message.validation.testType.DoesNot.mapped}")
+    private String TestTypeNotMappedMessage;
     @Value("${message.success.getType.project}")
     private String testTypeByProjectId;
 

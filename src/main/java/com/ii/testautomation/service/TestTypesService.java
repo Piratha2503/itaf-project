@@ -20,7 +20,13 @@ public interface TestTypesService {
 
     TestTypesResponse getTestTypeById(Long id);
 
+    List<TestTypesResponse> getTestTypesByProjectId(Long id);
+
     List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
+
+    Map<Integer, TestTypesRequest> csvProcess(InputStream inputStream);
+
+    Map<Integer, TestTypesRequest> excelProcess(MultipartFile multipartFile);
 
     boolean isExistsTestTypeByName(String name);
 
@@ -32,16 +38,9 @@ public interface TestTypesService {
 
     boolean hasExcelFormat(MultipartFile multipartFile);
 
-    List<TestTypesRequest> csvProcess(InputStream inputStream);
-
-    List<TestTypesRequest> excelProcess(MultipartFile multipartFile);
-
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
-
-    List<TestTypesResponse> getTestTypesByProjectId(Long projectId);
-
 }
