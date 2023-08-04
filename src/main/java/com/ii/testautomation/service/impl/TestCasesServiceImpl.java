@@ -100,12 +100,10 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         if (Utils.isNotNullAndEmpty(testCaseSearch.getModuleName())) {
             booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
-            //booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
-           // booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
-        }
-//        if (Utils.isNotNullAndEmpty(testCaseSearch.getProjectName())) {
-//            booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName()));
-//        }
+     }
+     if (Utils.isNotNullAndEmpty(testCaseSearch.getProjectName())) {
+            booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName()));
+       }
 
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         Page<TestCases> testCasesPage = testCasesRepository.findAll(booleanBuilder, pageable);
