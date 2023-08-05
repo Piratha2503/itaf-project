@@ -3,8 +3,8 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
-import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.entities.QMainModules;
+import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.entities.SubModules;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.repositories.SubModulesRepository;
@@ -13,7 +13,6 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -87,7 +86,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         Long projectId = testCasesRepository.findById(id).get().getSubModule().getMainModule().getModules().getProject().getId();
         return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, id);
     }
-
 
 
     @Override
