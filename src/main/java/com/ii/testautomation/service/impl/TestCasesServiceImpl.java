@@ -103,7 +103,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         if (Utils.isNotNullAndEmpty(testCaseSearch.getMainModuleName())) {
             booleanBuilder.and(qTestCases.subModule.mainModule.name.containsIgnoreCase(testCaseSearch.getMainModuleName()));
         }
-
         if (Utils.isNotNullAndEmpty(testCaseSearch.getModuleName())) {
             if (qTestCases.subModule != null &&
                     qTestCases.subModule.mainModule != null &&
