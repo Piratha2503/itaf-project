@@ -3,6 +3,8 @@ package com.ii.testautomation.dto.search;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 public class SubModuleSearch {
@@ -12,4 +14,5 @@ public class SubModuleSearch {
     private String mainModulePrefix;
     private String moduleName;
     private String modulePrefix;
+    private Timestamp updatedAt;
 }

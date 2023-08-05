@@ -78,6 +78,28 @@ public class ProjectServiceImpl implements ProjectService {
         return projectResponse;
     }
 
+//    public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
+//        BooleanBuilder booleanBuilder = new BooleanBuilder();
+//        if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
+//            booleanBuilder.and(QProject.project.name.containsIgnoreCase(projectSearch.getName()));
+//        }
+//        if (Utils.isNotNullAndEmpty(projectSearch.getCode())) {
+//            booleanBuilder.and(QProject.project.code.containsIgnoreCase(projectSearch.getCode()));
+//        }
+//        List<ProjectResponse> projectResponseList = new ArrayList<>();
+//        Page<Project> projectPage = projectRepository.findAll(booleanBuilder, pageable);
+//        List<Project> projectList = new ArrayList<>(projectPage.getContent());
+//        pagination.setPageSize(projectPage.getTotalPages());
+//        pagination.setTotalRecords(projectPage.getTotalElements());
+//        for (Project project : projectList) {
+//            ProjectResponse projectResponse = new ProjectResponse();
+//            BeanUtils.copyProperties(project, projectResponse);
+//            projectResponseList.add(projectResponse);
+//        }
+//        return projectResponseList;
+//    }
+
+
 
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -89,10 +111,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
         List<ProjectResponse> projectResponseList = new ArrayList<>();
         Page<Project> projectPage = projectRepository.findAll(booleanBuilder, pageable);
-
-        pagination.setTotalRecords(projectPage.getTotalElements());
+        List<Project> projectList = projectPage.getContent();
         pagination.setPageSize(projectPage.getTotalPages());
-        for (Project project : projectPage) {
+        pagination.setTotalRecords(projectPage.getTotalElements());
+        for (Project project : projectList) {
             ProjectResponse projectResponse = new ProjectResponse();
             BeanUtils.copyProperties(project, projectResponse);
             projectResponseList.add(projectResponse);
