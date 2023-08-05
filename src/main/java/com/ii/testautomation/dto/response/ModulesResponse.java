@@ -9,5 +9,6 @@ public class ModulesResponse {
     private Long id;
     private String name;
     private String prefix;
+    private Long projectId;
     private String projectName;
 }
