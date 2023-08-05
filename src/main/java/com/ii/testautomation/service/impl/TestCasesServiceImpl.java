@@ -88,29 +88,48 @@ public class TestCasesServiceImpl implements TestCasesService {
         return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, id);
     }
 
+
+
     @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         QTestCases qTestCases = QTestCases.testCases;
-        QMainModules qMainModule= QMainModules.mainModules;
+        QMainModules qMainModule = QMainModules.mainModules;
         if (Utils.isNotNullAndEmpty(testCaseSearch.getName())) {
             booleanBuilder.and(qTestCases.name.containsIgnoreCase(testCaseSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(testCaseSearch.getSubModuleName())) {
             booleanBuilder.and(qTestCases.subModule.name.containsIgnoreCase(testCaseSearch.getSubModuleName()));
         }
+
         if (Utils.isNotNullAndEmpty(testCaseSearch.getMainModuleName())) {
             booleanBuilder.and(qTestCases.subModule.mainModule.name.containsIgnoreCase(testCaseSearch.getMainModuleName()));
         }
 
         if (Utils.isNotNullAndEmpty(testCaseSearch.getModuleName())) {
+            if (qTestCases.subModule != null &&
+                    qTestCases.subModule.mainModule != null &&
+                    qTestCases.subModule.mainModule.modules != null &&
+                    qTestCases.subModule.mainModule.modules.name != null) {
 
-            booleanBuilder.and(qMainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName()));
-
+                booleanBuilder.and(
+                        qTestCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName())
+                );
+            }
         }
         if (Utils.isNotNullAndEmpty(testCaseSearch.getProjectName())) {
-            booleanBuilder.and(qMainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName()));
+            if (qTestCases.subModule != null &&
+                    qTestCases.subModule.mainModule != null &&
+                    qTestCases.subModule.mainModule.modules != null &&
+                    qTestCases.subModule.mainModule.modules.project != null &&
+                    qTestCases.subModule.mainModule.modules.project.name != null) {
+
+                booleanBuilder.and(
+                        qTestCases.subModule.mainModule.modules.project.name.containsIgnoreCase(testCaseSearch.getProjectName())
+                );
+            }
         }
+
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         Page<TestCases> testCasesPage = testCasesRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(testCasesPage.getTotalElements());
@@ -130,6 +149,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseResponseList;
     }
+
     @Override
     public List<TestCaseResponse> getAllTestCaseBySubModuleId(Long subModuleId) {
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
@@ -149,6 +169,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseResponseList;
     }
+
     @Override
     public void DeleteTestCaseById(Long id) {
         testCasesRepository.deleteById(id);
@@ -158,6 +179,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     public boolean existsBySubModuleId(Long subModuleId) {
         return testCasesRepository.existsBySubModuleId(subModuleId);
     }
+
     @Override
     public boolean hasExcelFormat(MultipartFile multipartFile) {
         try {
@@ -214,6 +236,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseRequestList;
     }
+
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
         try (InputStream inputStream = multipartFile.getInputStream();
@@ -233,6 +256,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             return false;
         }
     }
+
     @Override
     public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
@@ -256,6 +280,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         errorList.add(value);
         errorMessages.put(key, errorList);
     }
+
     @Override
     public List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId) {
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
@@ -278,10 +303,10 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public List<TestCaseResponse> getAllTestCasesByModuleId(Long moduleId) {
-        List<TestCaseResponse> testCaseResponseList=new ArrayList<>();
-        List<TestCases> testCasesList=testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId);
-        for (TestCases testCases:testCasesList) {
-            TestCaseResponse testCaseResponse=new TestCaseResponse();
+        List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
+        List<TestCases> testCasesList = testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId);
+        for (TestCases testCases : testCasesList) {
+            TestCaseResponse testCaseResponse = new TestCaseResponse();
             testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
             testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
             testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
@@ -290,7 +315,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-            BeanUtils.copyProperties(testCases,testCaseResponse);
+            BeanUtils.copyProperties(testCases, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);
 
         }
@@ -299,10 +324,10 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId) {
-        List<TestCaseResponse> testCaseResponseList=new ArrayList<>();
-        List<TestCases> testCasesList=testCasesRepository.findBySubModule_MainModule_Id(MainModuleId);
-        for (TestCases testCases:testCasesList) {
-            TestCaseResponse testCaseResponse=new TestCaseResponse();
+        List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
+        List<TestCases> testCasesList = testCasesRepository.findBySubModule_MainModule_Id(MainModuleId);
+        for (TestCases testCases : testCasesList) {
+            TestCaseResponse testCaseResponse = new TestCaseResponse();
             testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
             testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
             testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
@@ -311,7 +336,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-            BeanUtils.copyProperties(testCases,testCaseResponse);
+            BeanUtils.copyProperties(testCases, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);
 
         }
@@ -330,6 +355,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         cell.setCellType(CellType.STRING);
         return cell.getStringCellValue();
     }
+
     private Long getLongCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;
@@ -337,6 +363,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
     }
+
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 
