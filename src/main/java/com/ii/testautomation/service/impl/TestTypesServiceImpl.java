@@ -95,7 +95,7 @@ public class TestTypesServiceImpl implements TestTypesService {
 
     @Override
     public boolean isExistsTestTypeByName(String name) {
-        return testTypesRepository.existsByName(name);
+        return testTypesRepository.existsByNameIgnoreCase(name);
     }
 
     @Override
