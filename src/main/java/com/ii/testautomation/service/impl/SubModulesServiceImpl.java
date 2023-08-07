@@ -136,6 +136,7 @@ public class SubModulesServiceImpl implements SubModulesService {
 //        Collections.sort(subModulesPage.toList(),Comparator.comparing(SubModules::getCreatedAt));
         pagination.setTotalRecords(subModulesPage.getTotalElements());
         pagination.setPageSize(subModulesPage.getTotalPages());
+
         for (SubModules subModules : subModulesPage) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
@@ -147,6 +148,7 @@ public class SubModulesServiceImpl implements SubModulesService {
         }
         return subModulesResponseList;
     }
+
 
     @Override
     public void deleteSubModuleById(Long subModuleId) {
