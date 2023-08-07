@@ -1,5 +1,4 @@
 package com.ii.testautomation.service.impl;
-
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.entities.TestCases;
@@ -12,7 +11,6 @@ import com.ii.testautomation.service.TestGroupingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -119,8 +117,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean existByProjectId(Long projectId) {
-        return projectRepository.existsById(projectId);
+        return testGroupingRepository.existsByTestCases_SubModule_MainModule_Modules_ProjectId(projectId);
     }
+
 
     @Override
     public List<TestGroupingResponse> getTestGroupingByProjectId(Long projectId) {

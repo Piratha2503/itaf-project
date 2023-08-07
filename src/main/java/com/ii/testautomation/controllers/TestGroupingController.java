@@ -140,7 +140,7 @@ return  ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING,testGrou
         if(!testGroupingService.existByProjectId(id)){
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(),
-                    statusCodeBundle.getProjectNotExistsMessage()));
+                    statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
         }
 return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING,testGroupingService.getTestGroupingByProjectId(id),
         RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getGetTestGroupingSuccessMessage()));
