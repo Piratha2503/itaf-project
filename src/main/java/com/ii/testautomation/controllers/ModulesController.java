@@ -98,7 +98,8 @@ public class ModulesController {
         if (!modulesService.existsByModulesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleNotExistsCode(), statusCodeBundle.getModuleNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULE, modulesService.getModuleById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByIdSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULE, modulesService.getModuleById(id),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByIdSuccessMessage()));
     }
 
     @GetMapping(value = EndpointURI.MODULES_BY_ID)
