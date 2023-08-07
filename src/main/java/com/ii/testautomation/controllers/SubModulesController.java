@@ -43,6 +43,11 @@ public class SubModulesController {
 
     @PostMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest) {
+        if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getMainModulesNotExistCode(),
+                    statusCodeBundle.getMainModuleNotExistsMessage()));
+        }
         if (subModulesService.existsBySubModulesName(subModulesRequest.getName(),subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
@@ -52,12 +57,6 @@ public class SubModulesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
-        }
-        if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getMainModulesNotExistCode(),
-                    statusCodeBundle.getMainModuleNotExistsMessage()));
-
         }
         subModulesService.saveSubModules(subModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
