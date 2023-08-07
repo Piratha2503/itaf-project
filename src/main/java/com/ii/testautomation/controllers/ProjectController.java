@@ -143,6 +143,7 @@ public class ProjectController {
 
     }
 
+
     @GetMapping(value = EndpointURI.PROJECTS)
     public ResponseEntity<Object> getALlProjects(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
