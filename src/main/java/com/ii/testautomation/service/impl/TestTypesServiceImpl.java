@@ -62,7 +62,8 @@ public class TestTypesServiceImpl implements TestTypesService {
     @Override
     public List<TestTypesResponse> getTestTypesByProjectId(Long id) {
         List<TestGrouping> testGroupingList = testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(id);
-        List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
+
+        List<TestTypesResponse> testTypesResponseList=new ArrayList<>();
         for (TestGrouping testGrouping: testGroupingList)
         {
             TestTypesResponse testTypesResponse = new TestTypesResponse();

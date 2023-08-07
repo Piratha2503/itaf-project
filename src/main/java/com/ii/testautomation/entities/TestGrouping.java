@@ -1,5 +1,6 @@
 package com.ii.testautomation.entities;
 
+import com.ii.testautomation.utils.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class TestGrouping {
+public class TestGrouping extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
