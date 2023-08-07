@@ -14,5 +14,4 @@ public class SubModuleSearch {
     private String mainModulePrefix;
     private String moduleName;
     private String modulePrefix;
-    private Timestamp updatedAt;
 }
