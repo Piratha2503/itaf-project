@@ -1,6 +1,8 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.TestGroupingResponse;
+import com.ii.testautomation.entities.TestGrouping;
 
 import java.util.List;
 
@@ -21,5 +23,11 @@ public interface TestGroupingService {
 
     boolean existsByTestTypesId(Long testTypeId);
 
+    List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId);
 
+    public TestGroupingResponse getTestGroupingById(Long id);
+
+    boolean existsByTestGroupId(Long id);
+    boolean existByProjectId(Long projectId);
+    List <TestGroupingResponse> getTestGroupingByProjectId(Long projectId);
 }

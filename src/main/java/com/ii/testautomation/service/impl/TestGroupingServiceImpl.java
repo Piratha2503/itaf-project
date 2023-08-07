@@ -1,16 +1,17 @@
 package com.ii.testautomation.service.impl;
-
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
+import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.service.TestGroupingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private TestGroupingRepository testGroupingRepository;
     @Autowired
     private TestCasesRepository testCasesRepository;
-
+    @Autowired
+    private ProjectRepository projectRepository;
     @Override
     public void saveTestGrouping(TestGroupingRequest testGroupingRequest) {
         TestGrouping testGrouping = new TestGrouping();
@@ -85,4 +87,98 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
 
+    @Override
+    public TestGroupingResponse getTestGroupingById(Long id) {
+        TestGrouping testGrouping = testGroupingRepository.findById(id).get();
+        TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+        BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+        testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+        List<String> testCaseNames = new ArrayList<>();
+        List<String> subModuleName = new ArrayList<>();
+        List<String> mainModulesName = new ArrayList<>();
+        List<String> modulesName = new ArrayList<>();
+        for (TestCases testCase : testGrouping.getTestCases()) {
+            testCaseNames.add(testCase.getName());
+            subModuleName.add(testCase.getSubModule().getName());
+            mainModulesName.add(testCase.getSubModule().getMainModule().getName());
+            modulesName.add(testCase.getSubModule().getMainModule().getModules().getName());
+        }
+        testGroupingResponse.setTestCaseName(testCaseNames);
+        testGroupingResponse.setSubModuleName(subModuleName);
+        testGroupingResponse.setMainModuleName(mainModulesName);
+        testGroupingResponse.setModuleName(modulesName);
+        return testGroupingResponse;
+    }
+
+    @Override
+    public boolean existsByTestGroupId(Long id) {
+        return testGroupingRepository.existsById(id);
+    }
+
+    @Override
+    public boolean existByProjectId(Long projectId) {
+        return testGroupingRepository.existsByTestCases_SubModule_MainModule_Modules_ProjectId(projectId);
+    }
+
+
+    @Override
+    public List<TestGroupingResponse> getTestGroupingByProjectId(Long projectId) {
+     List<TestGroupingResponse> testGroupingResponseList=new ArrayList<>();
+     List<TestGrouping> testGroupingList=testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
+
+        for (TestGrouping testGrouping : testGroupingList) {
+            TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+            BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+            testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+            List<String> testCaseNames = new ArrayList<>();
+            List<String> subModuleName = new ArrayList<>();
+            List<String> mainModulesName = new ArrayList<>();
+            List<String> modulesName = new ArrayList<>();
+            for (TestCases testCase : testGrouping.getTestCases()) {
+                testCaseNames.add(testCase.getName());
+                subModuleName.add(testCase.getSubModule().getName());
+                mainModulesName.add(testCase.getSubModule().getMainModule().getName());
+                modulesName.add(testCase.getSubModule().getMainModule().getModules().getName());
+            }
+            testGroupingResponse.setTestCaseName(testCaseNames);
+            testGroupingResponse.setSubModuleName(subModuleName);
+            testGroupingResponse.setMainModuleName(mainModulesName);
+            testGroupingResponse.setModuleName(modulesName);
+            testGroupingResponseList.add(testGroupingResponse);
+        }
+
+        return testGroupingResponseList;
+
+    }
+
+
+    @Override
+    public List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId) {
+        List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
+        List<TestGrouping> testGroupingList = testGroupingRepository.findAllTestGroupingByTestCasesId(testCaseId);
+
+        for (TestGrouping testGrouping : testGroupingList) {
+            TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+            BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+            testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+            List<String> testCaseNames = new ArrayList<>();
+            List<String> subModuleName = new ArrayList<>();
+            List<String> mainModulesName = new ArrayList<>();
+            List<String> modulesName = new ArrayList<>();
+            for (TestCases testCase : testGrouping.getTestCases()) {
+                testCaseNames.add(testCase.getName());
+                subModuleName.add(testCase.getSubModule().getName());
+                mainModulesName.add(testCase.getSubModule().getMainModule().getName());
+                modulesName.add(testCase.getSubModule().getMainModule().getModules().getName());
+            }
+            testGroupingResponse.setTestCaseName(testCaseNames);
+            testGroupingResponse.setSubModuleName(subModuleName);
+            testGroupingResponse.setMainModuleName(mainModulesName);
+            testGroupingResponse.setModuleName(modulesName);
+            testGroupingResponseList.add(testGroupingResponse);
+        }
+
+        return testGroupingResponseList;
+
+    }
 }
