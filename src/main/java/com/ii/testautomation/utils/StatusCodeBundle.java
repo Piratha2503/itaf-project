@@ -218,7 +218,7 @@ public class StatusCodeBundle {
     private String testTypeDependentCode;
 
     //Test Type Messages
-    @Value("${code.validation.testTypes.notExists}")
+    @Value("${message.validation.testTypes.notExists}")
     private String testTypeNotExistMessage;
     @Value("${message.failure.alreadyExist.TestTypeId}")
     private String TestTypeIdAlReadyExistMessage;
