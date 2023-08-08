@@ -1,5 +1,6 @@
 package com.ii.testautomation.repositories;
 
+import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.entities.TestGrouping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -14,6 +15,8 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
     boolean existsByTestCasesId(Long id);
 
     boolean existsByTestTypeId(Long id);
+
+    public List<TestGrouping> findAllTestGroupingByTestTypeId(Long testTypeId);
 
     List<TestGrouping> findByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
     boolean existsByTestCases_SubModule_MainModule_Modules_ProjectId(Long projectId);
