@@ -92,7 +92,7 @@ public class TestGroupingController {
         testGroupingService.saveTestGrouping(testGroupingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSaveTestGroupingSuccessMessage()));
+                statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
 
     @DeleteMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
