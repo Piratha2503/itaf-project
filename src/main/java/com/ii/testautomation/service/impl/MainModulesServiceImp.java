@@ -83,13 +83,10 @@ public class MainModulesServiceImp implements MainModulesService {
     @Override
     public List<MainModulesResponse> getMainModulesByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
-        List<MainModules> mainModulesList = mainModulesRepository.findByModules_ProjectId(id);
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        booleanBuilder.and(QMainModules.mainModules.modules.project.id.eq(id));
-        Page<MainModules> mainModulesPage = mainModulesRepository.findAll(booleanBuilder, pageable);
+        Page<MainModules> mainModulesPage = mainModulesRepository.findByModules_ProjectId(id,pageable);
         pagination.setTotalRecords(mainModulesPage.getTotalElements());
         pagination.setPageSize(mainModulesPage.getTotalPages());
-        for (MainModules mainModules : mainModulesList)
+        for (MainModules mainModules : mainModulesPage)
         {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
             mainModulesResponse.setModuleId(mainModules.getModules().getId());
