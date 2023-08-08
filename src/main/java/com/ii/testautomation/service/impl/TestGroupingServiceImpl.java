@@ -1,8 +1,10 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
+import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
@@ -95,6 +97,40 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
+    public List<TestGroupingResponse> getAllTestGroupingByTestTypeId(Long testTypeId) {
+        List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
+        List<TestGrouping> testGroupingList = testGroupingRepository.findAllTestGroupingByTestTypeId(testTypeId);
+        for (TestGrouping testGrouping : testGroupingList) {
+            TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+            testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
+            List<TestCases> testCasesList = testGrouping.getTestCases();
+            List<String> subModuleNameList = new ArrayList<>();
+            List<String> mainMooduleNameList = new ArrayList<>();
+            List<String> moduleNameList = new ArrayList<>();
+            List<String> testCaseNameList = new ArrayList<>();
+
+            for (TestCases testCases : testCasesList) {
+                testCaseNameList.add(testCases.getName());
+                subModuleNameList.add(testCases.getSubModule().getName());
+                mainMooduleNameList.add(testCases.getSubModule().getMainModule().getName());
+                moduleNameList.add(testCases.getSubModule().getMainModule().getModules().getName());
+
+            }
+            BeanUtils.copyProperties(testGrouping,testGroupingResponse);
+            testGroupingResponse.setTestCaseName(testCaseNameList);
+            testGroupingResponse.setSubModulesName(subModuleNameList);
+            testGroupingResponse.setMainModulesName(mainMooduleNameList);
+            testGroupingResponse.setModulesName(moduleNameList);
+            testGroupingResponseList.add(testGroupingResponse);
+
+
+
+        }
+        return testGroupingResponseList;
+
+           }
+
+    @Override
     public List<TestGroupingResponse> multiSearchTestGrouping(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(testGroupingSearch.getName())) {
@@ -110,6 +146,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         pagination.setPageSize(testGroupingPage.getTotalPages());
         for (TestGrouping testGrouping:testGroupingPage) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+            testGroupingResponse.setTestTypesName(testGrouping.getTestType().getName());
             List<TestCases> testCasesList = testGrouping.getTestCases();
             List<String> subModuleNameList = new ArrayList<>();
             List<String> mainMooduleNameList = new ArrayList<>();
@@ -117,11 +154,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             List<String> testCaseNameList = new ArrayList<>();
             for (TestCases testCases : testCasesList)
             {
+
                 testCaseNameList.add(testCases.getName());
                 subModuleNameList.add(testCases.getSubModule().getName());
                 mainMooduleNameList.add(testCases.getSubModule().getMainModule().getName());
                 moduleNameList.add(testCases.getSubModule().getMainModule().getModules().getName());
             }
+            BeanUtils.copyProperties(testGrouping,testGroupingResponse);
             testGroupingResponse.setTestCaseName(testCaseNameList);
             testGroupingResponse.setSubModulesName(subModuleNameList);
             testGroupingResponse.setMainModulesName(mainMooduleNameList);

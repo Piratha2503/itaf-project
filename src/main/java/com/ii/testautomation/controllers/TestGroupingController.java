@@ -1,5 +1,14 @@
 package com.ii.testautomation.controllers;
 
+import com.ii.testautomation.dto.response.TestGroupingResponse;
+import com.ii.testautomation.dto.search.TestGroupingSearch;
+import com.ii.testautomation.entities.TestGrouping;
+import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.utils.Constants;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
@@ -13,6 +22,8 @@ import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -88,12 +99,33 @@ public class TestGroupingController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
-    @GetMapping(value =EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object>getAllWithMultiSearch(@RequestParam(name = "page")int page, @RequestParam(name = "size") int size, @RequestParam(name ="direction" )String direction, @RequestParam(name = "sortField") String sortField, TestGroupingSearch testGroupingSearch){
-        Pageable pageable= PageRequest.of(page, size, Sort.Direction.valueOf(direction),sortField);
+   @GetMapping(value =EndpointURI.TEST_GROUPING)
+   public ResponseEntity<Object>getAllWithMultiSearch(@RequestParam(name = "page")int page, @RequestParam(name = "size") int size, @RequestParam(name ="direction" )String direction, @RequestParam(name = "sortField") String sortField, TestGroupingSearch testGroupingSearch){
+       Pageable pageable= PageRequest.of(page, size, Sort.Direction.valueOf(direction),sortField);
         PaginatedContentResponse.Pagination pagination=new PaginatedContentResponse.Pagination(page,size,0,0l);
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS,testGroupingService.multiSearchTestGrouping(pageable,pagination,testGroupingSearch),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestGroupingSuccessMessage()));
+       return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS,testGroupingService.multiSearchTestGrouping(pageable,pagination,testGroupingSearch),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestGroupingSuccessMessage()));
     }
+
+
+    @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_TYPE_ID)
+    public ResponseEntity<BaseResponse>getAllTestGroupingByTestTypeId(@PathVariable Long id){
+        if(!testTypesService.existsByTestTypesId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestTypeNotExistCode(),
+                    statusCodeBundle.getTestTypeNotExistMessage()));
+        }
+        List<TestGroupingResponse>testGroupingResponseList=testGroupingService.getAllTestGroupingByTestTypeId(id);
+        if (testGroupingResponseList.isEmpty()){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getTestGroupingFileEmptyMessage()));
+
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS,testGroupingResponseList,RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getTestGroupingByTestType()));
+    }
+
     @DeleteMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
     public ResponseEntity<Object> deleteTestGroupingById(@PathVariable Long id) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
