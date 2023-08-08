@@ -81,9 +81,14 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
+    public List<MainModulesResponse> getMainModulesByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
         List<MainModules> mainModulesList = mainModulesRepository.findByModules_ProjectId(id);
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(QMainModules.mainModules.modules.project.id.eq(id));
+        Page<MainModules> mainModulesPage = mainModulesRepository.findAll(booleanBuilder, pageable);
+        pagination.setTotalRecords(mainModulesPage.getTotalElements());
+        pagination.setPageSize(mainModulesPage.getTotalPages());
         for (MainModules mainModules : mainModulesList)
         {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
@@ -173,6 +178,10 @@ public class MainModulesServiceImp implements MainModulesService {
         }
     }
 
+    @Override
+    public boolean isExistMainModulesByProjectId(Long id) {
+        return mainModulesRepository.existsByModules_ProjectId(id);
+    }
     @Override
     public Map<Integer, MainModulesRequest> csvProcess(InputStream inputStream) {
         Map<Integer, MainModulesRequest> mainModulesRequestList = new HashMap<>();

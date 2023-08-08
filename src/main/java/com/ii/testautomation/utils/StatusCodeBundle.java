@@ -159,7 +159,8 @@ public class StatusCodeBundle {
     private String mainModulesPrefixDuplicateMessage;
     @Value("${message.validation.mainModule.NameDuplicate}")
     private String mainModulesNameDuplicateMessage;
-
+    @Value("${message.validation.mainModule.notMapped}")
+    private String mainModulesNotMappedWithProjectMessage;
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
     private String moduleAlReadyExistsCode;
