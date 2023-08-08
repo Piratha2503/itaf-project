@@ -136,9 +136,21 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public List<TestGroupingResponse> getTestGroupingByProjectId(Long projectId) {
      List<TestGroupingResponse> testGroupingResponseList=new ArrayList<>();
-     List<TestGrouping> testGroupingList=testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
+     List<TestGrouping> testGropingList1 = testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
+     List<Long> idList = new ArrayList<>();
+     List<TestGrouping> testGroupingList2 = new ArrayList<>();
+     for (TestGrouping testGrouping : testGropingList1)
+     {
+        idList.add(testGrouping.getId());
+     }
+     List<Long> newList = idList.stream().distinct().collect(Collectors.toList());
+     for (Long id : newList)
+     {
+         testGroupingList2.add(testGroupingRepository.findById(id).get());
+     }
+     //List<TestGrouping> testGroupingList =testGroupingRepository.findByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
 
-        for (TestGrouping testGrouping : testGroupingList) {
+        for (TestGrouping testGrouping : testGroupingList2) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             BeanUtils.copyProperties(testGrouping, testGroupingResponse);
             testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
@@ -157,12 +169,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setMainModuleName(mainModulesName);
             testGroupingResponse.setModuleName(modulesName);
             testGroupingResponseList.add(testGroupingResponse);
+
         }
-
         return testGroupingResponseList;
-
     }
-
 
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId) {
