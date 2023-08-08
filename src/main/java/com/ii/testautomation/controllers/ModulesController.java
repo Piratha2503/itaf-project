@@ -42,7 +42,7 @@ public class ModulesController {
 
     @PostMapping(value = EndpointURI.MODULE)
     public ResponseEntity<Object> saveModule(@RequestBody ModulesRequest modulesRequest) {
-        if (modulesService.isModuleExistsByName(modulesRequest.getName(),modulesRequest.getProject_id())) {
+        if (modulesService.isModuleExistsByName(modulesRequest.getName(), modulesRequest.getProject_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModuleNameAlReadyExistsMessage()));
         }
         if (modulesService.isModuleExistsByPrefix(modulesRequest.getPrefix(), modulesRequest.getProject_id())) {
@@ -98,7 +98,8 @@ public class ModulesController {
         if (!modulesService.existsByModulesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleNotExistsCode(), statusCodeBundle.getModuleNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULE, modulesService.getModuleById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByIdSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULE, modulesService.getModuleById(id),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByIdSuccessMessage()));
     }
 
     @GetMapping(value = EndpointURI.MODULES_BY_ID)
@@ -148,10 +149,10 @@ public class ModulesController {
                 } else {
                     modulesPrefix.add(entry.getValue().getPrefix());
                 }
-                if (modulesService.isModuleExistsByName(entry.getValue().getName(),entry.getValue().getProject_id())) {
+                if (modulesService.isModuleExistsByName(entry.getValue().getName(), entry.getValue().getProject_id())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModuleNameAlReadyExistsMessage(), entry.getKey());
                 }
-                if (modulesService.isModuleExistsByPrefix(entry.getValue().getPrefix(),entry.getValue().getProject_id())) {
+                if (modulesService.isModuleExistsByPrefix(entry.getValue().getPrefix(), entry.getValue().getProject_id())) {
                     modulesService.addToErrorMessages(errorMessages, statusCodeBundle.getModulePrefixAlReadyExistsMessage(), entry.getKey());
                 }
                 if (entry.getValue().getProject_id() == null) {
