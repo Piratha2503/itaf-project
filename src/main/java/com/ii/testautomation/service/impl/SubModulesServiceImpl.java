@@ -39,6 +39,7 @@ public class SubModulesServiceImpl implements SubModulesService {
     private SubModulesRepository subModulesRepository;
     @Autowired
     private MainModulesRepository mainModulesRepository;
+
     @Override
     public void saveSubModules(SubModulesRequest subModulesRequest) {
         SubModules subModules = new SubModules();
@@ -50,27 +51,27 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
 
     @Override
-    public boolean existsBySubModulesName(String subModuleName,Long mainModuleId) {
-       Long projectId= mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
-        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName,projectId);
+    public boolean existsBySubModulesName(String subModuleName, Long mainModuleId) {
+        Long projectId = mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName, projectId);
     }
 
     @Override
-    public boolean existsBySubModulesPrefix(String subModulePrefix,Long mainModuleId) {
-        Long projectId= mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
-        return subModulesRepository.existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectId(subModulePrefix,projectId);
+    public boolean existsBySubModulesPrefix(String subModulePrefix, Long mainModuleId) {
+        Long projectId = mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return subModulesRepository.existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectId(subModulePrefix, projectId);
     }
 
     @Override
     public boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId) {
-        Long projectId=subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
-        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectIdAndIdNot(subModuleName,projectId, subModuleId);
+        Long projectId = subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
+        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectIdAndIdNot(subModuleName, projectId, subModuleId);
     }
 
     @Override
     public boolean isUpdateSubModulePrefixExits(String subModulePrefix, Long subModuleId) {
-        Long projectId=subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
-        return subModulesRepository.existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectIdAndIdNot(subModulePrefix,projectId, subModuleId);
+        Long projectId = subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
+        return subModulesRepository.existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectIdAndIdNot(subModulePrefix, projectId, subModuleId);
     }
 
     @Override
@@ -122,19 +123,18 @@ public class SubModulesServiceImpl implements SubModulesService {
         if (Utils.isNotNullAndEmpty(subModuleSearch.getPrefix())) {
             booleanBuilder.and(QSubModules.subModules.prefix.containsIgnoreCase(subModuleSearch.getPrefix()));
         }
-        if(Utils.isNotNullAndEmpty(subModuleSearch.getModuleName()))
-        {
+        if (Utils.isNotNullAndEmpty(subModuleSearch.getModuleName())) {
             booleanBuilder.and(QSubModules.subModules.mainModule.modules.name.containsIgnoreCase(subModuleSearch.getModuleName()));
         }
-        if(Utils.isNotNullAndEmpty(subModuleSearch.getModulePrefix()))
-        {
+        if (Utils.isNotNullAndEmpty(subModuleSearch.getModulePrefix())) {
             booleanBuilder.and(QSubModules.subModules.mainModule.modules.prefix.containsIgnoreCase(subModuleSearch.getModulePrefix()));
         }
         List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
         Page<SubModules> subModulesPage = subModulesRepository.findAll(booleanBuilder, pageable);
-
+//        Collections.sort(subModulesPage.toList(),Comparator.comparing(SubModules::getCreatedAt));
         pagination.setTotalRecords(subModulesPage.getTotalElements());
         pagination.setPageSize(subModulesPage.getTotalPages());
+
         for (SubModules subModules : subModulesPage) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
@@ -148,6 +148,28 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
 
     @Override
+    public List<SubModulesResponse> getSubModulesByProjectIdWithPagination(Long id, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
+
+        Page<SubModules> subModulesPage = subModulesRepository.findByMainModule_Modules_Project_Id(id, pageable);
+        pagination.setTotalRecords(subModulesPage.getTotalElements());
+        pagination.setPageSize(subModulesPage.getTotalPages());
+
+        for (SubModules subModules : subModulesPage) {
+            SubModulesResponse subModulesResponse = new SubModulesResponse();
+            BeanUtils.copyProperties(subModules, subModulesResponse);
+            subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
+            subModulesResponse.setModuleId(subModules.getMainModule().getModules().getId());
+            subModulesResponse.setMainModuleId(subModules.getMainModule().getId());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
+            subModulesResponseList.add(subModulesResponse);
+        }
+        return subModulesResponseList;
+    }
+
+
+    @Override
     public void deleteSubModuleById(Long subModuleId) {
         subModulesRepository.deleteById(subModuleId);
     }
@@ -156,23 +178,6 @@ public class SubModulesServiceImpl implements SubModulesService {
     @Override
     public boolean existsByMainModuleId(Long mainModuleId) {
         return subModulesRepository.existsByMainModuleId(mainModuleId);
-    }
-
-    @Override
-    public List<SubModulesResponse> getSubModulesByProjectId(Long id) {
-        List<SubModulesResponse> subModulesResponseList=new ArrayList<>();
-        List<SubModules> subModulesList=subModulesRepository.findByMainModule_Modules_Project_Id(id);
-        for (SubModules subModules : subModulesList
-        ){
-            SubModulesResponse subModulesResponse=new SubModulesResponse();
-            BeanUtils.copyProperties(subModules,subModulesResponse);
-            subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-            subModulesResponse.setModuleId(subModules.getMainModule().getModules().getId());
-            subModulesResponse.setMainModuleId(subModules.getMainModule().getId());
-            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
-            subModulesResponseList.add(subModulesResponse);
-        }
-        return subModulesResponseList;
     }
 
     @Override

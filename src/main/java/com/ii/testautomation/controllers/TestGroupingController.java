@@ -1,5 +1,8 @@
 package com.ii.testautomation.controllers;
 
+import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.service.ProjectService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.TestGrouping;
@@ -34,6 +37,9 @@ public class TestGroupingController {
     private TestTypesService testTypesService;
     @Autowired
     private TestCasesService testCasesService;
+
+    @Autowired
+    private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
@@ -133,7 +139,48 @@ public class TestGroupingController {
         }
         testGroupingService.deleteTestGroupingById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestGroupingSuccessMessage()));
+    }
+
+    @GetMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
+    public ResponseEntity<Object> getTestGroupingById(@PathVariable Long id) {
+        if (!testGroupingService.existsByTestGroupingId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingById(id),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
+    }
+
+    @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_CASE_ID)
+    public ResponseEntity<Object> getTestGroupingByTestCaseId(@PathVariable Long id) {
+        if (!testCasesService.existsByTestCasesId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestCasesNotExistCode(),
+                    statusCodeBundle.getTestCasesNotExistsMessage()));
+        }
+        if (!testGroupingService.existsByTestCasesId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getGetTestGroupingNotHaveTestCaseId()));
+        }
+return  ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING,testGroupingService.getAllTestGroupingByTestCaseId(id),
+        RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getGetTestGroupingSuccessMessage()));
 
     }
 
+    @GetMapping(value=EndpointURI.TEST_GROUPING_BY_PROJECT_ID)
+    public ResponseEntity<Object> getTestGroupingByProjectId(@PathVariable Long id){
+        if(!projectService.existByProjectId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        if(!testGroupingService.existByProjectId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
+        }
+return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING,testGroupingService.getTestGroupingByProjectId(id),
+        RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getGetTestGroupingSuccessMessage()));
+
+    }
 }

@@ -77,8 +77,6 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(project, projectResponse);
         return projectResponse;
     }
-
-
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
@@ -89,10 +87,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
         List<ProjectResponse> projectResponseList = new ArrayList<>();
         Page<Project> projectPage = projectRepository.findAll(booleanBuilder, pageable);
-
-        pagination.setTotalRecords(projectPage.getTotalElements());
+        List<Project> projectList = projectPage.getContent();
         pagination.setPageSize(projectPage.getTotalPages());
-        for (Project project : projectPage) {
+        pagination.setTotalRecords(projectPage.getTotalElements());
+        for (Project project : projectList) {
             ProjectResponse projectResponse = new ProjectResponse();
             BeanUtils.copyProperties(project, projectResponse);
             projectResponseList.add(projectResponse);

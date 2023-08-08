@@ -43,21 +43,20 @@ public class SubModulesController {
 
     @PostMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest) {
-        if (subModulesService.existsBySubModulesName(subModulesRequest.getName(),subModulesRequest.getMain_module_Id())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getSubModulesAlReadyExistCode(),
-                    statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
-        }
-        if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix(),subModulesRequest.getMain_module_Id())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getSubModulesAlReadyExistCode(),
-                    statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
-        }
         if (!mainModulesService.isExistMainModulesId(subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
-
+        }
+        if (subModulesService.existsBySubModulesName(subModulesRequest.getName(), subModulesRequest.getMain_module_Id())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getSubModulesAlReadyExistCode(),
+                    statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
+        }
+        if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix(), subModulesRequest.getMain_module_Id())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getSubModulesAlReadyExistCode(),
+                    statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
         }
         subModulesService.saveSubModules(subModulesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -108,8 +107,7 @@ public class SubModulesController {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleMainModuleIdEmptyMessage(), entry.getKey());
                 } else if (!mainModulesService.isExistMainModulesId(entry.getValue().getMain_module_Id())) {
                     subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getMainModuleNotExistsMessage(), entry.getKey());
-                }
-                else {
+                } else {
                     if (subModulesService.existsBySubModulesPrefix(entry.getValue().getPrefix(), entry.getValue().getMain_module_Id())) {
                         subModulesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModulePrefixAlReadyExistMessage(), entry.getKey());
                     }
@@ -232,22 +230,27 @@ public class SubModulesController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getDeleteSubModuleSuccessMessage()));
     }
+
     @GetMapping(EndpointURI.SUBMODULE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getSubModulesByProjectId(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getSubModulesByProjectId(@PathVariable Long id,
+                                                           @RequestParam(name = "page") int page,
+                                                           @RequestParam(name = "size") int size,
+                                                           @RequestParam(name = "direction") String direction,
+                                                           @RequestParam(name = "sortField") String sortField) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getProjectNotExistsMessage()));
         }
-        if (!subModulesService.existsByProjectId(id))
-        {
+        if (!subModulesService.existsByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getGetSubModuleNotHaveProjectId()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.SUBMODULES,subModulesService.getSubModulesByProjectId(id),
-              RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getSubModulesByProjectId()));
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.SUBMODULES, subModulesService.getSubModulesByProjectIdWithPagination(id, pageable, pagination),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSubModulesByProjectId(), pagination));
     }
 
 }

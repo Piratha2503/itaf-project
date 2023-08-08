@@ -5,19 +5,15 @@ import lombok.Setter;
 
 import java.util.List;
 
-
 @Getter
 @Setter
 public class TestGroupingResponse {
     private Long id;
     private String name;
-
     private List<String> testCaseName;
-    private String testTypesName;
-
-    private List<String> subModulesName;
-    private List<String> mainModulesName;
-    private List<String> modulesName;
-
+    private String testTypeName;
+    private List<String> subModuleName;
+    private List<String> mainModuleName;
+    private List<String> moduleName;
 
 }

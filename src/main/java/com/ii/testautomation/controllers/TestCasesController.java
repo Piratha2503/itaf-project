@@ -8,10 +8,7 @@ import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.ii.testautomation.service.ProjectService;
-import com.ii.testautomation.service.SubModulesService;
-import com.ii.testautomation.service.TestCasesService;
-import com.ii.testautomation.service.TestGroupingService;
+import com.ii.testautomation.service.*;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
@@ -40,6 +37,10 @@ public class TestCasesController {
     private TestGroupingService testGroupingService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private ModulesService modulesService;
+    @Autowired
+    private MainModulesService mainModulesService;
 
     @PostMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
@@ -147,6 +148,32 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseBySubModuleIdSuccessMessage()));
 
     }
+    @GetMapping(value = EndpointURI.TESTCASE_BY_MAIN_MODULE_ID)
+    public ResponseEntity<Object> getAllTestCasesByMainModuleId(@PathVariable Long id){
+        if(!mainModulesService.isExistMainModulesId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getMainModulesNotExistCode(),statusCodeBundle.getMainModuleNotExistsMessage()));
+        }
+        List<TestCaseResponse> testCaseResponseList = testCasesService.getAllTestCasesByMainModuleId(id);
+        if (testCaseResponseList.isEmpty()) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getGetTestCaseNotHaveMainModuleId()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCasesByMainModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestCasesSuccessMainModuleIdMessage()));
+    }
+    @GetMapping(value = EndpointURI.TESTCASE_BY_MODULE_ID)
+    public ResponseEntity<Object> getAllTestCasesByModuleId(@PathVariable Long id){
+        if(!modulesService.existsByModulesId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getModuleNotExistsCode(),
+                    statusCodeBundle.getModuleNotExistsMessage()));
+        }
+        List<TestCaseResponse> testCaseResponseList=testCasesService.getAllTestCasesByModuleId(id);
+        if (testCaseResponseList.isEmpty()) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getGetTestCasesNotHaveModuleIdMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES,testCasesService.getAllTestCasesByModuleId(id),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getGetTestCasesByModuleIdSuccessMessage()));
+    }
+
 
     @GetMapping(value = EndpointURI.TESTCASE_BY_PROJECT_ID)
     public ResponseEntity<Object> getAllTestCasesByProjectId(@PathVariable Long id) {

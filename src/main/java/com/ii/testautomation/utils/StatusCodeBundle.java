@@ -301,7 +301,14 @@ public class StatusCodeBundle {
     private String getAllTestCasesSuccessGivenProjectId;
     @Value("${message.validation.testCase.getProject.notHave}")
     private String getTestCaseNotHaveProjectId;
-
+    @Value("${message.validation.testCase.getByModule.notHave}")
+    private String getTestCasesNotHaveModuleIdMessage;
+    @Value("${message.validation.testCase.getByMainModule.notHave}")
+    private String getTestCaseNotHaveMainModuleId;
+    @Value("${message.success.testcase.byMainModuleId}")
+    private String getAllTestCasesSuccessMainModuleIdMessage;
+    @Value("${message.success.testcase.byModuleId}")
+    private String getTestCasesByModuleIdSuccessMessage;
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;

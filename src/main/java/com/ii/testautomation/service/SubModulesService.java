@@ -14,9 +14,9 @@ import java.util.Map;
 public interface SubModulesService {
     void saveSubModules(SubModulesRequest subModulesRequest);
 
-    boolean existsBySubModulesName(String subModuleName,Long mainModuleId);
+    boolean existsBySubModulesName(String subModuleName, Long mainModuleId);
 
-    boolean existsBySubModulesPrefix(String subModulePrefix,Long mainModuleId);
+    boolean existsBySubModulesPrefix(String subModulePrefix, Long mainModuleId);
 
     boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId);
 
@@ -46,7 +46,7 @@ public interface SubModulesService {
 
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
-    List<SubModulesResponse> getSubModulesByProjectId(Long id);
+    List<SubModulesResponse> getSubModulesByProjectIdWithPagination(Long id, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
     boolean existsByProjectId(Long projectId);
 }
