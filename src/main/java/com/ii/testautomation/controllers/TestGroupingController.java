@@ -103,7 +103,7 @@ public class TestGroupingController {
         testGroupingService.saveTestGrouping(testGroupingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSaveTestGroupingSuccessMessage()));
+                statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
    @GetMapping(value =EndpointURI.TEST_GROUPING)
    public ResponseEntity<Object>getAllWithMultiSearch(@RequestParam(name = "page")int page, @RequestParam(name = "size") int size, @RequestParam(name ="direction" )String direction, @RequestParam(name = "sortField") String sortField, TestGroupingSearch testGroupingSearch){

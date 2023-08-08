@@ -322,6 +322,8 @@ public class StatusCodeBundle {
     private String testGroupingNotExistsMessage;
     @Value("${message.success.save.testGrouping}")
     private String saveTestGroupingSuccessMessage;
+    @Value("${message.success.update.testGrouping}")
+    private String updateTestGroupingSuccessMessage;
     @Value("${message.success.get.testGrouping}")
     private String getTestGroupingSuccessMessage;
     @Value("${message.success.getAll.testGrouping}")
