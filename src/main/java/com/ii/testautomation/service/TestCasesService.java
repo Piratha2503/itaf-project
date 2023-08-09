@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import org.aspectj.weaver.ast.Test;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,8 +40,7 @@ public interface TestCasesService {
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
-
-    List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId);
+    List<TestCaseResponse> getAllTestcasesByProjectIdWithPagination(Long projectId,Pageable pageable,PaginatedContentResponse.Pagination pagination);
     List<TestCaseResponse> getAllTestCasesByModuleId(Long moduleId);
     List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId);
     boolean existsTestCaseByProjectId(Long projectId);

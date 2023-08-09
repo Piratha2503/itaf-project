@@ -47,7 +47,7 @@ public class TestCasesController {
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        if (testCasesService.existsByTestCasesName(testCaseRequest.getName(),testCaseRequest.getSubModuleId())) {
+        if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
         testCasesService.saveTestCase(testCaseRequest);
@@ -115,8 +115,7 @@ public class TestCasesController {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(), entry.getKey());
                 } else if (!subModulesService.existsBySubModuleId(entry.getValue().getSubModuleId())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNotExistsMessage(), entry.getKey());
-                }
-                else if (testCasesService.existsByTestCasesName(entry.getValue().getName(),entry.getValue().getSubModuleId())) {
+                } else if (testCasesService.existsByTestCasesName(entry.getValue().getName(), entry.getValue().getSubModuleId())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), entry.getKey());
                 }
             }
@@ -148,11 +147,12 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseBySubModuleIdSuccessMessage()));
 
     }
+
     @GetMapping(value = EndpointURI.TESTCASE_BY_MAIN_MODULE_ID)
-    public ResponseEntity<Object> getAllTestCasesByMainModuleId(@PathVariable Long id){
-        if(!mainModulesService.isExistMainModulesId(id)){
+    public ResponseEntity<Object> getAllTestCasesByMainModuleId(@PathVariable Long id) {
+        if (!mainModulesService.isExistMainModulesId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getMainModulesNotExistCode(),statusCodeBundle.getMainModuleNotExistsMessage()));
+                    statusCodeBundle.getMainModulesNotExistCode(), statusCodeBundle.getMainModuleNotExistsMessage()));
         }
         List<TestCaseResponse> testCaseResponseList = testCasesService.getAllTestCasesByMainModuleId(id);
         if (testCaseResponseList.isEmpty()) {
@@ -160,34 +160,40 @@ public class TestCasesController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCasesByMainModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestCasesSuccessMainModuleIdMessage()));
     }
+
     @GetMapping(value = EndpointURI.TESTCASE_BY_MODULE_ID)
-    public ResponseEntity<Object> getAllTestCasesByModuleId(@PathVariable Long id){
-        if(!modulesService.existsByModulesId(id)){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getModuleNotExistsCode(),
+    public ResponseEntity<Object> getAllTestCasesByModuleId(@PathVariable Long id) {
+        if (!modulesService.existsByModulesId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleNotExistsCode(),
                     statusCodeBundle.getModuleNotExistsMessage()));
         }
-        List<TestCaseResponse> testCaseResponseList=testCasesService.getAllTestCasesByModuleId(id);
+        List<TestCaseResponse> testCaseResponseList = testCasesService.getAllTestCasesByModuleId(id);
         if (testCaseResponseList.isEmpty()) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getGetTestCasesNotHaveModuleIdMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getGetTestCasesNotHaveModuleIdMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES,testCasesService.getAllTestCasesByModuleId(id),
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getGetTestCasesByModuleIdSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCasesByModuleId(id),
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCasesByModuleIdSuccessMessage()));
     }
 
 
     @GetMapping(value = EndpointURI.TESTCASE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getAllTestCasesByProjectId(@PathVariable Long id) {
+    public ResponseEntity<Object> getAllTestCasesByProjectIdWithPagination(@PathVariable Long id,
+                                                                           @RequestParam(name = "page") int page,
+                                                                           @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction,
+                                                                           @RequestParam(name = "sortField") String sortField) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
-        if(!testCasesService.existsTestCaseByProjectId(id)){
+        if (!testCasesService.existsTestCaseByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),statusCodeBundle.getGetTestCaseNotHaveProjectId()));
+                    statusCodeBundle.getFailureCode(), statusCodeBundle.getGetTestCaseNotHaveProjectId()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestcasesByProjectId(id),
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestcasesByProjectIdWithPagination(id, pageable, pagination),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getGetAllTestCasesSuccessGivenProjectId()));
+                statusCodeBundle.getGetAllTestCasesSuccessGivenProjectId(), pagination));
     }
 
     @DeleteMapping(value = EndpointURI.TESTCASE_BY_ID)
