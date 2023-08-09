@@ -12,13 +12,13 @@ import java.util.List;
 public interface ModulesRepository extends JpaRepository<Modules, Long>, QuerydslPredicateExecutor<Modules> {
     boolean existsByNameIgnoreCaseAndProjectId(String name, Long projectId);
 
-     boolean existsByPrefixIgnoreCaseAndProjectId(String prefix,Long projectId);
+    boolean existsByPrefixIgnoreCaseAndProjectId(String prefix, Long projectId);
 
-     boolean existsByNameIgnoreCaseAndProjectIdAndIdNot(String name, Long projectId,Long id);
+    boolean existsByNameIgnoreCaseAndProjectIdAndIdNot(String name, Long projectId, Long id);
 
-     boolean existsByPrefixIgnoreCaseAndProjectIdAndIdNot(String prefix,Long projectId, Long id);
+    boolean existsByPrefixIgnoreCaseAndProjectIdAndIdNot(String prefix, Long projectId, Long id);
 
-     Page<Modules> findAllModulesByProjectId(Long projectId, Pageable pageable);
+    Page<Modules> findAllModulesByProjectId(Long projectId, Pageable pageable);
 
-     boolean existsByProjectId(Long id);
+    boolean existsByProjectId(Long id);
 }
