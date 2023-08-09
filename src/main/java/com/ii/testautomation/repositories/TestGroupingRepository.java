@@ -15,11 +15,13 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
 
     boolean existsByTestTypeId(Long id);
 
-    public List<TestGrouping> findAllTestGroupingByTestTypeId(Long testTypeId);
+    List<TestGrouping> findAllTestGroupingByTestTypeId(Long testTypeId);
 
     boolean existsByTestCases_SubModule_MainModule_Modules_ProjectId(Long projectId);
     List<TestGrouping> findAllTestGroupingByTestCasesId(Long testCaseId);
+
+    List<TestGrouping> findAllByTestCases_SubModule_MainModule_Modules_Project_Id(Long id);
+
+    List<TestGrouping> findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
     List<TestGrouping> findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
 }
-
-

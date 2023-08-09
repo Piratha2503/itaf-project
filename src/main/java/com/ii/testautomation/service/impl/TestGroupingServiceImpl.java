@@ -23,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +36,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private TestCasesRepository testCasesRepository;
     @Autowired
     private ProjectRepository projectRepository;
-
     @Override
     public void saveTestGrouping(TestGroupingRequest testGroupingRequest) {
         TestGrouping testGrouping = new TestGrouping();
@@ -154,6 +152,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 modulesName.add(testCases.getSubModule().getMainModule().getModules().getName());
             }
             testGroupingResponse.setTestCaseName(testCaseNames);
+            testGroupingResponse.setSubModuleName(subModuleName);
             testGroupingResponse.setMainModuleName(mainModulesName);
             testGroupingResponse.setModuleName(modulesName);
             testGroupingResponse.setSubModuleName(subModuleName);
