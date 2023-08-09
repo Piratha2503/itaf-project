@@ -1,6 +1,8 @@
 package com.ii.testautomation.repositories;
 
 import com.ii.testautomation.entities.Modules;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
@@ -10,13 +12,13 @@ import java.util.List;
 public interface ModulesRepository extends JpaRepository<Modules, Long>, QuerydslPredicateExecutor<Modules> {
     boolean existsByNameIgnoreCaseAndProjectId(String name, Long projectId);
 
-    public boolean existsByPrefixIgnoreCaseAndProjectId(String prefix,Long projectId);
+     boolean existsByPrefixIgnoreCaseAndProjectId(String prefix,Long projectId);
 
-    public boolean existsByNameIgnoreCaseAndProjectIdAndIdNot(String name, Long projectId,Long id);
+     boolean existsByNameIgnoreCaseAndProjectIdAndIdNot(String name, Long projectId,Long id);
 
-    public boolean existsByPrefixIgnoreCaseAndProjectIdAndIdNot(String prefix,Long projectId, Long id);
+     boolean existsByPrefixIgnoreCaseAndProjectIdAndIdNot(String prefix,Long projectId, Long id);
 
-    public List<Modules> findAllModulesByProjectId(Long projectId);
+     Page<Modules> findAllModulesByProjectId(Long projectId, Pageable pageable);
 
-    public boolean existsByProjectId(Long id);
+     boolean existsByProjectId(Long id);
 }

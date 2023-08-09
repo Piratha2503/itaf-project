@@ -103,17 +103,23 @@ public class ModulesController {
     }
 
     @GetMapping(value = EndpointURI.MODULES_BY_ID)
-    public ResponseEntity<BaseResponse> getAllModulesByProjectId(@PathVariable Long id) {
+    public ResponseEntity<BaseResponse> getAllModulesByProjectIdWithPagination(@PathVariable Long id,
+                                                                               @RequestParam(name = "page") int page,
+                                                                               @RequestParam(name = "size") int size,
+                                                                               @RequestParam(name = "direction") String direction,
+                                                                               @RequestParam(name = "sortField") String sortField) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
 
-        List<ModulesResponse> modulesResponseList = modulesService.getAllModuleByProjectId(id);
+        List<ModulesResponse> modulesResponseList = modulesService.getAllModuleByProjectIdWithPagination(id, pageable, pagination);
         if (modulesResponseList.isEmpty()) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleNotHaveProjectMessage()));
         }
-
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES, modulesResponseList, RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByProjectIdSuccessMessage()));
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.SUBMODULES, modulesResponseList,
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByProjectIdSuccessMessage(), pagination));
     }
 
     @PostMapping(value = EndpointURI.MODULE_IMPORT)
