@@ -35,7 +35,7 @@ public final class EndpointURI {
     public static final String MODULE = BASE_API_PATH + "module";
     public static final String MODULE_BY_ID = MODULE + ID;
     public static final String MODULES = BASE_API_PATH + SEARCH + SLASH + "modules";
-    public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectId" + ID;
+    public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectIdWithPagination" + ID;
     // URLs for Test Types
 
     public static final String TEST_TYPE = BASE_API_PATH + "testType";
@@ -50,7 +50,7 @@ public final class EndpointURI {
     public static final String TESTCASES = BASE_API_PATH + SEARCH + SLASH + "testcases";
     public static final String TESTCASES_BY_ID = BASE_API_PATH + "TestCaseBySubModuleId" + ID;
     public static final String TESTCASE_IMPORT= TESTCASE+"/import";
-    public static final String TESTCASE_BY_PROJECT_ID = BASE_API_PATH+"TestCaseByProjectId"+ID;
+    public static final String TESTCASE_BY_PROJECT_ID = BASE_API_PATH+"TestCaseByProjectIdWithPagination"+ID;
     public static final String TESTCASE_BY_MODULE_ID = BASE_API_PATH+"TestCaseByModuleId"+ID;
 
     public static final String TESTCASE_BY_MAIN_MODULE_ID = BASE_API_PATH+"TestCaseByMainModuleId"+ID;

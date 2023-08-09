@@ -14,6 +14,7 @@ public class TestCases extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(length = 1500)
     private String description;
     @ManyToOne
     @JoinColumn(name = "submodule_id",nullable = false)

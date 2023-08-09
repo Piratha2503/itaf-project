@@ -29,7 +29,7 @@ public interface ModulesService {
 
     ModulesResponse getModuleById(Long id);
 
-    List<ModulesResponse> getAllModuleByProjectId(Long projectId);
+    List<ModulesResponse> getAllModuleByProjectIdWithPagination(Long projectId,Pageable pageable,PaginatedContentResponse.Pagination pagination);
 
     void deleteModuleById(Long id);
 
