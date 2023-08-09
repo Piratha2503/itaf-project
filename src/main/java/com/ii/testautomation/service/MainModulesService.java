@@ -25,7 +25,7 @@ public interface MainModulesService {
 
     Map<Integer, MainModulesRequest> excelProcess(MultipartFile multipartFile);
 
-    List<MainModulesResponse> getMainModulesByProjectId(Long id);
+    List<MainModulesResponse> getMainModulesByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long id);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
@@ -36,6 +36,8 @@ public interface MainModulesService {
     boolean isExistPrefix(String prefix, Long id);
 
     boolean isExistModulesId(Long id);
+
+    boolean isExistMainModulesByProjectId(Long id);
 
     boolean isUpdateMainModulesNameExist(String mainModuleName,Long mainModuleId);
 
@@ -48,6 +50,4 @@ public interface MainModulesService {
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
-
-
 }

@@ -1,6 +1,8 @@
 package com.ii.testautomation.repositories;
 
 import com.ii.testautomation.entities.MainModules;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
@@ -17,7 +19,7 @@ public interface MainModulesRepository extends JpaRepository<MainModules, Long>,
 
     boolean existsByModulesId(Long id);
 
-    List<MainModules> findByModules_ProjectId(Long id);
+    Page<MainModules> findByModules_ProjectId(Long id, Pageable pageable);
 
     List<MainModules> findAllByModulesId(Long id);
 
@@ -25,4 +27,5 @@ public interface MainModulesRepository extends JpaRepository<MainModules, Long>,
 
     MainModules findByModulesId(Long id);
 
+    boolean existsByModules_ProjectId(Long id);
 }

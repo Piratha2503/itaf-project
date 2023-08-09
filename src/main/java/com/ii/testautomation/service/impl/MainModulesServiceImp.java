@@ -61,7 +61,6 @@ public class MainModulesServiceImp implements MainModulesService {
         MainModules mainModules = mainModulesRepository.findById(id).get();
         mainModulesResponse.setModuleId(mainModules.getModules().getId());
         mainModulesResponse.setModulesName(mainModules.getModules().getName());
-        //mainModulesResponse.setModules(mainModules.getModules());
         BeanUtils.copyProperties(mainModules, mainModulesResponse);
         return mainModulesResponse;
     }
@@ -81,10 +80,12 @@ public class MainModulesServiceImp implements MainModulesService {
     }
 
     @Override
-    public List<MainModulesResponse> getMainModulesByProjectId(Long id) {
+    public List<MainModulesResponse> getMainModulesByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long id) {
         List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
-        List<MainModules> mainModulesList = mainModulesRepository.findByModules_ProjectId(id);
-        for (MainModules mainModules : mainModulesList)
+        Page<MainModules> mainModulesPage = mainModulesRepository.findByModules_ProjectId(id,pageable);
+        pagination.setTotalRecords(mainModulesPage.getTotalElements());
+        pagination.setPageSize(mainModulesPage.getTotalPages());
+        for (MainModules mainModules : mainModulesPage)
         {
             MainModulesResponse mainModulesResponse = new MainModulesResponse();
             mainModulesResponse.setModuleId(mainModules.getModules().getId());
@@ -173,6 +174,10 @@ public class MainModulesServiceImp implements MainModulesService {
         }
     }
 
+    @Override
+    public boolean isExistMainModulesByProjectId(Long id) {
+        return mainModulesRepository.existsByModules_ProjectId(id);
+    }
     @Override
     public Map<Integer, MainModulesRequest> csvProcess(InputStream inputStream) {
         Map<Integer, MainModulesRequest> mainModulesRequestList = new HashMap<>();
