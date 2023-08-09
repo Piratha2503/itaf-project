@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 public class TestGroupingController {
@@ -178,10 +180,7 @@ public class TestGroupingController {
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingByProjectId(id),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
-return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING,testGroupingService.getAllTestGroupingByProjectId(id),
-        RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getGetTestGroupingSuccessMessage()));
-
     }
 }
