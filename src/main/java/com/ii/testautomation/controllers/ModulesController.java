@@ -118,7 +118,7 @@ public class ModulesController {
         if (modulesResponseList.isEmpty()) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleNotHaveProjectMessage()));
         }
-        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.SUBMODULES, modulesResponseList,
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.MODULES, modulesResponseList,
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByProjectIdSuccessMessage(), pagination));
     }
 
