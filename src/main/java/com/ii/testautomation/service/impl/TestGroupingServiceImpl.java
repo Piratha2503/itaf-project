@@ -129,7 +129,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-        List<TestGrouping> testGroupings = testGroupingRepository.findAllByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
+        List<TestGrouping> testGroupings = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
         List<String> testCaseNames = new ArrayList<>();
         List<String> subModuleName = new ArrayList<>();
         List<String> mainModulesName = new ArrayList<>();
