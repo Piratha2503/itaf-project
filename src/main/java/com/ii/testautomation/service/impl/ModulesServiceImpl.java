@@ -52,31 +52,30 @@ ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public boolean isModuleExistsByName(String name,Long projectId) {
-        return modulesRepository.existsByNameIgnoreCaseAndProjectId(name,projectId);
+    public boolean isModuleExistsByName(String name, Long projectId) {
+        return modulesRepository.existsByNameIgnoreCaseAndProjectId(name, projectId);
     }
 
     @Override
-    public boolean isModuleExistsByPrefix(String prefix,Long projectId) {
-        return modulesRepository.existsByPrefixIgnoreCaseAndProjectId(prefix,projectId);
+    public boolean isModuleExistsByPrefix(String prefix, Long projectId) {
+        return modulesRepository.existsByPrefixIgnoreCaseAndProjectId(prefix, projectId);
     }
 
     @Override
-    public boolean existsByModulesId(Long id)
-    {
+    public boolean existsByModulesId(Long id) {
         return modulesRepository.existsById(id);
     }
 
     @Override
     public boolean isUpdateModuleNameExists(String name, Long id) {
-        Long projectId=modulesRepository.findById(id).get().getProject().getId();
-        return modulesRepository.existsByNameIgnoreCaseAndProjectIdAndIdNot(name,projectId, id);
+        Long projectId = modulesRepository.findById(id).get().getProject().getId();
+        return modulesRepository.existsByNameIgnoreCaseAndProjectIdAndIdNot(name, projectId, id);
     }
 
     @Override
     public boolean isUpdateModulePrefixExists(String prefix, Long id) {
-        Long projectId=modulesRepository.findById(id).get().getProject().getId();
-        return modulesRepository.existsByPrefixIgnoreCaseAndProjectIdAndIdNot(prefix,projectId,id);
+        Long projectId = modulesRepository.findById(id).get().getProject().getId();
+        return modulesRepository.existsByPrefixIgnoreCaseAndProjectIdAndIdNot(prefix, projectId, id);
     }
 
     @Override
@@ -117,10 +116,13 @@ ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public List<ModulesResponse> getAllModuleByProjectId(Long projectId) {
+    public List<ModulesResponse> getAllModuleByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
         List<ModulesResponse> modulesResponseList = new ArrayList<>();
-        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
-        for (Modules module : modulesList) {
+        Page<Modules> modulesPage = modulesRepository.findAllModulesByProjectId(projectId, pageable);
+        pagination.setTotalRecords(modulesPage.getTotalElements());
+        pagination.setPageSize(modulesPage.getTotalPages());
+        for (Modules module : modulesPage) {
             ModulesResponse modulesResponse = new ModulesResponse();
             modulesResponse.setProjectId(module.getProject().getId());
             modulesResponse.setProjectName(module.getProject().getName());
@@ -142,8 +144,8 @@ ModulesServiceImpl implements ModulesService {
 
 
     @Override
-    public Map<Integer,ModulesRequest> csvToModulesRequest(InputStream inputStream) {
-        Map<Integer,ModulesRequest> modulesRequestsList = new HashMap<>();
+    public Map<Integer, ModulesRequest> csvToModulesRequest(InputStream inputStream) {
+        Map<Integer, ModulesRequest> modulesRequestsList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
@@ -151,12 +153,12 @@ ModulesServiceImpl implements ModulesService {
                 ModulesRequest modulesRequest = new ModulesRequest();
                 modulesRequest.setName(csvRecord.get("name"));
                 modulesRequest.setPrefix(csvRecord.get("prefix"));
-                if(!csvRecord.get("project_id").isEmpty()) {
+                if (!csvRecord.get("project_id").isEmpty()) {
                     modulesRequest.setProject_id(Long.parseLong(csvRecord.get("project_id")));
-                }else{
+                } else {
                     modulesRequest.setProject_id(null);
                 }
-                modulesRequestsList.put(Math.toIntExact(csvRecord.getRecordNumber()+1),modulesRequest);
+                modulesRequestsList.put(Math.toIntExact(csvRecord.getRecordNumber() + 1), modulesRequest);
             }
 
         } catch (IOException e) {
@@ -177,8 +179,8 @@ ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public Map<Integer,ModulesRequest> excelToModuleRequest(MultipartFile multipartFile) {
-        Map<Integer,ModulesRequest> modulesRequestList = new HashMap<>();
+    public Map<Integer, ModulesRequest> excelToModuleRequest(MultipartFile multipartFile) {
+        Map<Integer, ModulesRequest> modulesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -190,7 +192,7 @@ ModulesServiceImpl implements ModulesService {
                 modulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 modulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
                 modulesRequest.setProject_id(getLongCellValue(row.getCell(columnMap.get("project_id"))));
-                modulesRequestList.put(row.getRowNum()+1, modulesRequest);
+                modulesRequestList.put(row.getRowNum() + 1, modulesRequest);
             }
             workbook.close();
         } catch (IOException e) {
@@ -218,6 +220,7 @@ ModulesServiceImpl implements ModulesService {
             return false;
         }
     }
+
     @Override
     public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
@@ -234,6 +237,7 @@ ModulesServiceImpl implements ModulesService {
             return false;
         }
     }
+
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;

@@ -279,10 +279,13 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public List<TestCaseResponse> getAllTestcasesByProjectId(Long projectId) {
+    public List<TestCaseResponse> getAllTestcasesByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
-        List<TestCases> testCasesList = testCasesRepository.findBySubModule_MainModule_Modules_Project_Id(projectId);
-        for (TestCases testCases : testCasesList) {
+        Page<TestCases> testCasesPage = testCasesRepository.findBySubModuleMainModuleModulesProjectId(projectId, pageable);
+        pagination.setTotalRecords(testCasesPage.getTotalElements());
+        pagination.setPageSize(testCasesPage.getTotalPages());
+        for (TestCases testCases : testCasesPage) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
             testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
             testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
