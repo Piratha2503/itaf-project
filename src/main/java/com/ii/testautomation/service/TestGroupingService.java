@@ -27,7 +27,6 @@ public interface TestGroupingService {
     boolean allTestCasesInSameProject(List<Long> testCaseIds);
 
     boolean existsByTestTypesId(Long testTypeId);
-
     List<TestGroupingResponse> getAllTestGroupingByTestTypeId(Long testTypeId);
 
 
@@ -40,6 +39,5 @@ public interface TestGroupingService {
     boolean existsByTestGroupId(Long id);
 
     boolean existByProjectId(Long projectId);
-
-    List<TestGroupingResponse> getTestGroupingByProjectId(Long projectId);
+    List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
 }

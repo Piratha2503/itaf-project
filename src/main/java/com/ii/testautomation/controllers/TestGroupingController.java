@@ -70,7 +70,6 @@ public class TestGroupingController {
         testGroupingService.saveTestGrouping(testGroupingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
-
     @PutMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
         if (!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())) {
@@ -181,8 +180,7 @@ public class TestGroupingController {
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingByProjectId(id),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
-
     }
 }
