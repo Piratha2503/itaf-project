@@ -142,7 +142,7 @@ return  ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING,testGrou
                     statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
         }
-return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING,testGroupingService.getTestGroupingByProjectId(id),
+return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING,testGroupingService.getAllTestGroupingByProjectId(id),
         RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getGetTestGroupingSuccessMessage()));
 
     }
