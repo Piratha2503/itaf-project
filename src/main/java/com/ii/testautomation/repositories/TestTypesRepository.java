@@ -11,6 +11,4 @@ public interface TestTypesRepository extends JpaRepository<TestTypes, Long>, Que
     boolean existsByNameIgnoreCase(String name);
 
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
-    @Query("SELECT tt FROM TestTypes tt JOIN TestGrouping tg ON tg.testType = tt JOIN tg.testCases tc JOIN tc.subModule sm JOIN sm.mainModule mm JOIN mm.modules m JOIN m.project p WHERE p.id = :id")
-    List<TestTypes> findBymyProjectId(Long id);
 }
