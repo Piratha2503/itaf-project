@@ -218,6 +218,8 @@ public class StatusCodeBundle {
     private String testTypeDependentCode;
 
     //Test Type Messages
+    @Value("${message.validation.testTypes.notExists}")
+    private String testTypeNotExistMessage;
     @Value("${message.failure.alreadyExist.TestTypeId}")
     private String TestTypeIdAlReadyExistMessage;
     @Value("${message.failure.alreadyExist.TestTypename}")
@@ -312,7 +314,7 @@ public class StatusCodeBundle {
     private String testGroupingAlReadyExistCode;
     @Value("${code.validation.testGrouping.notExists}")
     private String testGroupingNotExistCode;
-    
+
     //TestGrouping Message
     @Value("${message.validation.testGrouping.Name.alreadyExists}")
     private String testGroupingNameAlReadyExistMessage;
@@ -320,6 +322,8 @@ public class StatusCodeBundle {
     private String testGroupingNotExistsMessage;
     @Value("${message.success.save.testGrouping}")
     private String saveTestGroupingSuccessMessage;
+    @Value("${message.success.update.testGrouping}")
+    private String updateTestGroupingSuccessMessage;
     @Value("${message.success.get.testGrouping}")
     private String getTestGroupingSuccessMessage;
     @Value("${message.success.getAll.testGrouping}")
@@ -348,4 +352,6 @@ public class StatusCodeBundle {
     private String testGroupingNameDuplicateMessage;
     @Value("${message.success.getTestGrouping.project}")
     private String testGroupingByProjectId;
+    @Value("${message.success.getTestGrouping.testType}")
+    private String testGroupingByTestType;
 }
