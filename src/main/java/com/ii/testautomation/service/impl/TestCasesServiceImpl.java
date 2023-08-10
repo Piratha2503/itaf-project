@@ -49,6 +49,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         BeanUtils.copyProperties(testCaseRequest, testCases);
         testCasesRepository.save(testCases);
     }
+
     @Override
     public boolean existsByTestCasesId(Long id) {
         if (id == null) {
@@ -188,7 +189,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream,Long projectId) {
+    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream, Long projectId) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
@@ -199,7 +200,7 @@ public class TestCasesServiceImpl implements TestCasesService {
                 testCaseRequest.setName(csvRecord.get("name"));
                 testCaseRequest.setSubModuleName(csvRecord.get("submodule_name"));
                 if (!csvRecord.get("submodule_name").isEmpty()) {
-                    Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(csvRecord.get("submodule_name"),projectId).getId();
+                    Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(csvRecord.get("submodule_name"), projectId).getId();
                     testCaseRequest.setSubmoduleId(subModuleId);
                 } else {
                     testCaseRequest.setSubmoduleId(null);
@@ -213,7 +214,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile,Long projectId) {
+    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile, Long projectId) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
@@ -226,7 +227,7 @@ public class TestCasesServiceImpl implements TestCasesService {
                 testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testCaseRequest.setSubModuleName(getStringCellValue(row.getCell(columnMap.get("submodule_name"))));
-                Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(getStringCellValue(row.getCell(columnMap.get("submodule_name"))),projectId).getId();
+                Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(getStringCellValue(row.getCell(columnMap.get("submodule_name"))), projectId).getId();
                 testCaseRequest.setSubmoduleId(subModuleId);
                 testCaseRequest.setProject_id(projectId);
                 testCaseRequestList.put(row.getRowNum() + 1, testCaseRequest);
