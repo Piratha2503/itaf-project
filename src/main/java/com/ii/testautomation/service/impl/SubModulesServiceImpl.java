@@ -168,12 +168,10 @@ public class SubModulesServiceImpl implements SubModulesService {
         return subModulesResponseList;
     }
 
-
     @Override
     public void deleteSubModuleById(Long subModuleId) {
         subModulesRepository.deleteById(subModuleId);
     }
-
 
     @Override
     public boolean existsByMainModuleId(Long mainModuleId) {
@@ -183,6 +181,16 @@ public class SubModulesServiceImpl implements SubModulesService {
     @Override
     public boolean existsByProjectId(Long projectId) {
         return subModulesRepository.existsByMainModule_Modules_ProjectId(projectId);
+    }
+
+    @Override
+    public Long getSubModuleIdByNameForProject(String subModuleName, Long projectId) {
+        return subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName, projectId).getId();
+    }
+
+    @Override
+    public boolean existsBySubModulesNameForProject(String subModuleName, Long projectId) {
+        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName, projectId);
     }
 
     @Override

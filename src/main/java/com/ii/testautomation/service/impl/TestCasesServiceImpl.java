@@ -42,14 +42,13 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public void saveTestCase(TestCaseRequest testCaseRequest) {
+
         TestCases testCases = new TestCases();
-        SubModules subModules = new SubModules();
-        subModules.setId(testCaseRequest.getSubModuleId());
+        SubModules subModules = subModulesRepository.findById(testCaseRequest.getSubmoduleId()).get();
         testCases.setSubModule(subModules);
         BeanUtils.copyProperties(testCaseRequest, testCases);
         testCasesRepository.save(testCases);
     }
-
     @Override
     public boolean existsByTestCasesId(Long id) {
         if (id == null) {
@@ -189,7 +188,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
+    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream,Long projectId) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
@@ -198,10 +197,12 @@ public class TestCasesServiceImpl implements TestCasesService {
                 TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(csvRecord.get("description"));
                 testCaseRequest.setName(csvRecord.get("name"));
-                if (!csvRecord.get("submodule_id").isEmpty()) {
-                    testCaseRequest.setSubModuleId(Long.parseLong(csvRecord.get("submodule_id")));
+                testCaseRequest.setSubModuleName(csvRecord.get("submodule_name"));
+                if (!csvRecord.get("submodule_name").isEmpty()) {
+                    Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(csvRecord.get("submodule_name"),projectId).getId();
+                    testCaseRequest.setSubmoduleId(subModuleId);
                 } else {
-                    testCaseRequest.setSubModuleId(null);
+                    testCaseRequest.setSubmoduleId(null);
                 }
                 testCaseRequestList.put(Math.toIntExact(csvRecord.getRecordNumber() + 1), testCaseRequest);
             }
@@ -212,7 +213,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile) {
+    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile,Long projectId) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
@@ -224,7 +225,10 @@ public class TestCasesServiceImpl implements TestCasesService {
                 TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
-                testCaseRequest.setSubModuleId(getLongCellValue(row.getCell(columnMap.get("submodule_id"))));
+                testCaseRequest.setSubModuleName(getStringCellValue(row.getCell(columnMap.get("submodule_name"))));
+                Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(getStringCellValue(row.getCell(columnMap.get("submodule_name"))),projectId).getId();
+                testCaseRequest.setSubmoduleId(subModuleId);
+                testCaseRequest.setProject_id(projectId);
                 testCaseRequestList.put(row.getRowNum() + 1, testCaseRequest);
             }
             workbook.close();
@@ -245,7 +249,7 @@ public class TestCasesServiceImpl implements TestCasesService {
                 Cell cell = headerRow.getCell(i);
                 actualHeaders[i] = cell.getStringCellValue().toLowerCase();
             }
-            String[] expectedHeader = {"description", "name", "submodule_id"};
+            String[] expectedHeader = {"description", "name", "submodule_name"};
             Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
             Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
             return expectedHeaderSet.equals(actualHeaderSet);
@@ -262,7 +266,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             for (int i = 0; i < actualHeaders.length; i++) {
                 actualHeaders[i] = actualHeaders[i].toLowerCase();
             }
-            String[] expectedHeader = {"description", "name", "submodule_id"};
+            String[] expectedHeader = {"description", "name", "submodule_name"};
             Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
             Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
             return expectedHeaderSet.equals(actualHeaderSet);

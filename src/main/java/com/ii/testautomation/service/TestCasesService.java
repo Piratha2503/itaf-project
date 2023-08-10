@@ -17,7 +17,7 @@ public interface TestCasesService {
 
     boolean existsByTestCasesId(Long id);
 
-    boolean existsByTestCasesName(String testCaseName,Long subModulesId);
+    boolean existsByTestCasesName(String testCaseName, Long subModulesId);
 
     TestCaseResponse getById(Long id);
 
@@ -33,15 +33,21 @@ public interface TestCasesService {
 
     boolean hasExcelFormat(MultipartFile multipartFile);
 
-    Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
+    Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream, Long projectId);
 
-    Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
+    Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile, Long projectId);
+
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
-    List<TestCaseResponse> getAllTestcasesByProjectIdWithPagination(Long projectId,Pageable pageable,PaginatedContentResponse.Pagination pagination);
+
+    List<TestCaseResponse> getAllTestcasesByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
+
     List<TestCaseResponse> getAllTestCasesByModuleId(Long moduleId);
+
     List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId);
+
     boolean existsTestCaseByProjectId(Long projectId);
 }
