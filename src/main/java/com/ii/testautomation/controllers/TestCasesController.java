@@ -90,14 +90,21 @@ public class TestCasesController {
         Map<Integer, TestCaseRequest> testCaseRequestList;
         Set<String> testCasesNames = new HashSet<>();
         try {
-            if (!testCasesService.isCSVHeaderMatch(multipartFile) && (!testCasesService.isExcelHeaderMatch(multipartFile))) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-            }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(),id);
+                if (!testCasesService.isCSVHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    testCaseRequestList= testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(),id);
+                }
             } else if (testCasesService.hasExcelFormat(multipartFile)) {
-                testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile,id);
+                if (!testCasesService.isExcelHeaderMatch(multipartFile)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+                } else {
+                    testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile,id);
+                }
+//            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
+//                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(), id);
+//            }
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));

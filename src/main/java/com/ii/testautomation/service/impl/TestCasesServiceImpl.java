@@ -198,8 +198,10 @@ public class TestCasesServiceImpl implements TestCasesService {
                 TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(csvRecord.get("description"));
                 testCaseRequest.setName(csvRecord.get("name"));
-                if (!csvRecord.get("submodule_id").isEmpty()) {
-                    testCaseRequest.setSubModuleId(Long.parseLong(csvRecord.get("submodule_id")));
+                String subModuleName = csvRecord.get("submodule_Name");
+                if (!csvRecord.get("submodule_Name").isEmpty()) {
+                    Long subModuleId=subModulesRepository.findIdByNameAndMainModuleModulesProjectId(subModuleName,projectId);
+                    testCaseRequest.setSubModuleId(subModuleId);
                 } else {
                     testCaseRequest.setSubModuleId(null);
                 }
@@ -224,7 +226,9 @@ public class TestCasesServiceImpl implements TestCasesService {
                 TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
-                testCaseRequest.setSubModuleId(getLongCellValue(row.getCell(columnMap.get("submodule_id"))));
+                String subModuleName=getStringCellValue(row.getCell(columnMap.get("submodule_Name")));
+                 Long subModuleId =subModulesRepository.findIdByNameAndMainModuleModulesProjectId(subModuleName,projectId);
+               testCaseRequest.setSubModuleId(subModuleId);
                 testCaseRequestList.put(row.getRowNum() + 1, testCaseRequest);
             }
             workbook.close();
@@ -233,26 +237,28 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseRequestList;
     }
-
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
         try (InputStream inputStream = multipartFile.getInputStream();
              Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
-            String[] actualHeaders = new String[headerRow.getLastCellNum()];
+            Set<String> actualHeaders = new HashSet<>();
+
             for (int i = 0; i < headerRow.getLastCellNum(); i++) {
                 Cell cell = headerRow.getCell(i);
-                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
+                actualHeaders.add(cell.getStringCellValue().toLowerCase());
             }
-            String[] expectedHeader = {"description", "name", "submodule_id"};
+
+            String[] expectedHeader = {"description", "name", "submodule_Name"};
             Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
-            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
-            return expectedHeaderSet.equals(actualHeaderSet);
+
+            return actualHeaders.containsAll(expectedHeaderSet);
         } catch (Exception e) {
             return false;
         }
     }
+
 
     @Override
     public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
@@ -262,7 +268,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             for (int i = 0; i < actualHeaders.length; i++) {
                 actualHeaders[i] = actualHeaders[i].toLowerCase();
             }
-            String[] expectedHeader = {"description", "name", "submodule_id"};
+            String[] expectedHeader = {"description", "name", "submodule_Name"};
             Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
             Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
             return expectedHeaderSet.equals(actualHeaderSet);
