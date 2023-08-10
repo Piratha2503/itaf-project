@@ -1,13 +1,13 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
-import com.ii.testautomation.dto.response.ModulesResponse;
+import com.ii.testautomation.dto.response.*;
 import com.ii.testautomation.dto.search.ModuleSearch;
-import com.ii.testautomation.entities.Modules;
-import com.ii.testautomation.entities.Project;
-import com.ii.testautomation.entities.QModules;
+import com.ii.testautomation.entities.*;
+import com.ii.testautomation.repositories.MainModulesRepository;
 import com.ii.testautomation.repositories.ModulesRepository;
-import com.ii.testautomation.repositories.ProjectRepository;
+import com.ii.testautomation.repositories.SubModulesRepository;
+import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.utils.Utils;
@@ -39,7 +39,12 @@ ModulesServiceImpl implements ModulesService {
     @Autowired
     private ModulesRepository modulesRepository;
     @Autowired
-    private ProjectRepository projectRepository;
+    private MainModulesRepository mainModulesRepository;
+
+    @Autowired
+    private SubModulesRepository subModulesRepository;
+    @Autowired
+    private TestCasesRepository testCasesRepository;
 
     @Override
     public void saveModule(ModulesRequest modulesRequest) {
@@ -99,7 +104,6 @@ ModulesServiceImpl implements ModulesService {
             modulesResponse.setProjectName(modules.getProject().getName());
             BeanUtils.copyProperties(modules, modulesResponse);
             modulesResponseList.add(modulesResponse);
-
         }
 
         return modulesResponseList;
@@ -130,6 +134,51 @@ ModulesServiceImpl implements ModulesService {
             modulesResponseList.add(modulesResponse);
         }
         return modulesResponseList;
+    }
+
+    @Override
+    public ProjectModuleResponse getAllByProjectId(Long projectId) {
+        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
+        ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
+        List<ModulesResponse> modulesResponseList = new ArrayList<>();
+        for (Modules module : modulesList) {
+            ModulesResponse modulesResponse = new ModulesResponse();
+            modulesResponse.setName(module.getName());
+            modulesResponse.setId(module.getId());
+            modulesResponseList.add(modulesResponse);
+            List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(module.getId());
+            List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+            for (MainModules mainModules : mainModulesList
+            ) {
+                MainModulesResponse mainModulesResponse = new MainModulesResponse();
+                mainModulesResponse.setId(mainModules.getId());
+                mainModulesResponse.setName(mainModules.getName());
+                mainModulesResponseList.add(mainModulesResponse);
+                List<SubModules> subModulesList = subModulesRepository.findAllSubModulesByMainModuleId(mainModules.getId());
+                List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
+                for (SubModules subModules : subModulesList
+                ) {
+                    SubModulesResponse subModulesResponse = new SubModulesResponse();
+                    subModulesResponse.setId(subModules.getId());
+                    subModulesResponse.setName(subModules.getName());
+                    subModulesResponseList.add(subModulesResponse);
+                    List<TestCases> testCasesList = testCasesRepository.findAllTestCasesBySubModuleId(subModules.getId());
+                    List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
+                    for (TestCases testCases : testCasesList
+                    ) {
+                        TestCaseResponse testCaseResponse = new TestCaseResponse();
+                        testCaseResponse.setId(testCases.getId());
+                        testCaseResponse.setName(testCases.getName());
+                        testCaseResponseList.add(testCaseResponse);
+                    }
+                    subModulesResponse.setTestCaseResponses(testCaseResponseList);
+                }
+                mainModulesResponse.setSubModulesResponses(subModulesResponseList);
+            }
+            modulesResponse.setMainModulesResponse(mainModulesResponseList);
+        }
+        projectModuleResponse.setModulesResponseList(modulesResponseList);
+        return projectModuleResponse;
     }
 
     @Override

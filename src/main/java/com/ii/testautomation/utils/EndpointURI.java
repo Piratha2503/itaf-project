@@ -9,9 +9,11 @@ public final class EndpointURI {
     private static final String SEARCH = "search";
     private static final String SEARCH_WITH_PAGE = "page";
     private static final String ID = "/{id}";
+    private static final String PROJECT_ID = "/{projectId}";
 
     // URLs for Project
     public static final String PROJECT = BASE_API_PATH + "project";
+    public static final String PROJECT_FILE = PROJECT+"/updateFile";
     public static final String PROJECT_IMPORT = PROJECT + "/import";
     public static final String PROJECTS = BASE_API_PATH + SEARCH + SLASH + "products";
     public static final String PROJECT_BY_ID = PROJECT + ID;
@@ -34,6 +36,7 @@ public final class EndpointURI {
     //URLs for modules
     public static final String MODULE = BASE_API_PATH + "module";
     public static final String MODULE_BY_ID = MODULE + ID;
+    public static final String MODULE_BY_PROJECT_ID = MODULE +"/project" +ID;
     public static final String MODULES = BASE_API_PATH + SEARCH + SLASH + "modules";
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectIdWithPagination" + ID;
     // URLs for Test Types
@@ -63,7 +66,7 @@ public final class EndpointURI {
     public static final String TEST_GROUPING_BY_TEST_CASE_ID = TEST_GROUPING + "/testCase" + ID;
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;
-    public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update" + ID;
+    public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update" + ID+PROJECT_ID;
 
     private EndpointURI() {
     }
