@@ -19,6 +19,7 @@ public interface ModulesRepository extends JpaRepository<Modules, Long>, Queryds
     boolean existsByPrefixIgnoreCaseAndProjectIdAndIdNot(String prefix, Long projectId, Long id);
 
     Page<Modules> findAllModulesByProjectId(Long projectId, Pageable pageable);
+    List<Modules> findAllModulesByProjectId(Long projectId);
 
     boolean existsByProjectId(Long id);
 }

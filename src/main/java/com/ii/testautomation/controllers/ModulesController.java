@@ -2,6 +2,7 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
+import com.ii.testautomation.dto.response.ProjectModuleResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -121,7 +122,15 @@ public class ModulesController {
         return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.MODULES, modulesResponseList,
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByProjectIdSuccessMessage(), pagination));
     }
-
+    @GetMapping(value = EndpointURI.MODULE_BY_PROJECT_ID)
+    public ResponseEntity<BaseResponse> getAllModulesByProjectId(@PathVariable Long id) {
+        if (!projectService.existByProjectId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        ProjectModuleResponse projectModuleResponse = modulesService.getAllByProjectId(id);
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES,projectModuleResponse,
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByProjectIdSuccessMessage()));
+    }
     @PostMapping(value = EndpointURI.MODULE_IMPORT)
     public ResponseEntity<Object> importModuleFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
