@@ -16,9 +16,10 @@ public class TestGrouping extends DateAudit {
     private Long id;
     private String name;
     @ManyToMany
-    @JoinColumn(name ="testCases_id", nullable = false)
+    @JoinColumn(name = "testCases_id", nullable = false)
     private List<TestCases> testCases;
     @ManyToOne
-    @JoinColumn(name ="testType_id", nullable = false)
+    @JoinColumn(name = "testType_id", nullable = false)
     private TestTypes testType;
+    private Boolean executionStatus = false;
 }

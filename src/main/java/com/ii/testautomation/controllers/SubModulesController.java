@@ -59,7 +59,7 @@ public class SubModulesController {
                     statusCodeBundle.getSubModulePrefixAlReadyExistMessage()));
         }
         subModulesService.saveSubModules(subModulesRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveSubModuleSuccessMessage()));
     }
