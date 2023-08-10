@@ -156,6 +156,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     }
 
+    @Override
+    public void updateTestGroupingExecutionStatus(Long testGroupingId) {
+        TestGrouping testGrouping=testGroupingRepository.findById(testGroupingId).get();
+        testGrouping.setExecutionStatus(true);
+        testGroupingRepository.save(testGrouping);
+    }
+
 
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId) {

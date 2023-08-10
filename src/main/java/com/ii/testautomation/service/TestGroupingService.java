@@ -39,4 +39,6 @@ public interface TestGroupingService {
     boolean existByProjectId(Long projectId);
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
+
+    void updateTestGroupingExecutionStatus(Long testGroupingId);
 }
