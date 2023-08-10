@@ -1,5 +1,6 @@
 package com.ii.testautomation.entities;
 
+import com.ii.testautomation.enums.TestGroupingExecutionStatus;
 import com.ii.testautomation.utils.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,4 +22,5 @@ public class TestGrouping extends DateAudit {
     @ManyToOne
     @JoinColumn(name ="testType_id", nullable = false)
     private TestTypes testType;
+    private Boolean executionStatus=TestGroupingExecutionStatus.FALSE.getValue();
 }

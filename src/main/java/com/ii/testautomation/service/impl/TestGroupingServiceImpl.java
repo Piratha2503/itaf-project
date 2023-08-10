@@ -8,6 +8,7 @@ import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
+import com.ii.testautomation.enums.TestGroupingExecutionStatus;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.entities.QTestGrouping;
 import com.ii.testautomation.repositories.TestCasesRepository;
@@ -156,6 +157,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         return testGroupingResponseList;
 
+    }
+
+    @Override
+    public void updateTestGroupingExecutionStatus(Long testGroupingId) {
+        TestGrouping testGrouping=testGroupingRepository.findById(testGroupingId).get();
+        testGrouping.setExecutionStatus(TestGroupingExecutionStatus.TRUE.getValue());
+        testGroupingRepository.save(testGrouping);
     }
 
 
