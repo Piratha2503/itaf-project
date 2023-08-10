@@ -85,7 +85,7 @@ public class TestCasesController {
     }
 
     @PostMapping(EndpointURI.TESTCASE_IMPORT)
-    public ResponseEntity<Object> testCaseImport(@RequestParam MultipartFile multipartFile) {
+    public ResponseEntity<Object> testCaseImport(@RequestParam MultipartFile multipartFile,@PathVariable Long id) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         Map<Integer, TestCaseRequest> testCaseRequestList;
         Set<String> testCasesNames = new HashSet<>();
@@ -95,9 +95,9 @@ public class TestCasesController {
                         statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
             }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream());
+                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(),id);
             } else if (testCasesService.hasExcelFormat(multipartFile)) {
-                testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile);
+                testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile,id);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));

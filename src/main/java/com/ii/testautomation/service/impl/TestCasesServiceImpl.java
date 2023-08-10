@@ -189,7 +189,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
+    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream,Long projectId) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
@@ -212,7 +212,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile) {
+    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile,Long projectId) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());

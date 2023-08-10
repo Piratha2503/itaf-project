@@ -3,6 +3,7 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
+import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.aspectj.weaver.ast.Test;
 import org.springframework.data.domain.Pageable;
@@ -33,9 +34,9 @@ public interface TestCasesService {
 
     boolean hasExcelFormat(MultipartFile multipartFile);
 
-    Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream);
+    Map<Integer,TestCaseRequest> csvToTestCaseRequest(InputStream inputStream,Long projectId);
 
-    Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile);
+    Map<Integer,TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile,Long projectId);
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
@@ -44,4 +45,5 @@ public interface TestCasesService {
     List<TestCaseResponse> getAllTestCasesByModuleId(Long moduleId);
     List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId);
     boolean existsTestCaseByProjectId(Long projectId);
+
 }
