@@ -44,10 +44,10 @@ public class TestCasesController {
 
     @PostMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
-        if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubmoduleId())) {
+        if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubmoduleId())) {
+        if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
         testCasesService.saveTestCase(testCaseRequest);
@@ -70,7 +70,7 @@ public class TestCasesController {
         if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getId(), testCaseRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
-        if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubmoduleId())) {
+        if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
         }
         testCasesService.saveTestCase(testCaseRequest);

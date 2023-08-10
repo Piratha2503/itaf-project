@@ -10,6 +10,6 @@ public class TestCaseRequest {
     private String name;
     private String description;
     private String subModuleName;
-    private Long submoduleId;
+    private Long subModuleId;
     private Long project_id;
 }

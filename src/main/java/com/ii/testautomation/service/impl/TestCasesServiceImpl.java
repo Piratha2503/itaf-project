@@ -35,6 +35,7 @@ import java.util.*;
 @SuppressWarnings("ALL")
 @Service
 public class TestCasesServiceImpl implements TestCasesService {
+
     @Autowired
     private TestCasesRepository testCasesRepository;
     @Autowired
@@ -44,7 +45,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     public void saveTestCase(TestCaseRequest testCaseRequest) {
 
         TestCases testCases = new TestCases();
-        SubModules subModules = subModulesRepository.findById(testCaseRequest.getSubmoduleId()).get();
+        SubModules subModules = subModulesRepository.findById(testCaseRequest.getSubModuleId()).get();
         testCases.setSubModule(subModules);
         BeanUtils.copyProperties(testCaseRequest, testCases);
         testCasesRepository.save(testCases);
@@ -201,9 +202,9 @@ public class TestCasesServiceImpl implements TestCasesService {
                 testCaseRequest.setSubModuleName(csvRecord.get("submodule_name"));
                 if (!csvRecord.get("submodule_name").isEmpty()) {
                     Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(csvRecord.get("submodule_name"), projectId).getId();
-                    testCaseRequest.setSubmoduleId(subModuleId);
+                    testCaseRequest.setSubModuleId(subModuleId);
                 } else {
-                    testCaseRequest.setSubmoduleId(null);
+                    testCaseRequest.setSubModuleId(null);
                 }
                 testCaseRequestList.put(Math.toIntExact(csvRecord.getRecordNumber() + 1), testCaseRequest);
             }
@@ -228,7 +229,7 @@ public class TestCasesServiceImpl implements TestCasesService {
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testCaseRequest.setSubModuleName(getStringCellValue(row.getCell(columnMap.get("submodule_name"))));
                 Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(getStringCellValue(row.getCell(columnMap.get("submodule_name"))), projectId).getId();
-                testCaseRequest.setSubmoduleId(subModuleId);
+                testCaseRequest.setSubModuleId(subModuleId);
                 testCaseRequest.setProject_id(projectId);
                 testCaseRequestList.put(row.getRowNum() + 1, testCaseRequest);
             }
