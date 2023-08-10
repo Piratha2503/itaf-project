@@ -1,8 +1,8 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
-import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
+import com.ii.testautomation.dto.response.ProjectModuleResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +15,9 @@ import java.util.Map;
 public interface ModulesService {
     void saveModule(ModulesRequest modulesRequest);
 
-    boolean isModuleExistsByName(String name,Long projectId);
+    boolean isModuleExistsByName(String name, Long projectId);
 
-    boolean isModuleExistsByPrefix(String prefix,Long projectId);
+    boolean isModuleExistsByPrefix(String prefix, Long projectId);
 
     boolean existsByModulesId(Long id);
 
@@ -29,7 +29,7 @@ public interface ModulesService {
 
     ModulesResponse getModuleById(Long id);
 
-    List<ModulesResponse> getAllModuleByProjectIdWithPagination(Long projectId,Pageable pageable,PaginatedContentResponse.Pagination pagination);
+    List<ModulesResponse> getAllModuleByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
     void deleteModuleById(Long id);
 
@@ -46,4 +46,6 @@ public interface ModulesService {
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
+    ProjectModuleResponse getAllByProjectId(Long projectId);
 }

@@ -1,10 +1,7 @@
 package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
-import com.ii.testautomation.dto.response.ModulesResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
-import com.ii.testautomation.entities.Modules;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
@@ -16,7 +13,6 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-import org.aspectj.weaver.ast.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -122,16 +118,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public boolean existsByTestGroupId(Long id) {
-        return testGroupingRepository.existsById(id);
-    }
-
-    @Override
     public boolean existByProjectId(Long projectId) {
         return testGroupingRepository.existsByTestCases_SubModule_MainModule_Modules_ProjectId(projectId);
     }
 
-
+    @Override
     public List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
         List<TestGrouping> testGroupings = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
@@ -161,6 +152,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         return testGroupingResponseList;
 
+    }
+
+    @Override
+    public void updateTestGroupingExecutionStatus(Long testGroupingId) {
+        TestGrouping testGrouping=testGroupingRepository.findById(testGroupingId).get();
+        testGrouping.setExecutionStatus(true);
+        testGroupingRepository.save(testGrouping);
     }
 
 

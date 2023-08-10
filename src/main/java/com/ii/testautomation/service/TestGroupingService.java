@@ -14,7 +14,7 @@ import java.util.List;
 public interface TestGroupingService {
     void saveTestGrouping(TestGroupingRequest testGroupingRequest);
 
-    public boolean existsByTestGroupingName(String testGroupingName, Long testCaseId);
+    boolean existsByTestGroupingName(String testGroupingName, Long testCaseId);
 
     boolean existsByTestGroupingId(Long testGroupingId);
 
@@ -27,8 +27,8 @@ public interface TestGroupingService {
     boolean allTestCasesInSameProject(List<Long> testCaseIds);
 
     boolean existsByTestTypesId(Long testTypeId);
-    List<TestGroupingResponse> getAllTestGroupingByTestTypeId(Long testTypeId);
 
+    List<TestGroupingResponse> getAllTestGroupingByTestTypeId(Long testTypeId);
 
     List<TestGroupingResponse> multiSearchTestGrouping(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch);
 
@@ -36,8 +36,9 @@ public interface TestGroupingService {
 
     TestGroupingResponse getTestGroupingById(Long id);
 
-    boolean existsByTestGroupId(Long id);
-
     boolean existByProjectId(Long projectId);
+
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
+
+    void updateTestGroupingExecutionStatus(Long testGroupingId);
 }
