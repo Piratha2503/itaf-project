@@ -110,6 +110,41 @@ public class TestGroupingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
 
+        @PutMapping(value = EndpointURI.TEST_GROUPING)
+    public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(required = false) List<Long> subModuleIds,
+                                                   @RequestParam(required = false) List<Long> mainModuleIds, @RequestParam(required = false) List<Long> moduleIds) throws JsonProcessingException {
+            TestGroupingRequest testGroupingRequest=objectMapper.readValue(testGrouping,TestGroupingRequest.class);
+
+
+        if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestTypesNotExistCode(),
+                    statusCodeBundle.getTestTypesNotExistsMessage()));
+        }
+        for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
+            if (!testCasesService.existsByTestCasesId(testCaseId)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+            }
+        }
+        if (!testGroupingService.allTestCasesInSameProject(testGroupingRequest.getTestCaseId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getTestCasesAndProjectNotExistsSameProjectMessage()));
+        }
+        Long testcaseId = null;
+        for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
+            testcaseId = testCaseId;
+            break;
+        }
+        if (testGroupingService.isUpdateTestGroupingNameExits(testGroupingRequest.getName(), testcaseId, testGroupingRequest.getId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+        }
+        testGroupingService.saveTestGrouping(testGroupingRequest, moduleIds, subModuleIds, mainModuleIds);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
+    }
+
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
     public ResponseEntity<Object> updateExecution(@PathVariable Long id, @PathVariable Long projectId) {
