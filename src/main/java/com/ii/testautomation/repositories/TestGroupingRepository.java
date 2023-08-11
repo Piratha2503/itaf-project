@@ -7,16 +7,20 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import java.util.List;
 
 public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long>, QuerydslPredicateExecutor<TestGrouping> {
-    boolean existsByNameIgnoreCase(String name);
+    boolean existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(String name, Long ProjectId);
 
-    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
-
-    List<TestGrouping> findAllTestGroupingByTestCasesId(Long id);
-
-    List<TestGrouping> findAllTestGroupingByTestTypeId(Long id);
+    boolean existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(String name, Long projectId, Long id);
 
     boolean existsByTestCasesId(Long id);
 
     boolean existsByTestTypeId(Long id);
+
+    List<TestGrouping> findAllTestGroupingByTestTypeId(Long testTypeId);
+
+    boolean existsByTestCases_SubModule_MainModule_Modules_ProjectId(Long projectId);
+
+    List<TestGrouping> findAllTestGroupingByTestCasesId(Long testCaseId);
+
+    List<TestGrouping> findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
 
 }

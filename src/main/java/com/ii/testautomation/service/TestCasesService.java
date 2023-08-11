@@ -4,26 +4,50 @@ import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import org.aspectj.weaver.ast.Test;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface TestCasesService {
-    public void saveTestCase(TestCaseRequest testCaseRequest);
+    void saveTestCase(TestCaseRequest testCaseRequest);
 
-    public boolean existsByTestCasesId(Long id);
+    boolean existsByTestCasesId(Long id);
 
-    public boolean existsByTestCasesName(String testCaseName);
+    boolean existsByTestCasesName(String testCaseName, Long subModulesId);
 
-    public TestCaseResponse getById(Long id);
+    TestCaseResponse getById(Long id);
 
-    public boolean isUpdateTestCaseNameExists(Long id, String name);
+    boolean isUpdateTestCaseNameExists(Long id, String name);
 
-    public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch);
+    List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch);
 
-    public List<TestCaseResponse> getAllTestCaseBySubModuleId(Long subModuleId);
+    List<TestCaseResponse> getAllTestCaseBySubModuleId(Long subModuleId);
 
-    public void DeleteTestCaseById(Long id);
+    void DeleteTestCaseById(Long id);
 
-    public boolean existsBySubModuleId(Long subModuleId);
+    boolean existsBySubModuleId(Long subModuleId);
+
+    boolean hasExcelFormat(MultipartFile multipartFile);
+
+    Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream, Long projectId);
+
+    Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile, Long projectId);
+
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
+    List<TestCaseResponse> getAllTestcasesByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
+
+    List<TestCaseResponse> getAllTestCasesByModuleId(Long moduleId);
+
+    List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId);
+
+    boolean existsTestCaseByProjectId(Long projectId);
 }

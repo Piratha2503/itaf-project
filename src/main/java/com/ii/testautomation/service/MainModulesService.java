@@ -6,37 +6,48 @@ import com.ii.testautomation.dto.search.MainModuleSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-public interface MainModulesService
-{   public void saveMainModules(MainModulesRequest mainModulesRequest);
-    public void deleteMainModules(Long id);
+public interface MainModulesService {
+    void saveMainModules(MainModulesRequest mainModulesRequest);
 
-    // Get By Functions
-    public MainModulesResponse getByMainModulesId(Long id);
-    public List<MainModulesResponse> getMainModulesByModuleId(Long id);
-    public List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch);
-    public List<MainModulesResponse> getByMainModulesName(String name);
+    void deleteMainModules(Long id);
 
-    // Check Function
-    public boolean isExistMainModulesId(Long id);
-    public boolean isExistMainModulesName(String name);
-    public boolean isExistPrefix(String prefix);
-    public boolean isExistModulesId(Long id);
-    public boolean isUpdateMainModulesNameExist(String mainModuleName, Long mainModuleId);
-    public boolean isUpdateMainModulesPrefixExist(String mainModuleprefix, Long mainModuleId);
-    public boolean isExistsSubmodulesByMainModule(Long id);
-    public boolean existsMainModuleByModuleId(Long id);
-    //public boolean existsByMainModuleId(Long id);
+    MainModulesResponse getByMainModulesId(Long id);
 
-    // Bulk Import
-    public boolean hasExcelFormat(MultipartFile multipartFile);
-    public List<MainModulesRequest> csvProcess(InputStream inputStream);
-    public List<MainModulesRequest> excelProcess(MultipartFile multipartFile);
-    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+    List<MainModulesResponse> getMainModulesByModuleId(Long id);
 
+    List<MainModulesResponse> SearchMainModulesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, MainModuleSearch mainModuleSearch);
 
+    Map<Integer, MainModulesRequest> csvProcess(InputStream inputStream);
+
+    Map<Integer, MainModulesRequest> excelProcess(MultipartFile multipartFile);
+
+    List<MainModulesResponse> getMainModulesByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long id);
+
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
+    boolean isExistMainModulesId(Long id);
+
+    boolean isExistMainModulesName(String name, Long id);
+
+    boolean isExistPrefix(String prefix, Long id);
+
+    boolean isExistModulesId(Long id);
+
+    boolean isExistMainModulesByProjectId(Long id);
+
+    boolean isUpdateMainModulesNameExist(String mainModuleName,Long mainModuleId);
+
+    boolean isUpdateMainModulesPrefixExist(String mainModuleprefix,Long mainModuleId);
+
+    boolean existsMainModuleByModuleId(Long id);
+
+    boolean hasExcelFormat(MultipartFile multipartFile);
+
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }

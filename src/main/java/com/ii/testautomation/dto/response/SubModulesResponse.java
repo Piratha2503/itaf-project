@@ -3,6 +3,8 @@ package com.ii.testautomation.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class SubModulesResponse {
@@ -10,5 +12,8 @@ public class SubModulesResponse {
     private String name;
     private String prefix;
     private String mainModuleName;
-    private String mainModulePrefix;
+    private Long mainModuleId;
+    private String moduleName;
+    private Long moduleId;
+    List<TestCaseResponse> testCaseResponses;
 }

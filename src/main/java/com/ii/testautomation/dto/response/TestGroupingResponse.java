@@ -10,9 +10,10 @@ import java.util.List;
 public class TestGroupingResponse {
     private Long id;
     private String name;
-    private String testCasesName;
-    private String testTypesName;
-    private String subModuleName;
-    private String mainModuleName;
-    private String moduleName;
+    private List<String> testCaseName;
+    private String testTypeName;
+    private List<String> subModuleName;
+    private List<String> mainModuleName;
+    private List<String> moduleName;
+
 }

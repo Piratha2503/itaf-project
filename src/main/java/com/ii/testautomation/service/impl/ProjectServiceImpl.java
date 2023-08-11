@@ -26,10 +26,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -41,17 +39,6 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
         projectRepository.save(project);
-    }
-
-    @Override
-    public void saveProjectList(List<ProjectRequest> projectRequestList) {
-        for (ProjectRequest projectRequest : projectRequestList
-        ) {
-
-            Project project = new Project();
-            BeanUtils.copyProperties(projectRequest, project);
-            projectRepository.save(project);
-        }
     }
 
     @Override
@@ -76,18 +63,20 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public boolean existByProjectId(Long projectId) {
+        if (projectId == null) {
+            return false;
+        }
         return projectRepository.existsById(projectId);
     }
 
     @Override
     public ProjectResponse getProjectById(Long projectId) {
-        Project project = projectRepository.findById(projectId).get();
+        Project project;
+        project = projectRepository.findById(projectId).get();
         ProjectResponse projectResponse = new ProjectResponse();
         BeanUtils.copyProperties(project, projectResponse);
         return projectResponse;
     }
-
-    @Override
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
@@ -98,10 +87,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
         List<ProjectResponse> projectResponseList = new ArrayList<>();
         Page<Project> projectPage = projectRepository.findAll(booleanBuilder, pageable);
-
-        pagination.setTotalRecords(projectPage.getTotalElements());
+        List<Project> projectList = projectPage.getContent();
         pagination.setPageSize(projectPage.getTotalPages());
-        for (Project project : projectPage) {
+        pagination.setTotalRecords(projectPage.getTotalElements());
+        for (Project project : projectList) {
             ProjectResponse projectResponse = new ProjectResponse();
             BeanUtils.copyProperties(project, projectResponse);
             projectResponseList.add(projectResponse);
@@ -115,21 +104,20 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectRequest> csvToProjectRequest(InputStream inputStream) {
-        List<ProjectRequest> projectRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+    public Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream) {
+        Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
             for (CSVRecord csvRecord : csvRecords) {
                 ProjectRequest projectRequest = new ProjectRequest();
-                projectRequest.setCode(csvRecord.get("Code"));
+                projectRequest.setCode(csvRecord.get("code"));
                 projectRequest.setDescription(csvRecord.get("description"));
                 projectRequest.setName(csvRecord.get("name"));
-                projectRequestList.add(projectRequest);
+                projectRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, projectRequest);
             }
-
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
@@ -148,8 +136,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
-        List<ProjectRequest> projectRequestList = new ArrayList<>();
+    public Map<Integer, ProjectRequest> excelToProjectRequest(MultipartFile multipartFile) {
+        Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -162,7 +150,7 @@ public class ProjectServiceImpl implements ProjectService {
                 projectRequest.setCode(dataFormatter.formatCellValue(row.getCell(columnMap.get("code"))));
                 projectRequest.setDescription(dataFormatter.formatCellValue(row.getCell(columnMap.get("description"))));
                 projectRequest.setName(dataFormatter.formatCellValue(row.getCell(columnMap.get("name"))));
-                projectRequestList.add(projectRequest);
+                projectRequestList.put(row.getRowNum() + 1, projectRequest);
             }
             workbook.close();
         } catch (IOException e) {
@@ -179,8 +167,44 @@ public class ProjectServiceImpl implements ProjectService {
             int columnIndex = cell.getColumnIndex();
             columnMap.put(cellValue, columnIndex);
         }
-
         return columnMap;
+    }
+
+    @Override
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row headerRow = sheet.getRow(0);
+            String[] actualHeaders = new String[headerRow.getLastCellNum()];
+            for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+                Cell cell = headerRow.getCell(i);
+                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
+            }
+            String[] expectedHeader = {"code", "name", "description"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
+            String line = reader.readLine();
+            String[] actualHeaders = line.split(",");
+            for (int i = 0; i < actualHeaders.length; i++) {
+                actualHeaders[i] = actualHeaders[i].toLowerCase();
+            }
+            String[] expectedHeader = {"code", "name", "description"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

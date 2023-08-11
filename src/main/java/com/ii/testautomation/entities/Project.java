@@ -1,21 +1,20 @@
 package com.ii.testautomation.entities;
 
+import com.ii.testautomation.utils.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
-public class Project {
+public class Project extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(length = 1500)
     private String description;
     private String code;
 

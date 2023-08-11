@@ -3,6 +3,7 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
+import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,26 +12,35 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-public interface TestTypesService
-{
-    // CRUD Functions
-    public void saveTestTypes(TestTypesRequest testTypesRequest);
-    public void deleteTestTypeById(Long id);
+public interface TestTypesService {
 
-    // Get Functions
-    public TestTypesResponse getTestTypeById(Long id);
-    public List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
+    void saveTestTypes(TestTypesRequest testTypesRequest);
 
-     // Checking Functions
-    public boolean isExistsTestTypeByName(String name);
-    public boolean isExistsTestTypeById(Long id);
-    public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
-    public boolean existsByTestTypesId(Long id);
+    void deleteTestTypeById(Long id);
 
-    // Bulk Import
-    public boolean hasExcelFormat(MultipartFile multipartFile);
-    public List<TestTypesRequest> csvProcess(InputStream inputStream);
-    public List<TestTypesRequest> excelProcess(MultipartFile multipartFile);
-    public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+    TestTypesResponse getTestTypeById(Long id);
 
+    List<TestTypesResponse> getTestTypesByProjectId(Long id);
+
+    List<TestTypesResponse> SearchTestTypesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestTypesSearch testTypesSearch);
+
+    Map<Integer, TestTypesRequest> csvProcess(InputStream inputStream);
+
+    Map<Integer, TestTypesRequest> excelProcess(MultipartFile multipartFile);
+
+    boolean isExistsTestTypeByName(String name);
+
+    boolean isExistsTestTypeById(Long id);
+
+    boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
+
+    boolean existsByTestTypesId(Long id);
+
+    boolean hasExcelFormat(MultipartFile multipartFile);
+
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }

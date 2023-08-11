@@ -2,45 +2,48 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
+import com.ii.testautomation.entities.TestGrouping;
+import com.ii.testautomation.dto.response.TestCaseResponse;
+import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 public interface TestGroupingService {
-    void saveTestGrouping(TestGroupingRequest testGroupingRequest);
+    void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<Long> moduleIds, List<Long> subModuleIds, List<Long> mainModuleIds);
+    boolean existsByTestGroupingNameModule(String name, Long moduleId);
 
-    public boolean existsByTestGroupingName(String testGroupingName);
+    boolean existsByTestGroupingNameSubModule(String name, Long subModuleId);
 
-    public boolean existsByTestGroupingId(Long testGroupingId);
+    boolean existsByTestGroupingNameMainModule(String name, Long mainModuleId);
+    boolean existsByTestGroupingName(String testGroupingName, Long testCaseId);
 
-    public boolean isUpdateTestGroupingNameExits(String testGroupingName, Long testGroupingId);
+    boolean existsByTestGroupingId(Long testGroupingId);
 
-    public TestGroupingResponse getTestGroupingById(Long testGroupingId);
+    boolean isUpdateTestGroupingNameExits(String testGroupingName, Long testCaseId, Long testGroupingId);
 
-    public List<TestGroupingResponse> getALlTestGroupingByTestCaseId(Long testCaseId);
+    void deleteTestGroupingById(Long testGroupingId);
 
-    public List<TestGroupingResponse> getALlTestGroupingByTestTypeId(Long testTypeId);
+    boolean existsByTestCasesId(Long testCaseId);
 
-    public List<TestGroupingResponse> multiSearchTestGrouping(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch);
+    boolean allTestCasesInSameProject(List<Long> testCaseIds);
 
-    public void deleteTestGroupingById(Long testGroupingId);
+    boolean existsByTestTypesId(Long testTypeId);
 
-    public boolean existsByTestCasesId(Long testCaseId);
+    List<TestGroupingResponse> getAllTestGroupingByTestTypeId(Long testTypeId);
 
-    public boolean existsByTestTypesId(Long testTypeId);
+    List<TestGroupingResponse> multiSearchTestGrouping(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch);
 
-    List<TestGroupingRequest> csvToTestGroupingRequest(InputStream inputStream);
+    List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId);
 
-    List<TestGroupingRequest> excelToTestGroupingRequest(MultipartFile multipartFile);
+    TestGroupingResponse getTestGroupingById(Long id);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean existByProjectId(Long projectId);
 
-    boolean hasCsvFormat(MultipartFile multipartFile);
+    List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
 
-    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+    void updateTestGroupingExecutionStatus(Long testGroupingId);
+
 }

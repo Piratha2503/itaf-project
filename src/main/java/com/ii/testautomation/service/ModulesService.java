@@ -2,33 +2,50 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.ModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
+import com.ii.testautomation.dto.response.ProjectModuleResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface ModulesService {
-    public void saveModule(ModulesRequest modulesRequest);
+    void saveModule(ModulesRequest modulesRequest);
 
-    public boolean isModuleExistsByName(String name);
+    boolean isModuleExistsByName(String name, Long projectId);
 
-    public boolean isModuleExistsByPrefix(String prefix);
+    boolean isModuleExistsByPrefix(String prefix, Long projectId);
 
-    public boolean existsByModulesId(Long id);
+    boolean existsByModulesId(Long id);
 
-    public boolean isUpdateModuleNameExists(String name, Long id);
+    boolean isUpdateModuleNameExists(String name, Long id);
 
-    public boolean isUpdateModulePrefixExists(String prefix, Long id);
+    boolean isUpdateModulePrefixExists(String prefix, Long id);
 
-    public List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch);
+    List<ModulesResponse> multiSearchModules(Pageable pageable, PaginatedContentResponse.Pagination pagination, ModuleSearch moduleSearch);
 
-    public ModulesResponse getModuleById(Long id);
+    ModulesResponse getModuleById(Long id);
 
-    public List<ModulesResponse> getAllModuleByProjectId(Long projectId);
+    List<ModulesResponse> getAllModuleByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
-    public void deleteModuleById(Long id);
+    void deleteModuleById(Long id);
 
-    public boolean existsModuleByProjectId(Long projectId);
+    boolean existsModuleByProjectId(Long projectId);
 
+    boolean hasExcelFormat(MultipartFile multipartFile);
+
+    Map<Integer, ModulesRequest> csvToModulesRequest(InputStream inputStream);
+
+    Map<Integer, ModulesRequest> excelToModuleRequest(MultipartFile multipartFile);
+
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
+    ProjectModuleResponse getAllByProjectId(Long projectId);
 }

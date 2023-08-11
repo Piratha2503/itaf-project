@@ -1,6 +1,4 @@
 package com.ii.testautomation.service;
-
-
 import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
@@ -14,8 +12,6 @@ import java.util.Map;
 
 public interface ProjectService {
     void saveProject(ProjectRequest projectRequest);
-
-    void saveProjectList(List<ProjectRequest> projectRequestList);
 
     boolean existByProjectName(String projectName);
 
@@ -33,13 +29,17 @@ public interface ProjectService {
 
     void deleteProject(Long projectId);
 
-    List<ProjectRequest> csvToProjectRequest(InputStream inputStream);
+    Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream);
 
-    public boolean hasExcelFormat(MultipartFile multipartFile);
+    boolean hasExcelFormat(MultipartFile multipartFile);
 
-    List<ProjectRequest> excelToProjectRequest(MultipartFile multipartFile);
+    Map<Integer, ProjectRequest> excelToProjectRequest(MultipartFile multipartFile);
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
+
+    boolean isExcelHeaderMatch(MultipartFile multipartFile);
+
+    boolean isCSVHeaderMatch(MultipartFile multipartFile);
 }
 
 

@@ -6,6 +6,7 @@ import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.entities.MainModules;
 import com.ii.testautomation.entities.QSubModules;
 import com.ii.testautomation.entities.SubModules;
+import com.ii.testautomation.repositories.MainModulesRepository;
 import com.ii.testautomation.repositories.SubModulesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SubModulesService;
@@ -27,15 +28,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
+@SuppressWarnings("ALL")
 @Service
 public class SubModulesServiceImpl implements SubModulesService {
+
     @Autowired
     private SubModulesRepository subModulesRepository;
+    @Autowired
+    private MainModulesRepository mainModulesRepository;
 
     @Override
     public void saveSubModules(SubModulesRequest subModulesRequest) {
@@ -48,23 +51,27 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
 
     @Override
-    public boolean existsBySubModulesName(String subModuleName) {
-        return subModulesRepository.existsByNameIgnoreCase(subModuleName);
+    public boolean existsBySubModulesName(String subModuleName, Long mainModuleId) {
+        Long projectId = mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName, projectId);
     }
 
     @Override
-    public boolean existsBySubModulesPrefix(String subModulePrefix) {
-        return subModulesRepository.existsByPrefixIgnoreCase(subModulePrefix);
+    public boolean existsBySubModulesPrefix(String subModulePrefix, Long mainModuleId) {
+        Long projectId = mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
+        return subModulesRepository.existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectId(subModulePrefix, projectId);
     }
 
     @Override
     public boolean isUpdateSubModuleNameExits(String subModuleName, Long subModuleId) {
-        return subModulesRepository.existsByNameIgnoreCaseAndIdNot(subModuleName, subModuleId);
+        Long projectId = subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
+        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectIdAndIdNot(subModuleName, projectId, subModuleId);
     }
 
     @Override
     public boolean isUpdateSubModulePrefixExits(String subModulePrefix, Long subModuleId) {
-        return subModulesRepository.existsByPrefixIgnoreCaseAndIdNot(subModulePrefix, subModuleId);
+        Long projectId = subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
+        return subModulesRepository.existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectIdAndIdNot(subModulePrefix, projectId, subModuleId);
     }
 
     @Override
@@ -77,7 +84,9 @@ public class SubModulesServiceImpl implements SubModulesService {
         SubModules subModules = subModulesRepository.findById(subModuleId).get();
         SubModulesResponse subModulesResponse = new SubModulesResponse();
         subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-        subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+        subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
+        subModulesResponse.setModuleId(subModules.getMainModule().getModules().getId());
+        subModulesResponse.setMainModuleId(subModules.getMainModule().getId());
         BeanUtils.copyProperties(subModules, subModulesResponse);
         return subModulesResponse;
     }
@@ -89,8 +98,10 @@ public class SubModulesServiceImpl implements SubModulesService {
         for (SubModules subModules : subModulesList
         ) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
-            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
+            subModulesResponse.setModuleId(subModules.getMainModule().getModules().getId());
+            subModulesResponse.setMainModuleId(subModules.getMainModule().getId());
             BeanUtils.copyProperties(subModules, subModulesResponse);
             subModulesResponseList.add(subModulesResponse);
         }
@@ -107,22 +118,51 @@ public class SubModulesServiceImpl implements SubModulesService {
             booleanBuilder.and(QSubModules.subModules.mainModule.prefix.containsIgnoreCase(subModuleSearch.getMainModulePrefix()));
         }
         if (Utils.isNotNullAndEmpty(subModuleSearch.getName())) {
-            booleanBuilder.and(QSubModules.subModules.name.eq(subModuleSearch.getName()));
+            booleanBuilder.and(QSubModules.subModules.name.containsIgnoreCase(subModuleSearch.getName()));
         }
         if (Utils.isNotNullAndEmpty(subModuleSearch.getPrefix())) {
-            booleanBuilder.and(QSubModules.subModules.prefix.eq(subModuleSearch.getPrefix()));
+            booleanBuilder.and(QSubModules.subModules.prefix.containsIgnoreCase(subModuleSearch.getPrefix()));
         }
-
+        if (Utils.isNotNullAndEmpty(subModuleSearch.getModuleName())) {
+            booleanBuilder.and(QSubModules.subModules.mainModule.modules.name.containsIgnoreCase(subModuleSearch.getModuleName()));
+        }
+        if (Utils.isNotNullAndEmpty(subModuleSearch.getModulePrefix())) {
+            booleanBuilder.and(QSubModules.subModules.mainModule.modules.prefix.containsIgnoreCase(subModuleSearch.getModulePrefix()));
+        }
         List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
         Page<SubModules> subModulesPage = subModulesRepository.findAll(booleanBuilder, pageable);
-
+//        Collections.sort(subModulesPage.toList(),Comparator.comparing(SubModules::getCreatedAt));
         pagination.setTotalRecords(subModulesPage.getTotalElements());
         pagination.setPageSize(subModulesPage.getTotalPages());
+
         for (SubModules subModules : subModulesPage) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
-            subModulesResponse.setMainModulePrefix(subModules.getMainModule().getPrefix());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
+            subModulesResponse.setModuleId(subModules.getMainModule().getModules().getId());
+            subModulesResponse.setMainModuleId(subModules.getMainModule().getId());
             BeanUtils.copyProperties(subModules, subModulesResponse);
+            subModulesResponseList.add(subModulesResponse);
+        }
+        return subModulesResponseList;
+    }
+
+    @Override
+    public List<SubModulesResponse> getSubModulesByProjectIdWithPagination(Long id, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
+
+        Page<SubModules> subModulesPage = subModulesRepository.findByMainModule_Modules_Project_Id(id, pageable);
+        pagination.setTotalRecords(subModulesPage.getTotalElements());
+        pagination.setPageSize(subModulesPage.getTotalPages());
+
+        for (SubModules subModules : subModulesPage) {
+            SubModulesResponse subModulesResponse = new SubModulesResponse();
+            BeanUtils.copyProperties(subModules, subModulesResponse);
+            subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
+            subModulesResponse.setModuleId(subModules.getMainModule().getModules().getId());
+            subModulesResponse.setMainModuleId(subModules.getMainModule().getId());
+            subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             subModulesResponseList.add(subModulesResponse);
         }
         return subModulesResponseList;
@@ -139,9 +179,24 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
 
     @Override
-    public List<SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
-        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+    public boolean existsByProjectId(Long projectId) {
+        return subModulesRepository.existsByMainModule_Modules_ProjectId(projectId);
+    }
+
+    @Override
+    public Long getSubModuleIdByNameForProject(String subModuleName, Long projectId) {
+        return subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName, projectId).getId();
+    }
+
+    @Override
+    public boolean existsBySubModulesNameForProject(String subModuleName, Long projectId) {
+        return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName, projectId);
+    }
+
+    @Override
+    public Map<Integer, SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
+        Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -150,8 +205,12 @@ public class SubModulesServiceImpl implements SubModulesService {
                 SubModulesRequest subModulesRequest = new SubModulesRequest();
                 subModulesRequest.setName(csvRecord.get("name"));
                 subModulesRequest.setPrefix(csvRecord.get("prefix"));
-                subModulesRequest.setMain_module_Id(Long.parseLong(csvRecord.get("main_module_id")));
-                subModulesRequestList.add(subModulesRequest);
+                if (!csvRecord.get("main_module_id").isEmpty()) {
+                    subModulesRequest.setMain_module_Id(Long.parseLong(csvRecord.get("main_module_id")));
+                } else {
+                    subModulesRequest.setMain_module_Id(null);
+                }
+                subModulesRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, subModulesRequest);
             }
 
         } catch (IOException e) {
@@ -172,12 +231,11 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
 
     @Override
-    public List<SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile) {
-        List<SubModulesRequest> subModulesRequestList = new ArrayList<>();
+    public Map<Integer, SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile) {
+        Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
-            DataFormatter dataFormatter = new DataFormatter();
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> columnMap = getColumnMap(headerRow);
             for (Row row : sheet) {
@@ -186,13 +244,50 @@ public class SubModulesServiceImpl implements SubModulesService {
                 subModulesRequest.setMain_module_Id(getLongCellValue(row.getCell(columnMap.get("main_module_id"))));
                 subModulesRequest.setPrefix(getStringCellValue(row.getCell(columnMap.get("prefix"))));
                 subModulesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
-                subModulesRequestList.add(subModulesRequest);
+                subModulesRequestList.put(row.getRowNum() + 1, subModulesRequest);
             }
             workbook.close();
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse Excel file: " + e.getMessage());
         }
         return subModulesRequestList;
+    }
+
+    @Override
+    public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row headerRow = sheet.getRow(0);
+            String[] actualHeaders = new String[headerRow.getLastCellNum()];
+            for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+                Cell cell = headerRow.getCell(i);
+                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
+            }
+            String[] expectedHeader = {"name", "prefix", "main_module_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()))) {
+            String line = reader.readLine();
+            String[] actualHeaders = line.split(",");
+            for (int i = 0; i < actualHeaders.length; i++) {
+                actualHeaders[i] = actualHeaders[i].toLowerCase();
+            }
+            String[] expectedHeader = {"name", "prefix", "main_module_id"};
+            Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String getStringCellValue(Cell cell) {
