@@ -77,8 +77,9 @@ public class TestCasesServiceImpl implements TestCasesService {
         testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
         testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
         testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-        BeanUtils.copyProperties(testCases, testCaseResponse);
-
+        testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+        testCaseResponse.setId(testCases.getId());
+        testCaseResponse.setDescription(testCases.getDescription());
         return testCaseResponse;
     }
 
@@ -142,7 +143,9 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-            BeanUtils.copyProperties(testCases, testCaseResponse);
+            testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+            testCaseResponse.setId(testCases.getId());
+            testCaseResponse.setDescription(testCases.getDescription());
             testCaseResponseList.add(testCaseResponse);
         }
         return testCaseResponseList;
@@ -301,7 +304,9 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-            BeanUtils.copyProperties(testCases, testCaseResponse);
+            testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+            testCaseResponse.setId(testCases.getId());
+            testCaseResponse.setDescription(testCases.getDescription());
             testCaseResponseList.add(testCaseResponse);
         }
         return testCaseResponseList;
