@@ -1,18 +1,18 @@
 package com.ii.testautomation.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.search.ProjectSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
-import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
-import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +21,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.*;
 
 @RestController
 @CrossOrigin
 public class ProjectController {
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -35,8 +37,9 @@ public class ProjectController {
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(value = EndpointURI.PROJECT)
-    public ResponseEntity<Object> saveProject(@RequestBody ProjectRequest projectRequest) {
-
+    public ResponseEntity<Object> saveProject(@RequestParam String project,
+                                              @RequestParam(value = "multiPartFile", required = false) MultipartFile multiPartFile) throws JsonProcessingException {
+        ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
         if (projectService.existByProjectName(projectRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectAlReadyExistCode(),
@@ -47,79 +50,42 @@ public class ProjectController {
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
-        projectService.saveProject(projectRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSaveProjectSuccessMessage()));
-    }
-
-    @PostMapping(value = EndpointURI.PROJECT_IMPORT)
-    public ResponseEntity<Object> importProjectFile(@RequestParam MultipartFile multipartFile) {
-        Map<String, List<Integer>> errorMessages = new HashMap<>();
-        Map<Integer, ProjectRequest> projectRequestList;
-        Set<String> projectNames = new HashSet<>();
-        Set<String> projectCodes = new HashSet<>();
         try {
-            if (!projectService.isCSVHeaderMatch(multipartFile) && !projectService.isExcelHeaderMatch(multipartFile)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-            }
-            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-                projectRequestList = projectService.csvToProjectRequest(multipartFile.getInputStream());
-            } else if (projectService.hasExcelFormat(multipartFile)) {
-                projectRequestList = projectService.excelToProjectRequest(multipartFile);
-            } else {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
-            }
-            for (Map.Entry<Integer, ProjectRequest> entry : projectRequestList.entrySet()) {
-                if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameEmptyMessage(), entry.getKey());
-                } else if (projectNames.contains(entry.getValue().getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameDuplicateMessage(), entry.getKey());
-                } else {
-                    projectNames.add(entry.getValue().getName());
-                }
-                if (!Utils.isNotNullAndEmpty(entry.getValue().getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeEmptyMessage(), entry.getKey());
-                } else if (projectCodes.contains(entry.getValue().getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeDuplicateMessage(), entry.getKey());
-                } else {
-                    projectCodes.add(entry.getValue().getCode());
-                }
-                if (!Utils.isNotNullAndEmpty(entry.getValue().getDescription())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectDescriptionEmptyMessage(), entry.getKey());
-                }
-                if (projectService.existByProjectName(entry.getValue().getName())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectNameAlReadyExistMessage(), entry.getKey());
-                }
-                if (projectService.existByProjectCode(entry.getValue().getCode())) {
-                    projectService.addToErrorMessages(errorMessages, statusCodeBundle.getProjectCodeAlReadyExistMessage(), entry.getKey());
-                }
-            }
-            if (!errorMessages.isEmpty()) {
-                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getProjectFileImportValidationMessage(),
-                        errorMessages));
-            } else if (projectRequestList.isEmpty()) {
+            String filename = multiPartFile.getOriginalFilename();
+            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
+            if (!"jar".equalsIgnoreCase(fileExtension)) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(), statusCodeBundle.getProjectFileEmptyMessage()));
-            } else {
-                for (Map.Entry<Integer, ProjectRequest> entry : projectRequestList.entrySet()) {
-                    projectService.saveProject(entry.getValue());
-                }
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                        statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getSaveProjectSuccessMessage()));
+                        statusCodeBundle.getFileFailureCode(),
+                        statusCodeBundle.getFileFailureMessage()));
             }
+            String uploadedFilePath = null;
+            if (multiPartFile != null && !multiPartFile.isEmpty()) {
+                String directoryPath = "D:\\UploadedJar";
+                File directory = new File(directoryPath);
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+                uploadedFilePath = directoryPath + File.separator + multiPartFile.getOriginalFilename();
+                File savedJarFile = new File(uploadedFilePath);
+                multiPartFile.transferTo(savedJarFile);
+            }
+            projectService.saveProject(projectRequest, uploadedFilePath);
+
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                    statusCodeBundle.getCommonSuccessCode(),
+                    statusCodeBundle.getSaveProjectSuccessMessage()));
         } catch (IOException e) {
+            e.printStackTrace();
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getSaveProjectValidationMessage()));
+                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()
+            ));
         }
     }
 
     @PutMapping(value = EndpointURI.PROJECT)
-    public ResponseEntity<Object> editProject(@RequestBody ProjectRequest projectRequest) {
+    public ResponseEntity<Object> editProject(@RequestParam String project,
+                                              @RequestParam(value = "multiPartFile", required = false) MultipartFile multiPartFile) throws JsonProcessingException {
+        ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
         if (!projectService.existByProjectId(projectRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(),
@@ -135,14 +101,38 @@ public class ProjectController {
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectNameAlReadyExistMessage()));
         }
+        try {
+            String uploadedFilePath = null;
+            String filename = multiPartFile.getOriginalFilename();
+            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
+            if (!"jar".equalsIgnoreCase(fileExtension)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(),
+                        statusCodeBundle.getFileFailureMessage()));
+            }
+            if (multiPartFile != null && !multiPartFile.isEmpty()) {
+                String directoryPath = "D:\\UploadedJar";
+                File directory = new File(directoryPath);
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+                uploadedFilePath = directoryPath + File.separator + multiPartFile.getOriginalFilename();
+                File savedJarFile = new File(uploadedFilePath);
+                multiPartFile.transferTo(savedJarFile);
+            }
+            projectService.saveProject(projectRequest, uploadedFilePath);
 
-        projectService.saveProject(projectRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getUpdateProjectSuccessMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                    statusCodeBundle.getCommonSuccessCode(),
+                    statusCodeBundle.getUpdateProjectSuccessMessage()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()
+            ));
+        }
 
     }
-
 
     @GetMapping(value = EndpointURI.PROJECTS)
     public ResponseEntity<Object> getALlProjects(@RequestParam(name = "page") int page,
@@ -189,7 +179,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteProjectSuccessMessage()
         ));
     }
-
 }
 
 

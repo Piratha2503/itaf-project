@@ -112,18 +112,22 @@ public class TestGroupingController {
 
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
-    public ResponseEntity<Object> updateExecution(@PathVariable Long id) {
+    public ResponseEntity<Object> updateExecution(@PathVariable Long id, @PathVariable Long projectId) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        testGroupingService.updateTestGroupingExecutionStatus(id);
+        if(!projectService.existByProjectId(projectId))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()
+            ));
+        }
+        testGroupingService.updateTestGroupingExecutionStatus(id, projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode() ,
+                statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
-
     @GetMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> getAllWithMultiSearch(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, TestGroupingSearch testGroupingSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);

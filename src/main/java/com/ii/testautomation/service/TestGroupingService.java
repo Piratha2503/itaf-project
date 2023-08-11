@@ -44,6 +44,5 @@ public interface TestGroupingService {
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
 
-    void updateTestGroupingExecutionStatus(Long testGroupingId);
-
+    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId);
 }

@@ -17,5 +17,6 @@ public class Project extends DateAudit {
     @Column(length = 1500)
     private String description;
     private String code;
+    private String jarFilePath;
 
 }
