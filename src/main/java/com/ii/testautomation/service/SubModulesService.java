@@ -1,6 +1,7 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.SubModulesRequest;
+import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.SubModulesResponse;
 import com.ii.testautomation.dto.search.SubModuleSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -49,4 +50,8 @@ public interface SubModulesService {
     List<SubModulesResponse> getSubModulesByProjectIdWithPagination(Long id, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
     boolean existsByProjectId(Long projectId);
+
+    Long getSubModuleIdByNameForProject(String subModuleName, Long projectId);
+
+    boolean existsBySubModulesNameForProject(String subModuleName, Long projectId);
 }

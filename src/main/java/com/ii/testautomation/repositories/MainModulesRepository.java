@@ -23,9 +23,5 @@ public interface MainModulesRepository extends JpaRepository<MainModules, Long>,
 
     List<MainModules> findAllByModulesId(Long id);
 
-    List<MainModules> findAllByNameIgnoreCase(String name);
-
-    MainModules findByModulesId(Long id);
-
     boolean existsByModules_ProjectId(Long id);
 }

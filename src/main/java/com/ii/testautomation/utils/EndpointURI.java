@@ -52,7 +52,7 @@ public final class EndpointURI {
     public static final String TESTCASE_BY_ID = TESTCASE + ID;
     public static final String TESTCASES = BASE_API_PATH + SEARCH + SLASH + "testcases";
     public static final String TESTCASES_BY_ID = BASE_API_PATH + "TestCaseBySubModuleId" + ID;
-    public static final String TESTCASE_IMPORT= TESTCASE+"/import";
+    public static final String TESTCASE_IMPORT= TESTCASE+"/import"+ID;
     public static final String TESTCASE_BY_PROJECT_ID = BASE_API_PATH+"TestCaseByProjectIdWithPagination"+ID;
     public static final String TESTCASE_BY_MODULE_ID = BASE_API_PATH+"TestCaseByModuleId"+ID;
 
