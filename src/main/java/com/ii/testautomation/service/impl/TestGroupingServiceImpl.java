@@ -81,6 +81,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             }
             testGrouping.setTestCases(testCasesList);
         }
+        if(testGroupingRequest.getId()!=null){
+            testGroupingRepository.deleteById(testGroupingRequest.getId());
+        }
         testGroupingRepository.save(testGrouping);
     }
     @Override
