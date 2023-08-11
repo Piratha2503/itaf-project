@@ -10,6 +10,7 @@ import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
+import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Utils;
@@ -18,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private TestCasesRepository testCasesRepository;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private TestTypesRepository testTypesRepository;
     @Override
     public void saveTestGrouping(TestGroupingRequest testGroupingRequest) {
         TestGrouping testGrouping = new TestGrouping();

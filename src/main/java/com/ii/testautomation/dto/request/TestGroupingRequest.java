@@ -12,4 +12,8 @@ public class TestGroupingRequest {
     private String name;
     private List<Long> testCaseId;
     private Long testTypeId;
+    private List<Long> moduleId;
+    private List<Long> mainModuleId;
+    private List<Long> subModuleId;
+
 }
