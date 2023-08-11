@@ -167,7 +167,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGroupingRepository.save(testGrouping);
     }
 
-
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
