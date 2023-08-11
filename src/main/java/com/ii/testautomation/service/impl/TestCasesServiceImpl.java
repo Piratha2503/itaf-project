@@ -190,7 +190,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
+    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream, Long projectId) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
@@ -227,7 +227,10 @@ public class TestCasesServiceImpl implements TestCasesService {
                 TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
-                testCaseRequest.setSubModuleId(getLongCellValue(row.getCell(columnMap.get("submodule_id"))));
+                testCaseRequest.setSubModuleName(getStringCellValue(row.getCell(columnMap.get("submodule_name"))));
+                Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(getStringCellValue(row.getCell(columnMap.get("submodule_name"))), projectId).getId();
+                testCaseRequest.setSubModuleId(subModuleId);
+                testCaseRequest.setProject_id(projectId);
                 testCaseRequestList.put(row.getRowNum() + 1, testCaseRequest);
             }
             workbook.close();

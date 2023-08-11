@@ -1,9 +1,5 @@
 package com.ii.testautomation.controllers;
 
-import com.ii.testautomation.entities.TestCases;
-import com.ii.testautomation.response.common.ContentResponse;
-import com.ii.testautomation.service.ProjectService;
-import com.ii.testautomation.utils.Constants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
@@ -21,17 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
-import com.ii.testautomation.dto.request.TestGroupingRequest;
-import com.ii.testautomation.enums.RequestStatus;
-import com.ii.testautomation.response.common.BaseResponse;
-import com.ii.testautomation.service.TestCasesService;
-import com.ii.testautomation.service.TestGroupingService;
-import com.ii.testautomation.service.TestTypesService;
-import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.StatusCodeBundle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +46,7 @@ public class TestGroupingController {
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(required = false) List<Long> subModuleIds,
-                                                   @RequestParam(required = false) List<Long> mainModuleIds, @RequestParam(required = false) List<Long> moduleIds) throws JsonProcessingException {
+                                                   @RequestParam(required = false) List<Long> mainModuleIds, @RequestParam(required = false) List<Long> moduleIds) throws JsonProcessingException, JsonProcessingException {
 
         TestGroupingRequest testGroupingRequest=objectMapper.readValue(testGrouping,TestGroupingRequest.class);
         Long ProjectIdFindId = null;
@@ -125,41 +110,6 @@ public class TestGroupingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
 
-//    @PutMapping(value = EndpointURI.TEST_GROUPING)
-//    public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
-//        if (!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                    statusCodeBundle.getTestGroupingNotExistCode(),
-//                    statusCodeBundle.getTestGroupingNotExistsMessage()));
-//        }
-//        if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-//                    statusCodeBundle.getTestTypesNotExistCode(),
-//                    statusCodeBundle.getTestTypesNotExistsMessage()));
-//        }
-//        for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
-//            if (!testCasesService.existsByTestCasesId(testCaseId)) {
-//                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
-//            }
-//        }
-//        if (!testGroupingService.allTestCasesInSameProject(testGroupingRequest.getTestCaseId())) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-//                    statusCodeBundle.getFailureCode(),
-//                    statusCodeBundle.getTestCasesAndProjectNotExistsSameProjectMessage()));
-//        }
-//        Long testcaseId = null;
-//        for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
-//            testcaseId = testCaseId;
-//            break;
-//        }
-//        if (testGroupingService.isUpdateTestGroupingNameExits(testGroupingRequest.getName(), testcaseId, testGroupingRequest.getId())) {
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
-//        }
-//        testGroupingService.saveTestGrouping(testGroupingRequest);
-//        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-//                statusCodeBundle.getCommonSuccessCode(),
-//                statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
-//    }
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
     public ResponseEntity<Object> updateExecution(@PathVariable Long id) {
@@ -170,7 +120,7 @@ public class TestGroupingController {
         }
         testGroupingService.updateTestGroupingExecutionStatus(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getCommonSuccessCode() ,
                 statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
 
@@ -180,6 +130,7 @@ public class TestGroupingController {
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingService.multiSearchTestGrouping(pageable, pagination, testGroupingSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestGroupingSuccessMessage()));
     }
+
 
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_TYPE_ID)
     public ResponseEntity<BaseResponse> getAllTestGroupingByTestTypeId(@PathVariable Long id) {
@@ -250,6 +201,5 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
-
 
 }

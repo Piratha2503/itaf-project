@@ -3,7 +3,6 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
-import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.aspectj.weaver.ast.Test;
 import org.springframework.data.domain.Pageable;
