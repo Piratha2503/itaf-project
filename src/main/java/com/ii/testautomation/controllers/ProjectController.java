@@ -51,6 +51,13 @@ public class ProjectController {
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
         try {
+            String filename = multiPartFile.getOriginalFilename();
+            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
+            if (!"jar".equalsIgnoreCase(fileExtension)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(),
+                        statusCodeBundle.getFileFailureMessage()));
+            }
             String uploadedFilePath = null;
             if (multiPartFile != null && !multiPartFile.isEmpty()) {
                 String directoryPath = "D:\\UploadedJar";
@@ -96,6 +103,13 @@ public class ProjectController {
         }
         try {
             String uploadedFilePath = null;
+            String filename = multiPartFile.getOriginalFilename();
+            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
+            if (!"jar".equalsIgnoreCase(fileExtension)) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFileFailureCode(),
+                        statusCodeBundle.getFileFailureMessage()));
+            }
             if (multiPartFile != null && !multiPartFile.isEmpty()) {
                 String directoryPath = "D:\\UploadedJar";
                 File directory = new File(directoryPath);
@@ -166,7 +180,3 @@ public class ProjectController {
         ));
     }
 }
-
-
-
-

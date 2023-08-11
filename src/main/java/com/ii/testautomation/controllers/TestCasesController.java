@@ -87,7 +87,6 @@ public class TestCasesController {
     @PostMapping(EndpointURI.TESTCASE_IMPORT)
     public ResponseEntity<Object> testCaseImport(@PathVariable Long id,@RequestParam MultipartFile multipartFile) {
         Long projectId = id;
-    public ResponseEntity<Object> testCaseImport(@RequestParam MultipartFile multipartFile,@PathVariable Long id) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         Map<Integer, TestCaseRequest> testCaseRequestList;
         Set<String> testCasesNames = new HashSet<>();
@@ -98,21 +97,8 @@ public class TestCasesController {
             }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                 testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(),projectId);
-                if (!testCasesService.isCSVHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    testCaseRequestList= testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(),id);
-                }
             } else if (testCasesService.hasExcelFormat(multipartFile)) {
                 testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile,projectId);
-                if (!testCasesService.isExcelHeaderMatch(multipartFile)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-                } else {
-                    testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile,id);
-                }
-//            if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-//                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(), id);
-//            }
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
@@ -127,9 +113,9 @@ public class TestCasesController {
                 }
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getSubModuleName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(), entry.getKey());
-                } else if (!subModulesService.isUpdateSubModuleNameExits(entry.getValue().getSubModuleName(),projectId)) {
+                } else if (!subModulesService.existsBySubModulesNameForProject(entry.getValue().getSubModuleName(),projectId)) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNotExistsMessage(), entry.getKey());
-                } else if (testCasesService.existsByTestCasesName(entry.getValue().getName(), entry.getValue().getSubModuleId())) {
+                } else if (testCasesService.existsByTestCasesName(entry.getValue().getName(),subModulesService.getSubModuleIdByNameForProject(entry.getValue().getSubModuleName(),projectId))) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), entry.getKey());
                 }
             }
