@@ -108,6 +108,11 @@ public class TestGroupingController {
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
+        if(!projectService.existByProjectId(projectId))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()
+                    ));
+        }
         testGroupingService.updateTestGroupingExecutionStatus(id, projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
