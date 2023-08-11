@@ -29,4 +29,8 @@ public interface SubModulesRepository extends JpaRepository<SubModules, Long>, Q
 
 
 
+    Long findIdByNameIgnoreCaseAndMainModule_Modules_ProjectId(String subModuleName, Long projectId);
+
+    SubModules findByNameIgnoreCaseAndMainModule_Modules_ProjectId(String subModuleName, Long projectId);
+
 }

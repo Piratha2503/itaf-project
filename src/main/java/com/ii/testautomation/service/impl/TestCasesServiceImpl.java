@@ -35,6 +35,7 @@ import java.util.*;
 @SuppressWarnings("ALL")
 @Service
 public class TestCasesServiceImpl implements TestCasesService {
+
     @Autowired
     private TestCasesRepository testCasesRepository;
     @Autowired
@@ -42,9 +43,9 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public void saveTestCase(TestCaseRequest testCaseRequest) {
+
         TestCases testCases = new TestCases();
-        SubModules subModules = new SubModules();
-        subModules.setId(testCaseRequest.getSubModuleId());
+        SubModules subModules = subModulesRepository.findById(testCaseRequest.getSubModuleId()).get();
         testCases.setSubModule(subModules);
         BeanUtils.copyProperties(testCaseRequest, testCases);
         testCasesRepository.save(testCases);
@@ -189,7 +190,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream,Long projectId) {
+    public Map<Integer, TestCaseRequest> csvToTestCaseRequest(InputStream inputStream) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
@@ -198,9 +199,9 @@ public class TestCasesServiceImpl implements TestCasesService {
                 TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(csvRecord.get("description"));
                 testCaseRequest.setName(csvRecord.get("name"));
-                String subModuleName = csvRecord.get("submodule_Name");
-                if (!csvRecord.get("submodule_Name").isEmpty()) {
-                    Long subModuleId=subModulesRepository.findIdByNameAndMainModuleModulesProjectId(subModuleName,projectId);
+                testCaseRequest.setSubModuleName(csvRecord.get("submodule_name"));
+                if (!csvRecord.get("submodule_name").isEmpty()) {
+                    Long subModuleId = subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(csvRecord.get("submodule_name"), projectId).getId();
                     testCaseRequest.setSubModuleId(subModuleId);
                 } else {
                     testCaseRequest.setSubModuleId(null);
@@ -214,7 +215,7 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile,Long projectId) {
+    public Map<Integer, TestCaseRequest> excelToTestCaseRequest(MultipartFile multipartFile, Long projectId) {
         Map<Integer, TestCaseRequest> testCaseRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
@@ -226,9 +227,7 @@ public class TestCasesServiceImpl implements TestCasesService {
                 TestCaseRequest testCaseRequest = new TestCaseRequest();
                 testCaseRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
                 testCaseRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
-                String subModuleName=getStringCellValue(row.getCell(columnMap.get("submodule_Name")));
-                 Long subModuleId =subModulesRepository.findIdByNameAndMainModuleModulesProjectId(subModuleName,projectId);
-               testCaseRequest.setSubModuleId(subModuleId);
+                testCaseRequest.setSubModuleId(getLongCellValue(row.getCell(columnMap.get("submodule_id"))));
                 testCaseRequestList.put(row.getRowNum() + 1, testCaseRequest);
             }
             workbook.close();
@@ -237,28 +236,26 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return testCaseRequestList;
     }
+
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
         try (InputStream inputStream = multipartFile.getInputStream();
              Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
-            Set<String> actualHeaders = new HashSet<>();
-
+            String[] actualHeaders = new String[headerRow.getLastCellNum()];
             for (int i = 0; i < headerRow.getLastCellNum(); i++) {
                 Cell cell = headerRow.getCell(i);
-                actualHeaders.add(cell.getStringCellValue().toLowerCase());
+                actualHeaders[i] = cell.getStringCellValue().toLowerCase();
             }
-
-            String[] expectedHeader = {"description", "name", "submodule_Name"};
+            String[] expectedHeader = {"description", "name", "submodule_name"};
             Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
-
-            return actualHeaders.containsAll(expectedHeaderSet);
+            Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
+            return expectedHeaderSet.equals(actualHeaderSet);
         } catch (Exception e) {
             return false;
         }
     }
-
 
     @Override
     public boolean isCSVHeaderMatch(MultipartFile multipartFile) {
@@ -268,7 +265,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             for (int i = 0; i < actualHeaders.length; i++) {
                 actualHeaders[i] = actualHeaders[i].toLowerCase();
             }
-            String[] expectedHeader = {"description", "name", "submodule_Name"};
+            String[] expectedHeader = {"description", "name", "submodule_name"};
             Set<String> expectedHeaderSet = new HashSet<>(Arrays.asList(expectedHeader));
             Set<String> actualHeaderSet = new HashSet<>(Arrays.asList(actualHeaders));
             return expectedHeaderSet.equals(actualHeaderSet);

@@ -1,5 +1,9 @@
 package com.ii.testautomation.controllers;
 
+import com.ii.testautomation.entities.TestCases;
+import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.service.ProjectService;
+import com.ii.testautomation.utils.Constants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
@@ -17,6 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
+import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.enums.RequestStatus;
+import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.service.TestCasesService;
+import com.ii.testautomation.service.TestGroupingService;
+import com.ii.testautomation.service.TestTypesService;
+import com.ii.testautomation.utils.EndpointURI;
+import com.ii.testautomation.utils.StatusCodeBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,21 +84,12 @@ public class TestGroupingController {
             }
         }
 
-        if (moduleIds != null) {
-            for (Long moduleId : moduleIds) {
-                if (!modulesService.existsByModulesId(moduleId)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                            statusCodeBundle.getModuleNotExistsCode(),
-                            statusCodeBundle.getModuleNotExistsMessage()));
-                }
-                if (projectIdFind == 1) {
-                    ProjectIdFindId = moduleId;
-                    projectIdFind++;
-                }
-            }
-            if (testGroupingService.existsByTestGroupingNameModule(testGroupingRequest.getName(), ProjectIdFindId)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
-            }
+    @PutMapping(value = EndpointURI.TEST_GROUPING)
+    public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
+        if (!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestGroupingNotExistCode(),
+                    statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
         if (subModuleIds != null) {
             for (Long subModuleId : subModuleIds
@@ -182,7 +188,6 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingService.multiSearchTestGrouping(pageable, pagination, testGroupingSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestGroupingSuccessMessage()));
     }
 
-
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_TYPE_ID)
     public ResponseEntity<BaseResponse> getAllTestGroupingByTestTypeId(@PathVariable Long id) {
         if (!testTypesService.existsByTestTypesId(id)) {
@@ -252,4 +257,6 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
+
+
 }
