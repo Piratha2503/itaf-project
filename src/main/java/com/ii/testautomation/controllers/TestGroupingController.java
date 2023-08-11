@@ -84,13 +84,6 @@ public class TestGroupingController {
             }
         }
 
-    @PutMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> editTestGrouping(@RequestBody TestGroupingRequest testGroupingRequest) {
-        if (!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestGroupingNotExistCode(),
-                    statusCodeBundle.getTestGroupingNotExistsMessage()));
-        }
         if (subModuleIds != null) {
             for (Long subModuleId : subModuleIds
             ) {
