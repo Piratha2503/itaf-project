@@ -204,7 +204,7 @@ public class TestGroupingController {
                                             @RequestParam(name = "subModuleId",required = false) List<Long> subModuleId,
                                             @RequestParam(name = "mainModuleId",required = false) List<Long> mainModuleId,
                                             @RequestParam(name = "moduleId",required = false) List<Long> moduleId,
-                                            @RequestParam(name = "testCaseId",required = false) List<TestCases> testCasesList)
+                                            @RequestParam(name = "testCaseId",required = false) List<Long> testCasesList)
     {
         TestGroupingRequest testGroupingRequest = new TestGroupingRequest();
         if (moduleId == null) testGroupingRequest.setModuleId(null);
@@ -214,7 +214,6 @@ public class TestGroupingController {
         if (subModuleId == null) testGroupingRequest.setSubModuleId(null);
         else testGroupingRequest.setSubModuleId(subModuleId);
         if (testCasesList.isEmpty()) testGroupingRequest.setTestCaseId(null);
-        else testGroupingRequest.setTestCaseId(testCasesList);
         testGroupingRequest.setName(name);
         testGroupingRequest.setTestTypeId(testTypeId);
        testGroupingService.testCaseTestTypeGrouping(testGroupingRequest);
