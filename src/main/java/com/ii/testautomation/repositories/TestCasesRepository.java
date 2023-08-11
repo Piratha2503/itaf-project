@@ -1,6 +1,7 @@
 package com.ii.testautomation.repositories;
 
 import com.ii.testautomation.entities.TestCases;
+import com.ii.testautomation.entities.TestGrouping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,10 @@ public interface TestCasesRepository extends JpaRepository<TestCases, Long>, Que
     boolean existsBySubModuleId(Long id);
 
     boolean existsBySubModule_MainModule_Modules_Project_id(Long ProjectId);
+
+    List<TestCases> findAllBySubModule_MainModule_Modules_Id(Long moduleId);
+
+    List<TestCases> findAllBySubModule_MainModule_Id(Long mainModuleId);
+
+    List<TestCases> findAllBySubModuleId(Long subModuleId);
 }

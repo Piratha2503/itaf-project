@@ -10,6 +10,7 @@ import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
+import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Utils;
@@ -18,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private TestCasesRepository testCasesRepository;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private TestTypesRepository testTypesRepository;
     @Override
     public void saveTestGrouping(TestGroupingRequest testGroupingRequest) {
         TestGrouping testGrouping = new TestGrouping();
@@ -161,6 +165,60 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         TestGrouping testGrouping=testGroupingRepository.findById(testGroupingId).get();
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
+    }
+
+    @Override
+    public void testCaseTestTypeGrouping(TestGroupingRequest testGroupingRequest) {
+
+        TestGrouping testGrouping = new TestGrouping();
+        BeanUtils.copyProperties(testGroupingRequest,testGrouping);
+        TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
+        testGrouping.setTestType(testTypes);
+        List<TestCases> mainTestCasesList = new ArrayList<>();
+
+        if (!(testGroupingRequest.getModuleId() == null))
+        {
+            for (Long moduleId : testGroupingRequest.getModuleId()) {
+                List<TestCases> subTestCaseList = testCasesRepository.findAllBySubModule_MainModule_Id(moduleId);
+                for (TestCases testCases : subTestCaseList)
+                {
+                    mainTestCasesList.add(testCases);
+                }
+            }
+        }
+        if (!(testGroupingRequest.getMainModuleId() == null))
+        {
+            for (Long mainModuleId : testGroupingRequest.getMainModuleId()) {
+                List<TestCases> subTestCaseList = testCasesRepository.findAllBySubModule_MainModule_Id(mainModuleId);
+                for (TestCases testCases : subTestCaseList)
+                {
+                    mainTestCasesList.add(testCases);
+                }
+            }
+        }
+        if (!(testGroupingRequest.getSubModuleId() == null))
+        {
+            for (Long subModuleId : testGroupingRequest.getSubModuleId()) {
+                List<TestCases> subTestCaseList = testCasesRepository.findAllBySubModule_MainModule_Id(subModuleId);
+                for (TestCases testCases : subTestCaseList)
+                {
+                    mainTestCasesList.add(testCases);
+                }
+            }
+        }
+        if (!(testGroupingRequest.getTestCaseId() == null))
+        {
+
+            for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
+                TestCases testCases = testCasesRepository.findById(testCaseId).get();
+                mainTestCasesList.add(testCases);
+            }
+
+        }
+        List<TestCases> sortedList = mainTestCasesList.stream().distinct().collect(Collectors.toList());
+        testGrouping.setTestCases(sortedList);
+        testGroupingRepository.save(testGrouping);
+
     }
 
 

@@ -1,5 +1,6 @@
 package com.ii.testautomation.controllers;
 
+import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
@@ -127,7 +128,6 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingService.multiSearchTestGrouping(pageable, pagination, testGroupingSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestGroupingSuccessMessage()));
     }
 
-
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_TYPE_ID)
     public ResponseEntity<BaseResponse> getAllTestGroupingByTestTypeId(@PathVariable Long id) {
         if (!testTypesService.existsByTestTypesId(id)) {
@@ -196,5 +196,28 @@ public class TestGroupingController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
+    }
+
+    @PostMapping("/test")
+    public ResponseEntity<Object> grouptest(@RequestParam(name = "name") String name,
+                                            @RequestParam(name = "testTypeId") Long testTypeId,
+                                            @RequestParam(name = "subModuleId",required = false) List<Long> subModuleId,
+                                            @RequestParam(name = "mainModuleId",required = false) List<Long> mainModuleId,
+                                            @RequestParam(name = "moduleId",required = false) List<Long> moduleId,
+                                            @RequestParam(name = "testCaseId",required = false) List<TestCases> testCasesList)
+    {
+        TestGroupingRequest testGroupingRequest = new TestGroupingRequest();
+        if (moduleId == null) testGroupingRequest.setModuleId(null);
+        else testGroupingRequest.setModuleId(moduleId);
+        if (mainModuleId == null) testGroupingRequest.setMainModuleId(null);
+        else testGroupingRequest.setMainModuleId(mainModuleId);
+        if (subModuleId == null) testGroupingRequest.setSubModuleId(null);
+        else testGroupingRequest.setSubModuleId(subModuleId);
+        if (testCasesList.isEmpty()) testGroupingRequest.setTestCaseId(null);
+        else testGroupingRequest.setTestCaseId(testCasesList);
+        testGroupingRequest.setName(name);
+        testGroupingRequest.setTestTypeId(testTypeId);
+       testGroupingService.testCaseTestTypeGrouping(testGroupingRequest);
+        return ResponseEntity.ok(testGroupingRequest);
     }
 }
