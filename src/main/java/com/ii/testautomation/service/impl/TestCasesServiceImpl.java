@@ -65,7 +65,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(testCaseName, projectId);
     }
 
-    @Override
+    @Override,
     public TestCaseResponse getById(Long id) {
         TestCaseResponse testCaseResponse = new TestCaseResponse();
         TestCases testCases = testCasesRepository.findById(id).get();
