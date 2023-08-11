@@ -2,9 +2,6 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
-import com.ii.testautomation.entities.TestGrouping;
-import com.ii.testautomation.dto.response.TestCaseResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
@@ -40,5 +37,5 @@ public interface TestGroupingService {
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
 
-    void updateTestGroupingExecutionStatus(Long testGroupingId);
+    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId);
 }

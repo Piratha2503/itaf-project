@@ -1,28 +1,23 @@
 package com.ii.testautomation.controllers;
 
-import com.ii.testautomation.response.common.ContentResponse;
-import com.ii.testautomation.service.ProjectService;
-import com.ii.testautomation.utils.Constants;
+import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
-import com.ii.testautomation.entities.TestGrouping;
-import com.ii.testautomation.response.common.ContentResponse;
-import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.ii.testautomation.utils.Constants;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
-import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.TestCasesService;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.service.TestTypesService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +32,6 @@ public class TestGroupingController {
     private TestTypesService testTypesService;
     @Autowired
     private TestCasesService testCasesService;
-
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -108,15 +102,15 @@ public class TestGroupingController {
     }
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
-    public ResponseEntity<Object> updateExecution(@PathVariable Long id) {
+    public ResponseEntity<Object> updateExecution(@PathVariable Long id, @PathVariable Long projectId) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        testGroupingService.updateTestGroupingExecutionStatus(id);
+        testGroupingService.updateTestGroupingExecutionStatus(id, projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode() ,
+                statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
 
