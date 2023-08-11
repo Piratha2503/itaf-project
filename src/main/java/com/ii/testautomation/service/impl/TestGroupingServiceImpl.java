@@ -24,6 +24,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +42,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private ProjectRepository projectRepository;
     @Autowired
     private TestTypesRepository testTypesRepository;
+
     @Autowired
     private SubModulesRepository subModulesRepository;
     @Autowired
@@ -171,10 +174,24 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public void updateTestGroupingExecutionStatus(Long testGroupingId) {
-        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).get();
+    public void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId) {
+        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).orElse(null);
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
+        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+        File jarFile = new File(savedFilePath);
+        String jarFileName = jarFile.getName();
+        String jarDirectory = jarFile.getParent();
+
+        try {
+            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+            runProcessBuilder.directory(new File(jarDirectory));
+            runProcessBuilder.redirectErrorStream(true);
+            Process runProcess = runProcessBuilder.start();
+            runProcess.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -340,5 +357,4 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponseList;
     }
-
 }
