@@ -46,7 +46,7 @@ public class TestGroupingController {
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(required = false) List<Long> subModuleIds,
-                                                   @RequestParam(required = false) List<Long> mainModuleIds, @RequestParam(required = false) List<Long> moduleIds) throws JsonProcessingException, JsonProcessingException {
+                                                   @RequestParam(required = false) List<Long> mainModuleIds, @RequestParam(required = false) List<Long> moduleIds,@RequestParam Long projectId) throws JsonProcessingException, JsonProcessingException {
 
         TestGroupingRequest testGroupingRequest=objectMapper.readValue(testGrouping,TestGroupingRequest.class);
         Long ProjectIdFindId = null;
@@ -64,7 +64,7 @@ public class TestGroupingController {
                     projectIdFind++;
                 }
             }
-            if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName(), ProjectIdFindId)) {
+            if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName(),projectId)) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
             }
         }
@@ -82,7 +82,7 @@ public class TestGroupingController {
                     projectIdFind++;
                 }
             }
-            if (testGroupingService.existsByTestGroupingNameSubModule(testGroupingRequest.getName(), ProjectIdFindId)) {
+            if (testGroupingService.existsByTestGroupingNameSubModule(testGroupingRequest.getName(),projectId)) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
             }
         }
@@ -100,7 +100,7 @@ public class TestGroupingController {
                     projectIdFind++;
                 }
             }
-            if (testGroupingService.existsByTestGroupingNameMainModule(testGroupingRequest.getName(), ProjectIdFindId)) {
+            if (testGroupingService.existsByTestGroupingNameMainModule(testGroupingRequest.getName(),projectId)) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
             }
         }
