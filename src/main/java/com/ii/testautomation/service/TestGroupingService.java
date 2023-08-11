@@ -2,9 +2,6 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
-import com.ii.testautomation.entities.TestGrouping;
-import com.ii.testautomation.dto.response.TestCaseResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface TestGroupingService {
-    void saveTestGrouping(TestGroupingRequest testGroupingRequest);
 
     boolean existsByTestGroupingName(String testGroupingName, Long testCaseId);
 
@@ -41,4 +37,12 @@ public interface TestGroupingService {
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
 
     void updateTestGroupingExecutionStatus(Long testGroupingId);
+
+    boolean existsByTestGroupingNameModule(String name, Long moduleId);
+
+    boolean existsByTestGroupingNameSubModule(String name, Long subModuleId);
+
+    boolean existsByTestGroupingNameMainModule(String name, Long mainModuleId);
+
+    void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<Long> moduleIds, List<Long> subModuleIds, List<Long> mainModuleIds);
 }
