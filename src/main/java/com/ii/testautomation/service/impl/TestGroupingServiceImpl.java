@@ -167,60 +167,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGroupingRepository.save(testGrouping);
     }
 
-    @Override
-    public void testCaseTestTypeGrouping(TestGroupingRequest testGroupingRequest) {
-
-        TestGrouping testGrouping = new TestGrouping();
-        BeanUtils.copyProperties(testGroupingRequest,testGrouping);
-        TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
-        testGrouping.setTestType(testTypes);
-        List<TestCases> mainTestCasesList = new ArrayList<>();
-
-        if (!(testGroupingRequest.getModuleId() == null))
-        {
-            for (Long moduleId : testGroupingRequest.getModuleId()) {
-                List<TestCases> subTestCaseList = testCasesRepository.findAllBySubModule_MainModule_Id(moduleId);
-                for (TestCases testCases : subTestCaseList)
-                {
-                    mainTestCasesList.add(testCases);
-                }
-            }
-        }
-        if (!(testGroupingRequest.getMainModuleId() == null))
-        {
-            for (Long mainModuleId : testGroupingRequest.getMainModuleId()) {
-                List<TestCases> subTestCaseList = testCasesRepository.findAllBySubModule_MainModule_Id(mainModuleId);
-                for (TestCases testCases : subTestCaseList)
-                {
-                    mainTestCasesList.add(testCases);
-                }
-            }
-        }
-        if (!(testGroupingRequest.getSubModuleId() == null))
-        {
-            for (Long subModuleId : testGroupingRequest.getSubModuleId()) {
-                List<TestCases> subTestCaseList = testCasesRepository.findAllBySubModule_MainModule_Id(subModuleId);
-                for (TestCases testCases : subTestCaseList)
-                {
-                    mainTestCasesList.add(testCases);
-                }
-            }
-        }
-        if (!(testGroupingRequest.getTestCaseId() == null))
-        {
-
-            for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
-                TestCases testCases = testCasesRepository.findById(testCaseId).get();
-                mainTestCasesList.add(testCases);
-            }
-
-        }
-        List<TestCases> sortedList = mainTestCasesList.stream().distinct().collect(Collectors.toList());
-        testGrouping.setTestCases(sortedList);
-        testGroupingRepository.save(testGrouping);
-
-    }
-
 
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId) {

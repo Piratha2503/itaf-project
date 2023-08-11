@@ -198,25 +198,5 @@ public class TestGroupingController {
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
 
-    @PostMapping("/test")
-    public ResponseEntity<Object> grouptest(@RequestParam(name = "name") String name,
-                                            @RequestParam(name = "testTypeId") Long testTypeId,
-                                            @RequestParam(name = "subModuleId",required = false) List<Long> subModuleId,
-                                            @RequestParam(name = "mainModuleId",required = false) List<Long> mainModuleId,
-                                            @RequestParam(name = "moduleId",required = false) List<Long> moduleId,
-                                            @RequestParam(name = "testCaseId",required = false) List<Long> testCasesList)
-    {
-        TestGroupingRequest testGroupingRequest = new TestGroupingRequest();
-        if (moduleId == null) testGroupingRequest.setModuleId(null);
-        else testGroupingRequest.setModuleId(moduleId);
-        if (mainModuleId == null) testGroupingRequest.setMainModuleId(null);
-        else testGroupingRequest.setMainModuleId(mainModuleId);
-        if (subModuleId == null) testGroupingRequest.setSubModuleId(null);
-        else testGroupingRequest.setSubModuleId(subModuleId);
-        if (testCasesList.isEmpty()) testGroupingRequest.setTestCaseId(null);
-        testGroupingRequest.setName(name);
-        testGroupingRequest.setTestTypeId(testTypeId);
-       testGroupingService.testCaseTestTypeGrouping(testGroupingRequest);
-        return ResponseEntity.ok(testGroupingRequest);
-    }
+
 }

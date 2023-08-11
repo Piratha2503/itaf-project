@@ -42,5 +42,4 @@ public interface TestGroupingService {
 
     void updateTestGroupingExecutionStatus(Long testGroupingId);
 
-    void testCaseTestTypeGrouping(TestGroupingRequest testGroupingRequest);
 }
