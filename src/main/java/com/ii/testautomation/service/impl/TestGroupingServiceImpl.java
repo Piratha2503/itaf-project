@@ -94,8 +94,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean existsByTestGroupingNameSubModule(String testGroupingName, Long subModuleId) {
-        Long projectId = subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName, projectId);
+        //Long projectId = subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName, subModuleId);
     }
 
     @Override
