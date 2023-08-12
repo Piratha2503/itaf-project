@@ -22,10 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -35,9 +32,10 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
 
     @Override
-    public void saveProject(ProjectRequest projectRequest) {
+    public void saveProject(ProjectRequest projectRequest,String filePath) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
+        project.setJarFilePath(filePath);
         projectRepository.save(project);
     }
 
@@ -77,6 +75,7 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(project, projectResponse);
         return projectResponse;
     }
+
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {

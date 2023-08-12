@@ -11,7 +11,7 @@ public class TestCaseResponse {
     private String description;
     private Long moduleId;
     private String moduleName;
-    private Long submoduleId;
+    private Long subModuleId;
     private String subModuleName;
     private Long mainModuleId;
     private String mainModuleName;
