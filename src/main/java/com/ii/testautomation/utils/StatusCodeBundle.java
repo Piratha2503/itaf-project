@@ -24,6 +24,12 @@ public class StatusCodeBundle {
     // Common File Failure Message
     @Value("${message.file.failure.common}")
     private String fileFailureMessage;
+    @Value("${message.file.write.failure.common}")
+    private String fileWriteFailureMessage;
+    @Value("${message.jar.file.failure.common}")
+    private String jarfileFailureMessage;
+    @Value("${message.config.file.failure.common}")
+    private String configFileFailureMessage;
     @Value("${message.validation.header.notExits}")
     private String headerNotExistsMessage;
 

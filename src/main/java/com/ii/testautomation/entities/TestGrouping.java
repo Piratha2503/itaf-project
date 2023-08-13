@@ -15,11 +15,14 @@ public class TestGrouping extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany
-    @JoinColumn(name = "testCases_id", nullable = false)
-    private List<TestCases> testCases;
     @ManyToOne
     @JoinColumn(name = "testType_id", nullable = false)
     private TestTypes testType;
+    @ManyToMany
+    @JoinColumn(name = "testCases_id", nullable = true)
+    private List<TestCases> testCases;
+    @ManyToMany
+    @JoinColumn(name = "testScenarios_id", nullable = true)
+    private List<TestScenarios> testScenarios;
     private Boolean executionStatus = false;
 }

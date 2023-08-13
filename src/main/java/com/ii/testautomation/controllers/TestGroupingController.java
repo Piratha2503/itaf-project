@@ -30,6 +30,8 @@ public class TestGroupingController {
     @Autowired
     private TestGroupingService testGroupingService;
     @Autowired
+    private TestScenarioService testScenarioService;
+    @Autowired
     private TestTypesService testTypesService;
     @Autowired
     private TestCasesService testCasesService;
@@ -45,81 +47,54 @@ public class TestGroupingController {
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(required = false) List<Long> subModuleIds,
-                                                   @RequestParam(required = false) List<Long> mainModuleIds, @RequestParam(required = false) List<Long> moduleIds,@RequestParam Long projectId) throws JsonProcessingException, JsonProcessingException {
+    public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping) throws JsonProcessingException, JsonProcessingException {
 
-        TestGroupingRequest testGroupingRequest=objectMapper.readValue(testGrouping,TestGroupingRequest.class);
-        Long ProjectIdFindId = null;
-        int projectIdFind = 1;
+        TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
+        }
+        if (testGroupingService.existsByTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
         }
         if (testGroupingRequest.getTestCaseId() != null) {
             for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
                 if (!testCasesService.existsByTestCasesId(testCaseId)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
                 }
-                if (projectIdFind == 1) {
-                    ProjectIdFindId = testCaseId;
-                    projectIdFind++;
-                }
-            }
-            if (testGroupingService.existsByTestGroupingName(testGroupingRequest.getName(),projectId)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
             }
         }
-
-        if (subModuleIds != null) {
-            for (Long subModuleId : subModuleIds
-            ) {
+        if (testGroupingRequest.getSubModuleIds() != null) {
+            for (Long subModuleId : testGroupingRequest.getSubModuleIds()) {
                 if (!subModulesService.existsBySubModuleId(subModuleId)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                            statusCodeBundle.getSubModulesNotExistCode(),
-                            statusCodeBundle.getSubModuleNotExistsMessage()));
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
                 }
-                if (projectIdFind == 1) {
-                    ProjectIdFindId = subModuleId;
-                    projectIdFind++;
-                }
-            }
-            if (testGroupingService.existsByTestGroupingNameSubModule(testGroupingRequest.getName(),projectId)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
             }
         }
-        if (mainModuleIds != null) {
-            for (Long mainModuleId : mainModuleIds
-            ) {
+        if (testGroupingRequest.getMainModuleIds() != null) {
+            for (Long mainModuleId : testGroupingRequest.getMainModuleIds()) {
                 if (!mainModulesService.existsMainModuleByModuleId(mainModuleId)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                            statusCodeBundle.getMainModulesNotExistCode(),
-                            statusCodeBundle.getMainModuleNotExistsMessage()));
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getMainModulesNotExistCode(), statusCodeBundle.getMainModuleNotExistsMessage()));
                 }
-
-                if (projectIdFind == 1) {
-                    ProjectIdFindId = mainModuleId;
-                    projectIdFind++;
-                }
-            }
-            if (testGroupingService.existsByTestGroupingNameMainModule(testGroupingRequest.getName(),projectId)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
             }
         }
-
-
-        testGroupingService.saveTestGrouping(testGroupingRequest, moduleIds, subModuleIds, mainModuleIds);
+        if (testGroupingRequest.getTestScenarioIds() != null) {
+            for (Long testScenarioId : testGroupingRequest.getTestScenarioIds()) {
+                if (!testScenarioService.existsByTestScenarioId(testScenarioId)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), "100", "testScenario id not found"));
+                }
+            }
+        }
+        testGroupingService.saveTestGrouping(testGroupingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
 
-        @PutMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(required = false) List<Long> subModuleIds,
-                                                   @RequestParam(required = false) List<Long> mainModuleIds, @RequestParam(required = false) List<Long> moduleIds) throws JsonProcessingException {
-            TestGroupingRequest testGroupingRequest=objectMapper.readValue(testGrouping,TestGroupingRequest.class);
+    @PutMapping(value = EndpointURI.TEST_GROUPING)
+    public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping) throws JsonProcessingException {
+        TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
 
 
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestTypesNotExistCode(),
-                    statusCodeBundle.getTestTypesNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
         for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
             if (!testCasesService.existsByTestCasesId(testCaseId)) {
@@ -127,9 +102,7 @@ public class TestGroupingController {
             }
         }
         if (!testGroupingService.allTestCasesInSameProject(testGroupingRequest.getTestCaseId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getTestCasesAndProjectNotExistsSameProjectMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestCasesAndProjectNotExistsSameProjectMessage()));
         }
         Long testcaseId = null;
         for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
@@ -139,30 +112,22 @@ public class TestGroupingController {
         if (testGroupingService.isUpdateTestGroupingNameExits(testGroupingRequest.getName(), testcaseId, testGroupingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
         }
-        testGroupingService.saveTestGrouping(testGroupingRequest, moduleIds, subModuleIds, mainModuleIds);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
+        testGroupingService.saveTestGrouping(testGroupingRequest);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
-
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
     public ResponseEntity<Object> updateExecution(@PathVariable Long id, @PathVariable Long projectId) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestGroupingNotExistCode(),
-                    statusCodeBundle.getTestGroupingNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        if(!projectService.existByProjectId(projectId))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()
-            ));
+        if (!projectService.existByProjectId(projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         testGroupingService.updateTestGroupingExecutionStatus(id, projectId);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> getAllWithMultiSearch(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, TestGroupingSearch testGroupingSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
@@ -170,24 +135,17 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingService.multiSearchTestGrouping(pageable, pagination, testGroupingSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllTestGroupingSuccessMessage()));
     }
 
-
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_TYPE_ID)
     public ResponseEntity<BaseResponse> getAllTestGroupingByTestTypeId(@PathVariable Long id) {
         if (!testTypesService.existsByTestTypesId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestTypeNotExistCode(),
-                    statusCodeBundle.getTestTypeNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypeNotExistCode(), statusCodeBundle.getTestTypeNotExistMessage()));
         }
         List<TestGroupingResponse> testGroupingResponseList = testGroupingService.getAllTestGroupingByTestTypeId(id);
         if (testGroupingResponseList.isEmpty()) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getTestGroupingFileEmptyMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingFileEmptyMessage()));
 
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingResponseList, RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getTestGroupingByTestType()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPINGS, testGroupingResponseList, RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestGroupingByTestType()));
     }
 
     @DeleteMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
@@ -204,41 +162,30 @@ public class TestGroupingController {
         if (!testGroupingService.existsByTestGroupingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingById(id),
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
 
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_CASE_ID)
     public ResponseEntity<Object> getTestGroupingByTestCaseId(@PathVariable Long id) {
         if (!testCasesService.existsByTestCasesId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestCasesNotExistCode(),
-                    statusCodeBundle.getTestCasesNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
         }
         if (!testGroupingService.existsByTestCasesId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getGetTestGroupingNotHaveTestCaseId()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getGetTestGroupingNotHaveTestCaseId()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByTestCaseId(id),
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByTestCaseId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
 
     }
 
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_PROJECT_ID)
     public ResponseEntity<Object> getTestGroupingByProjectId(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getProjectNotExistCode(),
-                    statusCodeBundle.getProjectNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         if (!testGroupingService.existByProjectId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getProjectNotExistCode(),
-                    statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id),
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
 
 }
