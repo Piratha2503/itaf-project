@@ -42,12 +42,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private MainModulesRepository mainModulesRepository;
 
     @Override
-    public void saveTestGrouping(TestGroupingRequest testGroupingRequest) {
+    public void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<String> excelFilePath) {
         TestGrouping testGrouping = new TestGrouping();
         testGrouping.setName(testGroupingRequest.getName());
         TestTypes testTypes = new TestTypes();
         testTypes.setId(testGroupingRequest.getTestTypeId());
         testGrouping.setTestType(testTypes);
+        testGrouping.setExcelFilePath(excelFilePath);
         List<TestCases> testCasesList = new ArrayList<>();
         if (testGroupingRequest.getSubModuleIds() != null && !testGroupingRequest.getSubModuleIds().isEmpty()) {
             for (Long subModuleId : testGroupingRequest.getSubModuleIds()) {
@@ -96,24 +97,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public boolean existsByTestGroupingNameModule(String testGroupingName, Long moduleId) {
-        Long projectId = modulesRepository.findById(moduleId).get().getProject().getId();
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName, projectId);
-    }
-
-    @Override
-    public boolean existsByTestGroupingNameSubModule(String testGroupingName, Long projectId) {
-        //Long projectId = subModulesRepository.findById(subModuleId).get().getMainModule().getModules().getProject().getId();
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName, projectId);
-    }
-
-    @Override
-    public boolean existsByTestGroupingNameMainModule(String testGroupingName, Long mainModuleId) {
-        // Long projectId = mainModulesRepository.findById(mainModuleId).get().getModules().getProject().getId();
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName, mainModuleId);
-    }
-
-    @Override
     public boolean allTestCasesInSameProject(List<Long> testCaseIds) {
         Set<Long> uniqueProjectIds = new HashSet<>();
         for (Long testCaseId : testCaseIds) {
@@ -125,22 +108,12 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return uniqueProjectIds.size() == 1;
     }
 
-    @Override
-    public boolean existsByTestGroupingName(String testGroupingName, Long testCaseId) {
-        Long projectId = testCasesRepository.findById(1L).get().getSubModule().getMainModule().getModules().getProject().getId();
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(testGroupingName, projectId);
-    }
 
     @Override
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
     }
 
-    @Override
-    public boolean isUpdateTestGroupingNameExits(String testGroupingName, Long testCaseId, Long testGroupingId) {
-        Long projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(testGroupingName, projectId, testGroupingId);
-    }
 
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
@@ -238,8 +211,12 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean existsByTestGroupingNameByProjectId(String name, Long projectId) {
-        boolean tt = testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
+    }
+
+    @Override
+    public boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId) {
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name,projectId,groupingId);
     }
 
     @Override

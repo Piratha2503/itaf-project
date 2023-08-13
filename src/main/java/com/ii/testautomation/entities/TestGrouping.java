@@ -25,4 +25,6 @@ public class TestGrouping extends DateAudit {
     @JoinColumn(name = "testScenarios_id", nullable = true)
     private List<TestScenarios> testScenarios;
     private Boolean executionStatus = false;
+    @ElementCollection
+    private List<String> excelFilePath;
 }

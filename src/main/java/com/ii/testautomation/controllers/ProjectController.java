@@ -53,7 +53,6 @@ public class ProjectController {
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
-
         try {
             String uploadedJarFilePath = null;
             if (jarFile != null && !jarFile.isEmpty()) {

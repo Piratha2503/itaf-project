@@ -9,19 +9,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface TestGroupingService {
-    void saveTestGrouping(TestGroupingRequest testGroupingRequest);
-
-    boolean existsByTestGroupingNameModule(String name, Long moduleId);
-
-    boolean existsByTestGroupingNameSubModule(String name, Long projectId);
-
-    boolean existsByTestGroupingNameMainModule(String name, Long mainModuleId);
-
-    boolean existsByTestGroupingName(String testGroupingName, Long testCaseId);
+    void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<String> filePath);
 
     boolean existsByTestGroupingId(Long testGroupingId);
-
-    boolean isUpdateTestGroupingNameExits(String testGroupingName, Long testCaseId, Long testGroupingId);
 
     void deleteTestGroupingById(Long testGroupingId);
 
@@ -47,4 +37,5 @@ public interface TestGroupingService {
 
 
     boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
+    boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);
 }
