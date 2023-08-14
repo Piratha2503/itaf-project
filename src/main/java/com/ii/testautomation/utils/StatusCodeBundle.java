@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
-    //File Folder
-    @Value("${jar.import.file.path}")
-    private String fileFolder;
+
     // Common Success code
     @Value("${code.success.common}")
     private String commonSuccessCode;
@@ -382,5 +380,8 @@ public class StatusCodeBundle {
     private String testScenariosIdNotExistMessage;
     @Value("${message.success.update.testScenario}")
     private String updateTestScenarioSuccessMessage;
+    @Value("${message.failure.name.AlreadyExist.testCases.testScenario}")
+    private String testCasesListAlreadyExistMessage;
+
 
 }

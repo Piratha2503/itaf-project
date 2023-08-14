@@ -14,7 +14,4 @@ public interface TestScenariosRepository extends JpaRepository<TestScenarios,Lon
 
     boolean existsByTestCasesIn(List<TestCases> testCasesList);
 
-    //boolean existsByTestScenariosNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_AndIdNot(String name, Long id);
-    boolean existsByNameIgnoreCaseAndTestCasesSubModuleMainModuleModulesProjectAndIdNot(String name,Long id,Long projectId);
-
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface TestCasesRepository extends JpaRepository<TestCases, Long>, QuerydslPredicateExecutor<TestCases> {
@@ -26,6 +27,4 @@ public interface TestCasesRepository extends JpaRepository<TestCases, Long>, Que
     boolean existsBySubModuleId(Long id);
 
     boolean existsBySubModule_MainModule_Modules_Project_id(Long ProjectId);
-
-
 }

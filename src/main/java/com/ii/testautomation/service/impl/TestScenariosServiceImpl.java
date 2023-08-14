@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TestScenariosServiceImpl implements TestScenariosService {
@@ -32,12 +33,20 @@ public class TestScenariosServiceImpl implements TestScenariosService {
 
     @Override
     public boolean existByTestCaseList(TestScenariosRequest testScenariosRequest) {
+        List<Boolean> booleans = new ArrayList<>();
         List<TestCases> testCasesList = new ArrayList<>();
         for (Long testCaseId : testScenariosRequest.getTestCasesId())
         {
             testCasesList.add(testCasesRepository.findById(testCaseId).get());
         }
-        return testScenariosRepository.existsByTestCasesIn(testCasesList);
+        List<TestScenarios> testScenariosList = testScenariosRepository.findAll();
+        for (TestScenarios testScenarios : testScenariosList)
+        {
+            if (testScenarios.getTestCases().containsAll(testCasesList)) booleans.add(true);
+            else booleans.add(false);
+        }
+        if (booleans.contains(true)) return true;
+        else return false;
     }
 
     @Override
@@ -45,12 +54,27 @@ public class TestScenariosServiceImpl implements TestScenariosService {
 
         TestScenarios testScenarios = new TestScenarios();
         List<TestCases> testCasesList = new ArrayList<>();
-        for (Long testCaseId: testScenariosRequest.getTestCasesId())
-        {
-            testCasesList.add(testCasesRepository.findById(testCaseId).get());
+
+        if (testScenariosRequest.getTestCasesId()!=null) {
+            for (Long testCaseId: testScenariosRequest.getTestCasesId())
+                testCasesList.add(testCasesRepository.findById(testCaseId).get());
         }
+        if (testScenariosRequest.getSubModuleIds()!=null) {
+            for (Long subModuleId : testScenariosRequest.getSubModuleIds())
+                testCasesRepository.findAllTestCasesBySubModuleId(subModuleId).forEach(TestCases -> testCasesList.add(TestCases));
+        }
+        if (testScenariosRequest.getMainModuleIds()!=null) {
+            for (Long mainModuleId : testScenariosRequest.getMainModuleIds())
+                testCasesRepository.findBySubModule_MainModule_Id(mainModuleId).forEach(TestCases -> testCasesList.add(TestCases));
+        }
+        if (testScenariosRequest.getModuleIds()!=null) {
+            for (Long moduleId : testScenariosRequest.getModuleIds())
+                testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId).forEach(TestCases -> testCasesList.add(TestCases));
+        }
+
+        List<TestCases> sortedTestCaseList = testCasesList.stream().distinct().collect(Collectors.toList());
         BeanUtils.copyProperties(testScenariosRequest,testScenarios);
-        testScenarios.setTestCases(testCasesList);
+        testScenarios.setTestCases(sortedTestCaseList);
         testScenariosRepository.save(testScenarios);
     }
 
