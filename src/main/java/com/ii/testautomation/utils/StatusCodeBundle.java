@@ -388,7 +388,10 @@ public class StatusCodeBundle {
     @Value("${message.failure.name.AlreadyExist.testCases.testScenario}")
     private String testCasesListAlreadyExistMessage;
 
-
+    @Value("${code.validation.testScenario.dependent}")
+    private String testScenarioIdDependentCode;
+    @Value("${message.validation.testScenario.dependent}")
+    private String testScenarioIdDependentMessage;
 
 
 }

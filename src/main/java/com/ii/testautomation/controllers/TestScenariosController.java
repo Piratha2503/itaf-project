@@ -5,6 +5,7 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
+import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.service.TestScenariosService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
@@ -23,6 +24,9 @@ public class TestScenariosController {
     private TestScenariosService testScenariosService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private TestGroupingService testGroupingService;
+
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
@@ -56,13 +60,15 @@ public class TestScenariosController {
 
     @DeleteMapping(value = EndpointURI.TEST_SCENARIO_BY_ID)
     public ResponseEntity<Object> DeleteTestScenarioById(@PathVariable Long id) {
-        if (!projectService.existByProjectId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
-        }
+
         if (!testScenariosService.existsByTestScenarioId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestScenarioNotExistsMessage()));
         }
+         if (testGroupingService.existsTestGroupingByTestScenarioId(id)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                            statusCodeBundle.getTestScenarioIdDependentCode(),
+                            statusCodeBundle.getTestScenarioIdDependentMessage()));
+                }
         testScenariosService.DeleteTestScenariosById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestScenarioSuccessMessage()));
     }
