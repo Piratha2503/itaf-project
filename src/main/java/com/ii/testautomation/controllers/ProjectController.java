@@ -14,6 +14,7 @@ import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,11 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-
 @RestController
 @CrossOrigin
+@PropertySource("classpath:application.properties")
 public class ProjectController {
     @Autowired
     private ObjectMapper objectMapper;
@@ -38,8 +37,10 @@ public class ProjectController {
 
     @PostMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> saveProject(@RequestParam String project,
-                                              @RequestParam(value = "multiPartFile", required = false) MultipartFile multiPartFile) throws JsonProcessingException {
+                                              @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
+                                              @RequestParam(value = "configFile", required = false) MultipartFile configFile) throws JsonProcessingException {
         ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
+
         if (projectService.existByProjectName(projectRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectAlReadyExistCode(),
@@ -50,41 +51,28 @@ public class ProjectController {
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
-        try {
-            String filename = multiPartFile.getOriginalFilename();
-            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
-            if (!"jar".equalsIgnoreCase(fileExtension)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(),
-                        statusCodeBundle.getFileFailureMessage()));
-            }
-            String uploadedFilePath = null;
-            if (multiPartFile != null && !multiPartFile.isEmpty()) {
-                String directoryPath = "D:\\UpdatedJar";
-                File directory = new File(directoryPath);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
-                uploadedFilePath = directoryPath + File.separator + multiPartFile.getOriginalFilename();
-                File savedJarFile = new File(uploadedFilePath);
-                multiPartFile.transferTo(savedJarFile);
-            }
-            projectService.saveProject(projectRequest, uploadedFilePath);
-
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                    statusCodeBundle.getCommonSuccessCode(),
-                    statusCodeBundle.getSaveProjectSuccessMessage()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()
-            ));
+        if (!projectService.checkJarFile(jarFile)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),
+                    statusCodeBundle.getJarfileFailureMessage()));
         }
+        if (!projectService.checkPropertiesFile(configFile)) {
+            return ResponseEntity.ok(new BaseResponse((RequestStatus.FAILURE.getStatus()), statusCodeBundle.getFileFailureCode(),
+                    statusCodeBundle.getConfigFileFailureMessage()));
+
+        }
+
+        projectService.saveProject(projectRequest, jarFile, configFile);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getSaveProjectSuccessMessage()));
     }
+
 
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestParam String project,
-                                              @RequestParam(value = "multiPartFile", required = false) MultipartFile multiPartFile) throws JsonProcessingException {
+                                              @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
+                                              @RequestParam(value = "configFile", required = false) MultipartFile configFile) throws
+            JsonProcessingException {
         ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
         if (!projectService.existByProjectId(projectRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -101,37 +89,18 @@ public class ProjectController {
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectNameAlReadyExistMessage()));
         }
-        try {
-            String uploadedFilePath = null;
-            String filename = multiPartFile.getOriginalFilename();
-            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
-            if (!"jar".equalsIgnoreCase(fileExtension)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(),
-                        statusCodeBundle.getFileFailureMessage()));
-            }
-            if (multiPartFile != null && !multiPartFile.isEmpty()) {
-                String directoryPath = "D:\\UpdatedJar";
-                File directory = new File(directoryPath);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
-                uploadedFilePath = directoryPath + File.separator + multiPartFile.getOriginalFilename();
-                File savedJarFile = new File(uploadedFilePath);
-                multiPartFile.transferTo(savedJarFile);
-            }
-            projectService.saveProject(projectRequest, uploadedFilePath);
-
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                    statusCodeBundle.getCommonSuccessCode(),
-                    statusCodeBundle.getUpdateProjectSuccessMessage()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()
-            ));
+        if (!projectService.checkJarFile(jarFile)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),
+                    statusCodeBundle.getJarfileFailureMessage()));
         }
-
+        if (!projectService.checkPropertiesFile(configFile)) {
+            return ResponseEntity.ok(new BaseResponse((RequestStatus.FAILURE.getStatus()), statusCodeBundle.getFileFailureCode(),
+                    statusCodeBundle.getConfigFileFailureMessage()));
+        }
+        projectService.saveProject(projectRequest, jarFile, configFile);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getUpdateProjectSuccessMessage()));
     }
 
     @GetMapping(value = EndpointURI.PROJECTS)
