@@ -364,4 +364,25 @@ public class StatusCodeBundle {
     private String testGroupingByProjectId;
     @Value("${message.success.getTestGrouping.testType}")
     private String testGroupingByTestType;
+
+
+     //TestScenario Code
+        @Value("${code.validation.testScenario.alreadyExists}")
+        private String testScenarioAlReadyExistCode;
+        @Value("${code.validation.testScenario.notExists}")
+        private String testScenarioNotExistCode;
+
+        //TestScenario Message
+       @Value("${message.validation.testScenario.getProject.notHave}")
+       private String getTestScenarioNotHaveProjectId;
+
+       @Value("${message.success.testScenario.byProjectId}")
+       private String getAllTestScenarioSuccessGivenProjectId;
+
+        @Value("${message.success.delete.testScenario}")
+        private String deleteTestScenarioSuccessMessage;
+
+        @Value("${message.validation.testScenario.notExists}")
+        private String testScenarioNotExistsMessage;
+
 }

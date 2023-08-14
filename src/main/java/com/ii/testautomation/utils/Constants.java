@@ -14,4 +14,7 @@ public class Constants {
   public static final String MAINMODULES = "mainModules";
   public static final String TESTCASE="testcase";
   public static final String TESTCASES="testcases";
+
+  public static final String TESTSCENARIO="testscenario";
+  public static final String TESTSCENARIOS="testscenarios";
 }
