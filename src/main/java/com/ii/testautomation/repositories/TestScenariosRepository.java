@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface TestScenariosRepository extends JpaRepository<TestScenarios,Long> {
     boolean existsByNameIgnoreCase(String name);
-   // List<TestScenarios> findByTestCases(List<TestCases> testCases);
+
     boolean existsByTestCasesIn(List<TestCases> testCasesList);
 
 }
