@@ -362,7 +362,8 @@ public class StatusCodeBundle {
     private String testGroupingByProjectId;
     @Value("${message.success.getTestGrouping.testType}")
     private String testGroupingByTestType;
-
+    @Value("${message.success.execution}")
+    private String executionSuccessMessage;
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;
@@ -376,6 +377,5 @@ public class StatusCodeBundle {
     private String testScenariosNameAlreadyExistMessage;
     @Value("${message.failure.name.AlreadyExist.testCases.testScenario}")
     private String testCasesListAlreadyExistMessage;
-
 
 }

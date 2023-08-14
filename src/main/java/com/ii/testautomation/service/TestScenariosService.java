@@ -10,4 +10,6 @@ public interface TestScenariosService {
     boolean existByTestCaseList(TestScenariosRequest testScenariosRequest);
 
     void saveTestScenario(TestScenariosRequest testScenariosRequest);
+
+    void updateExecutionStatus(Long testScenarioId);
 }

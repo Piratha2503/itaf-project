@@ -19,6 +19,5 @@ public class TestCases extends DateAudit {
     @ManyToOne
     @JoinColumn(name = "submodule_id",nullable = false)
     private SubModules subModule;
-
-
+    private Boolean executionStatus = false;
 }

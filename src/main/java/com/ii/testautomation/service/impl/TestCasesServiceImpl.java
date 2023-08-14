@@ -359,6 +359,13 @@ public class TestCasesServiceImpl implements TestCasesService {
         return testCasesRepository.existsBySubModule_MainModule_Modules_Project_id(projectId);
     }
 
+    @Override
+    public void updateExecutionStatus(Long testCaseId) {
+        TestCases testCases=testCasesRepository.findById(testCaseId).get();
+        testCases.setExecutionStatus(true);
+        testCasesRepository.save(testCases);
+    }
+
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;

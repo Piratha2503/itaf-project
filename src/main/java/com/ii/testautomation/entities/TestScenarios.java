@@ -18,5 +18,6 @@ public class TestScenarios extends DateAudit {
     @ManyToMany
     @JoinColumn(name = "testCases_id", nullable = false)
     private List<TestCases> testCases;
+    private Boolean executionStatus = false;
 
 }

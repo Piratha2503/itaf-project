@@ -62,4 +62,11 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         testScenariosRepository.save(testScenarios);
     }
 
+    @Override
+    public void updateExecutionStatus(Long testScenarioId) {
+        TestScenarios testScenarios=testScenariosRepository.findById(testScenarioId).get();
+        testScenarios.setExecutionStatus(true);
+        testScenariosRepository.save(testScenarios);
+    }
+
 }
