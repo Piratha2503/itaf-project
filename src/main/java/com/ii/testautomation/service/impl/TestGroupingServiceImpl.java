@@ -79,11 +79,12 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 TestCases testCases = testCasesRepository.findById(testCaseId).get();
                 testCasesList.add(testCases);
             }
-            testGrouping.setTestCases(testCasesList);
+
         }
         if(testGroupingRequest.getId()!=null){
             testGroupingRepository.deleteById(testGroupingRequest.getId());
         }
+        testGrouping.setTestCases(testCasesList);
         testGroupingRepository.save(testGrouping);
     }
     @Override
