@@ -34,7 +34,7 @@ public class TestGroupingController {
     @Autowired
     private TestGroupingService testGroupingService;
     @Autowired
-    private TestScenarioService testScenarioService;
+    private TestScenariosService testScenarioService;
     @Autowired
     private TestTypesService testTypesService;
     @Autowired
