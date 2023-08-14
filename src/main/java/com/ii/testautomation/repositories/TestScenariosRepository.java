@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface TestScenariosRepository extends JpaRepository<TestScenarios,Long> {
     boolean existsByNameIgnoreCase(String name);
-
-    TestScenarios findByTestCasesIn(List<TestCases> testCasesList);
-
+   // List<TestScenarios> findByTestCases(List<TestCases> testCases);
     boolean existsByTestCasesIn(List<TestCases> testCasesList);
 }
