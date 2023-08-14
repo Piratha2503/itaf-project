@@ -31,7 +31,7 @@ public interface TestGroupingService {
 
     boolean existByProjectId(Long projectId);
 
-    List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
+    List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long projectId);
 
     void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId);
 

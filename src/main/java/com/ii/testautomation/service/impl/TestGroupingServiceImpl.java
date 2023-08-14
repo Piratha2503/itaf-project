@@ -157,14 +157,16 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId) {
+    public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-        List<TestGrouping> testGroupings = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
+        Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable,projectId);
         List<String> testCaseNames = new ArrayList<>();
         List<String> subModuleName = new ArrayList<>();
         List<String> mainModulesName = new ArrayList<>();
         List<String> modulesName = new ArrayList<>();
-        for (TestGrouping testGrouping : testGroupings) {
+        pagination.setTotalRecords(testGroupingPage.getTotalElements());
+        pagination.setPageSize(testGroupingPage.getTotalPages());
+        for (TestGrouping testGrouping : testGroupingPage) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
             testGroupingResponse.setName(testGrouping.getName());
@@ -183,6 +185,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setSubModuleName(subModuleName);
             testGroupingResponseList.add(testGroupingResponse);
         }
+
+
         return testGroupingResponseList;
     }
 
