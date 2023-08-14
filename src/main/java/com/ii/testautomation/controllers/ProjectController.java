@@ -60,7 +60,7 @@ public class ProjectController {
             }
             String uploadedFilePath = null;
             if (multiPartFile != null && !multiPartFile.isEmpty()) {
-                String directoryPath = "D:\\UploadedJar";
+                String directoryPath = "D:\\UpdatedJar";
                 File directory = new File(directoryPath);
                 if (!directory.exists()) {
                     directory.mkdirs();
@@ -111,7 +111,7 @@ public class ProjectController {
                         statusCodeBundle.getFileFailureMessage()));
             }
             if (multiPartFile != null && !multiPartFile.isEmpty()) {
-                String directoryPath = "D:\\UploadedJar";
+                String directoryPath = "D:\\UpdatedJar";
                 File directory = new File(directoryPath);
                 if (!directory.exists()) {
                     directory.mkdirs();

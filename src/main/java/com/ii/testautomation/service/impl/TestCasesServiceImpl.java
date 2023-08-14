@@ -72,13 +72,14 @@ public class TestCasesServiceImpl implements TestCasesService {
         testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
         testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
         testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
-        testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+        testCaseResponse.setModuleId(testCases.getSubModule().getId());
         testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
         testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
         testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
         testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-        BeanUtils.copyProperties(testCases, testCaseResponse);
-
+        testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+        testCaseResponse.setId(testCases.getId());
+        testCaseResponse.setDescription(testCases.getDescription());
         return testCaseResponse;
     }
 
@@ -137,12 +138,14 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
             testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
             testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
-            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
             testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-            BeanUtils.copyProperties(testCases, testCaseResponse);
+            testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+            testCaseResponse.setId(testCases.getId());
+            testCaseResponse.setDescription(testCases.getDescription());
             testCaseResponseList.add(testCaseResponse);
         }
         return testCaseResponseList;
@@ -157,7 +160,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
             testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
             testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
-            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
             testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
@@ -296,12 +299,14 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
             testCaseResponse.setProjectName(testCases.getSubModule().getMainModule().getModules().getProject().getName());
             testCaseResponse.setModuleId(testCases.getSubModule().getMainModule().getModules().getId());
-            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
             testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-            BeanUtils.copyProperties(testCases, testCaseResponse);
+            testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+            testCaseResponse.setId(testCases.getId());
+            testCaseResponse.setDescription(testCases.getDescription());
             testCaseResponseList.add(testCaseResponse);
         }
         return testCaseResponseList;
@@ -319,7 +324,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
-            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
             BeanUtils.copyProperties(testCases, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);
@@ -340,7 +345,7 @@ public class TestCasesServiceImpl implements TestCasesService {
             testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
             testCaseResponse.setMainModuleId(testCases.getSubModule().getMainModule().getId());
             testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
-            testCaseResponse.setSubmoduleId(testCases.getSubModule().getId());
+            testCaseResponse.setSubModuleId(testCases.getSubModule().getId());
             testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
             BeanUtils.copyProperties(testCases, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);
