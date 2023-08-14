@@ -42,7 +42,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private MainModulesRepository mainModulesRepository;
 
     @Override
-    public void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<String> excelFilePath) {
+    public void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<String> excelFilePath) {
         TestGrouping testGrouping = new TestGrouping();
         testGrouping.setName(testGroupingRequest.getName());
         TestTypes testTypes = new TestTypes();
@@ -108,12 +108,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return uniqueProjectIds.size() == 1;
     }
 
-
     @Override
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
     }
-
 
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
@@ -159,14 +157,16 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId) {
+    public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-        List<TestGrouping> testGroupings = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
+        Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable,projectId);
         List<String> testCaseNames = new ArrayList<>();
         List<String> subModuleName = new ArrayList<>();
         List<String> mainModulesName = new ArrayList<>();
         List<String> modulesName = new ArrayList<>();
-        for (TestGrouping testGrouping : testGroupings) {
+        pagination.setTotalRecords(testGroupingPage.getTotalElements());
+        pagination.setPageSize(testGroupingPage.getTotalPages());
+        for (TestGrouping testGrouping : testGroupingPage) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
             testGroupingResponse.setName(testGrouping.getName());
@@ -185,6 +185,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setSubModuleName(subModuleName);
             testGroupingResponseList.add(testGroupingResponse);
         }
+
+
         return testGroupingResponseList;
     }
 
@@ -216,7 +218,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId) {
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name,projectId,groupingId);
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, groupingId);
     }
 
     @Override
@@ -317,5 +319,4 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponseList;
     }
-
 }
