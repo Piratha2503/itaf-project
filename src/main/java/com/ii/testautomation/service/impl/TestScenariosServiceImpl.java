@@ -6,7 +6,6 @@ import com.ii.testautomation.entities.TestScenarios;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestScenariosRepository;
 import com.ii.testautomation.service.TestScenariosService;
-import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TestScenarioServiceImpl implements TestScenariosService {
+public class TestScenariosServiceImpl implements TestScenariosService {
     @Autowired
     private TestScenariosRepository testScenariosRepository;
     @Autowired

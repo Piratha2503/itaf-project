@@ -240,14 +240,18 @@ public class TestGroupingController {
     }
 
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_PROJECT_ID)
-    public ResponseEntity<Object> getTestGroupingByProjectId(@PathVariable Long id) {
+    public ResponseEntity<Object> getTestGroupingByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+                                                             @RequestParam(name = "direction") String direction,
+                                                             @RequestParam(name = "sortField") String sortField,@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         if (!testGroupingService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
 
 }
