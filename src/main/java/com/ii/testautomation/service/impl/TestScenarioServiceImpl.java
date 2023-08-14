@@ -33,12 +33,20 @@ public class TestScenarioServiceImpl implements TestScenariosService {
 
     @Override
     public boolean existByTestCaseList(TestScenariosRequest testScenariosRequest) {
+        List<Boolean> booleans = new ArrayList<>();
         List<TestCases> testCasesList = new ArrayList<>();
         for (Long testCaseId : testScenariosRequest.getTestCasesId())
         {
             testCasesList.add(testCasesRepository.findById(testCaseId).get());
         }
-        return testScenariosRepository.existsByTestCasesIn(testCasesList);
+        List<TestScenarios> testScenariosList = testScenariosRepository.findAll();
+        for (TestScenarios testScenarios : testScenariosList)
+        {
+            if (testScenarios.getTestCases().containsAll(testCasesList)) booleans.add(true);
+            else booleans.add(false);
+        }
+        if (booleans.contains(true)) return true;
+        else return false;
     }
 
     @Override
