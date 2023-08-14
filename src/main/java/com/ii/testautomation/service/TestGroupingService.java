@@ -12,8 +12,12 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface TestGroupingService {
-    void saveTestGrouping(TestGroupingRequest testGroupingRequest);
+    void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<Long> moduleIds, List<Long> subModuleIds, List<Long> mainModuleIds);
+    boolean existsByTestGroupingNameModule(String name, Long moduleId);
 
+    boolean existsByTestGroupingNameSubModule(String name, Long subModuleId);
+
+    boolean existsByTestGroupingNameMainModule(String name, Long mainModuleId);
     boolean existsByTestGroupingName(String testGroupingName, Long testCaseId);
 
     boolean existsByTestGroupingId(Long testGroupingId);
@@ -40,6 +44,7 @@ public interface TestGroupingService {
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
 
-    void updateTestGroupingExecutionStatus(Long testGroupingId);
+    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId);
+
 
 }
