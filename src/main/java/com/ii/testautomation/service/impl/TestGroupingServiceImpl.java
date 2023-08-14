@@ -42,7 +42,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private MainModulesRepository mainModulesRepository;
 
     @Override
-    public void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<String> excelFilePath) {
+    public void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<String> excelFilePath) {
         TestGrouping testGrouping = new TestGrouping();
         testGrouping.setName(testGroupingRequest.getName());
         TestTypes testTypes = new TestTypes();
@@ -108,12 +108,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return uniqueProjectIds.size() == 1;
     }
 
-
     @Override
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
     }
-
 
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
@@ -216,7 +214,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId) {
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name,projectId,groupingId);
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, groupingId);
     }
 
     @Override
