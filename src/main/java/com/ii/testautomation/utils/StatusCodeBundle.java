@@ -374,5 +374,8 @@ public class StatusCodeBundle {
     private String testScenariosSaveMessage;
     @Value("${message.failure.name.AlreadyExist.testScenario}")
     private String testScenariosNameAlreadyExistMessage;
+    @Value("${message.failure.name.AlreadyExist.testCases.testScenario}")
+    private String testCasesListAlreadyExistMessage;
+
 
 }

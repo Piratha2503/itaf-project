@@ -6,7 +6,6 @@ import com.ii.testautomation.entities.TestScenarios;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestScenariosRepository;
 import com.ii.testautomation.service.TestScenariosService;
-import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TestScenarioServiceImpl implements TestScenariosService {
+public class TestScenariosServiceImpl implements TestScenariosService {
     @Autowired
     private TestScenariosRepository testScenariosRepository;
     @Autowired
@@ -33,12 +32,20 @@ public class TestScenarioServiceImpl implements TestScenariosService {
 
     @Override
     public boolean existByTestCaseList(TestScenariosRequest testScenariosRequest) {
+        List<Boolean> booleans = new ArrayList<>();
         List<TestCases> testCasesList = new ArrayList<>();
         for (Long testCaseId : testScenariosRequest.getTestCasesId())
         {
             testCasesList.add(testCasesRepository.findById(testCaseId).get());
         }
-        return testScenariosRepository.existsByTestCasesIn(testCasesList);
+        List<TestScenarios> testScenariosList = testScenariosRepository.findAll();
+        for (TestScenarios testScenarios : testScenariosList)
+        {
+            if (testScenarios.getTestCases().containsAll(testCasesList)) booleans.add(true);
+            else booleans.add(false);
+        }
+        if (booleans.contains(true)) return true;
+        else return false;
     }
 
     @Override

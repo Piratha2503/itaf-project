@@ -26,9 +26,11 @@ public class TestScenariosController {
     public ResponseEntity<Object> insertTestScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
         if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName()))
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(),statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
-        if (testScenariosService.existByTestCaseList(testScenariosRequest))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(),"This Test Case Group Already Exist With Another Scenario"));
-        testScenariosService.saveTestScenario(testScenariosRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
+        else if (testScenariosService.existByTestCaseList(testScenariosRequest))
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(),statusCodeBundle.getTestCasesListAlreadyExistMessage()));
+        else {
+            testScenariosService.saveTestScenario(testScenariosRequest);
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
+        }
     }
 }
