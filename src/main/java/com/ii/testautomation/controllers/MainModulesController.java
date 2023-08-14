@@ -98,16 +98,15 @@ public class MainModulesController {
     }
 
     @GetMapping(EndpointURI.MAIN_MODULE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getMainModulesByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, @PathVariable Long id)
-    {
+    public ResponseEntity<Object> getMainModulesByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, @PathVariable Long id) {
         if (!projectService.existByProjectId(id))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         if (!mainModulesService.isExistMainModulesByProjectId(id))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getMainModulesNotMappedWithProjectMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getMainModulesNotMappedWithProjectMessage()));
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
         return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.MAINMODULES, mainModulesService.getMainModulesByProjectId(pageable, pagination, id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules(), pagination));
-        }
+    }
 
     @GetMapping(EndpointURI.MAIN_MODULE_PAGE)
     public ResponseEntity<Object> SearchMainModulesWithPage(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, MainModuleSearch mainModuleSearch) {

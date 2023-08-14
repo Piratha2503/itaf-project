@@ -13,13 +13,13 @@ public interface TestGroupingService {
     void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<MultipartFile> excelFiles);
      boolean hasExcelFormat(List<MultipartFile> multipartFiles);
 
+    boolean allTestCasesInSameProject(List<Long> testCaseIds);
+
     boolean existsByTestGroupingId(Long testGroupingId);
 
     void deleteTestGroupingById(Long testGroupingId);
 
     boolean existsByTestCasesId(Long testCaseId);
-
-    boolean allTestCasesInSameProject(List<Long> testCaseIds);
 
     boolean existsByTestTypesId(Long testTypeId);
 
@@ -33,7 +33,7 @@ public interface TestGroupingService {
 
     boolean existByProjectId(Long projectId);
 
-    List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId);
+    List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long projectId);
 
     void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId);
 

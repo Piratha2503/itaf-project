@@ -19,9 +19,11 @@ public interface MainModulesRepository extends JpaRepository<MainModules, Long>,
 
     boolean existsByModulesId(Long id);
 
+    boolean existsByModules_ProjectId(Long id);
+
     Page<MainModules> findByModules_ProjectId(Long id, Pageable pageable);
 
     List<MainModules> findAllByModulesId(Long id);
 
-    boolean existsByModules_ProjectId(Long id);
+
 }

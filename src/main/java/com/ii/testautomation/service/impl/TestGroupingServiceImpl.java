@@ -4,9 +4,7 @@ import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.*;
-import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.repositories.*;
-import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Utils;
@@ -19,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,7 +41,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private ProjectRepository projectRepository;
     @Autowired
-    private TestScenarioRepository testScenarioRepository;
+    private TestScenariosRepository testScenarioRepository;
     @Autowired
     private TestTypesRepository testTypesRepository;
     @Autowired
@@ -154,12 +151,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return uniqueProjectIds.size() == 1;
     }
 
-
     @Override
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
     }
-
 
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
@@ -205,14 +200,16 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public List<TestGroupingResponse> getAllTestGroupingByProjectId(Long projectId) {
+    public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-        List<TestGrouping> testGroupings = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectId);
+        Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
         List<String> testCaseNames = new ArrayList<>();
         List<String> subModuleName = new ArrayList<>();
         List<String> mainModulesName = new ArrayList<>();
         List<String> modulesName = new ArrayList<>();
-        for (TestGrouping testGrouping : testGroupings) {
+        pagination.setTotalRecords(testGroupingPage.getTotalElements());
+        pagination.setPageSize(testGroupingPage.getTotalPages());
+        for (TestGrouping testGrouping : testGroupingPage) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
             testGroupingResponse.setName(testGrouping.getName());
@@ -231,6 +228,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setSubModuleName(subModuleName);
             testGroupingResponseList.add(testGroupingResponse);
         }
+
+
         return testGroupingResponseList;
     }
 
@@ -363,5 +362,4 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponseList;
     }
-
 }
