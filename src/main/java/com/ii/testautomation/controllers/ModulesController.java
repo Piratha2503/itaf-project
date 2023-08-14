@@ -129,7 +129,7 @@ public class ModulesController {
         }
         ProjectModuleResponse projectModuleResponse = modulesService.getAllByProjectId(id);
         return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES,projectModuleResponse,
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByProjectIdSuccessMessage()));
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllModulesByProjectId()));
     }
     @PostMapping(value = EndpointURI.MODULE_IMPORT)
     public ResponseEntity<Object> importModuleFile(@RequestParam MultipartFile multipartFile) {
