@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface TestGroupingService {
-    void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<String> filePath);
+    void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<String> filePath);
 
     boolean existsByTestGroupingId(Long testGroupingId);
 
@@ -37,5 +37,6 @@ public interface TestGroupingService {
 
 
     boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
+
     boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);
 }
