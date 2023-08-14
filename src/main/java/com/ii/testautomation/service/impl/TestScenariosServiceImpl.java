@@ -1,6 +1,4 @@
 package com.ii.testautomation.service.impl;
-
-
 import com.ii.testautomation.dto.response.TestScenariosResponse;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestScenarios;
@@ -12,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
