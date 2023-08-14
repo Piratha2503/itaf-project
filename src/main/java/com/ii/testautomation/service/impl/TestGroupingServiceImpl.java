@@ -31,7 +31,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private ProjectRepository projectRepository;
     @Autowired
-    private TestScenarioRepository testScenarioRepository;
+    private TestScenariosRepository testScenarioRepository;
     @Autowired
     private TestTypesRepository testTypesRepository;
     @Autowired
