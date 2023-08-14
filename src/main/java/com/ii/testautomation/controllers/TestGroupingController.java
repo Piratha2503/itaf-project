@@ -21,9 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -51,7 +48,7 @@ public class TestGroupingController {
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles",required=false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
+    public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
 
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
@@ -88,40 +85,21 @@ public class TestGroupingController {
                 }
             }
         }
-        String folderPath = "D:\\UpdatedJar\\" + testGroupingRequest.getName();
-        List<String> filePaths=new ArrayList<>();
-        try {
-            File folder = new File(folderPath);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            if (excelFiles != null && !excelFiles.isEmpty()) {
-                for (MultipartFile excelFile : excelFiles) {
-                    String filename = excelFile.getOriginalFilename();
-                    String filePath = folderPath + File.separator + filename;
-                    File savedFile = new File(filePath);
-                    excelFile.transferTo(savedFile);
-                    filePaths.add(filePath);
-                }
-            }
+        if (!testGroupingService.hasExcelFormat(excelFiles)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
         }
-        catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
-        }
-        testGroupingService.saveTestGrouping(testGroupingRequest,filePaths);
+        testGroupingService.saveTestGrouping(testGroupingRequest, excelFiles);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
 
     @PutMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles",required=false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
+    public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
 
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
-        if (testGroupingService.isUpdateTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId(),testGroupingRequest.getId())) {
+        if (testGroupingService.isUpdateTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId(), testGroupingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
         }
         if (testGroupingRequest.getTestCaseId() != null) {
@@ -152,29 +130,10 @@ public class TestGroupingController {
                 }
             }
         }
-        String folderPath = "D:\\UpdatedJar\\" + testGroupingRequest.getName();
-        List<String> filePaths=new ArrayList<>();
-        try {
-            File folder = new File(folderPath);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            if (excelFiles != null && !excelFiles.isEmpty()) {
-                for (MultipartFile excelFile : excelFiles) {
-                    String filename = excelFile.getOriginalFilename();
-                    String filePath = folderPath + File.separator + filename;
-                    File savedFile = new File(filePath);
-                    excelFile.transferTo(savedFile);
-                    filePaths.add(filePath);
-                }
-            }
+        if (!testGroupingService.hasExcelFormat(excelFiles)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
         }
-        catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
-        }
-        testGroupingService.saveTestGrouping(testGroupingRequest,filePaths);
+        testGroupingService.saveTestGrouping(testGroupingRequest, excelFiles);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
 
