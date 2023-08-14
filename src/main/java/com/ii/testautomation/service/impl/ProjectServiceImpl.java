@@ -17,8 +17,11 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,15 +30,72 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
+@Component
+@PropertySource("classpath:application.properties")
 public class ProjectServiceImpl implements ProjectService {
+    @Value("${jar.import.file.windows.path}")
+    private String windowsFileFolder;
+    @Value("${jar.import.file.ubuntu.path}")
+    private String ubuntuFileFolder;
     @Autowired
     private ProjectRepository projectRepository;
 
     @Override
-    public void saveProject(ProjectRequest projectRequest,String filePath) {
+    public boolean checkJarFile(MultipartFile jarFile) {
+        if (jarFile != null && !jarFile.isEmpty()) {
+            String jarFilename = jarFile.getOriginalFilename();
+            String jarFileExtension = jarFilename.substring(jarFilename.lastIndexOf(".") + 1);
+            if (!"jar".equalsIgnoreCase(jarFileExtension)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean checkPropertiesFile(MultipartFile propertiesFile) {
+        if (propertiesFile != null && !propertiesFile.isEmpty()) {
+            String configFilename = propertiesFile.getOriginalFilename();
+            String configFileExtension = configFilename.substring(configFilename.lastIndexOf(".") + 1);
+
+            if (!"properties".equalsIgnoreCase(configFileExtension)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
-        project.setJarFilePath(filePath);
+        String directoryPath = ubuntuFileFolder+projectRequest.getName();
+        String uploadedJarFilePath = null;
+        String uploadedConfigFilePath = null;
+        File jarDirectory = new File(directoryPath);
+        if (!jarDirectory.exists()) {
+            jarDirectory.mkdirs();
+        }
+        try {
+            if (jarFile != null && !jarFile.isEmpty()) {
+                String jarFilename = jarFile.getOriginalFilename();
+                uploadedJarFilePath = directoryPath + File.separator + jarFilename;
+                File savedJarFile = new File(uploadedJarFilePath);
+                jarFile.transferTo(savedJarFile);
+
+            }
+            if (configFile != null && !configFile.isEmpty()) {
+                String configFilename = configFile.getOriginalFilename();
+                uploadedConfigFilePath = directoryPath + File.separator + configFilename;
+                File savedConfigFile = new File(uploadedConfigFilePath);
+                configFile.transferTo(savedConfigFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        project.setJarFilePath(uploadedJarFilePath);
+        project.setConfigFilePath(uploadedConfigFilePath);
         projectRepository.save(project);
     }
 
@@ -76,7 +136,8 @@ public class ProjectServiceImpl implements ProjectService {
         return projectResponse;
     }
 
-    public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
+    public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination
+            pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
             booleanBuilder.and(QProject.project.name.containsIgnoreCase(projectSearch.getName()));

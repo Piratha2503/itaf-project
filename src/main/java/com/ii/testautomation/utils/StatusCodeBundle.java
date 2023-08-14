@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
+
     // Common Success code
     @Value("${code.success.common}")
     private String commonSuccessCode;
@@ -24,6 +25,12 @@ public class StatusCodeBundle {
     // Common File Failure Message
     @Value("${message.file.failure.common}")
     private String fileFailureMessage;
+    @Value("${message.file.write.failure.common}")
+    private String fileWriteFailureMessage;
+    @Value("${message.jar.file.failure.common}")
+    private String jarfileFailureMessage;
+    @Value("${message.config.file.failure.common}")
+    private String configFileFailureMessage;
     @Value("${message.validation.header.notExits}")
     private String headerNotExistsMessage;
 
@@ -355,4 +362,17 @@ public class StatusCodeBundle {
     private String testGroupingByProjectId;
     @Value("${message.success.getTestGrouping.testType}")
     private String testGroupingByTestType;
+
+    //TestScenario Codes
+    @Value("${code.validation.testScenario.alreadyExists}")
+    private String testScenariosAlreadyExistCode;
+    @Value("${code.validation.testScenario.notExists}")
+    private String testScenariosNotExistCode;
+
+    //TestScenario Messages
+    @Value("${message.success.insert.testScenario}")
+    private String testScenariosSaveMessage;
+    @Value("${message.failure.name.AlreadyExist.testScenario}")
+    private String testScenariosNameAlreadyExistMessage;
+
 }

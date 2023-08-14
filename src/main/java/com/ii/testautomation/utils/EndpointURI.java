@@ -67,6 +67,8 @@ public final class EndpointURI {
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;
     public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update" + ID+PROJECT_ID;
+    // URLs for TestScenario
+    public static final String TEST_SCENARIO = BASE_API_PATH + "testScenario";
 
     private EndpointURI() {
     }
