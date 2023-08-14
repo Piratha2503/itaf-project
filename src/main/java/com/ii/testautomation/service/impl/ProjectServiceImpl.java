@@ -32,10 +32,11 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
 
     @Override
-    public void saveProject(ProjectRequest projectRequest,String filePath) {
+    public void saveProject(ProjectRequest projectRequest, String jarFilePath, String configFilePath) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
-        project.setJarFilePath(filePath);
+        project.setJarFilePath(jarFilePath);
+        project.setConfigFilePath(configFilePath);
         projectRepository.save(project);
     }
 

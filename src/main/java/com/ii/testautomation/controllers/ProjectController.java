@@ -38,53 +38,82 @@ public class ProjectController {
 
     @PostMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> saveProject(@RequestParam String project,
-                                              @RequestParam(value = "multiPartFile", required = false) MultipartFile multiPartFile) throws JsonProcessingException {
+                                              @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
+                                              @RequestParam(value = "configFile", required = false) MultipartFile configFile) throws JsonProcessingException {
         ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
+
         if (projectService.existByProjectName(projectRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectNameAlReadyExistMessage()));
         }
+
         if (projectService.existByProjectCode(projectRequest.getCode())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
         try {
-            String filename = multiPartFile.getOriginalFilename();
-            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
-            if (!"jar".equalsIgnoreCase(fileExtension)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(),
-                        statusCodeBundle.getFileFailureMessage()));
-            }
-            String uploadedFilePath = null;
-            if (multiPartFile != null && !multiPartFile.isEmpty()) {
-                String directoryPath = "D:\\UpdatedJar";
-                File directory = new File(directoryPath);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
-                uploadedFilePath = directoryPath + File.separator + multiPartFile.getOriginalFilename();
-                File savedJarFile = new File(uploadedFilePath);
-                multiPartFile.transferTo(savedJarFile);
-            }
-            projectService.saveProject(projectRequest, uploadedFilePath);
+            String uploadedJarFilePath = null;
+            if (jarFile != null && !jarFile.isEmpty()) {
+                String jarFilename = jarFile.getOriginalFilename();
+                String jarFileExtension = jarFilename.substring(jarFilename.lastIndexOf(".") + 1);
 
+                if (!"jar".equalsIgnoreCase(jarFileExtension)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                            statusCodeBundle.getFileFailureCode(),
+                            statusCodeBundle.getJarfileFailureMessage()));
+                }
+
+                String jarDirectoryPath = "D:\\UpdatedJar";
+                File jarDirectory = new File(jarDirectoryPath);
+                if (!jarDirectory.exists()) {
+                    jarDirectory.mkdirs();
+                }
+
+                uploadedJarFilePath = jarDirectoryPath + File.separator + jarFilename;
+                File savedJarFile = new File(uploadedJarFilePath);
+                jarFile.transferTo(savedJarFile);
+
+            }
+            String uploadedConfigFilePath = null;
+            if (configFile != null && !configFile.isEmpty()) {
+                String configFilename = configFile.getOriginalFilename();
+                String configFileExtension = configFilename.substring(configFilename.lastIndexOf(".") + 1);
+
+                if (!"properties".equalsIgnoreCase(configFileExtension)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                            statusCodeBundle.getFileFailureCode(),
+                            statusCodeBundle.getConfigFileFailureMessage()));
+                }
+
+                String configDirectoryPath = "D:\\UpdatedJar";
+                File configDirectory = new File(configDirectoryPath);
+                if (!configDirectory.exists()) {
+                    configDirectory.mkdirs();
+                }
+
+                uploadedConfigFilePath = configDirectoryPath + File.separator + configFilename;
+                File savedConfigFile = new File(uploadedConfigFilePath);
+                configFile.transferTo(savedConfigFile);
+            }
+            projectService.saveProject(projectRequest,uploadedJarFilePath,uploadedConfigFilePath);
             return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                     statusCodeBundle.getCommonSuccessCode(),
                     statusCodeBundle.getSaveProjectSuccessMessage()));
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()
+                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileWriteFailureMessage()
             ));
         }
     }
 
+
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestParam String project,
-                                              @RequestParam(value = "multiPartFile", required = false) MultipartFile multiPartFile) throws JsonProcessingException {
+                                              @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
+                                              @RequestParam(value = "configFile", required = false) MultipartFile configFile) throws JsonProcessingException {
         ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
         if (!projectService.existByProjectId(projectRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -102,33 +131,57 @@ public class ProjectController {
                     statusCodeBundle.getProjectNameAlReadyExistMessage()));
         }
         try {
-            String uploadedFilePath = null;
-            String filename = multiPartFile.getOriginalFilename();
-            String fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
-            if (!"jar".equalsIgnoreCase(fileExtension)) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFileFailureCode(),
-                        statusCodeBundle.getFileFailureMessage()));
-            }
-            if (multiPartFile != null && !multiPartFile.isEmpty()) {
-                String directoryPath = "D:\\UpdatedJar";
-                File directory = new File(directoryPath);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
-                uploadedFilePath = directoryPath + File.separator + multiPartFile.getOriginalFilename();
-                File savedJarFile = new File(uploadedFilePath);
-                multiPartFile.transferTo(savedJarFile);
-            }
-            projectService.saveProject(projectRequest, uploadedFilePath);
+            String uploadedJarFilePath = null;
+            if (jarFile != null && !jarFile.isEmpty()) {
+                String jarFilename = jarFile.getOriginalFilename();
+                String jarFileExtension = jarFilename.substring(jarFilename.lastIndexOf(".") + 1);
 
+                if (!"jar".equalsIgnoreCase(jarFileExtension)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                            statusCodeBundle.getFileFailureCode(),
+                            statusCodeBundle.getJarfileFailureMessage()));
+                }
+
+                String jarDirectoryPath = "D:\\UpdatedJar";
+                File jarDirectory = new File(jarDirectoryPath);
+                if (!jarDirectory.exists()) {
+                    jarDirectory.mkdirs();
+                }
+
+                uploadedJarFilePath = jarDirectoryPath + File.separator + jarFilename;
+                File savedJarFile = new File(uploadedJarFilePath);
+                jarFile.transferTo(savedJarFile);
+
+            }
+            String uploadedConfigFilePath = null;
+            if (configFile != null && !configFile.isEmpty()) {
+                String configFilename = configFile.getOriginalFilename();
+                String configFileExtension = configFilename.substring(configFilename.lastIndexOf(".") + 1);
+
+                if (!"properties".equalsIgnoreCase(configFileExtension)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                            statusCodeBundle.getFileFailureCode(),
+                            statusCodeBundle.getConfigFileFailureMessage()));
+                }
+
+                String configDirectoryPath = "D:\\UpdatedJar";
+                File configDirectory = new File(configDirectoryPath);
+                if (!configDirectory.exists()) {
+                    configDirectory.mkdirs();
+                }
+
+                uploadedConfigFilePath = configDirectoryPath + File.separator + configFilename;
+                File savedConfigFile = new File(uploadedConfigFilePath);
+                configFile.transferTo(savedConfigFile);
+            }
+            projectService.saveProject(projectRequest,uploadedJarFilePath,uploadedConfigFilePath);
             return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                     statusCodeBundle.getCommonSuccessCode(),
-                    statusCodeBundle.getUpdateProjectSuccessMessage()));
+                    statusCodeBundle.getSaveProjectSuccessMessage()));
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()
+                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileWriteFailureMessage()
             ));
         }
 
