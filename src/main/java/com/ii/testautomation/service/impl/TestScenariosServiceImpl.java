@@ -74,20 +74,21 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     }
     @Override
     public List<TestScenariosResponse> getAllTestScenariosByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination)      {
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
         List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
-        Page<TestScenarios> testScenariosPage = testScenariosRepository.findByTestCasesSubModuleMainModuleModulesProjectId(projectId,pageable);
+        Page<TestScenarios> testScenariosPage = testScenariosRepository.findDistinctTestScenariosByTestCases_SubModule_MainModule_Modules_Project_Id(projectId,pageable);
         pagination.setTotalRecords(testScenariosPage.getTotalElements());
         pagination.setPageSize(testScenariosPage.getTotalPages());
 
         for (TestScenarios testScenarios:testScenariosPage) {
             TestScenariosResponse testScenariosResponse=new TestScenariosResponse();
-            testScenariosResponse.setId(testScenarios.getId());
-            testScenariosResponse.setName(testScenarios.getName());
+          BeanUtils.copyProperties(testScenarios,testScenariosResponse);
             List<String> testCasesNames = new ArrayList<>();
             for (TestCases testCase : testScenarios.getTestCases()) {
-                String TestCaseName = testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1);
-                testCasesNames.add(TestCaseName);
+                String testCaseName = testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1);
+                if(!testCasesNames.contains(testCaseName))
+                {
+                    testCasesNames.add(testCaseName);
+                }
             }
             testScenariosResponse.setTestCasesName(testCasesNames);
             testScenariosResponseList.add(testScenariosResponse);
