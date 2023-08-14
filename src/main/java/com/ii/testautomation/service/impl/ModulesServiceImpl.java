@@ -136,50 +136,65 @@ ModulesServiceImpl implements ModulesService {
         return modulesResponseList;
     }
 
+
     @Override
     public ProjectModuleResponse getAllByProjectId(Long projectId) {
         List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
         ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
         List<ModulesResponse> modulesResponseList = new ArrayList<>();
+
         for (Modules module : modulesList) {
             ModulesResponse modulesResponse = new ModulesResponse();
             modulesResponse.setName(module.getName());
             modulesResponse.setId(module.getId());
-            modulesResponseList.add(modulesResponse);
             List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(module.getId());
             List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
-            for (MainModules mainModules : mainModulesList
-            ) {
+
+            for (MainModules mainModules : mainModulesList) {
                 MainModulesResponse mainModulesResponse = new MainModulesResponse();
                 mainModulesResponse.setId(mainModules.getId());
                 mainModulesResponse.setName(mainModules.getName());
-                mainModulesResponseList.add(mainModulesResponse);
                 List<SubModules> subModulesList = subModulesRepository.findAllSubModulesByMainModuleId(mainModules.getId());
                 List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
-                for (SubModules subModules : subModulesList
-                ) {
+
+                for (SubModules subModules : subModulesList) {
                     SubModulesResponse subModulesResponse = new SubModulesResponse();
                     subModulesResponse.setId(subModules.getId());
                     subModulesResponse.setName(subModules.getName());
-                    subModulesResponseList.add(subModulesResponse);
                     List<TestCases> testCasesList = testCasesRepository.findAllTestCasesBySubModuleId(subModules.getId());
                     List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
-                    for (TestCases testCases : testCasesList
-                    ) {
+
+                    for (TestCases testCases : testCasesList) {
                         TestCaseResponse testCaseResponse = new TestCaseResponse();
                         testCaseResponse.setId(testCases.getId());
                         testCaseResponse.setName(testCases.getName());
                         testCaseResponseList.add(testCaseResponse);
                     }
-                    subModulesResponse.setTestCaseResponses(testCaseResponseList);
+                    if(testCaseResponseList!=null&& !testCaseResponseList.isEmpty()) {
+                        subModulesResponse.setTestCaseResponses(testCaseResponseList);
+                    }
+                    if(subModulesResponse.getTestCaseResponses()!=null&& !subModulesResponse.getTestCaseResponses().isEmpty() )
+                    subModulesResponseList.add(subModulesResponse);
                 }
-                mainModulesResponse.setSubModulesResponses(subModulesResponseList);
+                if(subModulesResponseList!=null && !subModulesResponseList.isEmpty()){
+                    mainModulesResponse.setSubModulesResponses(subModulesResponseList);
+                }
+                if(mainModulesResponse.getSubModulesResponses()!=null&& !mainModulesResponse.getSubModulesResponses().isEmpty()) {
+                    mainModulesResponseList.add(mainModulesResponse);
+                }
             }
-            modulesResponse.setMainModulesResponse(mainModulesResponseList);
+            if( mainModulesResponseList!=null && !mainModulesResponseList.isEmpty()) {
+                modulesResponse.setMainModulesResponse(mainModulesResponseList);
+            }
+            if(modulesResponse.getMainModulesResponse()!=null && !modulesResponse.getMainModulesResponse().isEmpty()) {
+                modulesResponseList.add(modulesResponse);
+            }
         }
+
         projectModuleResponse.setModulesResponseList(modulesResponseList);
         return projectModuleResponse;
     }
+
 
     @Override
     public void deleteModuleById(Long id) {
