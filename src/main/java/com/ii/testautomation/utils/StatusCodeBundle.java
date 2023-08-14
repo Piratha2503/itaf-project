@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
-    //File Folder
-    @Value("${jar.import.file.path}")
-    private String fileFolder;
+
     // Common Success code
     @Value("${code.success.common}")
     private String commonSuccessCode;
