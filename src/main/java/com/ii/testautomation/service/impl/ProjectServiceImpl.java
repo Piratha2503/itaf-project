@@ -158,7 +158,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void deleteProject(Long projectId) {
-        String projectDirectoryPath = fileFolder +projectRepository.findById(projectId).get().getName();
+        String projectDirectoryPath = fileFolder +File.separator+projectRepository.findById(projectId).get().getName();
         deleteProjectFolder(projectDirectoryPath);
         projectRepository.deleteById(projectId);
     }
