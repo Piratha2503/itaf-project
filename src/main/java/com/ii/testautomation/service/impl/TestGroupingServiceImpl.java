@@ -212,6 +212,12 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
+    public boolean existsTestGroupingByTestScenarioId(Long id) {
+       return  testGroupingRepository.existsByTestScenariosId(id);
+
+    }
+
+    @Override
     public boolean existsByTestGroupingNameByProjectId(String name, Long projectId) {
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
