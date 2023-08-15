@@ -20,6 +20,8 @@ public interface TestScenariosService {
     boolean isUpdateTestScenariosNameExists(Long id,String name );
 
 
+    boolean existByProjectId(Long projectId);
+
     List<TestScenariosResponse> getAllTestScenariosByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
     void DeleteTestScenariosById(Long id);

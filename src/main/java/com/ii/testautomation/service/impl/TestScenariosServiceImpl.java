@@ -8,13 +8,12 @@ import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestScenariosRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestScenariosService;
-import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import javax.persistence.EntityNotFoundException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,7 +108,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
                     testCasesNames.add(testCaseName);
                 }
             }
-            testScenariosResponse.setTestCasesName(testCasesNames);
+            testScenariosResponse.setTestCaseName(testCasesNames);
             testScenariosResponseList.add(testScenariosResponse);
         }
         return testScenariosResponseList;
