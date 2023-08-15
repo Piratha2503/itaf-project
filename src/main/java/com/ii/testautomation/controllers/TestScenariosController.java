@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,8 +43,6 @@ public class TestScenariosController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
     }
 
-
-
     @GetMapping(EndpointURI.TEST_SCENARIO_BY_PROJECT_ID)
     public ResponseEntity<Object> getAllTestScenariosByProjectIdWithPagination(@PathVariable Long id,
                                                                                @RequestParam(name = "page") int page,
@@ -65,11 +64,11 @@ public class TestScenariosController {
         if (!testScenariosService.existsByTestScenarioId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestScenarioNotExistsMessage()));
         }
-         if (testGroupingService.existsTestGroupingByTestScenarioId(id)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                            statusCodeBundle.getTestScenarioIdDependentCode(),
-                            statusCodeBundle.getTestScenarioIdDependentMessage()));
-                }
+        if (testGroupingService.existsTestGroupingByTestScenarioId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestScenarioIdDependentCode(),
+                    statusCodeBundle.getTestScenarioIdDependentMessage()));
+        }
         testScenariosService.DeleteTestScenariosById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestScenarioSuccessMessage()));
     }
