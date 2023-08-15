@@ -8,12 +8,14 @@ import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestScenariosRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestScenariosService;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +26,26 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     private TestScenariosRepository testScenariosRepository;
     @Autowired
     private TestCasesRepository testCasesRepository;
+
+    @Override
+    public boolean isUpdateTestScenariosNameExists(Long id, String name) {
+        return testScenariosRepository.existsByNameIgnoreCaseAndIdNot(name,id);
+
+    }
+
+    @Override
+    public TestScenariosResponse viewScenarioById(Long id) {
+        TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
+        List<String> testCaseNames = new ArrayList<>();
+        TestScenarios testScenarios = testScenariosRepository.findById(id).get();
+        BeanUtils.copyProperties(testScenarios,testScenariosResponse);
+        for (TestCases testCases : testScenarios.getTestCases())
+        {
+            testCaseNames.add(testCases.getName());
+        }
+        testScenariosResponse.setTestCasesName(testCaseNames);
+        return testScenariosResponse;
+    }
 
     @Override
     public boolean existsByTestScenarioId(Long testScenarioId) {
@@ -49,6 +71,12 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         }
         if (booleans.contains(true)) return true;
         else return false;
+    }
+
+    @Override
+    public boolean existByProjectId(Long projectId) {
+        return testScenariosRepository.existsByTestCasesSubModuleMainModuleModulesProject_id(projectId);
+
     }
 
     @Override
@@ -81,16 +109,6 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     }
 
     @Override
-    public boolean isUpdateTestScenariosNameExists(Long id, String name) {
-        return testScenariosRepository.existsByNameIgnoreCaseAndIdNot(name,id);
-
-    }
-    @Override
-    public boolean existByProjectId(Long projectId) {
-          return testScenariosRepository.existsByTestCasesSubModuleMainModuleModulesProject_id(projectId);
-
-    }
-    @Override
     public List<TestScenariosResponse> getAllTestScenariosByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination)      {
         List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
         Page<TestScenarios> testScenariosPage = testScenariosRepository.findDistinctTestScenariosByTestCases_SubModule_MainModule_Modules_Project_Id(projectId,pageable);
@@ -108,7 +126,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
                     testCasesNames.add(testCaseName);
                 }
             }
-            testScenariosResponse.setTestCaseName(testCasesNames);
+            testScenariosResponse.setTestCasesName(testCasesNames);
             testScenariosResponseList.add(testScenariosResponse);
         }
         return testScenariosResponseList;
@@ -118,6 +136,5 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     public void DeleteTestScenariosById(Long id) {
         testScenariosRepository.deleteById(id);
     }
-
 
 }
