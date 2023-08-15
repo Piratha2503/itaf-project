@@ -28,6 +28,26 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     private TestCasesRepository testCasesRepository;
 
     @Override
+    public boolean isUpdateTestScenariosNameExists(Long id, String name) {
+        return testScenariosRepository.existsByNameIgnoreCaseAndIdNot(name,id);
+
+    }
+
+    @Override
+    public TestScenariosResponse viewScenarioById(Long id) {
+        TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
+        List<String> testCaseNames = new ArrayList<>();
+        TestScenarios testScenarios = testScenariosRepository.findById(id).get();
+        BeanUtils.copyProperties(testScenarios,testScenariosResponse);
+        for (TestCases testCases : testScenarios.getTestCases())
+        {
+            testCaseNames.add(testCases.getName());
+        }
+        testScenariosResponse.setTestCasesName(testCaseNames);
+        return testScenariosResponse;
+    }
+
+    @Override
     public boolean existsByTestScenarioId(Long testScenarioId) {
         return testScenariosRepository.existsById(testScenarioId);
     }
@@ -51,6 +71,12 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         }
         if (booleans.contains(true)) return true;
         else return false;
+    }
+
+    @Override
+    public boolean existByProjectId(Long projectId) {
+        return testScenariosRepository.existsByTestCasesSubModuleMainModuleModulesProject_id(projectId);
+
     }
 
     @Override
@@ -83,11 +109,6 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     }
 
     @Override
-    public boolean existByProjectId(Long projectId) {
-          return testScenariosRepository.existsByTestCasesSubModuleMainModuleModulesProject_id(projectId);
-
-    }
-    @Override
     public List<TestScenariosResponse> getAllTestScenariosByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination)      {
         List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
         Page<TestScenarios> testScenariosPage = testScenariosRepository.findDistinctTestScenariosByTestCases_SubModule_MainModule_Modules_Project_Id(projectId,pageable);
@@ -116,10 +137,4 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         testScenariosRepository.deleteById(id);
     }
 
-
-    @Override
-    public boolean isUpdateTestScenariosNameExists(Long id, String name) {
-        return testScenariosRepository.existsByNameIgnoreCaseAndIdNot(name,id);
-
-    }
 }

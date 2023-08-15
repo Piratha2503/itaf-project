@@ -385,8 +385,6 @@ public class StatusCodeBundle {
     private String testScenarioNotExistsMessage;
     @Value("${code.validation.testScenario.dependent}")
     private String testScenarioDependentCode;
-
-    //TestScenario Messages
     @Value("${message.success.insert.testScenario}")
     private String testScenariosSaveMessage;
     @Value("${message.failure.name.AlreadyExist.testScenario}")
@@ -397,7 +395,8 @@ public class StatusCodeBundle {
     private String updateTestScenarioSuccessMessage;
     @Value("${message.failure.name.AlreadyExist.testCases.testScenario}")
     private String testCasesListAlreadyExistMessage;
-
+    @Value("${message.success.view.testScenario}")
+    private String testScenarioViewMessage;
     @Value("${code.validation.testScenario.dependent}")
     private String testScenarioIdDependentCode;
     @Value("${message.validation.testScenario.dependent}")
