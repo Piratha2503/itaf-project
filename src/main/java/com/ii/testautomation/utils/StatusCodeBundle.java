@@ -222,6 +222,8 @@ public class StatusCodeBundle {
     private String moduleNameDuplicateMessage;
     @Value("${message.validation.module.prefix.duplicate}")
     private String modulePrefixDuplicateMessage;
+    @Value("${message.success.getAll.module.ByProjectId}")
+    private String getAllModulesByProjectId;
 
     // Test Types Codes
     @Value("${code.validation.testType.alreadyExists}")
