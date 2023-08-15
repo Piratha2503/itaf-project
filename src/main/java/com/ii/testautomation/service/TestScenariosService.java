@@ -12,7 +12,7 @@ public interface TestScenariosService {
 
     void saveTestScenario(TestScenariosRequest testScenariosRequest);
 
-    boolean isUpdateTestScenariosNameExists(Long id,String name,Long projectId);
+    boolean isUpdateTestScenariosNameExists(Long id,String name );
 
 
 }
