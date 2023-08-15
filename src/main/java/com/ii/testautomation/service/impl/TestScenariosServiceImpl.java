@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.request.TestScenariosRequest;
 import com.ii.testautomation.dto.response.TestScenariosResponse;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestScenarios;
+import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestScenariosRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;

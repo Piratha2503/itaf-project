@@ -9,11 +9,15 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,14 +45,30 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private MainModulesRepository mainModulesRepository;
 
+    @Value("${jar.import.file.windows.path}")
+    private String fileFolder;
+
     @Override
-    public void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<String> excelFilePath) {
+    public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
+        for (MultipartFile multipartFile : multipartFiles
+        ) {
+            try {
+                Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+                workbook.close();
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
         TestGrouping testGrouping = new TestGrouping();
         testGrouping.setName(testGroupingRequest.getName());
         TestTypes testTypes = new TestTypes();
         testTypes.setId(testGroupingRequest.getTestTypeId());
         testGrouping.setTestType(testTypes);
-        testGrouping.setExcelFilePath(excelFilePath);
         List<TestCases> testCasesList = new ArrayList<>();
         if (testGroupingRequest.getSubModuleIds() != null && !testGroupingRequest.getSubModuleIds().isEmpty()) {
             for (Long subModuleId : testGroupingRequest.getSubModuleIds()) {
@@ -90,6 +110,26 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         testGrouping.setTestScenarios(testScenariosList);
         testGrouping.setTestCases(testCasesList);
+        String folderPath = fileFolder + projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
+        List<String> filePaths = new ArrayList<>();
+        try {
+            File folder = new File(folderPath);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            if (excelFiles != null && !excelFiles.isEmpty()) {
+                for (MultipartFile excelFile : excelFiles) {
+                    String filename = excelFile.getOriginalFilename();
+                    String filePath = folderPath + File.separator + filename;
+                    File savedFile = new File(filePath);
+                    excelFile.transferTo(savedFile);
+                    filePaths.add(filePath);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        testGrouping.setExcelFilePath(filePaths);
         if (testGroupingRequest.getId() != null) {
             testGroupingRepository.deleteById(testGroupingRequest.getId());
         }
