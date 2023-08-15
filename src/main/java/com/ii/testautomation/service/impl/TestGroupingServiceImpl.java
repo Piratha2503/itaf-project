@@ -234,15 +234,30 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId) {
+    public void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds) {
         TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).orElse(null);
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
+        if (testScenarioIds != null && !testScenarioIds.isEmpty()) {
+            for (Long testScenarioId : testScenarioIds
+            ) {
+                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
+                testScenarios.setExecutionStatus(true);
+                testScenarioRepository.save(testScenarios);
+            }
+        }
+        if (testCaseIds != null && !testCaseIds.isEmpty()) {
+            for (Long testCaseId : testCaseIds
+            ) {
+                TestCases testCases = testCasesRepository.findById(testCaseId).get();
+                testCases.setExecutionStatus(true);
+                testCasesRepository.save(testCases);
+            }
+        }
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();
-
         try {
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
@@ -262,6 +277,14 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId) {
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, groupingId);
+    }
+
+    @Override
+    public boolean hasExcelPath(Long testGroupingId) {
+        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).get();
+        if (testGrouping.getExcelFilePath() != null) return true;
+        return false;
+
     }
 
     @Override

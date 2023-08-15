@@ -287,6 +287,19 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public boolean hasJarPath(Long projectId) {
+        Project project=projectRepository.findById(projectId).get();
+        if(project.getConfigFilePath()!=null)return true;
+        return false;
+    }
+    @Override
+    public boolean hasConfigPath(Long projectId) {
+        Project project=projectRepository.findById(projectId).get();
+        if(project.getConfigFilePath()!=null)return true;
+        return false;
+    }
+
+    @Override
     public void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value) {
         List<Integer> errorList = errorMessages.getOrDefault(key, new ArrayList<>());
         errorList.add(value);

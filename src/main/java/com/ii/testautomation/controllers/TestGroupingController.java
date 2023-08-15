@@ -138,7 +138,7 @@ public class TestGroupingController {
     }
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
-    public ResponseEntity<Object> updateExecution(@RequestParam List<Long> testScenarioIds, @RequestParam List<Long> testCaseIds, @RequestParam Long projectId) {
+    public ResponseEntity<Object> updateExecution(@RequestParam List<Long> testScenarioIds, @RequestParam List<Long> testCaseIds, @PathVariable Long projectId,@PathVariable Long id) {
         if (!projectService.existByProjectId(projectId)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
@@ -148,7 +148,6 @@ public class TestGroupingController {
             ) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNotExists"));
             }
-            testScenariosService.updateExecutionStatus(testScenarioId);
         }
         for (Long testCaseId : testCaseIds
         ) {
@@ -156,8 +155,20 @@ public class TestGroupingController {
             ) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
             }
-            testCasesService.updateExecutionStatus(testCaseId);
         }
+        if(!projectService.hasJarPath(projectId))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getProjectJarPathNotProvideMessage()));
+        }
+        if(!projectService.hasConfigPath(projectId))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getProjectConfigPathNotProvideMessage()));
+        }
+        if(!testGroupingService.hasExcelPath(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getExcelPathNotProvideMessage()));
+        }
+        testGroupingService.updateTestGroupingExecutionStatus(id, projectId,testScenarioIds,testCaseIds);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionSuccessMessage()));
     }
 

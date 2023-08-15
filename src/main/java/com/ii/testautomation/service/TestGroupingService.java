@@ -35,9 +35,10 @@ public interface TestGroupingService {
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long projectId);
 
-    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId);
+    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId,List<Long>testScenarioIds,List<Long>testCaseIds );
 
 
     boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
     boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);
+    boolean hasExcelPath(Long testGroupingId);
 }

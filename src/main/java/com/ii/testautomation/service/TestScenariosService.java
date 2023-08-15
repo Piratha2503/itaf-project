@@ -11,5 +11,6 @@ public interface TestScenariosService {
 
     void saveTestScenario(TestScenariosRequest testScenariosRequest);
 
-    void updateExecutionStatus(Long testScenarioId);
+    void updateExecutionStatus(Long testScenarioId,Long projectId);
+    boolean hasExcelPath(Long testScenarioId);
 }

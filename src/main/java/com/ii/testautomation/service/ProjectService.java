@@ -42,6 +42,8 @@ public interface ProjectService {
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
+    boolean hasJarPath(Long projectId);
+    public boolean hasConfigPath(Long projectId);
 
 }
 

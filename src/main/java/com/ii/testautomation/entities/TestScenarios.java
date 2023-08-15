@@ -19,5 +19,7 @@ public class TestScenarios extends DateAudit {
     @JoinColumn(name = "testCases_id", nullable = false)
     private List<TestCases> testCases;
     private Boolean executionStatus = false;
+    @ElementCollection
+    private List<String> excelPath;
 
 }

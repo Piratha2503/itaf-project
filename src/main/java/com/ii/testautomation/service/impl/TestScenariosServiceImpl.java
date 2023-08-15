@@ -3,6 +3,7 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.TestScenariosRequest;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestScenarios;
+import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestScenariosRepository;
 import com.ii.testautomation.service.TestScenariosService;
@@ -10,6 +11,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,8 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     private TestScenariosRepository testScenariosRepository;
     @Autowired
     private TestCasesRepository testCasesRepository;
-
+    @Autowired
+    private ProjectRepository projectRepository;
     @Override
     public boolean existsByTestScenarioId(Long testScenarioId) {
         return testScenariosRepository.existsById(testScenarioId);
@@ -63,10 +67,32 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     }
 
     @Override
-    public void updateExecutionStatus(Long testScenarioId) {
+    public void updateExecutionStatus(Long testScenarioId,Long projectId) {
         TestScenarios testScenarios=testScenariosRepository.findById(testScenarioId).get();
         testScenarios.setExecutionStatus(true);
         testScenariosRepository.save(testScenarios);
+        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+        File jarFile = new File(savedFilePath);
+        String jarFileName = jarFile.getName();
+        String jarDirectory = jarFile.getParent();
+        try {
+            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+            runProcessBuilder.directory(new File(jarDirectory));
+            runProcessBuilder.redirectErrorStream(true);
+            Process runProcess = runProcessBuilder.start();
+            runProcess.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
+
+    @Override
+    public boolean hasExcelPath(Long testScenarioId) {
+        TestScenarios testScenarios=testScenariosRepository.findById(testScenarioId).get();
+        if(testScenarios.getExcelPath()!=null)return true;
+        return false;
+    }
+
 
 }
