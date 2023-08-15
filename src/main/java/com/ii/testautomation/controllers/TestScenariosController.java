@@ -53,7 +53,7 @@ public class TestScenariosController {
         if (!testScenariosService.existsByTestScenarioId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getGetTestScenarioNotHaveProjectId()));
         }
-        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants., testScenariosService.getAllTestScenariosByProjectIdWithPagination(id, pageable, pagination),
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.TESTSCENARIO, testScenariosService.getAllTestScenariosByProjectIdWithPagination(id, pageable, pagination),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllTestScenarioSuccessGivenProjectId(), pagination));
     }

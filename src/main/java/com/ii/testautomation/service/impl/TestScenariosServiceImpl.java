@@ -126,7 +126,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
                     testCasesNames.add(testCaseName);
                 }
             }
-            testScenariosResponse.setTestCaseName(testCasesNames);
+            testScenariosResponse.setTestCasesName(testCasesNames);
             testScenariosResponseList.add(testScenariosResponse);
         }
         return testScenariosResponseList;
