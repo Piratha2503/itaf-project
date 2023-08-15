@@ -142,18 +142,22 @@ public class TestGroupingController {
         if (!projectService.existByProjectId(projectId)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
-        for (Long testScenarioId : testScenarioIds
-        ) {
-            if (!testScenariosService.existsByTestScenarioId(testScenarioId)
+        if(testScenarioIds!=null && !testScenarioIds.isEmpty()) {
+            for (Long testScenarioId : testScenarioIds
             ) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNotExists"));
+                if (!testScenariosService.existsByTestScenarioId(testScenarioId)
+                ) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNotExists"));
+                }
             }
         }
-        for (Long testCaseId : testCaseIds
-        ) {
-            if (!testCasesService.existsByTestCasesId(testCaseId)
+        if(testCaseIds!=null && !testCaseIds.isEmpty()) {
+            for (Long testCaseId : testCaseIds
             ) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+                if (!testCasesService.existsByTestCasesId(testCaseId)
+                ) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+                }
             }
         }
         if(!projectService.hasJarPath(projectId))
