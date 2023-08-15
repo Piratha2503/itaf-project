@@ -34,7 +34,7 @@ public interface TestGroupingService {
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long projectId);
 
     void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId);
-
+   boolean existsTestGroupingByTestScenarioId(Long id);
 
     boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
     boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);

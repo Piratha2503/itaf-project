@@ -11,4 +11,5 @@ public class TestScenariosRequest {
     private Long id;
     private String name;
     private List<Long> testCasesId;
+
 }
