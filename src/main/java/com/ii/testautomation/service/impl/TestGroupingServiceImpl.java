@@ -113,7 +113,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
     }
+    @Override
+    public boolean existsTestGroupingByTestScenarioId(Long id) {
+        return  testGroupingRepository.existsByTestScenariosId(id);
 
+    }
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
         testGroupingRepository.deleteById(testGroupingId);
