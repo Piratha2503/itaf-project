@@ -81,7 +81,7 @@ public class TestGroupingController {
         if (testGroupingRequest.getTestScenarioIds() != null) {
             for (Long testScenarioId : testGroupingRequest.getTestScenarioIds()) {
                 if (!testScenariosService.existsByTestScenarioId(testScenarioId)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNot exists"));
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), statusCodeBundle.getTestScenarioNotExistsMessage()));
                 }
             }
         }
@@ -126,7 +126,7 @@ public class TestGroupingController {
         if (testGroupingRequest.getTestScenarioIds() != null) {
             for (Long testScenarioId : testGroupingRequest.getTestScenarioIds()) {
                 if (!testScenariosService.existsByTestScenarioId(testScenarioId)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), "100", "testScenario id not found"));
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getTestScenariosNotExistCode(),statusCodeBundle.getTestScenarioNotExistsMessage()));
                 }
             }
         }
