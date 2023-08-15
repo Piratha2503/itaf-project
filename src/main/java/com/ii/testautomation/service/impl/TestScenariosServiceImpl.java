@@ -1,15 +1,19 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.TestScenariosRequest;
+import com.ii.testautomation.dto.response.TestScenariosResponse;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestScenarios;
 import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestScenariosRepository;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestScenariosService;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,4 +86,39 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         return testScenariosRepository.existsByNameIgnoreCaseAndIdNot(name,id);
 
     }
+    @Override
+    public boolean existByProjectId(Long projectId) {
+          return testScenariosRepository.existsByTestCasesSubModuleMainModuleModulesProject_id(projectId);
+
+    }
+    @Override
+    public List<TestScenariosResponse> getAllTestScenariosByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination)      {
+        List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
+        Page<TestScenarios> testScenariosPage = testScenariosRepository.findDistinctTestScenariosByTestCases_SubModule_MainModule_Modules_Project_Id(projectId,pageable);
+        pagination.setTotalRecords(testScenariosPage.getTotalElements());
+        pagination.setPageSize(testScenariosPage.getTotalPages());
+
+        for (TestScenarios testScenarios:testScenariosPage) {
+            TestScenariosResponse testScenariosResponse=new TestScenariosResponse();
+          BeanUtils.copyProperties(testScenarios,testScenariosResponse);
+            List<String> testCasesNames = new ArrayList<>();
+            for (TestCases testCase : testScenarios.getTestCases()) {
+                String testCaseName = testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1);
+                if(!testCasesNames.contains(testCaseName))
+                {
+                    testCasesNames.add(testCaseName);
+                }
+            }
+            testScenariosResponse.setTestCasesName(testCasesNames);
+            testScenariosResponseList.add(testScenariosResponse);
+        }
+        return testScenariosResponseList;
+    }
+
+    @Override
+    public void DeleteTestScenariosById(Long id) {
+        testScenariosRepository.deleteById(id);
+    }
+
+
 }

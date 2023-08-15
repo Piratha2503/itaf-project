@@ -32,7 +32,7 @@ public class TestScenariosController {
     }
 
 
-    @PutMapping(EndpointURI.TEST_SCENARIO_BY_ID)
+    @PutMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object>UpdateTestScenarios(@RequestBody TestScenariosRequest testScenariosRequest){
       if (!testScenariosService.existsByTestScenarioId(testScenariosRequest.getId())){
           return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
