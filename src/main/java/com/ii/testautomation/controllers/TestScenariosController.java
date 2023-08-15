@@ -10,9 +10,13 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.service.TestScenariosService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +53,7 @@ public class TestScenariosController {
         if (!testScenariosService.existsByTestScenarioId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getGetTestScenarioNotHaveProjectId()));
         }
-        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.TESTSCENARIOS, testScenariosService.getAllTestScenariosByProjectIdWithPagination(id, pageable, pagination),
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants., testScenariosService.getAllTestScenariosByProjectIdWithPagination(id, pageable, pagination),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllTestScenarioSuccessGivenProjectId(), pagination));
     }

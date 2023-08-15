@@ -109,16 +109,6 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     }
 
     @Override
-    public boolean isUpdateTestScenariosNameExists(Long id, String name) {
-        return testScenariosRepository.existsByNameIgnoreCaseAndIdNot(name,id);
-
-    }
-    @Override
-    public boolean existByProjectId(Long projectId) {
-          return testScenariosRepository.existsByTestCasesSubModuleMainModuleModulesProject_id(projectId);
-
-    }
-    @Override
     public List<TestScenariosResponse> getAllTestScenariosByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination)      {
         List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
         Page<TestScenarios> testScenariosPage = testScenariosRepository.findDistinctTestScenariosByTestCases_SubModule_MainModule_Modules_Project_Id(projectId,pageable);
