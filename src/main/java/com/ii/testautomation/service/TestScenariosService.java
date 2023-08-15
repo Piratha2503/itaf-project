@@ -11,9 +11,11 @@ public interface TestScenariosService {
     boolean existsByTestScenarioId(Long testScenarioId);
 
 
-    boolean existsByTestScenarioNameIgnoreCase(String name);
+    boolean existsByTestScenarioNameIgnoreCase(String name, Long projectId);
 
     boolean existByProjectId(Long projectId);
+
+    void updateTestScenario(TestScenariosRequest testScenariosRequest);
 
     List<TestScenariosResponse> getAllTestScenariosByProjectIdWithPagination(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
