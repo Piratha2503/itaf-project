@@ -8,7 +8,6 @@ import com.ii.testautomation.repositories.TestCasesRepository;
 import com.ii.testautomation.repositories.TestScenariosRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestScenariosService;
-import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TestScenariosServiceImpl implements TestScenariosService {
@@ -39,13 +39,11 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     public boolean existByTestCaseList(TestScenariosRequest testScenariosRequest) {
         List<Boolean> booleans = new ArrayList<>();
         List<TestCases> testCasesList = new ArrayList<>();
-        for (Long testCaseId : testScenariosRequest.getTestCasesId())
-        {
+        for (Long testCaseId : testScenariosRequest.getTestCasesId()) {
             testCasesList.add(testCasesRepository.findById(testCaseId).get());
         }
         List<TestScenarios> testScenariosList = testScenariosRepository.findAll();
-        for (TestScenarios testScenarios : testScenariosList)
-        {
+        for (TestScenarios testScenarios : testScenariosList) {
             if (testScenarios.getTestCases().containsAll(testCasesList)) booleans.add(true);
             else booleans.add(false);
         }
@@ -58,15 +56,35 @@ public class TestScenariosServiceImpl implements TestScenariosService {
 
         TestScenarios testScenarios = new TestScenarios();
         List<TestCases> testCasesList = new ArrayList<>();
-        for (Long testCaseId: testScenariosRequest.getTestCasesId())
-        {
-            testCasesList.add(testCasesRepository.findById(testCaseId).get());
+
+        if (testScenariosRequest.getTestCasesId() != null) {
+            for (Long testCaseId : testScenariosRequest.getTestCasesId())
+                testCasesList.add(testCasesRepository.findById(testCaseId).get());
         }
-        BeanUtils.copyProperties(testScenariosRequest,testScenarios);
-        testScenarios.setTestCases(testCasesList);
+        if (testScenariosRequest.getSubModuleIds() != null) {
+            for (Long subModuleId : testScenariosRequest.getSubModuleIds())
+                testCasesRepository.findAllTestCasesBySubModuleId(subModuleId).forEach(TestCases -> testCasesList.add(TestCases));
+        }
+        if (testScenariosRequest.getMainModuleIds() != null) {
+            for (Long mainModuleId : testScenariosRequest.getMainModuleIds())
+                testCasesRepository.findBySubModule_MainModule_Id(mainModuleId).forEach(TestCases -> testCasesList.add(TestCases));
+        }
+        if (testScenariosRequest.getModuleIds() != null) {
+            for (Long moduleId : testScenariosRequest.getModuleIds())
+                testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId).forEach(TestCases -> testCasesList.add(TestCases));
+        }
+
+        List<TestCases> sortedTestCaseList = testCasesList.stream().distinct().collect(Collectors.toList());
+        BeanUtils.copyProperties(testScenariosRequest, testScenarios);
+        testScenarios.setTestCases(sortedTestCaseList);
         testScenariosRepository.save(testScenarios);
     }
 
+    @Override
+    public boolean isUpdateTestScenariosNameExists(Long id, String name) {
+        return testScenariosRepository.existsByNameIgnoreCaseAndIdNot(name,id);
+
+    }
     @Override
     public boolean existByProjectId(Long projectId) {
           return testScenariosRepository.existsByTestCasesSubModuleMainModuleModulesProject_id(projectId);
@@ -90,7 +108,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
                     testCasesNames.add(testCaseName);
                 }
             }
-            testScenariosResponse.setTestCasesName(testCasesNames);
+            testScenariosResponse.setTestCaseName(testCasesNames);
             testScenariosResponseList.add(testScenariosResponse);
         }
         return testScenariosResponseList;

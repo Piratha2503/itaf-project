@@ -34,7 +34,9 @@ import java.util.*;
 @PropertySource("classpath:application.properties")
 public class ProjectServiceImpl implements ProjectService {
     @Value("${jar.import.file.windows.path}")
-    private String fileFolder;
+    private String windowsFileFolder;
+    @Value("${jar.import.file.ubuntu.path}")
+    private String ubuntuFileFolder;
     @Autowired
     private ProjectRepository projectRepository;
 
@@ -67,7 +69,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
-        String directoryPath = fileFolder+projectRequest.getName();
+        String directoryPath = ubuntuFileFolder+projectRequest.getName();
         String uploadedJarFilePath = null;
         String uploadedConfigFilePath = null;
         File jarDirectory = new File(directoryPath);
@@ -158,30 +160,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void deleteProject(Long projectId) {
-        String projectDirectoryPath = fileFolder +projectRepository.findById(projectId).get().getName();
-        deleteProjectFolder(projectDirectoryPath);
         projectRepository.deleteById(projectId);
     }
-    private void deleteProjectFolder(String folderPath) {
-        File directory = new File(folderPath);
-        if (directory.exists()) {
-            if (directory.isDirectory()) {
-                File[] files = directory.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        if (file.isDirectory()) {
-                            deleteProjectFolder(file.getAbsolutePath());
-                        } else {
-                            file.delete();
-                        }
-                    }
-                }
-                directory.delete();
-            } else {
-                directory.delete();
-            }
-        }
-    }
+
     @Override
     public Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream) {
         Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();

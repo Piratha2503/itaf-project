@@ -65,16 +65,24 @@ public class TestCasesController {
     @PutMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> UpdateTestCase(@RequestBody TestCaseRequest testCaseRequest) {
         if (!testCasesService.existsByTestCasesId(testCaseRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestCasesNotExistCode(),
+                    statusCodeBundle.getTestCasesNotExistsMessage()));
         }
         if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getId(), testCaseRequest.getName())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestCasesAlreadyExistsCode(),
+                    statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getSubModulesNotExistCode(),
+                    statusCodeBundle.getSubModuleNotExistsMessage()));
         }
         testCasesService.saveTestCase(testCaseRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateTestCaseSuccessMessage()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getUpdateTestCaseSuccessMessage()));
     }
 
     @GetMapping(value = EndpointURI.TESTCASES)

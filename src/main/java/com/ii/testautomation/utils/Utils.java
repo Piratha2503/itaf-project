@@ -5,9 +5,7 @@ public class Utils {
     {
         return field != null && !field.isEmpty();
     }
-    public static boolean isNullOrEmpty(String str) {
-        return str == null || str.trim().isEmpty();
-    }
+
     private Utils()
     {
     }
