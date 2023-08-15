@@ -5,11 +5,13 @@ import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface TestGroupingService {
-    void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<String> filePath);
+    void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<MultipartFile> excelFiles);
+     boolean hasExcelFormat(List<MultipartFile> multipartFiles);
 
     boolean allTestCasesInSameProject(List<Long> testCaseIds);
 
