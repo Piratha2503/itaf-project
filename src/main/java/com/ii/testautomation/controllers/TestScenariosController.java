@@ -27,7 +27,6 @@ public class TestScenariosController {
     private ProjectService projectService;
     @Autowired
     private TestGroupingService testGroupingService;
-
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
@@ -41,7 +40,7 @@ public class TestScenariosController {
     }
 
     @PutMapping(EndpointURI.TEST_SCENARIO)
-    public ResponseEntity<Object> UpdateTestScenarios(@RequestBody TestScenariosRequest testScenariosRequest, @PathVariable Long projectId) {
+    public ResponseEntity<Object> UpdateTestScenarios(@RequestBody TestScenariosRequest testScenariosRequest) {
         if (!testScenariosService.existsByTestScenarioId(testScenariosRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestScenariosNotExistCode(),
@@ -60,20 +59,6 @@ public class TestScenariosController {
                 statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
     }
 
-    @DeleteMapping(value = EndpointURI.TEST_SCENARIO_BY_ID)
-    public ResponseEntity<Object> DeleteTestScenarioById(@PathVariable Long id) {
-
-        if (!testScenariosService.existsByTestScenarioId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestScenarioNotExistsMessage()));
-        }
-        if (testGroupingService.existsTestGroupingByTestScenarioId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestScenarioIdDependentCode(),
-                    statusCodeBundle.getTestScenarioIdDependentMessage()));
-        }
-        testScenariosService.DeleteTestScenariosById(id);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestScenarioSuccessMessage()));
-    }
 
     @GetMapping(EndpointURI.TEST_SCENARIO_BY_ID)
     public ResponseEntity<Object> viewScenarioById(@PathVariable Long id) {
@@ -81,25 +66,28 @@ public class TestScenariosController {
     }
 
 
-    @PutMapping(EndpointURI.TEST_SCENARIO)
-    public ResponseEntity<Object>UpdateTestScenarios(@RequestBody TestScenariosRequest testScenariosRequest){
-      if (!testScenariosService.existsByTestScenarioId(testScenariosRequest.getId())){
-          return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                  statusCodeBundle.getTestScenariosNotExistCode(),
-                  statusCodeBundle.getTestScenariosIdNotExistMessage()));
-
-      }
-
-      if(testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(),testScenariosRequest.getName())){
-          return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                  statusCodeBundle.getTestScenariosAlreadyExistCode(),
-                  statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
-      }
-      testScenariosService.saveTestScenario(testScenariosRequest);
-      return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-              statusCodeBundle.getCommonSuccessCode(),
-              statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
+    @PutMapping(value = EndpointURI.TEST_SCENARIO_UPDATE_EXECUTION_STATUS)
+    public ResponseEntity<Object> updateTestScenarioStatus(@PathVariable Long id, @PathVariable Long projectId) {
+        if (!projectService.existByProjectId(projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        if (!testScenariosService.existsByTestScenarioId(id)
+        ) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNotExists"));
+        }
+        if (!projectService.hasJarPath(projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getProjectJarPathNotProvideMessage()));
+        }
+        if (!projectService.hasConfigPath(projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getProjectConfigPathNotProvideMessage()));
+        }
+        if (!testScenariosService.hasExcelPath(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExcelPathNotProvideMessage()));
+        }
+        testScenariosService.updateExecutionStatus(id, projectId);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionSuccessMessage()));
     }
+
     @GetMapping(EndpointURI.TEST_SCENARIO_BY_PROJECT_ID)
     public ResponseEntity<Object> getAllTestScenariosByProjectIdWithPagination(@PathVariable Long id,
                                                                                @RequestParam(name = "page") int page,
@@ -115,6 +103,19 @@ public class TestScenariosController {
                 statusCodeBundle.getGetAllTestScenarioSuccessGivenProjectId(), pagination));
     }
 
+    @DeleteMapping(value = EndpointURI.TEST_SCENARIO_BY_ID)
+    public ResponseEntity<Object> DeleteTestScenarioById(@PathVariable Long id) {
+
+        if (!testScenariosService.existsByTestScenarioId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestScenarioNotExistsMessage()));
+        }
+        if (testGroupingService.existsTestGroupingByTestScenarioId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestScenarioIdDependentCode(),
+                    statusCodeBundle.getTestScenarioIdDependentMessage()));
+        }
+        testScenariosService.DeleteTestScenariosById(id);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestScenarioSuccessMessage()));
+    }
 
 }
-

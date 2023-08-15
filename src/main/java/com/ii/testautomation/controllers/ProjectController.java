@@ -14,7 +14,6 @@ import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin
-@PropertySource("classpath:application.properties")
 public class ProjectController {
     @Autowired
     private ObjectMapper objectMapper;
@@ -149,3 +147,4 @@ public class ProjectController {
         ));
     }
 }
+

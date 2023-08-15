@@ -49,5 +49,5 @@ public interface TestCasesService {
     List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId);
 
     boolean existsTestCaseByProjectId(Long projectId);
-
+    void updateExecutionStatus(Long testCaseId);
 }
