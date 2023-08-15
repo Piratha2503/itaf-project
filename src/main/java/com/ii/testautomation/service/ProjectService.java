@@ -1,4 +1,5 @@
 package com.ii.testautomation.service;
+
 import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
@@ -12,7 +13,9 @@ import java.util.Map;
 
 public interface ProjectService {
     boolean checkJarFile(MultipartFile jarFile);
+
     boolean checkPropertiesFile(MultipartFile propertiesFile);
+
     void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile);
 
     boolean existByProjectName(String projectName);
@@ -42,7 +45,9 @@ public interface ProjectService {
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
 
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
     boolean hasJarPath(Long projectId);
+
     public boolean hasConfigPath(Long projectId);
 
 }

@@ -67,7 +67,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
-        String directoryPath = fileFolder+File.separator+projectRequest.getName();
+        String directoryPath = fileFolder + File.separator + projectRequest.getName();
         String uploadedJarFilePath = null;
         String uploadedConfigFilePath = null;
         File jarDirectory = new File(directoryPath);
@@ -158,10 +158,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void deleteProject(Long projectId) {
-        String projectDirectoryPath = fileFolder +File.separator+projectRepository.findById(projectId).get().getName();
+        String projectDirectoryPath = fileFolder + File.separator + projectRepository.findById(projectId).get().getName();
         deleteProjectFolder(projectDirectoryPath);
         projectRepository.deleteById(projectId);
     }
+
     private void deleteProjectFolder(String folderPath) {
         File directory = new File(folderPath);
         if (directory.exists()) {
@@ -182,6 +183,7 @@ public class ProjectServiceImpl implements ProjectService {
             }
         }
     }
+
     @Override
     public Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream) {
         Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();
@@ -288,14 +290,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public boolean hasJarPath(Long projectId) {
-        Project project=projectRepository.findById(projectId).get();
-        if(project.getConfigFilePath()!=null)return true;
+        Project project = projectRepository.findById(projectId).get();
+        if (project.getConfigFilePath() != null) return true;
         return false;
     }
+
     @Override
     public boolean hasConfigPath(Long projectId) {
-        Project project=projectRepository.findById(projectId).get();
-        if(project.getConfigFilePath()!=null)return true;
+        Project project = projectRepository.findById(projectId).get();
+        if (project.getConfigFilePath() != null) return true;
         return false;
     }
 
