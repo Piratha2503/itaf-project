@@ -72,6 +72,7 @@ public final class EndpointURI {
     public static final String TEST_SCENARIO_BY_PROJECT_ID = BASE_API_PATH+"TestScenarioByProjectIdWithPagination"+ID;
 
     public static final String TEST_SCENARIO_BY_ID = TEST_SCENARIO + ID;
+
     private EndpointURI() {
     }
 }

@@ -10,8 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface TestGroupingService {
-    void saveTestGrouping(TestGroupingRequest testGroupingRequest,List<MultipartFile> excelFiles);
-     boolean hasExcelFormat(List<MultipartFile> multipartFiles);
+    void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles);
+
+    boolean hasExcelFormat(List<MultipartFile> multipartFiles);
 
     boolean allTestCasesInSameProject(List<Long> testCaseIds);
 
@@ -33,11 +34,11 @@ public interface TestGroupingService {
 
     boolean existByProjectId(Long projectId);
 
-    List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long projectId);
+    List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId);
 
     void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId);
-   boolean existsTestGroupingByTestScenarioId(Long id);
 
     boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
+
     boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);
 }
