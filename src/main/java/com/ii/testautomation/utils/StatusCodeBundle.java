@@ -383,10 +383,18 @@ public class StatusCodeBundle {
     private String deleteTestScenarioSuccessMessage;
     @Value("${message.validation.testScenario.notExists}")
     private String testScenarioNotExistsMessage;
+    @Value("${code.validation.testScenario.dependent}")
+    private String testScenarioDependentCode;
+
+    //TestScenario Messages
     @Value("${message.success.insert.testScenario}")
     private String testScenariosSaveMessage;
     @Value("${message.failure.name.AlreadyExist.testScenario}")
     private String testScenariosNameAlreadyExistMessage;
+    @Value("${message.failure.Id.notExist.testScenario}")
+    private String testScenariosIdNotExistMessage;
+    @Value("${message.success.update.testScenario}")
+    private String updateTestScenarioSuccessMessage;
     @Value("${message.failure.name.AlreadyExist.testCases.testScenario}")
     private String testCasesListAlreadyExistMessage;
 

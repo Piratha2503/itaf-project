@@ -4,19 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ii.testautomation.dto.request.TestScenariosRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
-import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.ii.testautomation.service.ProjectService;
-import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.service.TestScenariosService;
-import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -56,6 +52,27 @@ public class TestScenariosController {
         return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.TESTSCENARIOS, testScenariosService.getAllTestScenariosByProjectIdWithPagination(id, pageable, pagination),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllTestScenarioSuccessGivenProjectId(), pagination));
+    }
+
+
+    @PutMapping(EndpointURI.TEST_SCENARIO_BY_ID)
+    public ResponseEntity<Object>UpdateTestScenarios(@RequestBody TestScenariosRequest testScenariosRequest,@PathVariable Long projectId){
+      if (!testScenariosService.existsByTestScenarioId(testScenariosRequest.getId())){
+          return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                  statusCodeBundle.getTestScenariosNotExistCode(),
+                  statusCodeBundle.getTestScenariosIdNotExistMessage()));
+
+      }
+
+      if(testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(),testScenariosRequest.getName(),projectId)){
+          return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                  statusCodeBundle.getTestScenariosAlreadyExistCode(),
+                  statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
+      }
+      testScenariosService.saveTestScenario(testScenariosRequest);
+      return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+              statusCodeBundle.getCommonSuccessCode(),
+              statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
     }
 
     @DeleteMapping(value = EndpointURI.TEST_SCENARIO_BY_ID)

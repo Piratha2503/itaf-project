@@ -10,6 +10,7 @@ import java.util.List;
 public interface TestScenariosService {
     boolean existsByTestScenarioId(Long testScenarioId);
 
+
     boolean existsByTestScenarioNameIgnoreCase(String name);
 
     boolean existByProjectId(Long projectId);
@@ -22,4 +23,8 @@ public interface TestScenariosService {
     boolean existByTestCaseList(TestScenariosRequest testScenariosRequest);
 
     void saveTestScenario(TestScenariosRequest testScenariosRequest);
+
+    boolean isUpdateTestScenariosNameExists(Long id,String name );
+
+
 }

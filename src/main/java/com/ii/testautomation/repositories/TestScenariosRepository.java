@@ -1,5 +1,6 @@
 package com.ii.testautomation.repositories;
 
+import com.ii.testautomation.dto.request.TestScenariosRequest;
 import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestScenarios;
@@ -19,4 +20,5 @@ public interface TestScenariosRepository extends JpaRepository<TestScenarios, Lo
     // List<TestScenarios> findByTestCases(List<TestCases> testCases);
     boolean existsByTestCasesIn(List<TestCases> testCasesList);
 
+    boolean existsByNameIgnoreCaseAndIdNot(String name,Long id);
 }
