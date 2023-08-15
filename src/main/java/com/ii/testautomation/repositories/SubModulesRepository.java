@@ -9,6 +9,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import java.util.List;
 
 public interface SubModulesRepository extends JpaRepository<SubModules, Long>, QuerydslPredicateExecutor<SubModules> {
+
     boolean existsByNameIgnoreCaseAndMainModule_Modules_ProjectId(String name, Long projectId);
 
     boolean existsByPrefixIgnoreCaseAndMainModule_Modules_ProjectId(String prefix, Long projectId);
@@ -24,12 +25,6 @@ public interface SubModulesRepository extends JpaRepository<SubModules, Long>, Q
     boolean existsByMainModuleId(Long id);
 
     boolean existsByMainModule_Modules_ProjectId(Long projectId);
-    SubModules findByNameAndMainModule_Modules_ProjectId(String name, Long projectId);
-
-
-
-
-    Long findIdByNameIgnoreCaseAndMainModule_Modules_ProjectId(String subModuleName, Long projectId);
 
     SubModules findByNameIgnoreCaseAndMainModule_Modules_ProjectId(String subModuleName, Long projectId);
 

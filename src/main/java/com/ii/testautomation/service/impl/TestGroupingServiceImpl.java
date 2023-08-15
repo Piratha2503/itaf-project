@@ -113,11 +113,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
     }
+
     @Override
     public boolean existsTestGroupingByTestScenarioId(Long id) {
-        return  testGroupingRepository.existsByTestScenariosId(id);
+        return testGroupingRepository.existsByTestScenariosId(id);
 
     }
+
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
         testGroupingRepository.deleteById(testGroupingId);
@@ -162,9 +164,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination,Long projectId) {
+    public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-        Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable,projectId);
+        Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
         List<String> testCaseNames = new ArrayList<>();
         List<String> subModuleName = new ArrayList<>();
         List<String> mainModulesName = new ArrayList<>();
