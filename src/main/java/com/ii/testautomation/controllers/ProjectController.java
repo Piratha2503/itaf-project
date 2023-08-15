@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin
-@PropertySource("classpath:application.properties")
 public class ProjectController {
     @Autowired
     private ObjectMapper objectMapper;

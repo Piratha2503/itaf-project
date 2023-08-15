@@ -25,4 +25,5 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
 
     Page<TestGrouping> findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(Pageable pageable, Long projectId);
     List<TestGrouping> findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
+    boolean existsByTestScenariosId(Long id);
 }
