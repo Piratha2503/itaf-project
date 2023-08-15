@@ -4,7 +4,6 @@ import com.ii.testautomation.dto.request.TestScenariosRequest;
 import com.ii.testautomation.dto.response.TestScenariosResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -24,7 +23,11 @@ public interface TestScenariosService {
 
     void saveTestScenario(TestScenariosRequest testScenariosRequest);
 
-    boolean isUpdateTestScenariosNameExists(Long id,String name );
+    void updateExecutionStatus(Long testScenarioId, Long projectId);
+
+    boolean hasExcelPath(Long testScenarioId);
+
+    boolean isUpdateTestScenariosNameExists(Long id, String name);
 
     TestScenariosResponse viewScenarioById(Long id);
 }

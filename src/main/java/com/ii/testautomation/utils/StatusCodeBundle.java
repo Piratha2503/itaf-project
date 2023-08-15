@@ -33,6 +33,10 @@ public class StatusCodeBundle {
     private String configFileFailureMessage;
     @Value("${message.validation.header.notExits}")
     private String headerNotExistsMessage;
+    @Value("${message.failure.excelPath}")
+    private String ExcelPathNotProvideMessage;
+    @Value("${message.success.execution}")
+    private String executionSuccessMessage;
 
     //Project Code
     @Value("${code.validation.project.alreadyExists}")
@@ -76,6 +80,10 @@ public class StatusCodeBundle {
     private String projectNameDuplicateMessage;
     @Value("${message.validation.project.code.duplicate}")
     private String projectCodeDuplicateMessage;
+    @Value("${message.failure.project.configPath}")
+    private String projectConfigPathNotProvideMessage;
+    @Value("${message.failure.project.jarPath}")
+    private String projectJarPathNotProvideMessage;
 
     //SubModules Code
     @Value("${code.validation.subModules.alreadyExists}")
@@ -366,7 +374,6 @@ public class StatusCodeBundle {
     private String testGroupingByProjectId;
     @Value("${message.success.getTestGrouping.testType}")
     private String testGroupingByTestType;
-
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;
@@ -400,6 +407,4 @@ public class StatusCodeBundle {
     private String deleteTestScenarioSuccessMessage;
     @Value("${message.validation.testScenario.notExists}")
     private String testScenarioNotExistsMessage;
-
-
 }

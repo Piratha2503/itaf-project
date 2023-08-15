@@ -70,8 +70,8 @@ public final class EndpointURI {
     // URLs for TestScenario
     public static final String TEST_SCENARIO = BASE_API_PATH + "testScenario";
     public static final String TEST_SCENARIO_BY_PROJECT_ID = BASE_API_PATH+"TestScenarioByProjectIdWithPagination"+ID;
-
     public static final String TEST_SCENARIO_BY_ID = TEST_SCENARIO + ID;
+    public static final String TEST_SCENARIO_UPDATE_EXECUTION_STATUS = TEST_SCENARIO + "/update" + ID+PROJECT_ID;
 
     private EndpointURI() {
     }

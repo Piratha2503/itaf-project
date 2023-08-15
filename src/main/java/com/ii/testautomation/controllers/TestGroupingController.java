@@ -21,9 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -51,7 +48,7 @@ public class TestGroupingController {
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles",required=false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
+    public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
 
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
@@ -84,44 +81,25 @@ public class TestGroupingController {
         if (testGroupingRequest.getTestScenarioIds() != null) {
             for (Long testScenarioId : testGroupingRequest.getTestScenarioIds()) {
                 if (!testScenariosService.existsByTestScenarioId(testScenarioId)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), "100", "testScenario id not found"));
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNot exists"));
                 }
             }
         }
-        String folderPath = "D:\\UpdatedJar\\" + testGroupingRequest.getName();
-        List<String> filePaths=new ArrayList<>();
-        try {
-            File folder = new File(folderPath);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            if (excelFiles != null && !excelFiles.isEmpty()) {
-                for (MultipartFile excelFile : excelFiles) {
-                    String filename = excelFile.getOriginalFilename();
-                    String filePath = folderPath + File.separator + filename;
-                    File savedFile = new File(filePath);
-                    excelFile.transferTo(savedFile);
-                    filePaths.add(filePath);
-                }
-            }
+        if (!testGroupingService.hasExcelFormat(excelFiles)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
         }
-        catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
-        }
-        testGroupingService.saveTestGrouping(testGroupingRequest,filePaths);
+        testGroupingService.saveTestGrouping(testGroupingRequest, excelFiles);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
 
     @PutMapping(value = EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles",required=false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
+    public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
 
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
-        if (testGroupingService.isUpdateTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId(),testGroupingRequest.getId())) {
+        if (testGroupingService.isUpdateTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId(), testGroupingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
         }
         if (testGroupingRequest.getTestCaseId() != null) {
@@ -152,43 +130,49 @@ public class TestGroupingController {
                 }
             }
         }
-        String folderPath = "D:\\UpdatedJar\\" + testGroupingRequest.getName();
-        List<String> filePaths=new ArrayList<>();
-        try {
-            File folder = new File(folderPath);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            if (excelFiles != null && !excelFiles.isEmpty()) {
-                for (MultipartFile excelFile : excelFiles) {
-                    String filename = excelFile.getOriginalFilename();
-                    String filePath = folderPath + File.separator + filename;
-                    File savedFile = new File(filePath);
-                    excelFile.transferTo(savedFile);
-                    filePaths.add(filePath);
-                }
-            }
+        if (!testGroupingService.hasExcelFormat(excelFiles)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
         }
-        catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
-        }
-        testGroupingService.saveTestGrouping(testGroupingRequest,filePaths);
+        testGroupingService.saveTestGrouping(testGroupingRequest, excelFiles);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
-    public ResponseEntity<Object> updateExecution(@PathVariable Long id, @PathVariable Long projectId) {
-        if (!testGroupingService.existsByTestGroupingId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
-        }
+    public ResponseEntity<Object> updateExecution(@RequestParam List<Long> testScenarioIds, @RequestParam List<Long> testCaseIds, @PathVariable Long projectId, @PathVariable Long id) {
         if (!projectService.existByProjectId(projectId)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
-        testGroupingService.updateTestGroupingExecutionStatus(id, projectId);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
+        if (testScenarioIds != null && !testScenarioIds.isEmpty()) {
+            for (Long testScenarioId : testScenarioIds
+            ) {
+                if (!testScenariosService.existsByTestScenarioId(testScenarioId)
+                ) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNotExists"));
+                }
+            }
+        }
+        if (testCaseIds != null && !testCaseIds.isEmpty()) {
+            for (Long testCaseId : testCaseIds
+            ) {
+                if (!testCasesService.existsByTestCasesId(testCaseId)
+                ) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+                }
+            }
+        }
+        if (!projectService.hasJarPath(projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getProjectJarPathNotProvideMessage()));
+        }
+        if (!projectService.hasConfigPath(projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getProjectConfigPathNotProvideMessage()));
+        }
+        if (!testGroupingService.hasExcelPath(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExcelPathNotProvideMessage()));
+        }
+        testGroupingService.updateTestGroupingExecutionStatus(id, projectId, testScenarioIds, testCaseIds);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionSuccessMessage()));
     }
+
 
     @GetMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> getAllWithMultiSearch(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, TestGroupingSearch testGroupingSearch) {
@@ -242,7 +226,7 @@ public class TestGroupingController {
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_PROJECT_ID)
     public ResponseEntity<Object> getTestGroupingByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
                                                              @RequestParam(name = "direction") String direction,
-                                                             @RequestParam(name = "sortField") String sortField,@PathVariable Long id) {
+                                                             @RequestParam(name = "sortField") String sortField, @PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
