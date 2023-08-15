@@ -95,7 +95,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         testGroupingRepository.save(testGrouping);
     }
+    @Override
+    public boolean existsTestGroupingByTestScenarioId(Long id) {
+        return  testGroupingRepository.existsByTestScenariosId(id);
 
+    }
 
     @Override
     public boolean allTestCasesInSameProject(List<Long> testCaseIds) {
