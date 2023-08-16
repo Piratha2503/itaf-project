@@ -41,14 +41,23 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
         List<String> testCaseNames = new ArrayList<>();
         List<Long> testCaseIds = new ArrayList<>();
+        List<Long> mainModuleIds = new ArrayList<>();
+        List<Long> subModuleIds = new ArrayList<>();
+        List<Long> moduleIds = new ArrayList<>();
         TestScenarios testScenarios = testScenariosRepository.findById(id).get();
         BeanUtils.copyProperties(testScenarios, testScenariosResponse);
         for (TestCases testCases : testScenarios.getTestCases()) {
             testCaseNames.add(testCases.getName());
             testCaseIds.add(testCases.getId());
+            subModuleIds.add(testCases.getSubModule().getId());
+            mainModuleIds.add(testCases.getSubModule().getMainModule().getId());
+            moduleIds.add(testCases.getSubModule().getMainModule().getModules().getId());
         }
         testScenariosResponse.setTestCasesName(testCaseNames);
         testScenariosResponse.setTestCaseId(testCaseIds);
+        testScenariosResponse.setModuleId(moduleIds);
+        testScenariosResponse.setMainModuleId(mainModuleIds);
+        testScenariosResponse.setSubModuleId(subModuleIds);
         return testScenariosResponse;
     }
 
@@ -85,7 +94,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     }
 
     @Override
-    public boolean saveTestScenario(TestScenariosRequest testScenariosRequest) {
+    public void saveTestScenario(TestScenariosRequest testScenariosRequest) {
 
         TestScenarios testScenarios = new TestScenarios();
         List<TestCases> testCasesList = new ArrayList<>();
@@ -108,11 +117,10 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         }
 
         List<TestCases> sortedTestCaseList = testCasesList.stream().distinct().collect(Collectors.toList());
-        if (sortedTestCaseList.isEmpty()) return false;
+
         BeanUtils.copyProperties(testScenariosRequest, testScenarios);
         testScenarios.setTestCases(sortedTestCaseList);
         testScenariosRepository.save(testScenarios);
-        return true;
     }
     @Override
     public void updateTestScenario(TestScenariosRequest testScenariosRequest) {

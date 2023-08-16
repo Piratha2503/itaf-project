@@ -35,9 +35,9 @@ public class TestScenariosController {
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
         if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(),testScenariosRequest.getProjectId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
-        if (!testScenariosService.saveTestScenario(testScenariosRequest))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),"No TestCases Assigned"));
-        else return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
+
+        testScenariosService.saveTestScenario(testScenariosRequest);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
     }
 
     @GetMapping(EndpointURI.TEST_SCENARIO_BY_PROJECT_ID)
@@ -92,7 +92,10 @@ public class TestScenariosController {
 
     @GetMapping(EndpointURI.TEST_SCENARIO_BY_ID)
     public ResponseEntity<Object> viewScenarioById(@PathVariable Long id) {
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTSCENARIO, testScenariosService.viewScenarioById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenarioViewMessage()));
+        if (!testScenariosService.existsByTestScenarioId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestScenarioNotExistsMessage()));
+
+            return ResponseEntity.ok(new ContentResponse<>(Constants.TESTSCENARIO, testScenariosService.viewScenarioById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenarioViewMessage()));
     }
 
     @PutMapping(value = EndpointURI.TEST_SCENARIO_UPDATE_EXECUTION_STATUS)
