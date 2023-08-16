@@ -158,11 +158,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsById(testGroupingId);
     }
 
-    @Override
-    public boolean existsTestGroupingByTestScenarioId(Long id) {
-        return testGroupingRepository.existsByTestScenariosId(id);
 
-    }
 
     @Override
     public void deleteTestGroupingById(Long testGroupingId) {
@@ -189,12 +185,17 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<String> subModuleName = new ArrayList<>();
         List<String> mainModulesName = new ArrayList<>();
         List<String> modulesName = new ArrayList<>();
+        List<String> testScenariosName=new ArrayList<>();
         for (TestCases testCase : testGrouping.getTestCases()) {
             testCaseNames.add(testCase.getName());
             subModuleName.add(testCase.getSubModule().getName());
             mainModulesName.add(testCase.getSubModule().getMainModule().getName());
             modulesName.add(testCase.getSubModule().getMainModule().getModules().getName());
+
         }
+
+
+
         testGroupingResponse.setTestCaseName(testCaseNames);
         testGroupingResponse.setSubModuleName(subModuleName);
         testGroupingResponse.setMainModuleName(mainModulesName);

@@ -121,13 +121,16 @@ public class TestScenariosServiceImpl implements TestScenariosService {
             TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
             BeanUtils.copyProperties(testScenarios, testScenariosResponse);
             List<String> testCasesNames = new ArrayList<>();
+            List<Long> testCasesIds=new ArrayList<>();
             for (TestCases testCase : testScenarios.getTestCases()) {
                 String testCaseName = testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1);
                 if (!testCasesNames.contains(testCaseName)) {
                     testCasesNames.add(testCaseName);
+                    testCasesIds.add(testCase.getId());
                 }
             }
             testScenariosResponse.setTestCasesName(testCasesNames);
+            testScenariosResponse.setTestCasesId(testCasesIds);
             testScenariosResponseList.add(testScenariosResponse);
         }
         return testScenariosResponseList;

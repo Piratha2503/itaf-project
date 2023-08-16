@@ -10,5 +10,6 @@ public class TestScenariosResponse {
 
     private Long id;
     private String name;
+    private List<Long> testCasesId;
    private  List<String> testCasesName;
 }
