@@ -95,7 +95,7 @@ public class ProjectController {
             return ResponseEntity.ok(new BaseResponse((RequestStatus.FAILURE.getStatus()), statusCodeBundle.getFileFailureCode(),
                     statusCodeBundle.getConfigFileFailureMessage()));
         }
-        projectService.saveProject(projectRequest, jarFile, configFile);
+        projectService.updateProject(projectRequest, jarFile, configFile);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateProjectSuccessMessage()));

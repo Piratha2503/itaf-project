@@ -9,16 +9,12 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-public class Project extends DateAudit {
-    @Id
+public class ExecutionHistory extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
-    private String name;
-    @Column(length = 1500)
-    private String description;
-    private String code;
-    private String jarFilePath;
-    private String configFilePath;
-    private String projectPath;
+    @OneToOne
+    private TestGrouping testGrouping;
+
 
 }
