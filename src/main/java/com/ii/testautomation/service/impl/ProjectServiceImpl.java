@@ -33,7 +33,7 @@ import java.util.*;
 @Component
 @PropertySource("classpath:application.properties")
 public class ProjectServiceImpl implements ProjectService {
-    @Value("${jar.import.file.ubuntu.path}")
+    @Value("${jar.import.file.windows.path}")
     private String fileFolder;
     @Autowired
     private ProjectRepository projectRepository;
@@ -62,7 +62,79 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return true;
     }
-
+//        @Override
+//    public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
+//        Project project = new Project();
+//        BeanUtils.copyProperties(projectRequest, project);
+//        if (project.getId() != null) {
+//            Project eixstingProject = projectRepository.findById(projectRequest.getId()).get();
+//            String existingFolderPath = eixstingProject.getProjectPath();
+//            String newFolderPath = fileFolder + File.separator + projectRequest.getName();
+//            File existingFolder = new File(existingFolderPath);
+//            File newFolder = new File(newFolderPath);
+//            if (existingFolder.exists()) {
+//                existingFolder.renameTo(newFolder);
+//                if (jarFile != null) {
+//                    String existingJarPath = projectRepository.findById(projectRequest.getId()).get().getJarFilePath();
+//                    if (existingJarPath != null) {
+//                        File existingJarFolder = new File(existingJarPath);
+//                        existingJarFolder.delete();
+//                    }
+//                }
+//                if (configFile != null) {
+//                    String existingConfigPath = projectRepository.findById(projectRequest.getId()).get().getConfigFilePath();
+//                    if (existingConfigPath != null) {
+//                        File existingConfigFolder = new File(existingConfigPath);
+//                        existingConfigFolder.delete();
+//                    }
+//                }
+//            }
+//            else {
+//                if (jarFile != null) {
+//                    String existingJarPath = projectRepository.findById(projectRequest.getId()).get().getJarFilePath();
+//                    if (existingJarPath != null) {
+//                        File existingJarFolder = new File(existingJarPath);
+//                        existingJarFolder.delete();
+//                    }
+//                }
+//                if (configFile != null) {
+//                    String existingConfigPath = projectRepository.findById(projectRequest.getId()).get().getConfigFilePath();
+//                    if (existingConfigPath != null) {
+//                        File existingConfigFolder = new File(existingConfigPath);
+//                        existingConfigFolder.delete();
+//                    }
+//                }
+//            }
+//        }
+//        String directoryPath = fileFolder + File.separator + projectRequest.getName();
+//        String uploadedJarFilePath = null;
+//        String uploadedConfigFilePath = null;
+//        File jarDirectory = new File(directoryPath);
+//        if (!jarDirectory.exists()) {
+//            jarDirectory.mkdirs();
+//        }
+//        project.setProjectPath(directoryPath);
+//        try {
+//            if (jarFile != null && !jarFile.isEmpty()) {
+//                String jarFilename = jarFile.getOriginalFilename();
+//                uploadedJarFilePath = directoryPath + File.separator + jarFilename;
+//                File savedJarFile = new File(uploadedJarFilePath);
+//                jarFile.transferTo(savedJarFile);
+//
+//            }
+//            if (configFile != null && !configFile.isEmpty()) {
+//                String configFilename = configFile.getOriginalFilename();
+//                uploadedConfigFilePath = directoryPath + File.separator + configFilename;
+//                File savedConfigFile = new File(uploadedConfigFilePath);
+//                configFile.transferTo(savedConfigFile);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        project.setJarFilePath(uploadedJarFilePath);
+//        project.setConfigFilePath(uploadedConfigFilePath);
+//        projectRepository.save(project);
+//    }
     @Override
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
@@ -74,6 +146,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (!jarDirectory.exists()) {
             jarDirectory.mkdirs();
         }
+        project.setProjectPath(directoryPath);
         try {
             if (jarFile != null && !jarFile.isEmpty()) {
                 String jarFilename = jarFile.getOriginalFilename();
@@ -91,11 +164,90 @@ public class ProjectServiceImpl implements ProjectService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         project.setJarFilePath(uploadedJarFilePath);
         project.setConfigFilePath(uploadedConfigFilePath);
         projectRepository.save(project);
     }
+
+    @Override
+    public void updateProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
+        Project eixstingProject = projectRepository.findById(projectRequest.getId()).get();
+        BeanUtils.copyProperties(projectRequest, eixstingProject);
+        String existingFolderPath = eixstingProject.getProjectPath();
+        String newProjectFolderPath = fileFolder + File.separator + projectRequest.getName();
+        File existingFolder = new File(existingFolderPath);
+        File newFolder = new File(newProjectFolderPath);
+        String uploadedJarFilePath = eixstingProject.getJarFilePath();
+        String uploadedConfigPath = eixstingProject.getConfigFilePath();
+        if (existingFolder.exists()) {
+                existingFolder.renameTo(newFolder);
+            try {
+                if (jarFile != null && !jarFile.isEmpty()) {
+                    if (uploadedJarFilePath != null) {
+                        File existingJarFolder = new File(uploadedJarFilePath);
+                        existingJarFolder.delete();
+                    }
+
+                    String jarFilename = jarFile.getOriginalFilename();
+                    uploadedJarFilePath = newProjectFolderPath + File.separator + jarFilename;
+                    File savedJarFile = new File(uploadedJarFilePath);
+                    jarFile.transferTo(savedJarFile);
+                }
+
+                if (configFile != null && !configFile.isEmpty()) {
+                    if (uploadedConfigPath != null) {
+                        File existingConfigFolder = new File(uploadedConfigPath);
+                        existingConfigFolder.delete();
+                    }
+
+                    String configFilename = configFile.getOriginalFilename();
+                    uploadedConfigPath = newProjectFolderPath + File.separator + configFilename;
+                    File savedConfigFile = new File(uploadedConfigPath);
+                    configFile.transferTo(savedConfigFile);
+                }
+
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            try {
+                if (jarFile != null && !jarFile.isEmpty()) {
+                    if (uploadedJarFilePath != null) {
+                        File existingJarFolder = new File(uploadedJarFilePath);
+                        existingJarFolder.delete();
+                    }
+
+                    String jarFilename = jarFile.getOriginalFilename();
+                    uploadedJarFilePath = newProjectFolderPath + File.separator + jarFilename;
+                    File savedJarFile = new File(uploadedJarFilePath);
+                    jarFile.transferTo(savedJarFile);
+                }
+
+                if (configFile != null && !configFile.isEmpty()) {
+                    if (uploadedConfigPath != null) {
+                        File existingConfigFolder = new File(uploadedConfigPath);
+                        existingConfigFolder.delete();
+                    }
+
+                    String configFilename = configFile.getOriginalFilename();
+                    uploadedConfigPath = newProjectFolderPath + File.separator + configFilename;
+                    File savedConfigFile = new File(uploadedConfigPath);
+                    configFile.transferTo(savedConfigFile);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        eixstingProject.setProjectPath(newProjectFolderPath);
+        eixstingProject.setJarFilePath(uploadedJarFilePath);
+        eixstingProject.setConfigFilePath(uploadedConfigPath);
+        projectRepository.save(eixstingProject);
+
+    }
+
 
     @Override
     public boolean existByProjectName(String projectName) {
