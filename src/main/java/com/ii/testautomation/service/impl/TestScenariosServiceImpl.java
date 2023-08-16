@@ -53,7 +53,6 @@ public class TestScenariosServiceImpl implements TestScenariosService {
             mainModuleIds.add(testCases.getSubModule().getMainModule().getId());
             moduleIds.add(testCases.getSubModule().getMainModule().getModules().getId());
         }
-
         List<Long> sortedMainModuleIds = mainModuleIds.stream().distinct().collect(Collectors.toList());
         List<Long> sortedSubModuleIds = subModuleIds.stream().distinct().collect(Collectors.toList());
         List<Long> sortedModuleIds = moduleIds.stream().distinct().collect(Collectors.toList());

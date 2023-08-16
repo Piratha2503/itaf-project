@@ -41,6 +41,7 @@ public class TestScenariosController {
 
     @PutMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> UpdateTestScenarios(@RequestBody TestScenariosRequest testScenariosRequest) {
+
         if (!testScenariosService.existsByTestScenarioId(testScenariosRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestScenariosNotExistCode(),
@@ -53,10 +54,12 @@ public class TestScenariosController {
                   statusCodeBundle.getTestScenariosAlreadyExistCode(),
                    statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
        }
-        testScenariosService.updateTestScenario(testScenariosRequest);
+        testScenariosService.saveTestScenario(testScenariosRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
+
+
     }
 
 
