@@ -33,8 +33,9 @@ public class TestScenariosController {
 
     @PostMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
-        if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName()))
+        if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(),testScenariosRequest.getProjectId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
+
         testScenariosService.saveTestScenario(testScenariosRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
     }
@@ -63,12 +64,12 @@ public class TestScenariosController {
 
         }
 
-        if (testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(), testScenariosRequest.getName())) {
+        if (testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(), testScenariosRequest.getName(),testScenariosRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestScenariosAlreadyExistCode(),
-                    statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
-        }
-        testScenariosService.saveTestScenario(testScenariosRequest);
+                  statusCodeBundle.getTestScenariosAlreadyExistCode(),
+                   statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
+       }
+        testScenariosService.updateTestScenario(testScenariosRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
@@ -91,7 +92,10 @@ public class TestScenariosController {
 
     @GetMapping(EndpointURI.TEST_SCENARIO_BY_ID)
     public ResponseEntity<Object> viewScenarioById(@PathVariable Long id) {
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTSCENARIO, testScenariosService.viewScenarioById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenarioViewMessage()));
+        if (!testScenariosService.existsByTestScenarioId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestScenarioNotExistsMessage()));
+
+            return ResponseEntity.ok(new ContentResponse<>(Constants.TESTSCENARIO, testScenariosService.viewScenarioById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenarioViewMessage()));
     }
 
     @PutMapping(value = EndpointURI.TEST_SCENARIO_UPDATE_EXECUTION_STATUS)
