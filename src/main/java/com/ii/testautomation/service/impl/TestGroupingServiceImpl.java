@@ -50,13 +50,15 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
-        for (MultipartFile multipartFile : multipartFiles
-        ) {
-            try {
-                Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
-                workbook.close();
-            } catch (Exception e) {
-                return false;
+        if(multipartFiles!=null && !multipartFiles.isEmpty()) {
+            for (MultipartFile multipartFile : multipartFiles
+            ) {
+                try {
+                    Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+                    workbook.close();
+                } catch (Exception e) {
+                    return false;
+                }
             }
         }
         return true;
