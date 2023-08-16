@@ -29,7 +29,7 @@ public interface TestScenariosService {
 
     boolean hasExcelPath(Long testScenarioId);
 
-    boolean isUpdateTestScenariosNameExists(Long id, String name);
+    boolean isUpdateTestScenariosNameExists(Long id, String name, Long projectId);
 
     TestScenariosResponse viewScenarioById(Long id);
 }

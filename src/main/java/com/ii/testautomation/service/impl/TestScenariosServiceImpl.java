@@ -31,8 +31,8 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     private ProjectRepository projectRepository;
 
     @Override
-    public boolean isUpdateTestScenariosNameExists(Long id, String name) {
-        return testScenariosRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+    public boolean isUpdateTestScenariosNameExists(Long id, String name, Long projectId) {
+        return testScenariosRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name,projectId,id);
 
     }
 
@@ -111,12 +111,8 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     }
     @Override
     public void updateTestScenario(TestScenariosRequest testScenariosRequest) {
-
-        TestScenarios testScenarios = testScenariosRepository.findByIdAndTestCases_SubModule_MainModule_Modules_Project_Id(testScenariosRequest.getId(), testScenariosRequest.getProjectId());
         List<TestCases> testCasesList = new ArrayList<>();
-        for (TestCases testCases : testScenarios.getTestCases()) {
-            testCasesList.add(testCasesRepository.findById(testCases.getId()).get());
-        }
+        //BeanUtils.copyProperties(testScenariosRequest, testScenarios);
         if (testScenariosRequest.getTestCasesId() != null) {
             for (Long testCaseId : testScenariosRequest.getTestCasesId())
                 testCasesList.add(testCasesRepository.findById(testCaseId).get());
@@ -133,9 +129,14 @@ public class TestScenariosServiceImpl implements TestScenariosService {
             for (Long moduleId : testScenariosRequest.getModuleIds())
                 testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId).forEach(TestCases -> testCasesList.add(TestCases));
         }
+        TestScenarios testScenarios = testScenariosRepository.findByIdAndTestCases_SubModule_MainModule_Modules_Project_Id(testScenariosRequest.getId(), testScenariosRequest.getProjectId());
 
+        for (TestCases testCases : testScenarios.getTestCases()) {
+            testCasesList.add(testCasesRepository.findById(testCases.getId()).get());
+        }
         List<TestCases> sortedTestCaseList = testCasesList.stream().distinct().collect(Collectors.toList());
-        BeanUtils.copyProperties(testScenariosRequest, testScenarios);
+//        BeanUtils.copyProperties(testScenariosRequest, testScenarios);
+        testScenarios.setName(testScenariosRequest.getName());
         testScenarios.setTestCases(sortedTestCaseList);
         testScenariosRepository.save(testScenarios);
     }

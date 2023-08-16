@@ -63,11 +63,11 @@ public class TestScenariosController {
 
         }
 
-        if (testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(), testScenariosRequest.getName())) {
+        if (testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(), testScenariosRequest.getName(),testScenariosRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestScenariosAlreadyExistCode(),
-                    statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
-        }
+                  statusCodeBundle.getTestScenariosAlreadyExistCode(),
+                   statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
+       }
         testScenariosService.updateTestScenario(testScenariosRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
