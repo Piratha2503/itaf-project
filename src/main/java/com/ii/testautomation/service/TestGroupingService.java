@@ -45,6 +45,6 @@ public interface TestGroupingService {
 
     boolean existsTestGroupingByTestScenarioId(Long id);
 
-    void deleteTestGroupingById(Long id);
+    void deleteTestGroupingById(Long id,Long projectId);
 
 }
