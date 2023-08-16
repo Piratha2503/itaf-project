@@ -163,9 +163,32 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public void deleteTestGroupingById(Long testGroupingId) {
-        testGroupingRepository.deleteById(testGroupingId);
+    public void deleteTestGroupingById(Long id) {
+        String testGroupingDirectoryPath = fileFolder + File.separator + testGroupingRepository.findById(id).get().getName();
+        deleteTestGroupingFolder(testGroupingDirectoryPath);
+        testGroupingRepository.deleteById(id);
     }
+    private void deleteTestGroupingFolder (String folderPath) {
+            File directory = new File(folderPath);
+            if (directory.exists()) {
+                if (directory.isDirectory()) {
+                    File[] files = directory.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if (file.isDirectory()) {
+                                deleteTestGroupingFolder(file.getAbsolutePath());
+                            } else {
+                                file.delete();
+                            }
+                        }
+                    }
+                    directory.delete();
+                } else {
+                    directory.delete();
+                }
+            }
+        }
+
 
     @Override
     public boolean existsByTestCasesId(Long testCaseId) {
