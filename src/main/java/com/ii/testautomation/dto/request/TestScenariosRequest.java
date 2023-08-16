@@ -14,4 +14,5 @@ public class TestScenariosRequest {
     private List<Long> moduleIds;
     private List<Long> subModuleIds;
     private List<Long> mainModuleIds;
+    private Long projectId;
 }
