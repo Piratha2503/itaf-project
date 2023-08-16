@@ -67,6 +67,17 @@ public class ProjectServiceImpl implements ProjectService {
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
+        if(project.getId()!=null)
+        {
+            Project eixstingProject=projectRepository.findById(projectRequest.getId()).get();
+            String existingFolderPath=eixstingProject.getProjectPath();
+            String newFolderPath = fileFolder + File.separator + projectRequest.getName();
+            File existingFolder = new File(existingFolderPath);
+            File newFolder = new File(newFolderPath);
+            if (existingFolder.exists()) {
+                existingFolder.renameTo(newFolder);
+            }
+        }
         String directoryPath = fileFolder + File.separator + projectRequest.getName();
         String uploadedJarFilePath = null;
         String uploadedConfigFilePath = null;
@@ -74,6 +85,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (!jarDirectory.exists()) {
             jarDirectory.mkdirs();
         }
+        project.setProjectPath(directoryPath);
         try {
             if (jarFile != null && !jarFile.isEmpty()) {
                 String jarFilename = jarFile.getOriginalFilename();
@@ -91,7 +103,9 @@ public class ProjectServiceImpl implements ProjectService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (projectRequest.getId() != null) {
 
+        }
         project.setJarFilePath(uploadedJarFilePath);
         project.setConfigFilePath(uploadedConfigFilePath);
         projectRepository.save(project);

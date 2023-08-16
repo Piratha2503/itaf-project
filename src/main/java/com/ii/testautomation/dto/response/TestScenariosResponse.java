@@ -11,4 +11,5 @@ public class TestScenariosResponse {
     private Long id;
     private String name;
    private  List<String> testCasesName;
+
 }

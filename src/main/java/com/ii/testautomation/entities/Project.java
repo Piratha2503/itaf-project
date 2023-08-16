@@ -19,5 +19,6 @@ public class Project extends DateAudit {
     private String code;
     private String jarFilePath;
     private String configFilePath;
+    private String projectPath;
 
 }
