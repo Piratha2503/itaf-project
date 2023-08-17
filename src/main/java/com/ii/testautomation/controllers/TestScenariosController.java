@@ -33,8 +33,7 @@ public class TestScenariosController {
 
     @PostMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
-        if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(), testScenariosRequest.getProjectId()))
-
+        if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(),testScenariosRequest.getProjectId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
         if (testScenariosService.saveTestScenario(testScenariosRequest))
         else
@@ -61,7 +60,7 @@ public class TestScenariosController {
         }
        else
            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                   statusCodeBundle.
+                   statusCodeBundle.g
     }
 
 
