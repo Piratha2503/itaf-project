@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TestGroupingServiceImpl implements TestGroupingService {
@@ -50,7 +51,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
-        if(multipartFiles!=null && !multipartFiles.isEmpty()) {
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
             for (MultipartFile multipartFile : multipartFiles
             ) {
                 try {
@@ -140,7 +141,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean existsTestGroupingByTestScenarioId(Long id) {
-        return  testGroupingRepository.existsByTestScenariosId(id);
+        return testGroupingRepository.existsByTestScenariosId(id);
 
     }
 
@@ -161,36 +162,34 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsById(testGroupingId);
     }
 
-
-
     @Override
-    public void deleteTestGroupingById(Long id,Long projectId) {
-        String projectName=projectRepository.findById(projectId).get().getName();
-        String testGroupingDirectoryPath = fileFolder + File.separator + projectName+File.separator+testGroupingRepository.findById(id).get().getName();
+    public void deleteTestGroupingById(Long id, Long projectId) {
+        String projectName = projectRepository.findById(projectId).get().getName();
+        String testGroupingDirectoryPath = fileFolder + File.separator + projectName + File.separator + testGroupingRepository.findById(id).get().getName();
         deleteTestGroupingFolder(testGroupingDirectoryPath);
         testGroupingRepository.deleteById(id);
     }
-    private void deleteTestGroupingFolder (String folderPath) {
-            File directory = new File(folderPath);
-            if (directory.exists()) {
-                if (directory.isDirectory()) {
-                    File[] files = directory.listFiles();
-                    if (files != null) {
-                        for (File file : files) {
-                            if (file.isDirectory()) {
-                                deleteTestGroupingFolder(file.getAbsolutePath());
-                            } else {
-                                file.delete();
-                            }
+
+    private void deleteTestGroupingFolder(String folderPath) {
+        File directory = new File(folderPath);
+        if (directory.exists()) {
+            if (directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isDirectory()) {
+                            deleteTestGroupingFolder(file.getAbsolutePath());
+                        } else {
+                            file.delete();
                         }
                     }
-                    directory.delete();
-                } else {
-                    directory.delete();
                 }
+                directory.delete();
+            } else {
+                directory.delete();
             }
         }
-
+    }
 
     @Override
     public boolean existsByTestCasesId(Long testCaseId) {
@@ -212,7 +211,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<String> subModuleName = new ArrayList<>();
         List<String> mainModulesName = new ArrayList<>();
         List<String> modulesName = new ArrayList<>();
-        List<String> testScenariosName=new ArrayList<>();
+        List<String> testScenariosName = new ArrayList<>();
         for (TestCases testCase : testGrouping.getTestCases()) {
             testCaseNames.add(testCase.getName());
             subModuleName.add(testCase.getSubModule().getName());
@@ -236,28 +235,25 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
         Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
         List<String> testCaseNames = new ArrayList<>();
-        List<String> subModuleName = new ArrayList<>();
-        List<String> mainModulesName = new ArrayList<>();
-        List<String> modulesName = new ArrayList<>();
+        List<String> testScenariosNames = new ArrayList<>();
         pagination.setTotalRecords(testGroupingPage.getTotalElements());
         pagination.setPageSize(testGroupingPage.getTotalPages());
+
         for (TestGrouping testGrouping : testGroupingPage) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
             testGroupingResponse.setName(testGrouping.getName());
             testGroupingResponse.setId(testGrouping.getId());
-            for (TestCases testCases : testGrouping.getTestCases()
-            ) {
+            for (TestCases testCases : testGrouping.getTestCases()) {
                 testCaseNames.add(testCases.getName());
-                subModuleName.add(testCases.getSubModule().getName());
-                mainModulesName.add(testCases.getSubModule().getMainModule().getName());
-                modulesName.add(testCases.getSubModule().getMainModule().getModules().getName());
             }
-            testGroupingResponse.setTestCaseName(testCaseNames);
-            testGroupingResponse.setSubModuleName(subModuleName);
-            testGroupingResponse.setMainModuleName(mainModulesName);
-            testGroupingResponse.setModuleName(modulesName);
-            testGroupingResponse.setSubModuleName(subModuleName);
+            for (TestScenarios testScenarios : testGrouping.getTestScenarios()) {
+                testScenariosNames.add(testScenarios.getName());
+            }
+            List<String> sortedTestCaseNames = testCaseNames.stream().distinct().collect(Collectors.toList());
+            List<String> sortedTestScenarioNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
+            testGroupingResponse.setTestScenariosName(sortedTestScenarioNames);
+            testGroupingResponse.setTestCaseName(sortedTestCaseNames);
             testGroupingResponseList.add(testGroupingResponse);
         }
 
