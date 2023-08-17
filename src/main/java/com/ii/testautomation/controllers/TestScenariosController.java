@@ -33,11 +33,22 @@ public class TestScenariosController {
 
     @PostMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
+        if (testScenariosRequest.getName() == null || testScenariosRequest.getProjectId() ==null)
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenarioNameAndIdNullMessage()));
+
+        if (testScenariosRequest.getTestCasesId() == null && testScenariosRequest.getMainModuleIds() == null
+        && testScenariosRequest.getModuleIds() == null && testScenariosRequest.getSubModuleIds() ==null)
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
+
+        if (testScenariosRequest.getTestCasesId().isEmpty() && testScenariosRequest.getMainModuleIds().isEmpty()
+                && testScenariosRequest.getModuleIds().isEmpty() && testScenariosRequest.getSubModuleIds().isEmpty())
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
+
         if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(),testScenariosRequest.getProjectId()))
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
-        if (testScenariosService.saveTestScenario(testScenariosRequest))
+        testScenariosService.saveTestScenario(testScenariosRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
-        else return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
+
     }
 
     @PutMapping(EndpointURI.TEST_SCENARIO)
