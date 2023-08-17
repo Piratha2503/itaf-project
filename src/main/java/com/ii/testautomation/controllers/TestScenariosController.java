@@ -54,10 +54,14 @@ public class TestScenariosController {
                   statusCodeBundle.getTestScenariosAlreadyExistCode(),
                    statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
        }
-        testScenariosService.updateTestScenario(testScenariosRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
+       if (testScenariosService.saveTestScenario(testScenariosRequest) ){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                    statusCodeBundle.getCommonSuccessCode(),
+                    statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
+        }
+       else
+           return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                   statusCodeBundle.
     }
 
 
