@@ -35,10 +35,11 @@ public class TestScenariosController {
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
         if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(),testScenariosRequest.getProjectId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
-        if (testScenariosService.saveTestScenario(testScenariosRequest))
-        else
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
+
+        testScenariosService.saveTestScenario(testScenariosRequest);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
     }
+
     @PutMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> UpdateTestScenarios(@RequestBody TestScenariosRequest testScenariosRequest) {
         if (!testScenariosService.existsByTestScenarioId(testScenariosRequest.getId())) {
@@ -53,14 +54,10 @@ public class TestScenariosController {
                   statusCodeBundle.getTestScenariosAlreadyExistCode(),
                    statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
        }
-       if (testScenariosService.saveTestScenario(testScenariosRequest) ){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                    statusCodeBundle.getCommonSuccessCode(),
-                    statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
-        }
-       else
-           return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                   statusCodeBundle.g
+        testScenariosService.updateTestScenario(testScenariosRequest);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
     }
 
 
