@@ -101,7 +101,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     }
 
     @Override
-    public void saveTestScenario(TestScenariosRequest testScenariosRequest) {
+    public boolean saveTestScenario(TestScenariosRequest testScenariosRequest) {
 
         TestScenarios testScenarios = new TestScenarios();
         List<TestCases> testCasesList = new ArrayList<>();
@@ -124,10 +124,11 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         }
 
         List<TestCases> sortedTestCaseList = testCasesList.stream().distinct().collect(Collectors.toList());
-
+        if (sortedTestCaseList.isEmpty()) return false;
         BeanUtils.copyProperties(testScenariosRequest, testScenarios);
         testScenarios.setTestCases(sortedTestCaseList);
         testScenariosRepository.save(testScenarios);
+        return true;
     }
     @Override
     public void updateTestScenario(TestScenariosRequest testScenariosRequest) {
