@@ -12,8 +12,10 @@ public class TestGroupingResponse {
     private String name;
     private List<String> testCaseName;
     private String testTypeName;
+    private List<String> testScenarioName;
     private List<String> subModuleName;
     private List<String> mainModuleName;
     private List<String> moduleName;
+    private Boolean executionStatus;
 
 }
