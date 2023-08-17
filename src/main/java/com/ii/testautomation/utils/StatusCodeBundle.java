@@ -407,4 +407,6 @@ public class StatusCodeBundle {
     private String deleteTestScenarioSuccessMessage;
     @Value("${message.validation.testScenario.notExists}")
     private String testScenarioNotExistsMessage;
+    @Value("${message.validation.testScenario.testCasesNil}")
+    private String testCasesNotProvidedMessage;
 }

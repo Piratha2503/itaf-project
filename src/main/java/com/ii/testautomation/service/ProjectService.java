@@ -18,6 +18,8 @@ public interface ProjectService {
 
     void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile);
 
+    public void updateProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile);
+
     boolean existByProjectName(String projectName);
 
     boolean existByProjectCode(String projectCode);
