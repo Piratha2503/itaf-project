@@ -47,7 +47,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         TestScenarios testScenarios = testScenariosRepository.findById(id).get();
         BeanUtils.copyProperties(testScenarios, testScenariosResponse);
         for (TestCases testCases : testScenarios.getTestCases()) {
-            testCaseNames.add(testCases.getName());
+            testCaseNames.add(testCases.getName().substring(testCases.getName().lastIndexOf(".")+1));
             testCaseIds.add(testCases.getId());
             subModuleIds.add(testCases.getSubModule().getId());
             mainModuleIds.add(testCases.getSubModule().getMainModule().getId());
