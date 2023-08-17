@@ -167,7 +167,7 @@ ModulesServiceImpl implements ModulesService {
                     for (TestCases testCases : testCasesList) {
                         TestCaseResponse testCaseResponse = new TestCaseResponse();
                         testCaseResponse.setId(testCases.getId());
-                        testCaseResponse.setName(testCases.getName());
+                        testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".")+1));
                         testCaseResponseList.add(testCaseResponse);
                     }
                     if(testCaseResponseList!=null&& !testCaseResponseList.isEmpty()) {

@@ -204,15 +204,33 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public boolean existsTestGroupingByTestScenarioId(Long id) {
-        return testGroupingRepository.existsByTestScenariosId(id);
-
+    public void deleteTestGroupingById(Long id,Long projectId) {
+        String projectName=projectRepository.findById(projectId).get().getName();
+        String testGroupingDirectoryPath = fileFolder + File.separator + projectName+File.separator+testGroupingRepository.findById(id).get().getName();
+        deleteTestGroupingFolder(testGroupingDirectoryPath);
+        testGroupingRepository.deleteById(id);
     }
+    private void deleteTestGroupingFolder (String folderPath) {
+            File directory = new File(folderPath);
+            if (directory.exists()) {
+                if (directory.isDirectory()) {
+                    File[] files = directory.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if (file.isDirectory()) {
+                                deleteTestGroupingFolder(file.getAbsolutePath());
+                            } else {
+                                file.delete();
+                            }
+                        }
+                    }
+                    directory.delete();
+                } else {
+                    directory.delete();
+                }
+            }
+        }
 
-    @Override
-    public void deleteTestGroupingById(Long testGroupingId) {
-        testGroupingRepository.deleteById(testGroupingId);
-    }
 
     @Override
     public boolean existsByTestCasesId(Long testCaseId) {

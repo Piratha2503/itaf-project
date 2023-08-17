@@ -8,10 +8,10 @@ import java.util.List;
 @Setter
 public class TestScenariosResponse {
 
-   private Long id;
-   private String name;
-   private List<String> testCasesName;
-   private List<Long> testCaseId;
+    private Long id;
+    private String name;
+    private List<Long> testCasesId;
+   private  List<String> testCasesName;
    private List<Long> subModuleId;
    private List<Long> moduleId;
    private List<Long> mainModuleId;
