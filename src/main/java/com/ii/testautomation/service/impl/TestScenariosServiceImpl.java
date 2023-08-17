@@ -53,11 +53,18 @@ public class TestScenariosServiceImpl implements TestScenariosService {
             mainModuleIds.add(testCases.getSubModule().getMainModule().getId());
             moduleIds.add(testCases.getSubModule().getMainModule().getModules().getId());
         }
-        testScenariosResponse.setTestCasesName(testCaseNames);
-        testScenariosResponse.setTestCaseId(testCaseIds);
-        testScenariosResponse.setModuleId(moduleIds);
-        testScenariosResponse.setMainModuleId(mainModuleIds);
-        testScenariosResponse.setSubModuleId(subModuleIds);
+        List<Long> sortedMainModuleIds = mainModuleIds.stream().distinct().collect(Collectors.toList());
+        List<Long> sortedSubModuleIds = subModuleIds.stream().distinct().collect(Collectors.toList());
+        List<Long> sortedModuleIds = moduleIds.stream().distinct().collect(Collectors.toList());
+        List<Long> sortedTestCaseIds = testCaseIds.stream().distinct().collect(Collectors.toList());
+        List<String> sortedTestCaseNames = testCaseNames.stream().distinct().collect(Collectors.toList());
+
+        testScenariosResponse.setTestCasesName(sortedTestCaseNames);
+        testScenariosResponse.setTestCasesId(sortedTestCaseIds);
+        testScenariosResponse.setModuleId(sortedModuleIds);
+        testScenariosResponse.setMainModuleId(sortedMainModuleIds);
+        testScenariosResponse.setSubModuleId(sortedSubModuleIds);
+
         return testScenariosResponse;
     }
 
@@ -117,7 +124,6 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         }
 
         List<TestCases> sortedTestCaseList = testCasesList.stream().distinct().collect(Collectors.toList());
-
         BeanUtils.copyProperties(testScenariosRequest, testScenarios);
         testScenarios.setTestCases(sortedTestCaseList);
         testScenariosRepository.save(testScenarios);
