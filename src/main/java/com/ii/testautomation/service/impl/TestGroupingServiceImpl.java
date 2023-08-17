@@ -132,10 +132,58 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             e.printStackTrace();
         }
         testGrouping.setExcelFilePath(filePaths);
-        if (testGroupingRequest.getId() != null) {
-            testGroupingRepository.deleteById(testGroupingRequest.getId());
-        }
         testGroupingRepository.save(testGrouping);
+    }
+
+    @Override
+    public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
+        TestGrouping testGrouping =testGroupingRepository.findById(testGroupingRequest.getId()).get();
+        testGrouping.setName(testGroupingRequest.getName());
+        TestTypes testTypes=testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
+        testGrouping.setTestType(testTypes);
+        List<TestCases> testCasesList = new ArrayList<>();
+        if (testGroupingRequest.getSubModuleIds() != null && !testGroupingRequest.getSubModuleIds().isEmpty()) {
+            for (Long subModuleId : testGroupingRequest.getSubModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findAllTestCasesBySubModuleId(subModuleId);
+                for (TestCases testCases1 : testCases) {
+                    testCasesList.add(testCases1);
+                }
+            }
+        }
+        if (testGroupingRequest.getMainModuleIds() != null && !testGroupingRequest.getMainModuleIds().isEmpty()) {
+            for (Long mainModuleId : testGroupingRequest.getMainModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findBySubModule_MainModule_Id(mainModuleId);
+                for (TestCases testCase1 : testCases) {
+                    testCasesList.add(testCase1);
+                }
+            }
+        }
+        if (testGroupingRequest.getModuleIds() != null && !testGroupingRequest.getModuleIds().isEmpty()) {
+            for (Long moduleId : testGroupingRequest.getModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId);
+                for (TestCases testCase1 : testCases) {
+                    testCasesList.add(testCase1);
+                }
+            }
+        }
+        if (testGroupingRequest.getTestCaseId() != null && !testGroupingRequest.getTestCaseId().isEmpty()) {
+            for (Long testCaseId : testGroupingRequest.getTestCaseId()
+            ) {
+                TestCases testCases = testCasesRepository.findById(testCaseId).get();
+                testCasesList.add(testCases);
+            }
+        }
+        List<TestScenarios> testScenariosList = new ArrayList<>();
+        if (testGroupingRequest.getTestScenarioIds() != null && !testGroupingRequest.getTestScenarioIds().isEmpty()) {
+            for (Long testScenarioId : testGroupingRequest.getTestScenarioIds()) {
+                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
+                testScenariosList.add(testScenarios);
+            }
+        }
+        testGrouping.setTestScenarios(testScenariosList);
+        testGrouping.setTestCases(testCasesList);
+
+
     }
 
     @Override
