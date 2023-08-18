@@ -5,16 +5,20 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 public class ExecutionHistory extends DateAudit {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @OneToOne
     private TestGrouping testGrouping;
 
-
+    @ElementCollection
+    @Lob
+    private List<byte[]> reportLists;
 }
