@@ -60,6 +60,12 @@ public class TestScenariosController {
                     statusCodeBundle.getTestScenariosIdNotExistMessage()));
 
         }
+        if (testScenariosRequest.getName() == null || testScenariosRequest.getProjectId() == null||testScenariosRequest.getId()==null) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestScenariosAlreadyExistCode(),
+                    statusCodeBundle.getTestScenarioNameAndIdNullMessage()));
+
+        }
 
         if (testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(), testScenariosRequest.getName(), testScenariosRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -70,6 +76,8 @@ public class TestScenariosController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
+
+
 
 
     }
