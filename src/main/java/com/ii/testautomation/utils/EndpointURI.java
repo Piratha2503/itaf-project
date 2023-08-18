@@ -72,6 +72,10 @@ public final class EndpointURI {
     public static final String TEST_SCENARIO_BY_ID = TEST_SCENARIO + ID;
     public static final String TEST_SCENARIO_UPDATE_EXECUTION_STATUS = TEST_SCENARIO + "/update" + ID+PROJECT_ID;
 
+    // Execution History
+    public static final String EXECUTION_HISTORY = BASE_API_PATH + "ExecutionHistory";
+    public static final String EXECUTION_HISTORY_BY_TEST_GROUPING_ID = EXECUTION_HISTORY+"/testGrouping"+ID;
+    public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
     private EndpointURI() {
     }
 }
