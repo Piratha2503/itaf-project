@@ -164,33 +164,32 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
 
     @Override
-    public void deleteTestGroupingById(Long id, Long projectId) {
-        String projectName = projectRepository.findById(projectId).get().getName();
-        String testGroupingDirectoryPath = fileFolder + File.separator + projectName + File.separator + testGroupingRepository.findById(id).get().getName();
+    public void deleteTestGroupingById(Long id,Long projectId) {
+        String projectName=projectRepository.findById(projectId).get().getName();
+        String testGroupingDirectoryPath = fileFolder + File.separator + projectName+File.separator+testGroupingRepository.findById(id).get().getName();
         deleteTestGroupingFolder(testGroupingDirectoryPath);
         testGroupingRepository.deleteById(id);
     }
-
-    private void deleteTestGroupingFolder(String folderPath) {
-        File directory = new File(folderPath);
-        if (directory.exists()) {
-            if (directory.isDirectory()) {
-                File[] files = directory.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        if (file.isDirectory()) {
-                            deleteTestGroupingFolder(file.getAbsolutePath());
-                        } else {
-                            file.delete();
+    private void deleteTestGroupingFolder (String folderPath) {
+            File directory = new File(folderPath);
+            if (directory.exists()) {
+                if (directory.isDirectory()) {
+                    File[] files = directory.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if (file.isDirectory()) {
+                                deleteTestGroupingFolder(file.getAbsolutePath());
+                            } else {
+                                file.delete();
+                            }
                         }
                     }
+                    directory.delete();
+                } else {
+                    directory.delete();
                 }
-                directory.delete();
-            } else {
-                directory.delete();
             }
         }
-    }
 
 
     @Override
@@ -203,29 +202,42 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
 
-    @Override
-    public TestGroupingResponse getTestGroupingById(Long id) {
-        TestGrouping testGrouping = testGroupingRepository.findById(id).get();
-        TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
-        BeanUtils.copyProperties(testGrouping, testGroupingResponse);
-        testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
-        List<String> testCaseNames = new ArrayList<>();
-        List<String> subModuleName = new ArrayList<>();
-        List<String> mainModulesName = new ArrayList<>();
-        List<String> modulesName = new ArrayList<>();
-        List<String> testScenariosName = new ArrayList<>();
-        for (TestCases testCase : testGrouping.getTestCases()) {
-            testCaseNames.add(testCase.getName());
-            subModuleName.add(testCase.getSubModule().getName());
-            mainModulesName.add(testCase.getSubModule().getMainModule().getName());
-            modulesName.add(testCase.getSubModule().getMainModule().getModules().getName());
+
+
+@Override
+public TestGroupingResponse getTestGroupingById(Long id) {
+    TestGrouping testGrouping = testGroupingRepository.findById(id).get();
+
+    TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+    BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+    testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+    testGroupingResponse.setTestTypeId(testGrouping.getTestType().getId());
+    List<String> testCaseNames = new ArrayList<>();
+    List<String> testScenarioNames = new ArrayList<>();
+    List<Long> testCaseIds = new ArrayList<>();
+    List<Long> testScenarioIds = new ArrayList<>();
+    Set<String> addedTestCaseNames = new HashSet<>();
+
+    for (TestCases testCase : testGrouping.getTestCases()) {
+        String testCaseName = testCase.getName();
+        if (!addedTestCaseNames.contains(testCaseName)) {
+            testCaseNames.add(testCaseName);
+            testCaseIds.add(testCase.getId());
+            addedTestCaseNames.add(testCaseName);
         }
-        testGroupingResponse.setTestCaseName(testCaseNames);
-        testGroupingResponse.setSubModuleName(subModuleName);
-        testGroupingResponse.setMainModuleName(mainModulesName);
-        testGroupingResponse.setModuleName(modulesName);
-        return testGroupingResponse;
     }
+    for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
+        testScenarioNames.add(testScenario.getName());
+        testScenarioIds.add(testScenario.getId());
+    }
+
+    testGroupingResponse.setTestCaseIds(testCaseIds);
+    testGroupingResponse.setTestCaseName(testCaseNames);
+    testGroupingResponse.setTestScenarioIds(testScenarioIds);
+    testGroupingResponse.setTestScenarioName(testScenarioNames);
+
+    return testGroupingResponse;
+}
 
     @Override
     public boolean existByProjectId(Long projectId) {
@@ -261,8 +273,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setSubModuleName(subModuleName);
             testGroupingResponseList.add(testGroupingResponse);
         }
-
-
         return testGroupingResponseList;
     }
 
