@@ -204,34 +204,40 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
 
 
+@Override
+public TestGroupingResponse getTestGroupingById(Long id) {
+    TestGrouping testGrouping = testGroupingRepository.findById(id).get();
 
-    @Override
-    public TestGroupingResponse getTestGroupingById(Long id) {
-        TestGrouping testGrouping = testGroupingRepository.findById(id).get();
+    TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+    BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+    testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+    testGroupingResponse.setTestTypeId(testGrouping.getTestType().getId());
+    List<String> testCaseNames = new ArrayList<>();
+    List<String> testScenarioNames = new ArrayList<>();
+    List<Long> testCaseIds = new ArrayList<>();
+    List<Long> testScenarioIds = new ArrayList<>();
+    Set<String> addedTestCaseNames = new HashSet<>();
 
-        TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
-        BeanUtils.copyProperties(testGrouping, testGroupingResponse);
-        testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
-        List<String> testCaseNames = new ArrayList<>();
-        List<String> testScenarioNames = new ArrayList<>();
-        Set<String> addedTestCaseNames = new HashSet<>();
-
-        for (TestCases testCase : testGrouping.getTestCases()) {
-            String testCaseName = testCase.getName();
-            if (!addedTestCaseNames.contains(testCaseName)) {
-                testCaseNames.add(testCaseName);
-                addedTestCaseNames.add(testCaseName);
-            }
+    for (TestCases testCase : testGrouping.getTestCases()) {
+        String testCaseName = testCase.getName();
+        if (!addedTestCaseNames.contains(testCaseName)) {
+            testCaseNames.add(testCaseName);
+            testCaseIds.add(testCase.getId());
+            addedTestCaseNames.add(testCaseName);
         }
-        for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
-            testScenarioNames.add(testScenario.getName());
-        }
-        testGroupingResponse.setTestCaseName(testCaseNames);
-        testGroupingResponse.setExecutionStatus(testGrouping.getExecutionStatus());
-        testGroupingResponse.setTestScenarioName(testScenarioNames);
-
-        return testGroupingResponse;
     }
+    for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
+        testScenarioNames.add(testScenario.getName());
+        testScenarioIds.add(testScenario.getId());
+    }
+
+    testGroupingResponse.setTestCaseIds(testCaseIds);
+    testGroupingResponse.setTestCaseName(testCaseNames);
+    testGroupingResponse.setTestScenarioIds(testScenarioIds);
+    testGroupingResponse.setTestScenarioName(testScenarioNames);
+
+    return testGroupingResponse;
+}
 
     @Override
     public boolean existByProjectId(Long projectId) {
