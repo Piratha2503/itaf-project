@@ -1,5 +1,6 @@
 package com.ii.testautomation.service.impl;
 
+import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
@@ -21,6 +22,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +50,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private ModulesRepository modulesRepository;
     @Autowired
     private MainModulesRepository mainModulesRepository;
+    @Autowired
+    private ExecutedTestCaseRepository executedTestCaseRepository;
 
     @Value("${jar.import.file.windows.path}")
     private String fileFolder;
@@ -133,16 +140,94 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             e.printStackTrace();
         }
         testGrouping.setExcelFilePath(filePaths);
-        if (testGroupingRequest.getId() != null) {
-            testGroupingRepository.deleteById(testGroupingRequest.getId());
-        }
         testGroupingRepository.save(testGrouping);
     }
 
     @Override
     public boolean existsTestGroupingByTestScenarioId(Long id) {
         return testGroupingRepository.existsByTestScenariosId(id);
+    }
 
+
+    public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
+        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingRequest.getId()).get();
+        TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
+        testGrouping.setTestType(testTypes);
+        List<TestCases> testCasesList = new ArrayList<>();
+        if (testGroupingRequest.getSubModuleIds() != null && !testGroupingRequest.getSubModuleIds().isEmpty()) {
+            for (Long subModuleId : testGroupingRequest.getSubModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findAllTestCasesBySubModuleId(subModuleId);
+                for (TestCases testCases1 : testCases) {
+                    testCasesList.add(testCases1);
+                }
+            }
+        }
+        if (testGroupingRequest.getMainModuleIds() != null && !testGroupingRequest.getMainModuleIds().isEmpty()) {
+            for (Long mainModuleId : testGroupingRequest.getMainModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findBySubModule_MainModule_Id(mainModuleId);
+                for (TestCases testCase1 : testCases) {
+                    testCasesList.add(testCase1);
+                }
+            }
+        }
+        if (testGroupingRequest.getModuleIds() != null && !testGroupingRequest.getModuleIds().isEmpty()) {
+            for (Long moduleId : testGroupingRequest.getModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId);
+                for (TestCases testCase1 : testCases) {
+                    testCasesList.add(testCase1);
+                }
+            }
+        }
+        if (testGroupingRequest.getTestCaseId() != null && !testGroupingRequest.getTestCaseId().isEmpty()) {
+            for (Long testCaseId : testGroupingRequest.getTestCaseId()
+            ) {
+                TestCases testCases = testCasesRepository.findById(testCaseId).get();
+                testCasesList.add(testCases);
+            }
+        }
+        List<TestScenarios> testScenariosList = new ArrayList<>();
+        if (testGroupingRequest.getTestScenarioIds() != null && !testGroupingRequest.getTestScenarioIds().isEmpty()) {
+            for (Long testScenarioId : testGroupingRequest.getTestScenarioIds()) {
+                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
+                testScenariosList.add(testScenarios);
+            }
+        }
+        testGrouping.setTestScenarios(testScenariosList);
+        testGrouping.setTestCases(testCasesList);
+        String newGroupFolderPath = fileFolder + File.separator + projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
+        String existingGroupFolderPath = testGrouping.getGroupPath();
+        File existingGroupFolder = new File(existingGroupFolderPath);
+        File newGroupFolder = new File(newGroupFolderPath);
+        List<String> excelPaths = testGrouping.getExcelFilePath();
+        List<String> newExcelPathList = new ArrayList<>();
+        existingGroupFolder.renameTo(newGroupFolder);
+        testGrouping.setGroupPath(newGroupFolderPath);
+        if (excelPaths != null && !excelPaths.isEmpty()) {
+            for (String excelPath : excelPaths
+            ) {
+                Path excel = Paths.get(excelPath);
+                String excelFileName = excel.getFileName().toString();
+                String newExcelPath = newGroupFolderPath + File.separator + excelFileName;
+                newExcelPathList.add(newExcelPath);
+            }
+        }
+        if (excelFiles != null && !excelFiles.isEmpty()) {
+            try {
+                for (MultipartFile multipartFile : excelFiles
+                ) {
+                    String excelFileName = multipartFile.getOriginalFilename();
+                    String newExcelFilePath = newGroupFolderPath + File.separator + excelFileName;
+                    File excelFile = new File(newExcelFilePath);
+                    multipartFile.transferTo(excelFile);
+                    newExcelPathList.add(newExcelFilePath);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        testGrouping.setExcelFilePath(newExcelPathList);
+        testGrouping.setName(testGroupingRequest.getName());
+        testGroupingRepository.save(testGrouping);
     }
 
     @Override
@@ -161,6 +246,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
     }
+
 
     @Override
     public void deleteTestGroupingById(Long id, Long projectId) {
@@ -191,6 +277,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
+
     @Override
     public boolean existsByTestCasesId(Long testCaseId) {
         return testGroupingRepository.existsByTestCasesId(testCaseId);
@@ -201,27 +288,39 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
 
+
     @Override
     public TestGroupingResponse getTestGroupingById(Long id) {
         TestGrouping testGrouping = testGroupingRepository.findById(id).get();
+
         TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
         BeanUtils.copyProperties(testGrouping, testGroupingResponse);
         testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+        testGroupingResponse.setTestTypeId(testGrouping.getTestType().getId());
         List<String> testCaseNames = new ArrayList<>();
-        List<String> subModuleName = new ArrayList<>();
-        List<String> mainModulesName = new ArrayList<>();
-        List<String> modulesName = new ArrayList<>();
-        List<String> testScenariosName = new ArrayList<>();
+        List<String> testScenarioNames = new ArrayList<>();
+        List<Long> testCaseIds = new ArrayList<>();
+        List<Long> testScenarioIds = new ArrayList<>();
+        Set<String> addedTestCaseNames = new HashSet<>();
+
         for (TestCases testCase : testGrouping.getTestCases()) {
-            testCaseNames.add(testCase.getName());
-            subModuleName.add(testCase.getSubModule().getName());
-            mainModulesName.add(testCase.getSubModule().getMainModule().getName());
-            modulesName.add(testCase.getSubModule().getMainModule().getModules().getName());
+            String testCaseName = testCase.getName();
+            if (!addedTestCaseNames.contains(testCaseName)) {
+                testCaseNames.add(testCaseName);
+                testCaseIds.add(testCase.getId());
+                addedTestCaseNames.add(testCaseName);
+            }
         }
+        for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
+            testScenarioNames.add(testScenario.getName());
+            testScenarioIds.add(testScenario.getId());
+        }
+
+        testGroupingResponse.setTestCaseIds(testCaseIds);
         testGroupingResponse.setTestCaseName(testCaseNames);
-        testGroupingResponse.setSubModuleName(subModuleName);
-        testGroupingResponse.setMainModuleName(mainModulesName);
-        testGroupingResponse.setModuleName(modulesName);
+        testGroupingResponse.setTestScenarioIds(testScenarioIds);
+        testGroupingResponse.setTestScenarioName(testScenarioNames);
+
         return testGroupingResponse;
     }
 
@@ -262,27 +361,37 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds) {
-        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).orElse(null);
+    public void execution(ExecutionRequest executionRequest) {
+        TestGrouping testGrouping = testGroupingRepository.findById(executionRequest.getTestGroupingId()).orElse(null);
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
-        if (testScenarioIds != null && !testScenarioIds.isEmpty()) {
-            for (Long testScenarioId : testScenarioIds
-            ) {
-                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
-                testScenarios.setExecutionStatus(true);
-                testScenarioRepository.save(testScenarios);
+        int mapSize = executionRequest.getTestScenario().size() + executionRequest.getTestScenario().size();
+        for (int i = 1; i < mapSize + 1; i++) {
+            for (Map.Entry<Integer, Long> entry : executionRequest.getTestScenario().entrySet()) {
+                if (entry.getKey() == i) {
+                    TestScenarios testScenarios = testScenarioRepository.findById(entry.getValue()).get();
+                    testScenarios.setExecutionStatus(true);
+                    List<TestCases> testCasesList = testScenarios.getTestCases();
+                    for (TestCases testCases : testCasesList
+                    ) {
+                        ExecutedTestCase executedTestCase = new ExecutedTestCase();
+                        executedTestCase.setTestCases(testCases);
+                        executedTestCaseRepository.save(executedTestCase);
+                        testCases.setExecutionStatus(true);
+                    }
+                }
+            }
+            for (Map.Entry<Integer, Long> entry : executionRequest.getTestCase().entrySet()) {
+                if (entry.getKey() == i) {
+                    TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
+                    ExecutedTestCase executedTestCase = new ExecutedTestCase();
+                    executedTestCase.setTestCases(testCases);
+                    executedTestCaseRepository.save(executedTestCase);
+                    testCases.setExecutionStatus(true);
+                }
             }
         }
-        if (testCaseIds != null && !testCaseIds.isEmpty()) {
-            for (Long testCaseId : testCaseIds
-            ) {
-                TestCases testCases = testCasesRepository.findById(testCaseId).get();
-                testCases.setExecutionStatus(true);
-                testCasesRepository.save(testCases);
-            }
-        }
-        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+        String savedFilePath = projectRepository.findById(executionRequest.getProjectId()).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();

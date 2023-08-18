@@ -27,4 +27,5 @@ public class TestGrouping extends DateAudit {
     private Boolean executionStatus = false;
     @ElementCollection
     private List<String> excelFilePath;
+    private String groupPath;
 }
