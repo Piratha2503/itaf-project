@@ -119,6 +119,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             if (!folder.exists()) {
                 folder.mkdirs();
             }
+            testGrouping.setGroupPath(folderPath);
             if (excelFiles != null && !excelFiles.isEmpty()) {
                 for (MultipartFile excelFile : excelFiles) {
                     String filename = excelFile.getOriginalFilename();

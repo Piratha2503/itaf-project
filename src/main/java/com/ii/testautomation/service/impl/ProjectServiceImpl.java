@@ -5,7 +5,9 @@ import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
 import com.ii.testautomation.entities.Project;
 import com.ii.testautomation.entities.QProject;
+import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.repositories.ProjectRepository;
+import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Utils;
@@ -39,6 +41,9 @@ public class ProjectServiceImpl implements ProjectService {
     private String fileFolder;
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private TestGroupingRepository testGroupingRepository;
 
     @Override
     public boolean checkJarFile(MultipartFile jarFile) {
@@ -98,7 +103,73 @@ public class ProjectServiceImpl implements ProjectService {
         project.setConfigFilePath(uploadedConfigFilePath);
         projectRepository.save(project);
     }
-
+//    @Override
+//    public void updateProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
+//        Project eixstingProject = projectRepository.findById(projectRequest.getId()).get();
+//        BeanUtils.copyProperties(projectRequest, eixstingProject);
+//        String existingFolderPath = eixstingProject.getProjectPath();
+//        String newProjectFolderPath = fileFolder + File.separator + projectRequest.getName();
+//        File existingFolder = new File(existingFolderPath);
+//        File newFolder = new File(newProjectFolderPath);
+//        String uploadedJarFilePath = eixstingProject.getJarFilePath();
+//        String uploadedConfigPath = eixstingProject.getConfigFilePath();
+//        if (existingFolder.exists()) {
+//            try {
+//                if (jarFile != null && !jarFile.isEmpty()) {
+//                    if (uploadedJarFilePath != null) {
+//                        File existingJarFolder = new File(uploadedJarFilePath);
+//                        existingJarFolder.delete();
+//                    }
+//                    String jarFilename = jarFile.getOriginalFilename();
+//                    existingFolder.renameTo(newFolder);
+//                    eixstingProject.setProjectPath(newProjectFolderPath);
+//                    uploadedJarFilePath = newProjectFolderPath + File.separator + jarFilename;
+//                    File savedJarFile = new File(uploadedJarFilePath);
+//                    jarFile.transferTo(savedJarFile);
+//                    eixstingProject.setJarFilePath(uploadedJarFilePath);
+//                } else {
+//                    if (uploadedJarFilePath != null) {
+//                        existingFolder.renameTo(newFolder);
+//                        eixstingProject.setProjectPath(newProjectFolderPath);
+//                        Path path = Paths.get(uploadedJarFilePath);
+//                        String fileName = path.getFileName().toString();
+//                        String newJarFilePath = newProjectFolderPath + File.separator + fileName;
+//                        eixstingProject.setJarFilePath(newJarFilePath);
+//                    }
+//
+//                }
+//
+//                if (configFile != null && !configFile.isEmpty()) {
+//                    if (uploadedConfigPath != null) {
+//                        File existingConfigFolder = new File(uploadedConfigPath);
+//                        existingConfigFolder.delete();
+//                    }
+//
+//                    String configFilename = configFile.getOriginalFilename();
+//                    existingFolder.renameTo(newFolder);
+//                    eixstingProject.setProjectPath(newProjectFolderPath);
+//                    uploadedConfigPath = newProjectFolderPath + File.separator + configFilename;
+//                    File savedConfigFile = new File(uploadedConfigPath);
+//                    configFile.transferTo(savedConfigFile);
+//                    eixstingProject.setConfigFilePath(uploadedConfigPath);
+//                } else {
+//                    if (uploadedConfigPath != null) {
+//                        existingFolder.renameTo(newFolder);
+//                        eixstingProject.setProjectPath(newProjectFolderPath);
+//                        Path path = Paths.get(uploadedConfigPath);
+//                        String fileName = path.getFileName().toString();
+//                        String newConfigPath = newProjectFolderPath + File.separator + fileName;
+//                        eixstingProject.setConfigFilePath(newConfigPath);
+//                    }
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        BeanUtils.copyProperties(projectRequest, eixstingProject);
+//        projectRepository.save(eixstingProject);
+//
+//    }
     @Override
     public void updateProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project eixstingProject = projectRepository.findById(projectRequest.getId()).get();
@@ -161,6 +232,25 @@ public class ProjectServiceImpl implements ProjectService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+       List<TestGrouping> testGroupingList= testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectRequest.getId());
+        for (TestGrouping testGrouping : testGroupingList
+        ){
+            Path groupingPath=Paths.get(testGrouping.getGroupPath());
+            String groupName=groupingPath.getFileName().toString();
+            String newGroupingPath=newProjectFolderPath+File.separator+groupName;
+            testGrouping.setGroupPath(newGroupingPath);
+            List<String> excelPathList=testGrouping.getExcelFilePath();
+            List<String> newExcelPathList=new ArrayList<>();
+            for (String excelPath:excelPathList
+                 ) {
+                Path groupingExcelPath=Paths.get(excelPath);
+                String newExcelName=groupingExcelPath.getFileName().toString();
+                String newExcelPath=newGroupingPath+File.separator+newExcelName;
+                newExcelPathList.add(newExcelPath);
+            }
+            testGrouping.setExcelFilePath(excelPathList);
+            testGroupingRepository.save(testGrouping);
         }
         BeanUtils.copyProperties(projectRequest, eixstingProject);
         projectRepository.save(eixstingProject);
