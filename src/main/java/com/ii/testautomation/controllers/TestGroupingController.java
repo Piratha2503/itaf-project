@@ -163,9 +163,9 @@ public class TestGroupingController {
         if (!projectService.hasJarPath(projectId)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getProjectJarPathNotProvideMessage()));
         }
-        if (!projectService.hasConfigPath(projectId)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getProjectConfigPathNotProvideMessage()));
-        }
+        if (!projectService.hasConfigPath(projectId))
+
+
         if (!testGroupingService.hasExcelPath(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExcelPathNotProvideMessage()));
         }
@@ -195,11 +195,11 @@ public class TestGroupingController {
     }
 
     @DeleteMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
-    public ResponseEntity<Object> deleteTestGroupingById(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteTestGroupingById(@PathVariable Long id,@PathVariable Long projectId) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        testGroupingService.deleteTestGroupingById(id);
+        testGroupingService.deleteTestGroupingById(id,projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestGroupingSuccessMessage()));
     }
 
