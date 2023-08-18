@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +52,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
-        if(multipartFiles!=null && !multipartFiles.isEmpty()) {
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
             for (MultipartFile multipartFile : multipartFiles
             ) {
                 try {
@@ -67,7 +69,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
         TestGrouping testGrouping = new TestGrouping();
-        testGrouping.setName(testGroupingRequest.getName());
         TestTypes testTypes = new TestTypes();
         testTypes.setId(testGroupingRequest.getTestTypeId());
         testGrouping.setTestType(testTypes);
@@ -119,6 +120,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             if (!folder.exists()) {
                 folder.mkdirs();
             }
+            testGrouping.setGroupPath(folderPath);
             if (excelFiles != null && !excelFiles.isEmpty()) {
                 for (MultipartFile excelFile : excelFiles) {
                     String filename = excelFile.getOriginalFilename();
@@ -131,15 +133,15 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        testGrouping.setName(testGroupingRequest.getName());
         testGrouping.setExcelFilePath(filePaths);
         testGroupingRepository.save(testGrouping);
     }
 
     @Override
     public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
-        TestGrouping testGrouping =testGroupingRepository.findById(testGroupingRequest.getId()).get();
-        testGrouping.setName(testGroupingRequest.getName());
-        TestTypes testTypes=testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
+        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingRequest.getId()).get();
+        TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
         testGrouping.setTestType(testTypes);
         List<TestCases> testCasesList = new ArrayList<>();
         if (testGroupingRequest.getSubModuleIds() != null && !testGroupingRequest.getSubModuleIds().isEmpty()) {
@@ -182,8 +184,40 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         testGrouping.setTestScenarios(testScenariosList);
         testGrouping.setTestCases(testCasesList);
-
-
+        String newGroupFolderPath = fileFolder + File.separator + projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
+        String existingGroupFolderPath = testGrouping.getGroupPath();
+        File existingGroupFolder = new File(existingGroupFolderPath);
+        File newGroupFolder = new File(newGroupFolderPath);
+        List<String> excelPaths = testGrouping.getExcelFilePath();
+        List<String> newExcelPathList=new ArrayList<>();
+        existingGroupFolder.renameTo(newGroupFolder);
+        testGrouping.setGroupPath(newGroupFolderPath);
+        if (excelPaths != null && !excelPaths.isEmpty()) {
+            for (String excelPath : excelPaths
+            ) {
+                Path excel = Paths.get(excelPath);
+                String excelFileName = excel.getFileName().toString();
+                String newExcelPath = newGroupFolderPath + File.separator + excelFileName;
+                newExcelPathList.add(newExcelPath);
+            }
+        }
+        if (excelFiles != null && !excelFiles.isEmpty()) {
+            try {
+                for (MultipartFile multipartFile : excelFiles
+                ) {
+                    String excelFileName = multipartFile.getOriginalFilename();
+                    String newExcelFilePath = newGroupFolderPath + File.separator + excelFileName;
+                    File excelFile = new File(newExcelFilePath);
+                    multipartFile.transferTo(excelFile);
+                    newExcelPathList.add(newExcelFilePath);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        testGrouping.setExcelFilePath(newExcelPathList);
+        testGrouping.setName(testGroupingRequest.getName());
+        testGroupingRepository.save(testGrouping);
     }
 
     @Override
@@ -199,37 +233,44 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
+    public boolean existsTestGroupingByTestScenarioId(Long id) {
+        return testGroupingRepository.existsByTestScenariosId(id);
+
+    }
+
+    @Override
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
     }
 
     @Override
-    public void deleteTestGroupingById(Long id,Long projectId) {
-        String projectName=projectRepository.findById(projectId).get().getName();
-        String testGroupingDirectoryPath = fileFolder + File.separator + projectName+File.separator+testGroupingRepository.findById(id).get().getName();
+    public void deleteTestGroupingById(Long id, Long projectId) {
+        String projectName = projectRepository.findById(projectId).get().getName();
+        String testGroupingDirectoryPath = fileFolder + File.separator + projectName + File.separator + testGroupingRepository.findById(id).get().getName();
         deleteTestGroupingFolder(testGroupingDirectoryPath);
         testGroupingRepository.deleteById(id);
     }
-    private void deleteTestGroupingFolder (String folderPath) {
-            File directory = new File(folderPath);
-            if (directory.exists()) {
-                if (directory.isDirectory()) {
-                    File[] files = directory.listFiles();
-                    if (files != null) {
-                        for (File file : files) {
-                            if (file.isDirectory()) {
-                                deleteTestGroupingFolder(file.getAbsolutePath());
-                            } else {
-                                file.delete();
-                            }
+
+    private void deleteTestGroupingFolder(String folderPath) {
+        File directory = new File(folderPath);
+        if (directory.exists()) {
+            if (directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isDirectory()) {
+                            deleteTestGroupingFolder(file.getAbsolutePath());
+                        } else {
+                            file.delete();
                         }
                     }
-                    directory.delete();
-                } else {
-                    directory.delete();
                 }
+                directory.delete();
+            } else {
+                directory.delete();
             }
         }
+    }
 
 
     @Override
