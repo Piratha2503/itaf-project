@@ -62,7 +62,8 @@ public final class EndpointURI {
     public static final String TEST_GROUPING = BASE_API_PATH + "testGrouping";
     public static final String TEST_GROUPING_IMPORT = TEST_GROUPING + "/import";
     public static final String TEST_GROUPING_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testGrouping";
-    public static final String TEST_GROUPING_BY_ID = TEST_GROUPING + ID;
+   // public static final String TEST_GROUPING_BY_ID = TEST_GROUPING + ID;
+   public static final String TEST_GROUPINGS_BY_ID = TEST_GROUPING + ID;
     public static final String TEST_GROUPING_BY_TEST_CASE_ID = TEST_GROUPING + "/testCase" + ID;
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;

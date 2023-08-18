@@ -204,6 +204,35 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 //    }
 
 
+//    @Override
+//    public TestGroupingResponse getTestGroupingById(Long id) {
+//        TestGrouping testGrouping = testGroupingRepository.findById(id).get();
+//
+//        TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+//        BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+//        testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+//
+//        List<String> testCaseNames = new ArrayList<>();
+//        List<String> testScenarioNames = new ArrayList<>();
+//        Set<String> addedTestCaseNames = new HashSet<>();
+//
+//        for (TestCases testCase : testGrouping.getTestCases()) {
+//            String testCaseName = testCase.getName();
+//            if (!addedTestCaseNames.contains(testCaseName)) {
+//                testCaseNames.add(testCaseName);
+//                addedTestCaseNames.add(testCaseName);
+//            }
+//        }
+//        for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
+//            testScenarioNames.add(testScenario.getName());
+//        }
+//        testGroupingResponse.setTestCaseName(testCaseNames);
+//        testGroupingResponse.setExecutionStatus(testGrouping.getExecutionStatus());
+//        testGroupingResponse.setTestScenarioName(testScenarioNames);
+//
+//        return testGroupingResponse;
+//    }
+
     @Override
     public TestGroupingResponse getTestGroupingById(Long id) {
         TestGrouping testGrouping = testGroupingRepository.findById(id).get();
@@ -211,24 +240,17 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
         BeanUtils.copyProperties(testGrouping, testGroupingResponse);
         testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
-
         List<String> testCaseNames = new ArrayList<>();
         List<String> testScenarioNames = new ArrayList<>();
-        Set<String> addedTestCaseNames = new HashSet<>();
-
-        for (TestCases testCase : testGrouping.getTestCases()) {
-            String testCaseName = testCase.getName();
-            if (!addedTestCaseNames.contains(testCaseName)) {
-                testCaseNames.add(testCaseName);
-                addedTestCaseNames.add(testCaseName);
+        for(TestScenarios testScenarios :testGrouping.getTestScenarios()) {
+            testScenarioNames.add(testScenarios.getName());
+            for (TestCases testCase : testScenarios.getTestCases()) {
+                testCaseNames.add(testCase.getName());
             }
         }
-        for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
-            testScenarioNames.add(testScenario.getName());
-        }
         testGroupingResponse.setTestCaseName(testCaseNames);
-        testGroupingResponse.setExecutionStatus(testGrouping.getExecutionStatus());
         testGroupingResponse.setTestScenarioName(testScenarioNames);
+
 
         return testGroupingResponse;
     }
