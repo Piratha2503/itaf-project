@@ -131,8 +131,9 @@ public class TestGroupingController {
             }
         }
         if (!testGroupingService.hasExcelFormat(excelFiles)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
-        }
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
+            }
+
         testGroupingService.updateTestGrouping(testGroupingRequest, excelFiles);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
