@@ -189,7 +189,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         File existingGroupFolder = new File(existingGroupFolderPath);
         File newGroupFolder = new File(newGroupFolderPath);
         List<String> excelPaths = testGrouping.getExcelFilePath();
-        List<String> newExcelPathList=new ArrayList<>();
+        List<String> newExcelPathList = new ArrayList<>();
         existingGroupFolder.renameTo(newGroupFolder);
         testGrouping.setGroupPath(newGroupFolderPath);
         if (excelPaths != null && !excelPaths.isEmpty()) {
