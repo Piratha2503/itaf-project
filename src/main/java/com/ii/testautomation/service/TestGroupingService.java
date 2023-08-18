@@ -1,5 +1,6 @@
 package com.ii.testautomation.service;
 
+import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
@@ -34,7 +35,7 @@ public interface TestGroupingService {
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId);
 
-    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds);
+//    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds);
 
     boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
 
@@ -45,6 +46,7 @@ public interface TestGroupingService {
 
     boolean existsTestGroupingByTestScenarioId(Long id);
 
-    void deleteTestGroupingById(Long id,Long projectId);
+    void deleteTestGroupingById(Long id, Long projectId);
 
+    void execution(ExecutionRequest executionRequest);
 }
