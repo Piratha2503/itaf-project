@@ -25,6 +25,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TestGroupingServiceImpl implements TestGroupingService {
@@ -121,7 +127,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             if (!folder.exists()) {
                 folder.mkdirs();
             }
-            testGrouping.setGroupPath(folderPath);
             if (excelFiles != null && !excelFiles.isEmpty()) {
                 for (MultipartFile excelFile : excelFiles) {
                     String filename = excelFile.getOriginalFilename();
@@ -241,6 +246,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsById(testGroupingId);
     }
 
+
     @Override
     public void deleteTestGroupingById(Long id, Long projectId) {
         String projectName = projectRepository.findById(projectId).get().getName();
@@ -332,7 +338,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestCases_SubModule_MainModule_Modules_ProjectId(projectId);
     }
 
-
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
@@ -343,13 +348,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<String> modulesName = new ArrayList<>();
         pagination.setTotalRecords(testGroupingPage.getTotalElements());
         pagination.setPageSize(testGroupingPage.getTotalPages());
+
         for (TestGrouping testGrouping : testGroupingPage) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
             testGroupingResponse.setName(testGrouping.getName());
             testGroupingResponse.setId(testGrouping.getId());
-            for (TestCases testCases : testGrouping.getTestCases()
-            ) {
+            for (TestCases testCases : testGrouping.getTestCases()) {
                 testCaseNames.add(testCases.getName());
                 subModuleName.add(testCases.getSubModule().getName());
                 mainModulesName.add(testCases.getSubModule().getMainModule().getName());
@@ -411,6 +416,41 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
+    //    @Override
+//    public void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds) {
+//        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).orElse(null);
+//        testGrouping.setExecutionStatus(true);
+//        testGroupingRepository.save(testGrouping);
+//        if (testScenarioIds != null && !testScenarioIds.isEmpty()) {
+//            for (Long testScenarioId : testScenarioIds
+//            ) {
+//                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
+//                testScenarios.setExecutionStatus(true);
+//                testScenarioRepository.save(testScenarios);
+//            }
+//        }
+//        if (testCaseIds != null && !testCaseIds.isEmpty()) {
+//            for (Long testCaseId : testCaseIds
+//            ) {
+//                TestCases testCases = testCasesRepository.findById(testCaseId).get();
+//                testCases.setExecutionStatus(true);
+//                testCasesRepository.save(testCases);
+//            }
+//        }
+//        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+//        File jarFile = new File(savedFilePath);
+//        String jarFileName = jarFile.getName();
+//        String jarDirectory = jarFile.getParent();
+//        try {
+//            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+//            runProcessBuilder.directory(new File(jarDirectory));
+//            runProcessBuilder.redirectErrorStream(true);
+//            Process runProcess = runProcessBuilder.start();
+//            runProcess.waitFor();
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
     @Override
     public boolean existsByTestGroupingNameByProjectId(String name, Long projectId) {
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
