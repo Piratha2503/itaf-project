@@ -384,6 +384,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     ) {
                         ExecutedTestCase executedTestCase = new ExecutedTestCase();
                         executedTestCase.setTestCases(testCases);
+                        executedTestCase.setTestGrouping(testGrouping);
                         executedTestCaseRepository.save(executedTestCase);
                         testCases.setExecutionStatus(true);
                     }
@@ -394,6 +395,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
                     ExecutedTestCase executedTestCase = new ExecutedTestCase();
                     executedTestCase.setTestCases(testCases);
+                    executedTestCase.setTestGrouping(testGrouping);
                     executedTestCaseRepository.save(executedTestCase);
                     testCases.setExecutionStatus(true);
                 }
