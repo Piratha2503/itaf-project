@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -219,13 +220,21 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponse getProjectById(Long projectId) {
+    public ProjectResponse getProjectById(Long projectId) throws IOException {
         Project project;
         project = projectRepository.findById(projectId).get();
         ProjectResponse projectResponse = new ProjectResponse();
         BeanUtils.copyProperties(project, projectResponse);
+        String existingConfigFile = project.getConfigFilePath();
+        String existingJarFile = project.getJarFilePath();
+        Path jarPath = Path.of(existingJarFile.toString());
+        Path propertiesPath = Path.of(existingConfigFile.toString());
+        byte[] jarFile = Files.readAllBytes(jarPath);
+        byte[] propertiesFile = Files.readAllBytes(propertiesPath);
+        projectResponse.setConfigFile(propertiesFile);
+        projectResponse.setJarFile(jarFile);
         return projectResponse;
-    }
+}
 
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -381,7 +390,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public boolean hasJarPath(Long projectId) {
         Project project = projectRepository.findById(projectId).get();
-        if (project.getConfigFilePath() != null) return true;
+        if (project.getJarFilePath() != null) return true;
         return false;
     }
 
