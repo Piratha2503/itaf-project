@@ -2,6 +2,7 @@ package com.ii.testautomation.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
@@ -203,7 +204,7 @@ public class TestGroupingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestGroupingSuccessMessage()));
     }
 
-    @GetMapping(value = EndpointURI.TEST_GROUPING_BY_ID)
+    @GetMapping(value = EndpointURI.TEST_GROUPINGS_BY_ID)
     public ResponseEntity<Object> getTestGroupingById(@PathVariable Long id) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
@@ -211,28 +212,6 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
 
-    @GetMapping(value = EndpointURI.TEST_GROUPINGS_EXCEL_BY_ID)
-    public ResponseEntity<String> getTestGroupingExcels(@PathVariable Long id) {
-        if (!testGroupingService.existsByTestGroupingId(id)) {
-            return ResponseEntity.ok(statusCodeBundle.getTestGroupingNotExistsMessage());
-        }
-
-        try {
-            List<String> excelContent = testGroupingService.getTestGroupingExcel(id);
-            if (excelContent.isEmpty()) {
-                return ResponseEntity.ok("No Excel content available.");
-            }
-
-            StringBuilder responseBuilder = new StringBuilder();
-            for (String content : excelContent) {
-                responseBuilder.append(content).append("\n");
-            }
-
-            return ResponseEntity.ok(responseBuilder.toString());
-        } catch (IOException e) {
-            return ResponseEntity.ok("Error reading Excel file: " + e.getMessage());
-        }
-    }
 
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_CASE_ID)
     public ResponseEntity<Object> getTestGroupingByTestCaseId(@PathVariable Long id) {

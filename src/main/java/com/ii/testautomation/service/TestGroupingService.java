@@ -8,12 +8,13 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface TestGroupingService {
     void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles);
+
     void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles);
+
     boolean hasExcelFormat(List<MultipartFile> multipartFiles);
 
     boolean allTestCasesInSameProject(List<Long> testCaseIds);
@@ -31,7 +32,6 @@ public interface TestGroupingService {
     List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId);
 
     TestGroupingResponse getTestGroupingById(Long id);
-   List<String> getTestGroupingExcel(Long id) throws IOException;
 
     boolean existByProjectId(Long projectId);
 
