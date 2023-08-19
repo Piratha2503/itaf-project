@@ -227,14 +227,14 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(project, projectResponse);
         String existingConfigFile = project.getConfigFilePath();
         String existingJarFile = project.getJarFilePath();
-        Path jarPath = Path.of(existingJarFile.toString());
-        Path propertiesPath = Path.of(existingConfigFile.toString());
-        byte[] jarFile = Files.readAllBytes(jarPath);
-        byte[] propertiesFile = Files.readAllBytes(propertiesPath);
-        projectResponse.setConfigFile(propertiesFile);
-        projectResponse.setJarFile(jarFile);
+        Path config = Paths.get(existingConfigFile);
+        Path jar = Paths.get(existingJarFile);
+        String jarFileName = config.getFileName().toString();
+        String configFileName = jar.getFileName().toString();
+        projectResponse.setConfigFile(jarFileName);
+        projectResponse.setJarFile(configFileName);
         return projectResponse;
-}
+    }
 
     public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();

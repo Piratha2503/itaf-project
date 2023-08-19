@@ -10,7 +10,6 @@ public class ProjectResponse {
     private String name;
     private String description;
     private String code;
-    private byte[] jarFile;
-    private byte[] configFile;
-
+    private String jarFile;
+    private String configFile;
 }
