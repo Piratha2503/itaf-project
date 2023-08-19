@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -141,6 +142,12 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGroupingRepository.save(testGrouping);
     }
 
+    @Override
+    public boolean existsTestGroupingByTestScenarioId(Long id) {
+        return testGroupingRepository.existsByTestScenariosId(id);
+    }
+
+
     public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
         TestGrouping testGrouping = testGroupingRepository.findById(testGroupingRequest.getId()).get();
         TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
@@ -220,11 +227,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGrouping.setExcelFilePath(newExcelPathList);
         testGrouping.setName(testGroupingRequest.getName());
         testGroupingRepository.save(testGrouping);
-    }
-
-    @Override
-    public boolean existsTestGroupingByTestScenarioId(Long id) {
-        return testGroupingRepository.existsByTestScenariosId(id);
     }
 
     @Override
@@ -331,30 +333,38 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
         Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
         List<String> testCaseNames = new ArrayList<>();
-        List<String> subModuleName = new ArrayList<>();
-        List<String> mainModulesName = new ArrayList<>();
-        List<String> modulesName = new ArrayList<>();
+        List<String> testScenariosNames = new ArrayList<>();
+        List<Long> testScenariosIds = new ArrayList<>();
+        List<Long> testCaseIds = new ArrayList<>();
         pagination.setTotalRecords(testGroupingPage.getTotalElements());
         pagination.setPageSize(testGroupingPage.getTotalPages());
+
         for (TestGrouping testGrouping : testGroupingPage) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
             testGroupingResponse.setName(testGrouping.getName());
             testGroupingResponse.setId(testGrouping.getId());
-            for (TestCases testCases : testGrouping.getTestCases()
-            ) {
+            for (TestCases testCases : testGrouping.getTestCases()) {
                 testCaseNames.add(testCases.getName());
-                subModuleName.add(testCases.getSubModule().getName());
-                mainModulesName.add(testCases.getSubModule().getMainModule().getName());
-                modulesName.add(testCases.getSubModule().getMainModule().getModules().getName());
+                testCaseIds.add(testCases.getId());
             }
-            testGroupingResponse.setTestCaseName(testCaseNames);
-            testGroupingResponse.setSubModuleName(subModuleName);
-            testGroupingResponse.setMainModuleName(mainModulesName);
-            testGroupingResponse.setModuleName(modulesName);
-            testGroupingResponse.setSubModuleName(subModuleName);
+            for (TestScenarios testScenarios : testGrouping.getTestScenarios()) {
+                testScenariosNames.add(testScenarios.getName());
+                testScenariosIds.add(testScenarios.getId());
+            }
+            testGroupingResponse.setTestTypeId(testGrouping.getTestType().getId());
+            List<String> sortedTestCaseNames = testCaseNames.stream().distinct().collect(Collectors.toList());
+            List<String> sortedTestScenarioNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
+            List<Long> sortedTestScenariosIds = testScenariosIds.stream().distinct().collect(Collectors.toList());
+            List<Long> sortedTestCasesIds = testCaseIds.stream().distinct().collect(Collectors.toList());
+            testGroupingResponse.setTestCaseIds(sortedTestCasesIds);
+            testGroupingResponse.setTestScenarioName(sortedTestScenarioNames);
+            testGroupingResponse.setTestScenarioIds(sortedTestScenariosIds);
+            testGroupingResponse.setTestCaseName(sortedTestCaseNames);
             testGroupingResponseList.add(testGroupingResponse);
         }
+
+
         return testGroupingResponseList;
     }
 
