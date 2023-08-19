@@ -15,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +30,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
 
     @Override
     public boolean isUpdateTestScenariosNameExists(Long id, String name, Long projectId) {
-        return testScenariosRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name,projectId,id);
+        return testScenariosRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, id);
 
     }
 
@@ -47,7 +45,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         TestScenarios testScenarios = testScenariosRepository.findById(id).get();
         BeanUtils.copyProperties(testScenarios, testScenariosResponse);
         for (TestCases testCases : testScenarios.getTestCases()) {
-            testCaseNames.add(testCases.getName().substring(testCases.getName().lastIndexOf(".")+1));
+            testCaseNames.add(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
             testCaseIds.add(testCases.getId());
             subModuleIds.add(testCases.getSubModule().getId());
             mainModuleIds.add(testCases.getSubModule().getMainModule().getId());
@@ -75,7 +73,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
 
     @Override
     public boolean existsByTestScenarioNameIgnoreCase(String name, Long projectId) {
-        return testScenariosRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name,projectId);
+        return testScenariosRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
 
     @Override
@@ -108,19 +106,19 @@ public class TestScenariosServiceImpl implements TestScenariosService {
 
         if (testScenariosRequest.getTestCasesId() != null) {
             for (Long testCaseId : testScenariosRequest.getTestCasesId())
-                testCasesList.add(testCasesRepository.findByIdAndSubModule_MainModule_Modules_Project_Id(testCaseId,testScenariosRequest.getProjectId()));
+                testCasesList.add(testCasesRepository.findByIdAndSubModule_MainModule_Modules_Project_Id(testCaseId, testScenariosRequest.getProjectId()));
         }
         if (testScenariosRequest.getSubModuleIds() != null) {
             for (Long subModuleId : testScenariosRequest.getSubModuleIds())
-                testCasesRepository.findBySubModuleIdAndSubModule_MainModule_Modules_Project_Id(subModuleId,testScenariosRequest.getProjectId()).forEach(TestCases -> testCasesList.add(TestCases));
+                testCasesRepository.findBySubModuleIdAndSubModule_MainModule_Modules_Project_Id(subModuleId, testScenariosRequest.getProjectId()).forEach(TestCases -> testCasesList.add(TestCases));
         }
         if (testScenariosRequest.getMainModuleIds() != null) {
             for (Long mainModuleId : testScenariosRequest.getMainModuleIds())
-                testCasesRepository.findBySubModule_MainModule_IdAndSubModule_MainModule_Modules_Project_Id(mainModuleId,testScenariosRequest.getProjectId()).forEach(TestCases -> testCasesList.add(TestCases));
+                testCasesRepository.findBySubModule_MainModule_IdAndSubModule_MainModule_Modules_Project_Id(mainModuleId, testScenariosRequest.getProjectId()).forEach(TestCases -> testCasesList.add(TestCases));
         }
         if (testScenariosRequest.getModuleIds() != null) {
             for (Long moduleId : testScenariosRequest.getModuleIds())
-                testCasesRepository.findBySubModule_MainModule_Modules_IdAndSubModule_MainModule_Modules_Project_Id(moduleId,testScenariosRequest.getProjectId()).forEach(TestCases -> testCasesList.add(TestCases));
+                testCasesRepository.findBySubModule_MainModule_Modules_IdAndSubModule_MainModule_Modules_Project_Id(moduleId, testScenariosRequest.getProjectId()).forEach(TestCases -> testCasesList.add(TestCases));
         }
 
         List<TestCases> sortedTestCaseList = testCasesList.stream().distinct().collect(Collectors.toList());
@@ -128,6 +126,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
         testScenarios.setTestCases(sortedTestCaseList);
         testScenariosRepository.save(testScenarios);
     }
+
     @Override
     public void updateTestScenario(TestScenariosRequest testScenariosRequest) {
         List<TestCases> testCasesList = new ArrayList<>();
@@ -170,7 +169,7 @@ public class TestScenariosServiceImpl implements TestScenariosService {
             TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
             BeanUtils.copyProperties(testScenarios, testScenariosResponse);
             List<String> testCasesNames = new ArrayList<>();
-            List<Long> testCasesIds=new ArrayList<>();
+            List<Long> testCasesIds = new ArrayList<>();
             for (TestCases testCase : testScenarios.getTestCases()) {
                 String testCaseName = testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1);
                 if (!testCasesNames.contains(testCaseName)) {
@@ -188,34 +187,6 @@ public class TestScenariosServiceImpl implements TestScenariosService {
     @Override
     public void DeleteTestScenariosById(Long id) {
         testScenariosRepository.deleteById(id);
-    }
-
-    @Override
-    public void updateExecutionStatus(Long testScenarioId, Long projectId) {
-        TestScenarios testScenarios = testScenariosRepository.findById(testScenarioId).get();
-        testScenarios.setExecutionStatus(true);
-        testScenariosRepository.save(testScenarios);
-        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
-        File jarFile = new File(savedFilePath);
-        String jarFileName = jarFile.getName();
-        String jarDirectory = jarFile.getParent();
-        try {
-            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
-            runProcessBuilder.directory(new File(jarDirectory));
-            runProcessBuilder.redirectErrorStream(true);
-            Process runProcess = runProcessBuilder.start();
-            runProcess.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public boolean hasExcelPath(Long testScenarioId) {
-        TestScenarios testScenarios = testScenariosRepository.findById(testScenarioId).get();
-        if (testScenarios.getExcelPath() != null) return true;
-        return false;
     }
 
 }
