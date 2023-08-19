@@ -148,7 +148,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestScenariosId(id);
     }
 
-
     public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
         TestGrouping testGrouping = testGroupingRepository.findById(testGroupingRequest.getId()).get();
         TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
@@ -315,7 +314,17 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testScenarioNames.add(testScenario.getName());
             testScenarioIds.add(testScenario.getId());
         }
-
+        List<String> excelFileNames = testGrouping.getExcelFilePath();
+        List<String> newExcelFileNames=new ArrayList<>();
+        if (excelFileNames != null && !excelFileNames.isEmpty()) {
+            for (String excelPath : excelFileNames
+            ) {
+                Path excel = Paths.get(excelPath);
+                String excelFileName = excel.getFileName().toString();
+                newExcelFileNames.add(excelFileName);
+            }
+        }
+        testGroupingResponse.setExcelFile(newExcelFileNames);
         testGroupingResponse.setTestCaseIds(testCaseIds);
         testGroupingResponse.setTestCaseName(testCaseNames);
         testGroupingResponse.setTestScenarioIds(testScenarioIds);
@@ -415,6 +424,41 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
+    //    @Override
+//    public void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds) {
+//        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).orElse(null);
+//        testGrouping.setExecutionStatus(true);
+//        testGroupingRepository.save(testGrouping);
+//        if (testScenarioIds != null && !testScenarioIds.isEmpty()) {
+//            for (Long testScenarioId : testScenarioIds
+//            ) {
+//                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
+//                testScenarios.setExecutionStatus(true);
+//                testScenarioRepository.save(testScenarios);
+//            }
+//        }
+//        if (testCaseIds != null && !testCaseIds.isEmpty()) {
+//            for (Long testCaseId : testCaseIds
+//            ) {
+//                TestCases testCases = testCasesRepository.findById(testCaseId).get();
+//                testCases.setExecutionStatus(true);
+//                testCasesRepository.save(testCases);
+//            }
+//        }
+//        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+//        File jarFile = new File(savedFilePath);
+//        String jarFileName = jarFile.getName();
+//        String jarDirectory = jarFile.getParent();
+//        try {
+//            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+//            runProcessBuilder.directory(new File(jarDirectory));
+//            runProcessBuilder.redirectErrorStream(true);
+//            Process runProcess = runProcessBuilder.start();
+//            runProcess.waitFor();
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
     @Override
     public boolean existsByTestGroupingNameByProjectId(String name, Long projectId) {
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
