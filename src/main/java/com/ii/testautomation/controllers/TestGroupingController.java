@@ -96,8 +96,11 @@ public class TestGroupingController {
 
     @PutMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
-
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
+        if(!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getTestGroupingNotExistCode(),
+                    statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
