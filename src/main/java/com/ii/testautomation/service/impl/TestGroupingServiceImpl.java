@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -140,6 +141,87 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         if (testGroupingRequest.getId() != null) {
             testGroupingRepository.deleteById(testGroupingRequest.getId());
         }
+        testGroupingRepository.save(testGrouping);
+    }
+
+    public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
+        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingRequest.getId()).get();
+        TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
+        testGrouping.setTestType(testTypes);
+        List<TestCases> testCasesList = new ArrayList<>();
+        if (testGroupingRequest.getSubModuleIds() != null && !testGroupingRequest.getSubModuleIds().isEmpty()) {
+            for (Long subModuleId : testGroupingRequest.getSubModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findAllTestCasesBySubModuleId(subModuleId);
+                for (TestCases testCases1 : testCases) {
+                    testCasesList.add(testCases1);
+                }
+            }
+        }
+        if (testGroupingRequest.getMainModuleIds() != null && !testGroupingRequest.getMainModuleIds().isEmpty()) {
+            for (Long mainModuleId : testGroupingRequest.getMainModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findBySubModule_MainModule_Id(mainModuleId);
+                for (TestCases testCase1 : testCases) {
+                    testCasesList.add(testCase1);
+                }
+            }
+        }
+        if (testGroupingRequest.getModuleIds() != null && !testGroupingRequest.getModuleIds().isEmpty()) {
+            for (Long moduleId : testGroupingRequest.getModuleIds()) {
+                List<TestCases> testCases = testCasesRepository.findBySubModule_MainModule_Modules_Id(moduleId);
+                for (TestCases testCase1 : testCases) {
+                    testCasesList.add(testCase1);
+                }
+            }
+        }
+        if (testGroupingRequest.getTestCaseId() != null && !testGroupingRequest.getTestCaseId().isEmpty()) {
+            for (Long testCaseId : testGroupingRequest.getTestCaseId()
+            ) {
+                TestCases testCases = testCasesRepository.findById(testCaseId).get();
+                testCasesList.add(testCases);
+            }
+        }
+        List<TestScenarios> testScenariosList = new ArrayList<>();
+        if (testGroupingRequest.getTestScenarioIds() != null && !testGroupingRequest.getTestScenarioIds().isEmpty()) {
+            for (Long testScenarioId : testGroupingRequest.getTestScenarioIds()) {
+                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
+                testScenariosList.add(testScenarios);
+            }
+        }
+        testGrouping.setTestScenarios(testScenariosList);
+        testGrouping.setTestCases(testCasesList);
+        String newGroupFolderPath = fileFolder + File.separator + projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
+        String existingGroupFolderPath = testGrouping.getGroupPath();
+        File existingGroupFolder = new File(existingGroupFolderPath);
+        File newGroupFolder = new File(newGroupFolderPath);
+        List<String> excelPaths = testGrouping.getExcelFilePath();
+        List<String> newExcelPathList = new ArrayList<>();
+        existingGroupFolder.renameTo(newGroupFolder);
+        testGrouping.setGroupPath(newGroupFolderPath);
+        if (excelPaths != null && !excelPaths.isEmpty()) {
+            for (String excelPath : excelPaths
+            ) {
+                Path excel = Paths.get(excelPath);
+                String excelFileName = excel.getFileName().toString();
+                String newExcelPath = newGroupFolderPath + File.separator + excelFileName;
+                newExcelPathList.add(newExcelPath);
+            }
+        }
+        if (excelFiles != null && !excelFiles.isEmpty()) {
+            try {
+                for (MultipartFile multipartFile : excelFiles
+                ) {
+                    String excelFileName = multipartFile.getOriginalFilename();
+                    String newExcelFilePath = newGroupFolderPath + File.separator + excelFileName;
+                    File excelFile = new File(newExcelFilePath);
+                    multipartFile.transferTo(excelFile);
+                    newExcelPathList.add(newExcelFilePath);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        testGrouping.setExcelFilePath(newExcelPathList);
+        testGrouping.setName(testGroupingRequest.getName());
         testGroupingRepository.save(testGrouping);
     }
 
@@ -368,7 +450,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public boolean hasExcelPath(Long testGroupingId) {
         List<String> excelFilePath = testGroupingRepository.findById(testGroupingId).get().getExcelFilePath();
-        if (excelFilePath .isEmpty()) return false;
+        if (excelFilePath.isEmpty()) return false;
         return true;
 
     }

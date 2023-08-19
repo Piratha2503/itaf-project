@@ -97,8 +97,11 @@ public class TestGroupingController {
 
     @PutMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
-
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
+        if(!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getTestGroupingNotExistCode(),
+                    statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
@@ -129,15 +132,16 @@ public class TestGroupingController {
         if (testGroupingRequest.getTestScenarioIds() != null) {
             for (Long testScenarioId : testGroupingRequest.getTestScenarioIds()) {
                 if (!testScenariosService.existsByTestScenarioId(testScenarioId)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getTestScenariosNotExistCode(),statusCodeBundle.getTestScenarioNotExistsMessage()));
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), statusCodeBundle.getTestScenarioNotExistsMessage()));
                 }
             }
         }
         if (!testGroupingService.hasExcelFormat(excelFiles)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
         }
-        testGroupingService.saveTestGrouping(testGroupingRequest, excelFiles);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
+
+        testGroupingService.updateTestGrouping(testGroupingRequest, excelFiles);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
