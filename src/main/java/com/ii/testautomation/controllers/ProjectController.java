@@ -21,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @CrossOrigin
 public class ProjectController {
@@ -116,7 +118,7 @@ public class ProjectController {
     }
 
     @GetMapping(value = EndpointURI.PROJECT_BY_ID)
-    public ResponseEntity<Object> getProjectById(@PathVariable Long id) {
+    public ResponseEntity<Object> getProjectById(@PathVariable Long id) throws IOException {
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectNotExistCode(),

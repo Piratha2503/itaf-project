@@ -54,6 +54,11 @@ public class TestGroupingController {
     public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
 
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
+        if ((testGroupingRequest.getTestCaseId() == null || testGroupingRequest.getTestCaseId().isEmpty()) && (testGroupingRequest.getSubModuleIds() == null || testGroupingRequest.getSubModuleIds().isEmpty()) &&
+                (testGroupingRequest.getModuleIds() == null || testGroupingRequest.getModuleIds().isEmpty()) && (testGroupingRequest.getMainModuleIds() == null || testGroupingRequest.getMainModuleIds().isEmpty()) &&
+                (testGroupingRequest.getTestScenarioIds() == null || testGroupingRequest.getTestScenarioIds().isEmpty())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
+        }
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
@@ -98,9 +103,14 @@ public class TestGroupingController {
     @PutMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
-        if(!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getTestGroupingNotExistCode(),
+        if (!testGroupingService.existsByTestGroupingId(testGroupingRequest.getId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        if ((testGroupingRequest.getTestCaseId() == null || testGroupingRequest.getTestCaseId().isEmpty()) && (testGroupingRequest.getSubModuleIds() == null || testGroupingRequest.getSubModuleIds().isEmpty()) &&
+                (testGroupingRequest.getModuleIds() == null || testGroupingRequest.getModuleIds().isEmpty()) && (testGroupingRequest.getMainModuleIds() == null || testGroupingRequest.getMainModuleIds().isEmpty()) &&
+                (testGroupingRequest.getTestScenarioIds() == null || testGroupingRequest.getTestScenarioIds().isEmpty())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
         }
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
@@ -145,19 +155,17 @@ public class TestGroupingController {
     }
 
     @PutMapping(value = EndpointURI.TEST_GROUPING_UPDATE_EXECUTION_STATUS)
-    public ResponseEntity<Object> updateExecution(@RequestBody ExecutionRequest executionRequest) {
+    public ResponseEntity<Object> updateExecution(@RequestBody ExecutionRequest executionRequest) throws IOException {
         if (!projectService.existByProjectId(executionRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         for (Map.Entry<Integer, Long> entry : executionRequest.getTestScenario().entrySet()) {
-            if(!testScenariosService.existsByTestScenarioId(entry.getValue()))
-            {
+            if (!testScenariosService.existsByTestScenarioId(entry.getValue())) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNotExists"));
             }
         }
         for (Map.Entry<Integer, Long> entry : executionRequest.getTestCase().entrySet()) {
-            if(!testCasesService.existsByTestCasesId(entry.getValue()))
-            {
+            if (!testCasesService.existsByTestCasesId(entry.getValue())) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testScenarioNotExists"));
             }
         }

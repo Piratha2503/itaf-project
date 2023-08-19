@@ -15,5 +15,6 @@ public class ExecutedTestCase extends DateAudit {
     private Long id;
     @OneToOne
     private TestCases testCases;
-
+    @OneToOne
+    private TestGrouping testGrouping;
 }
