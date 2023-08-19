@@ -23,8 +23,12 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
 
     List<TestGrouping> findAllTestGroupingByTestCasesId(Long testCaseId);
 
-    Page<TestGrouping> findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(Pageable pageable, Long projectId);
-    List<TestGrouping> findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
+    Page<TestGrouping> findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(Pageable pageable, Long projectId);
+
+    Page<TestGrouping> findDistinctByTestScenarios_TestCases_SubModule_MainModule_Modules_Project_Id(Pageable pageable, Long projectId);
+
+    List<TestGrouping> findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
 
     boolean existsByTestScenariosId(Long id);
+
 }

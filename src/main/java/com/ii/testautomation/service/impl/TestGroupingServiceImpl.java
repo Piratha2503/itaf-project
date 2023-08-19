@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -198,7 +199,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         File newGroupFolder = new File(newGroupFolderPath);
         List<String> excelPaths = testGrouping.getExcelFilePath();
         List<String> newExcelPathList = new ArrayList<>();
-        existingGroupFolder.renameTo(newGroupFolder);
+        if (existingGroupFolder.exists()) {
+            existingGroupFolder.renameTo(newGroupFolder);
+        }
         testGrouping.setGroupPath(newGroupFolderPath);
         if (excelPaths != null && !excelPaths.isEmpty()) {
             for (String excelPath : excelPaths
@@ -340,7 +343,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-        Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
+        Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
+        Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findDistinctByTestScenarios_TestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
+        Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
         List<String> testCaseNames = new ArrayList<>();
         List<String> testScenariosNames = new ArrayList<>();
         List<Long> testScenariosIds = new ArrayList<>();
@@ -372,9 +377,16 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setTestCaseName(sortedTestCaseNames);
             testGroupingResponseList.add(testGroupingResponse);
         }
-
-
         return testGroupingResponseList;
+    }
+
+    private Page<TestGrouping> combineAndRemoveDuplicates(Page<TestGrouping> page1, Page<TestGrouping> page2) {
+        Set<TestGrouping> uniqueTestGroupings = new HashSet<>(page1.getContent());
+        uniqueTestGroupings.addAll(page2.getContent());
+
+        List<TestGrouping> combinedContent = new ArrayList<>(uniqueTestGroupings);
+
+        return new PageImpl<>(combinedContent, page1.getPageable(), combinedContent.size());
     }
 
     @Override
@@ -455,41 +467,16 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
-    //    @Override
-//    public void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds) {
-//        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).orElse(null);
-//        testGrouping.setExecutionStatus(true);
-//        testGroupingRepository.save(testGrouping);
-//        if (testScenarioIds != null && !testScenarioIds.isEmpty()) {
-//            for (Long testScenarioId : testScenarioIds
-//            ) {
-//                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
-//                testScenarios.setExecutionStatus(true);
-//                testScenarioRepository.save(testScenarios);
-//            }
-//        }
-//        if (testCaseIds != null && !testCaseIds.isEmpty()) {
-//            for (Long testCaseId : testCaseIds
-//            ) {
-//                TestCases testCases = testCasesRepository.findById(testCaseId).get();
-//                testCases.setExecutionStatus(true);
-//                testCasesRepository.save(testCases);
-//            }
-//        }
-//        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
-//        File jarFile = new File(savedFilePath);
-//        String jarFileName = jarFile.getName();
-//        String jarDirectory = jarFile.getParent();
-//        try {
-//            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
-//            runProcessBuilder.directory(new File(jarDirectory));
-//            runProcessBuilder.redirectErrorStream(true);
-//            Process runProcess = runProcessBuilder.start();
-//            runProcess.waitFor();
-//        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Override
+    public boolean folderExists(Long groupId) {
+        String groupPath = testGroupingRepository.findById(groupId).get().getGroupPath();
+        if (groupPath != null) {
+            File file = new File(groupPath);
+            if (file.exists()) return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean existsByTestGroupingNameByProjectId(String name, Long projectId) {
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
