@@ -335,6 +335,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         Page<TestGrouping> testGroupingPage = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
         List<String> testCaseNames = new ArrayList<>();
         List<String> testScenariosNames = new ArrayList<>();
+        List<Long> testScenariosIds = new ArrayList<>();
+        List<Long> testCaseIds = new ArrayList<>();
         pagination.setTotalRecords(testGroupingPage.getTotalElements());
         pagination.setPageSize(testGroupingPage.getTotalPages());
 
@@ -345,13 +347,20 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testGroupingResponse.setId(testGrouping.getId());
             for (TestCases testCases : testGrouping.getTestCases()) {
                 testCaseNames.add(testCases.getName());
+                testCaseIds.add(testCases.getId());
             }
             for (TestScenarios testScenarios : testGrouping.getTestScenarios()) {
                 testScenariosNames.add(testScenarios.getName());
+                testScenariosIds.add(testScenarios.getId());
             }
+            testGroupingResponse.setTestTypeId(testGrouping.getTestType().getId());
             List<String> sortedTestCaseNames = testCaseNames.stream().distinct().collect(Collectors.toList());
             List<String> sortedTestScenarioNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
-            testGroupingResponse.setTestScenariosName(sortedTestScenarioNames);
+            List<Long> sortedTestScenariosIds = testScenariosIds.stream().distinct().collect(Collectors.toList());
+            List<Long> sortedTestCasesIds = testCaseIds.stream().distinct().collect(Collectors.toList());
+            testGroupingResponse.setTestCaseIds(sortedTestCasesIds);
+            testGroupingResponse.setTestScenarioName(sortedTestScenarioNames);
+            testGroupingResponse.setTestScenarioIds(sortedTestScenariosIds);
             testGroupingResponse.setTestCaseName(sortedTestCaseNames);
             testGroupingResponseList.add(testGroupingResponse);
         }
