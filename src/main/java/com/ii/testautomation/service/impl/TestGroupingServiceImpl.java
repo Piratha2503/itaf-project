@@ -21,6 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -164,32 +168,33 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
 
     @Override
-    public void deleteTestGroupingById(Long id,Long projectId) {
-        String projectName=projectRepository.findById(projectId).get().getName();
-        String testGroupingDirectoryPath = fileFolder + File.separator + projectName+File.separator+testGroupingRepository.findById(id).get().getName();
+    public void deleteTestGroupingById(Long id, Long projectId) {
+        String projectName = projectRepository.findById(projectId).get().getName();
+        String testGroupingDirectoryPath = fileFolder + File.separator + projectName + File.separator + testGroupingRepository.findById(id).get().getName();
         deleteTestGroupingFolder(testGroupingDirectoryPath);
         testGroupingRepository.deleteById(id);
     }
-    private void deleteTestGroupingFolder (String folderPath) {
-            File directory = new File(folderPath);
-            if (directory.exists()) {
-                if (directory.isDirectory()) {
-                    File[] files = directory.listFiles();
-                    if (files != null) {
-                        for (File file : files) {
-                            if (file.isDirectory()) {
-                                deleteTestGroupingFolder(file.getAbsolutePath());
-                            } else {
-                                file.delete();
-                            }
+
+    private void deleteTestGroupingFolder(String folderPath) {
+        File directory = new File(folderPath);
+        if (directory.exists()) {
+            if (directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isDirectory()) {
+                            deleteTestGroupingFolder(file.getAbsolutePath());
+                        } else {
+                            file.delete();
                         }
                     }
-                    directory.delete();
-                } else {
-                    directory.delete();
                 }
+                directory.delete();
+            } else {
+                directory.delete();
             }
         }
+    }
 
 
     @Override
@@ -203,41 +208,55 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
 
+    @Override
+    public TestGroupingResponse getTestGroupingById(Long id) {
+        TestGrouping testGrouping = testGroupingRepository.findById(id).get();
 
-@Override
-public TestGroupingResponse getTestGroupingById(Long id) {
-    TestGrouping testGrouping = testGroupingRepository.findById(id).get();
+        TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+        BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+        testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+        testGroupingResponse.setTestTypeId(testGrouping.getTestType().getId());
+        List<String> testCaseNames = new ArrayList<>();
+        List<String> testScenarioNames = new ArrayList<>();
+        List<Long> testCaseIds = new ArrayList<>();
+        List<Long> testScenarioIds = new ArrayList<>();
+        Set<String> addedTestCaseNames = new HashSet<>();
 
-    TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
-    BeanUtils.copyProperties(testGrouping, testGroupingResponse);
-    testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
-    testGroupingResponse.setTestTypeId(testGrouping.getTestType().getId());
-    List<String> testCaseNames = new ArrayList<>();
-    List<String> testScenarioNames = new ArrayList<>();
-    List<Long> testCaseIds = new ArrayList<>();
-    List<Long> testScenarioIds = new ArrayList<>();
-    Set<String> addedTestCaseNames = new HashSet<>();
-
-    for (TestCases testCase : testGrouping.getTestCases()) {
-        String testCaseName = testCase.getName();
-        if (!addedTestCaseNames.contains(testCaseName)) {
-            testCaseNames.add(testCaseName);
-            testCaseIds.add(testCase.getId());
-            addedTestCaseNames.add(testCaseName);
+        for (TestCases testCase : testGrouping.getTestCases()) {
+            String testCaseName = testCase.getName();
+            if (!addedTestCaseNames.contains(testCaseName)) {
+                testCaseNames.add(testCaseName);
+                testCaseIds.add(testCase.getId());
+                addedTestCaseNames.add(testCaseName);
+            }
         }
-    }
-    for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
-        testScenarioNames.add(testScenario.getName());
-        testScenarioIds.add(testScenario.getId());
+        for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
+            testScenarioNames.add(testScenario.getName());
+            testScenarioIds.add(testScenario.getId());
+        }
+        testGroupingResponse.setTestCaseIds(testCaseIds);
+        testGroupingResponse.setTestCaseName(testCaseNames);
+        testGroupingResponse.setTestScenarioIds(testScenarioIds);
+        testGroupingResponse.setTestScenarioName(testScenarioNames);
+
+        return testGroupingResponse;
     }
 
-    testGroupingResponse.setTestCaseIds(testCaseIds);
-    testGroupingResponse.setTestCaseName(testCaseNames);
-    testGroupingResponse.setTestScenarioIds(testScenarioIds);
-    testGroupingResponse.setTestScenarioName(testScenarioNames);
+    @Override
+    public List<String> getTestGroupingExcel(Long id) throws IOException {
+        TestGrouping testGrouping = testGroupingRepository.findById(id).get();
+        TestGroupingResponse testGroupingResponse=new TestGroupingResponse();
+        List<String> excelPaths = testGrouping.getExcelFilePath();
 
-    return testGroupingResponse;
-}
+        List<String> excelFiles = new ArrayList<>();
+        for (String excelPath : excelPaths
+        ) {
+            Path excel = Path.of(excelPath);
+            String excelFile=Files.readString(excel);
+           excelFiles.add(excelFile);
+        }
+        return excelFiles;
+    }
 
     @Override
     public boolean existByProjectId(Long projectId) {

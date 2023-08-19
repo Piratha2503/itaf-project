@@ -21,5 +21,5 @@ public class TestGroupingResponse {
     private List<String> mainModuleName;
     private List<String> moduleName;
     private Boolean executionStatus;
-
+    private List<String> excelFile;
 }
