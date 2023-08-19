@@ -138,9 +138,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             e.printStackTrace();
         }
         testGrouping.setExcelFilePath(filePaths);
-        if (testGroupingRequest.getId() != null) {
-            testGroupingRepository.deleteById(testGroupingRequest.getId());
-        }
         testGroupingRepository.save(testGrouping);
     }
 
@@ -228,6 +225,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public boolean existsTestGroupingByTestScenarioId(Long id) {
         return testGroupingRepository.existsByTestScenariosId(id);
+    }
 
     }
 
@@ -288,6 +286,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsByTestTypesId(Long testTypeId) {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
+
 
     @Override
     public TestGroupingResponse getTestGroupingById(Long id) {
