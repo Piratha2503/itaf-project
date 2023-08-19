@@ -227,8 +227,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestScenariosId(id);
     }
 
-    }
-
     @Override
     public boolean allTestCasesInSameProject(List<Long> testCaseIds) {
         Set<Long> uniqueProjectIds = new HashSet<>();
