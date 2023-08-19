@@ -302,7 +302,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         Set<String> addedTestCaseNames = new HashSet<>();
 
         for (TestCases testCase : testGrouping.getTestCases()) {
-            String testCaseName = testCase.getName();
+            String testCaseName = testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1);
             if (!addedTestCaseNames.contains(testCaseName)) {
                 testCaseNames.add(testCaseName);
                 testCaseIds.add(testCase.getId());
@@ -314,7 +314,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testScenarioIds.add(testScenario.getId());
         }
         List<String> excelFileNames = testGrouping.getExcelFilePath();
-        List<String> newExcelFileNames=new ArrayList<>();
+        List<String> newExcelFileNames = new ArrayList<>();
         if (excelFileNames != null && !excelFileNames.isEmpty()) {
             for (String excelPath : excelFileNames
             ) {
@@ -383,7 +383,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
         int mapSize = executionRequest.getTestScenario().size() + executionRequest.getTestScenario().size();
-        for (int i = 1; i < mapSize + 1; i++) {
+        for (int i = 1; i <= mapSize + 1; i++) {
             for (Map.Entry<Integer, Long> entry : executionRequest.getTestScenario().entrySet()) {
                 if (entry.getKey() == i) {
                     TestScenarios testScenarios = testScenarioRepository.findById(entry.getValue()).get();
