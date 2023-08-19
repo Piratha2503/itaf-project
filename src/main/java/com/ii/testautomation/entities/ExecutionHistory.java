@@ -16,9 +16,9 @@ public class ExecutionHistory extends DateAudit {
     private Long id;
 
     @OneToOne
+    @JoinColumn(name = "test_grouping_id",nullable = false)
     private TestGrouping testGrouping;
+    private String reportName;
 
-    @ElementCollection
-    @Lob
-    private List<byte[]> reportLists;
+
 }

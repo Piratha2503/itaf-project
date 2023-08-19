@@ -20,6 +20,5 @@ public class TestGroupingResponse {
     private List<String> subModuleName;
     private List<String> mainModuleName;
     private List<String> moduleName;
-    private Boolean executionStatus;
 
 }
