@@ -34,12 +34,10 @@ public class ExecutionHistoryController {
     public ResponseEntity<Object> viewByTestGroupingId(@PathVariable Long id){
 
         if (!testGroupingService.existsByTestGroupingId(id))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), "70000","existByExecutionHistoryId not Exist"));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),statusCodeBundle.getTestGroupingNotExistsMessage()));
         if(!executionHistoryService.existByTestGropingId(id))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),"This Test Group Does not Have Any Execution History"));
-
-        return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.viewByTestGroupingId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), "View By TestGroupingId"));
-
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getTestGroupingNotMappedMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.viewByTestGroupingId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getViewExecutionHistoryMessage()));
     }
 
     @GetMapping(EndpointURI.EXECUTION_HISTORY_ID)

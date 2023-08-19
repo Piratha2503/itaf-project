@@ -417,4 +417,9 @@ public class StatusCodeBundle {
     private String executionHistoryIdNull;
     @Value("${message.success.executionHistory.notExist}")
     private String executionHistoryNotFound;
+    @Value("${message.success.testGrouping.notMapped}")
+    private String TestGroupingNotMappedMessage;
+    @Value("${message.success.executionHistory.view}")
+    private String viewExecutionHistoryMessage;
+
 }
