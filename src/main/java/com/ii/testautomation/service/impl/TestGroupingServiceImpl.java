@@ -22,15 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class TestGroupingServiceImpl implements TestGroupingService {
@@ -127,6 +125,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             if (!folder.exists()) {
                 folder.mkdirs();
             }
+            testGrouping.setGroupPath(folderPath);
             if (excelFiles != null && !excelFiles.isEmpty()) {
                 for (MultipartFile excelFile : excelFiles) {
                     String filename = excelFile.getOriginalFilename();
@@ -147,7 +146,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsTestGroupingByTestScenarioId(Long id) {
         return testGroupingRepository.existsByTestScenariosId(id);
     }
-
 
     public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
         TestGrouping testGrouping = testGroupingRepository.findById(testGroupingRequest.getId()).get();
@@ -304,7 +302,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         Set<String> addedTestCaseNames = new HashSet<>();
 
         for (TestCases testCase : testGrouping.getTestCases()) {
-            String testCaseName = testCase.getName();
+            String testCaseName = testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1);
             if (!addedTestCaseNames.contains(testCaseName)) {
                 testCaseNames.add(testCaseName);
                 testCaseIds.add(testCase.getId());
@@ -315,7 +313,17 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testScenarioNames.add(testScenario.getName());
             testScenarioIds.add(testScenario.getId());
         }
-
+        List<String> excelFileNames = testGrouping.getExcelFilePath();
+        List<String> newExcelFileNames = new ArrayList<>();
+        if (excelFileNames != null && !excelFileNames.isEmpty()) {
+            for (String excelPath : excelFileNames
+            ) {
+                Path excel = Paths.get(excelPath);
+                String excelFileName = excel.getFileName().toString();
+                newExcelFileNames.add(excelFileName);
+            }
+        }
+        testGroupingResponse.setExcelFile(newExcelFileNames);
         testGroupingResponse.setTestCaseIds(testCaseIds);
         testGroupingResponse.setTestCaseName(testCaseNames);
         testGroupingResponse.setTestScenarioIds(testScenarioIds);
@@ -370,12 +378,12 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public void execution(ExecutionRequest executionRequest) {
+    public void execution(ExecutionRequest executionRequest) throws IOException {
         TestGrouping testGrouping = testGroupingRepository.findById(executionRequest.getTestGroupingId()).orElse(null);
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
         int mapSize = executionRequest.getTestScenario().size() + executionRequest.getTestScenario().size();
-        for (int i = 1; i < mapSize + 1; i++) {
+        for (int i = 1; i <= mapSize + 1; i++) {
             for (Map.Entry<Integer, Long> entry : executionRequest.getTestScenario().entrySet()) {
                 if (entry.getKey() == i) {
                     TestScenarios testScenarios = testScenarioRepository.findById(entry.getValue()).get();
@@ -385,6 +393,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     ) {
                         ExecutedTestCase executedTestCase = new ExecutedTestCase();
                         executedTestCase.setTestCases(testCases);
+                        executedTestCase.setTestGrouping(testGrouping);
                         executedTestCaseRepository.save(executedTestCase);
                         testCases.setExecutionStatus(true);
                     }
@@ -395,8 +404,25 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
                     ExecutedTestCase executedTestCase = new ExecutedTestCase();
                     executedTestCase.setTestCases(testCases);
+                    executedTestCase.setTestGrouping(testGrouping);
                     executedTestCaseRepository.save(executedTestCase);
                     testCases.setExecutionStatus(true);
+                }
+            }
+        }
+        List<String> excelFiles = testGrouping.getExcelFilePath();
+        String projectPath = projectRepository.findById(executionRequest.getProjectId()).get().getProjectPath();
+        if (excelFiles != null) {
+            for (String excel : excelFiles) {
+                Path excelPath = Path.of(excel);
+
+                try {
+                    byte[] excelBytes = Files.readAllBytes(excelPath);
+                    String excelFileName = excelPath.getFileName().toString();
+                    Path destinationPath = Path.of(projectPath, excelFileName);
+                    Files.write(destinationPath, excelBytes);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -413,8 +439,57 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        if (!testGrouping.getExecutionStatus()) {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Path.of(projectPath), "*.xlsx")) {
+                StreamSupport.stream(directoryStream.spliterator(), false)
+                        .forEach(excelPath -> {
+                            try {
+                                Files.delete(excelPath);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
+    //    @Override
+//    public void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds) {
+//        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).orElse(null);
+//        testGrouping.setExecutionStatus(true);
+//        testGroupingRepository.save(testGrouping);
+//        if (testScenarioIds != null && !testScenarioIds.isEmpty()) {
+//            for (Long testScenarioId : testScenarioIds
+//            ) {
+//                TestScenarios testScenarios = testScenarioRepository.findById(testScenarioId).get();
+//                testScenarios.setExecutionStatus(true);
+//                testScenarioRepository.save(testScenarios);
+//            }
+//        }
+//        if (testCaseIds != null && !testCaseIds.isEmpty()) {
+//            for (Long testCaseId : testCaseIds
+//            ) {
+//                TestCases testCases = testCasesRepository.findById(testCaseId).get();
+//                testCases.setExecutionStatus(true);
+//                testCasesRepository.save(testCases);
+//            }
+//        }
+//        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+//        File jarFile = new File(savedFilePath);
+//        String jarFileName = jarFile.getName();
+//        String jarDirectory = jarFile.getParent();
+//        try {
+//            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+//            runProcessBuilder.directory(new File(jarDirectory));
+//            runProcessBuilder.redirectErrorStream(true);
+//            Process runProcess = runProcessBuilder.start();
+//            runProcess.waitFor();
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
     @Override
     public boolean existsByTestGroupingNameByProjectId(String name, Long projectId) {
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
@@ -427,9 +502,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean hasExcelPath(Long testGroupingId) {
-        TestGrouping testGrouping = testGroupingRepository.findById(testGroupingId).get();
-        if (testGrouping.getExcelFilePath() != null) return true;
-        return false;
+        List<String> excelFilePath = testGroupingRepository.findById(testGroupingId).get().getExcelFilePath();
+        if (excelFilePath.isEmpty()) return false;
+        return true;
 
     }
 
