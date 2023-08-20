@@ -49,4 +49,6 @@ public interface TestGroupingService {
     void deleteTestGroupingById(Long id, Long projectId);
 
     void execution(ExecutionRequest executionRequest) throws IOException;
+
+    boolean folderExists(Long groupId);
 }
