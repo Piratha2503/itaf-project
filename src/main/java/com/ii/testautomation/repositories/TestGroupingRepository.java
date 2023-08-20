@@ -1,6 +1,7 @@
 package com.ii.testautomation.repositories;
 
 import com.ii.testautomation.entities.TestGrouping;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,8 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
     Page<TestGrouping> findDistinctByTestScenarios_TestCases_SubModule_MainModule_Modules_Project_Id(Pageable pageable, Long projectId);
 
     List<TestGrouping> findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId);
+
+//    List<TestGrouping> findDistinctAll(BooleanBuilder booleanBuilder,Pageable pageable);
 
     boolean existsByTestScenariosId(Long id);
 

@@ -29,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -168,7 +167,7 @@ public class ProjectServiceImpl implements ProjectService {
                 e.printStackTrace();
             }
         }
-        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectRequest.getId());
+        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(projectRequest.getId());
         for (TestGrouping testGrouping : testGroupingList) {
             Path groupingPath = Paths.get(testGrouping.getGroupPath());
             String groupName = groupingPath.getFileName().toString();
