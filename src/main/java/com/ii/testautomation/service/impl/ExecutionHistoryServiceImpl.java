@@ -19,6 +19,7 @@ import org.w3c.dom.Document;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,11 +52,13 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     }
 
     @Override
-    public String viewReportByExecutionHistoryId(Long id) throws IOException {
-        String reportName = executionHistoryRepository.findById(id).get().getReportName();
-        Path path = Path.of(fileFolder+reportName.toString()+".html");
-        String myfile = Files.readString(path);
-        return myfile;
+    public URL viewReportByExecutionHistoryId(Long id) throws IOException {
+      //  String reportName = executionHistoryRepository.findById(id).get().getReportName();
+        Path path = Path.of(fileFolder+"test.html");
+
+        File myfile = new File(path.toUri());
+        URL url = myfile.toURI().toURL();
+        return url;
 
     }
 

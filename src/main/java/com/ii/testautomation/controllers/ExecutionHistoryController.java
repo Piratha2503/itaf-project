@@ -18,6 +18,7 @@ import org.w3c.dom.html.HTMLDocument;
 
 import javax.swing.text.html.HTML;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 @RestController
@@ -33,19 +34,19 @@ public class ExecutionHistoryController {
     @GetMapping(EndpointURI.EXECUTION_HISTORY_BY_TEST_GROUPING_ID)
     public ResponseEntity<Object> viewByTestGroupingId(@PathVariable Long id){
 
-        if (!testGroupingService.existsByTestGroupingId(id))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), "70000","existByExecutionHistoryId not Exist"));
-        if(!executionHistoryService.existByTestGropingId(id))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),"This Test Group Does not Have Any Execution History"));
+        //if (!testGroupingService.existsByTestGroupingId(id))
+       // return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), "70000","existByExecutionHistoryId not Exist"));
+       // if(!executionHistoryService.existByTestGropingId(id))
+       // return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),"This Test Group Does not Have Any Execution History"));
 
         return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.viewByTestGroupingId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), "View By TestGroupingId"));
 
     }
 
     @GetMapping(EndpointURI.EXECUTION_HISTORY_ID)
-    public ResponseEntity<String> viewReportByExecutionHistoryId(@PathVariable Long id) throws IOException {
-        if (id == null) return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryIdNull());
-        if (!executionHistoryService.existByExecutionHistoryId(id)) return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryNotFound());
+    public ResponseEntity<URL> viewReportByExecutionHistoryId(@PathVariable Long id) throws IOException {
+        //if (id == null) return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryIdNull());
+       // if (!executionHistoryService.existByExecutionHistoryId(id)) return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryNotFound());
         return ResponseEntity.ok(executionHistoryService.viewReportByExecutionHistoryId(id));
     }
 }

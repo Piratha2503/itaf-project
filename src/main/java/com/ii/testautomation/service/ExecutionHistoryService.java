@@ -7,6 +7,7 @@ import org.w3c.dom.html.HTMLDocument;
 
 import javax.swing.text.html.HTML;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 public interface ExecutionHistoryService {
@@ -15,7 +16,7 @@ public interface ExecutionHistoryService {
 
     List<ExecutionHistoryResponse> viewByTestGroupingId(Long id);
 
-    String viewReportByExecutionHistoryId(Long id) throws IOException;
+    URL viewReportByExecutionHistoryId(Long id) throws IOException;
 
     boolean existByExecutionHistoryId(Long id);
 }
