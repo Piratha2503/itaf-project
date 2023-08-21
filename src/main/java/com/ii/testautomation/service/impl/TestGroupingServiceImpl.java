@@ -380,9 +380,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         }
         Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findAll(testScenariosbooleanBuilder, pageable);
-            //Page<TestGrouping> testGroupingPageByTestCase =
-            // testGroupingRepository.findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
-           // Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findDistinctByTestScenarios_TestCases_SubModule_MainModule_Modules_Project_Id(pageable, projectId);
             Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
             List<String> testCaseNames = new ArrayList<>();
             List<String> testScenariosNames = new ArrayList<>();
