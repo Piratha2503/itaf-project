@@ -52,7 +52,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
 
-    @Value("${jar.import.file.ubuntu.path}")
+    @Value("${jar.import.file.windows.path}")
     private String fileFolder;
 
     @Override
@@ -339,16 +339,37 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean existByProjectId(Long projectId) {
-        return testGroupingRepository.existsByTestCases_SubModule_MainModule_Modules_ProjectId(projectId);
+        return testGroupingRepository.existsByProjectId(projectId);
     }
+
 
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId) {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         BooleanBuilder testScenariosbooleanBuilder = new BooleanBuilder();
-        Page<TestGrouping> testGroupingPageByTestScenarios=testGroupingRepository.findDistinctByTestScenarios_TestCases_SubModule_MainModule_Modules_Project_Id(pageable,projectId);
-        Page<TestGrouping>testGroupingPageByTestCase=testGroupingRepository.findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(pageable,projectId);
+        QTestGrouping qTestGrouping = QTestGrouping.testGrouping;
+
+        if (qTestGrouping.testCases != null &&
+                qTestGrouping.testCases.any().subModule != null &&
+                qTestGrouping.testCases.any().subModule.mainModule != null &&
+                qTestGrouping.testCases.any().subModule.mainModule.modules != null &&
+                qTestGrouping.testCases.any().subModule.mainModule.modules.name != null) {
+            booleanBuilder.and(qTestGrouping.testCases.any().subModule.mainModule.modules.project.id.eq(projectId));
+
+        }
+        Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findAll(booleanBuilder, pageable);
+
+        if (qTestGrouping.testScenarios != null &&
+                qTestGrouping.testScenarios.any().testCases != null &&
+                qTestGrouping.testScenarios.any().testCases.any().subModule != null &&
+                qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule != null &&
+                qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule.modules != null &&
+                qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule.modules.name != null) {
+            testScenariosbooleanBuilder.and(qTestGrouping.testCases.any().subModule.mainModule.modules.project.id.eq(projectId));
+
+        }
+        Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findAll(testScenariosbooleanBuilder, pageable);
         Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
 
         for (TestGrouping testGrouping : testGroupingPage) {
@@ -401,7 +422,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         return testGroupingResponseList;
     }
-
     private Page<TestGrouping> combineAndRemoveDuplicates(Page<TestGrouping> page1, Page<TestGrouping> page2) {
         Set<TestGrouping> uniqueTestGroupings = new HashSet<>(page1.getContent());
         uniqueTestGroupings.addAll(page2.getContent());
@@ -417,7 +437,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
         int mapSize = executionRequest.getTestScenario().size() + executionRequest.getTestScenario().size();
-        for (int i = 1; i <= mapSize + 1; i++) {
+        for (int i = 0; i <= mapSize; i++) {
             for (Map.Entry<Integer, Long> entry : executionRequest.getTestScenario().entrySet()) {
                 if (entry.getKey() == i) {
                     TestScenarios testScenarios = testScenarioRepository.findById(entry.getValue()).get();
