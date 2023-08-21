@@ -2,7 +2,9 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
+import com.ii.testautomation.dto.response.TestScenariosResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -305,18 +307,27 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<Long> testCaseIds = new ArrayList<>();
         List<Long> testScenarioIds = new ArrayList<>();
         Set<String> addedTestCaseNames = new HashSet<>();
+        List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
+        List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
 
         for (TestCases testCase : testGrouping.getTestCases()) {
+            TestCaseResponse testCaseResponse = new TestCaseResponse();
             String testCaseName = testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1);
             if (!addedTestCaseNames.contains(testCaseName)) {
                 testCaseNames.add(testCaseName);
                 testCaseIds.add(testCase.getId());
                 addedTestCaseNames.add(testCaseName);
             }
+            BeanUtils.copyProperties(testCase,testCaseResponse);
+            testCaseResponse.setName(testCaseName);
+            testCaseResponseList.add(testCaseResponse);
         }
         for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
+            TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
             testScenarioNames.add(testScenario.getName());
             testScenarioIds.add(testScenario.getId());
+            BeanUtils.copyProperties(testScenario,testScenariosResponse);
+            testScenariosResponseList.add(testScenariosResponse);
         }
         List<String> excelFileNames = testGrouping.getExcelFilePath();
         List<String> newExcelFileNames = new ArrayList<>();
@@ -328,6 +339,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 newExcelFileNames.add(excelFileName);
             }
         }
+        testGroupingResponse.setTestCaseResponseList(testCaseResponseList);
+        testGroupingResponse.setTestScenariosResponseList(testScenariosResponseList);
         testGroupingResponse.setExcelFile(newExcelFileNames);
         testGroupingResponse.setTestCaseIds(testCaseIds);
         testGroupingResponse.setTestCaseName(testCaseNames);
