@@ -226,12 +226,16 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(project, projectResponse);
         String existingConfigFile = project.getConfigFilePath();
         String existingJarFile = project.getJarFilePath();
-        Path config = Paths.get(existingConfigFile);
-        Path jar = Paths.get(existingJarFile);
-        String jarFileName = config.getFileName().toString();
-        String configFileName = jar.getFileName().toString();
-        projectResponse.setConfigFile(jarFileName);
-        projectResponse.setJarFile(configFileName);
+        if (existingConfigFile != null && !existingConfigFile.isEmpty()) {
+            Path config = Paths.get(existingConfigFile);
+            String jarFileName = config.getFileName().toString();
+            projectResponse.setConfigFile(jarFileName);
+        }
+        if (existingJarFile != null && !existingJarFile.isEmpty()) {
+            Path jar = Paths.get(existingJarFile);
+            String configFileName = jar.getFileName().toString();
+            projectResponse.setJarFile(configFileName);
+        }
         return projectResponse;
     }
 
