@@ -7,6 +7,7 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public interface ProjectService {
 
     boolean existByProjectId(Long projectId);
 
-    ProjectResponse getProjectById(Long projectId);
+    ProjectResponse getProjectById(Long projectId) throws IOException;
 
     List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch);
 

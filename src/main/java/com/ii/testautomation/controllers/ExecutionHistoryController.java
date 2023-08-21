@@ -46,4 +46,14 @@ public class ExecutionHistoryController {
         if (!executionHistoryService.existByExecutionHistoryId(id)) return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryNotFound());
         return ResponseEntity.ok(executionHistoryService.viewReportByExecutionHistoryId(id));
     }
+    @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_ID)
+    public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id)
+    {
+        if(!executionHistoryService.existByExecutionHistoryId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        executionHistoryService.deleteExecutionHistory(id);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
+    }
 }

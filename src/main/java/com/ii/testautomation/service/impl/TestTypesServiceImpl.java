@@ -4,7 +4,6 @@ import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
 import com.ii.testautomation.entities.QTestTypes;
-import com.ii.testautomation.entities.TestCases;
 import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.repositories.TestGroupingRepository;
@@ -40,7 +39,7 @@ public class TestTypesServiceImpl implements TestTypesService {
     private TestGroupingRepository testGroupingRepository;
 
     @Override
-    public void  saveTestTypes(TestTypesRequest testTypesRequest) {
+    public void saveTestTypes(TestTypesRequest testTypesRequest) {
         TestTypes testTypes = new TestTypes();
         BeanUtils.copyProperties(testTypesRequest, testTypes);
         testTypesRepository.save(testTypes);
@@ -61,12 +60,11 @@ public class TestTypesServiceImpl implements TestTypesService {
 
     @Override
     public List<TestTypesResponse> getTestTypesByProjectId(Long id) {
-        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(id);
-        List<TestTypesResponse> testTypesResponseList=new ArrayList<>();
-        for (TestGrouping testGrouping: testGroupingList)
-        {
+        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(id);
+        List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
+        for (TestGrouping testGrouping : testGroupingList) {
             TestTypesResponse testTypesResponse = new TestTypesResponse();
-            BeanUtils.copyProperties(testGrouping.getTestType(),testTypesResponse);
+            BeanUtils.copyProperties(testGrouping.getTestType(), testTypesResponse);
             testTypesResponseList.add(testTypesResponse);
         }
         return testTypesResponseList;
@@ -127,8 +125,8 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public Map<Integer,TestTypesRequest> csvProcess(InputStream inputStream) {
-        Map<Integer,TestTypesRequest> testTypesRequestList = new HashMap<>();
+    public Map<Integer, TestTypesRequest> csvProcess(InputStream inputStream) {
+        Map<Integer, TestTypesRequest> testTypesRequestList = new HashMap<>();
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
@@ -138,7 +136,7 @@ public class TestTypesServiceImpl implements TestTypesService {
                 TestTypesRequest testTypesRequest = new TestTypesRequest();
                 testTypesRequest.setDescription(csvRecord.get("description"));
                 testTypesRequest.setName(csvRecord.get("name"));
-                testTypesRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1,testTypesRequest);
+                testTypesRequestList.put(Math.toIntExact(csvRecord.getRecordNumber()) + 1, testTypesRequest);
             }
 
         } catch (IOException e) {
@@ -148,8 +146,8 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public Map<Integer,TestTypesRequest> excelProcess(MultipartFile multipartFile) {
-        Map<Integer,TestTypesRequest> testTypesRequestList = new HashMap<>();
+    public Map<Integer, TestTypesRequest> excelProcess(MultipartFile multipartFile) {
+        Map<Integer, TestTypesRequest> testTypesRequestList = new HashMap<>();
         try {
             Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
@@ -161,7 +159,7 @@ public class TestTypesServiceImpl implements TestTypesService {
                 TestTypesRequest testTypesRequest = new TestTypesRequest();
                 testTypesRequest.setName(getStringCellValue(row.getCell(columnMap.get("name"))));
                 testTypesRequest.setDescription(getStringCellValue(row.getCell(columnMap.get("description"))));
-                testTypesRequestList.put(row.getRowNum()+1,testTypesRequest);
+                testTypesRequestList.put(row.getRowNum() + 1, testTypesRequest);
             }
             workbook.close();
         } catch (IOException e) {

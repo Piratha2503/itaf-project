@@ -167,7 +167,7 @@ public class ProjectServiceImpl implements ProjectService {
                 e.printStackTrace();
             }
         }
-        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectRequest.getId());
+        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(projectRequest.getId());
         for (TestGrouping testGrouping : testGroupingList) {
             Path groupingPath = Paths.get(testGrouping.getGroupPath());
             String groupName = groupingPath.getFileName().toString();
@@ -219,11 +219,23 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponse getProjectById(Long projectId) {
+    public ProjectResponse getProjectById(Long projectId) throws IOException {
         Project project;
         project = projectRepository.findById(projectId).get();
         ProjectResponse projectResponse = new ProjectResponse();
         BeanUtils.copyProperties(project, projectResponse);
+        String existingConfigFile = project.getConfigFilePath();
+        String existingJarFile = project.getJarFilePath();
+        if (existingConfigFile != null && !existingConfigFile.isEmpty()) {
+            Path config = Paths.get(existingConfigFile);
+            String jarFileName = config.getFileName().toString();
+            projectResponse.setConfigFile(jarFileName);
+        }
+        if (existingJarFile != null && !existingJarFile.isEmpty()) {
+            Path jar = Paths.get(existingJarFile);
+            String configFileName = jar.getFileName().toString();
+            projectResponse.setJarFile(configFileName);
+        }
         return projectResponse;
     }
 
@@ -381,7 +393,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public boolean hasJarPath(Long projectId) {
         Project project = projectRepository.findById(projectId).get();
-        if (project.getConfigFilePath() != null) return true;
+        if (project.getJarFilePath() != null) return true;
         return false;
     }
 

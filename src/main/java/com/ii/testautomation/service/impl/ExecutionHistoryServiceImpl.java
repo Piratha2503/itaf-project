@@ -64,6 +64,11 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return executionHistoryRepository.existsById(id);
     }
 
+    @Override
+    public void deleteExecutionHistory(Long id) {
+        executionHistoryRepository.deleteById(id);
+    }
+
 
     @Override
     public boolean existByTestGropingId(Long id) {
