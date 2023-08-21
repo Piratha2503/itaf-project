@@ -345,28 +345,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         BooleanBuilder testScenariosbooleanBuilder = new BooleanBuilder();
-        QTestGrouping qTestGrouping = QTestGrouping.testGrouping;
-
-        if (qTestGrouping.testCases != null &&
-                qTestGrouping.testCases.any().subModule != null &&
-                qTestGrouping.testCases.any().subModule.mainModule != null &&
-                qTestGrouping.testCases.any().subModule.mainModule.modules != null &&
-                qTestGrouping.testCases.any().subModule.mainModule.modules.name != null) {
-            booleanBuilder.and(qTestGrouping.testCases.any().subModule.mainModule.modules.project.id.eq(projectId));
-
-        }
-        Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findAll(booleanBuilder, pageable);
-
-        if (qTestGrouping.testScenarios != null &&
-                qTestGrouping.testScenarios.any().testCases != null &&
-                qTestGrouping.testScenarios.any().testCases.any().subModule != null &&
-                qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule != null &&
-                qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule.modules != null &&
-                qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule.modules.name != null) {
-            testScenariosbooleanBuilder.and(qTestGrouping.testCases.any().subModule.mainModule.modules.project.id.eq(projectId));
-
-        }
-        Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findAll(testScenariosbooleanBuilder, pageable);
+        Page<TestGrouping> testGroupingPageByTestScenarios=testGroupingRepository.findDistinctByTestScenarios_TestCases_SubModule_MainModule_Modules_Project_Id(pageable,projectId);
+        Page<TestGrouping>testGroupingPageByTestCase=testGroupingRepository.findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(pageable,projectId);
         Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
 
         for (TestGrouping testGrouping : testGroupingPage) {
