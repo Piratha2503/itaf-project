@@ -16,9 +16,11 @@ public interface ExecutionHistoryService {
 
     List<ExecutionHistoryResponse> viewByTestGroupingId(Long id);
 
-    URL viewReportByExecutionHistoryId(Long id) throws IOException;
+    String viewReportByExecutionHistoryId(Long id) throws IOException;
 
     boolean existByExecutionHistoryId(Long id);
 
     void deleteExecutionHistory(Long id);
+
+    List<ExecutionHistoryResponse> viewReportByTestGroupingIdAndDate(Long testGroupingId);
 }

@@ -52,14 +52,19 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     }
 
     @Override
-    public URL viewReportByExecutionHistoryId(Long id) throws IOException {
-      //  String reportName = executionHistoryRepository.findById(id).get().getReportName();
-        Path path = Path.of(fileFolder+"test.html");
+    public String viewReportByExecutionHistoryId(Long id) throws IOException {
+        String reportName = executionHistoryRepository.findById(id).get().getReportName();
+        Path path = Path.of(fileFolder+reportName.toString()+".html");
+        String myfile = Files.readString(path);
+        return myfile;
 
-        File myfile = new File(path.toUri());
-        URL url = myfile.toURI().toURL();
-        return url;
+    }
 
+    @Override
+    public List<ExecutionHistoryResponse> viewReportByTestGroupingIdAndDate(Long testGroupingId) {
+        List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
+        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findAllByTestGroupingIdOrderByCreatedAtDesc(testGroupingId);
+        return executionHistoryResponseList;
     }
 
     @Override
@@ -71,7 +76,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     public void deleteExecutionHistory(Long id) {
         executionHistoryRepository.deleteById(id);
     }
-
 
     @Override
     public boolean existByTestGropingId(Long id) {
