@@ -33,8 +33,13 @@ public class TestScenariosController {
 
     @PostMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
-        if (testScenariosRequest.getName() == null || testScenariosRequest.getProjectId() == null)
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenarioNameAndIdNullMessage()));
+        if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(),testScenariosRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
+        }
+        if(!projectService.existByProjectId(testScenariosRequest.getProjectId())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
+        }
 
         if (testScenariosRequest.getTestCasesId() == null && testScenariosRequest.getMainModuleIds() == null
                 && testScenariosRequest.getModuleIds() == null && testScenariosRequest.getSubModuleIds() == null)
@@ -43,9 +48,6 @@ public class TestScenariosController {
         if (testScenariosRequest.getTestCasesId().isEmpty() && testScenariosRequest.getMainModuleIds().isEmpty()
                 && testScenariosRequest.getModuleIds().isEmpty() && testScenariosRequest.getSubModuleIds().isEmpty())
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
-
-        if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(), testScenariosRequest.getProjectId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
         testScenariosService.saveTestScenario(testScenariosRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
 
