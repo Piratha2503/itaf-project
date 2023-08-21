@@ -29,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -38,7 +37,7 @@ import java.util.*;
 @Component
 @PropertySource("classpath:application.properties")
 public class ProjectServiceImpl implements ProjectService {
-    @Value("${jar.import.file.windows.path}")
+    @Value("${jar.import.file.ubuntu.path}")
     private String fileFolder;
     @Autowired
     private ProjectRepository projectRepository;
@@ -168,7 +167,7 @@ public class ProjectServiceImpl implements ProjectService {
                 e.printStackTrace();
             }
         }
-        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectRequest.getId());
+        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(projectRequest.getId());
         for (TestGrouping testGrouping : testGroupingList) {
             Path groupingPath = Paths.get(testGrouping.getGroupPath());
             String groupName = groupingPath.getFileName().toString();
@@ -227,12 +226,16 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(project, projectResponse);
         String existingConfigFile = project.getConfigFilePath();
         String existingJarFile = project.getJarFilePath();
-        Path config = Paths.get(existingConfigFile);
-        Path jar = Paths.get(existingJarFile);
-        String jarFileName = config.getFileName().toString();
-        String configFileName = jar.getFileName().toString();
-        projectResponse.setConfigFile(jarFileName);
-        projectResponse.setJarFile(configFileName);
+        if (existingConfigFile != null && !existingConfigFile.isEmpty()) {
+            Path config = Paths.get(existingConfigFile);
+            String jarFileName = config.getFileName().toString();
+            projectResponse.setConfigFile(jarFileName);
+        }
+        if (existingJarFile != null && !existingJarFile.isEmpty()) {
+            Path jar = Paths.get(existingJarFile);
+            String configFileName = jar.getFileName().toString();
+            projectResponse.setJarFile(configFileName);
+        }
         return projectResponse;
     }
 

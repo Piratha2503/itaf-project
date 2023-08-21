@@ -59,10 +59,16 @@ public class TestGroupingController {
                 (testGroupingRequest.getTestScenarioIds() == null || testGroupingRequest.getTestScenarioIds().isEmpty())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
         }
+        if (!projectService.existByProjectId(testGroupingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+        }
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
-        if (testGroupingService.existsByTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
+        if (testGroupingService.existsByTestGroupingNameByTestCaseAndProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+        }
+        if (testGroupingService.existsByTestGroupingNameByTestScenarioAndProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
         }
         if (testGroupingRequest.getTestCaseId() != null) {
@@ -107,13 +113,13 @@ public class TestGroupingController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
+        if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
+        }
         if ((testGroupingRequest.getTestCaseId() == null || testGroupingRequest.getTestCaseId().isEmpty()) && (testGroupingRequest.getSubModuleIds() == null || testGroupingRequest.getSubModuleIds().isEmpty()) &&
                 (testGroupingRequest.getModuleIds() == null || testGroupingRequest.getModuleIds().isEmpty()) && (testGroupingRequest.getMainModuleIds() == null || testGroupingRequest.getMainModuleIds().isEmpty()) &&
                 (testGroupingRequest.getTestScenarioIds() == null || testGroupingRequest.getTestScenarioIds().isEmpty())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
-        }
-        if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
         if (testGroupingService.isUpdateTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId(), testGroupingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
@@ -149,7 +155,9 @@ public class TestGroupingController {
         if (!testGroupingService.hasExcelFormat(excelFiles)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
         }
-
+        if (!testGroupingService.folderExists(testGroupingRequest.getId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), "folder doesnot exists"));
+        }
         testGroupingService.updateTestGrouping(testGroupingRequest, excelFiles);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateTestGroupingSuccessMessage()));
     }
@@ -245,7 +253,7 @@ public class TestGroupingController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getGetTestGroupingNotHaveProjectId()));
         }
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(pageable, pagination, id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
 

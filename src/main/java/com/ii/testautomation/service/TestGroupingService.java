@@ -38,7 +38,8 @@ public interface TestGroupingService {
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId);
 
-    boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
+    boolean existsByTestGroupingNameByTestCaseAndProjectId(String name, Long projectId);
+    boolean existsByTestGroupingNameByTestScenarioAndProjectId(String name, Long projectId);
 
     boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);
 
@@ -49,4 +50,6 @@ public interface TestGroupingService {
     void deleteTestGroupingById(Long id, Long projectId);
 
     void execution(ExecutionRequest executionRequest) throws IOException;
+
+    boolean folderExists(Long groupId);
 }
