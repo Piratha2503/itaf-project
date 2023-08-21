@@ -1,5 +1,6 @@
 package com.ii.testautomation.dto.response;
 
+import com.ii.testautomation.entities.TestScenarios;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,4 +22,6 @@ public class TestGroupingResponse {
     private List<String> mainModuleName;
     private List<String> moduleName;
     private List<String> excelFile;
+    private List<TestScenariosResponse> testScenariosResponseList;
+    private List<TestCaseResponse> testCaseResponseList;
 }
