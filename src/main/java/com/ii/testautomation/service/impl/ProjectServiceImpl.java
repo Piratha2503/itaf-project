@@ -37,7 +37,7 @@ import java.util.*;
 @Component
 @PropertySource("classpath:application.properties")
 public class ProjectServiceImpl implements ProjectService {
-    @Value("${jar.import.file.windows.path}")
+    @Value("${jar.import.file.ubuntu.path}")
     private String fileFolder;
     @Autowired
     private ProjectRepository projectRepository;

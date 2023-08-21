@@ -54,24 +54,23 @@ public class TestGroupingController {
     public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
 
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
-        if(testGroupingService.existsByTestGroupingNameByProjectId(testGroupingRequest.getName(),testGroupingRequest.getProjectId())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getTestGroupingAlReadyExistCode(),
-                    statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
-        }
-
         if ((testGroupingRequest.getTestCaseId() == null || testGroupingRequest.getTestCaseId().isEmpty()) && (testGroupingRequest.getSubModuleIds() == null || testGroupingRequest.getSubModuleIds().isEmpty()) &&
                 (testGroupingRequest.getModuleIds() == null || testGroupingRequest.getModuleIds().isEmpty()) && (testGroupingRequest.getMainModuleIds() == null || testGroupingRequest.getMainModuleIds().isEmpty()) &&
                 (testGroupingRequest.getTestScenarioIds() == null || testGroupingRequest.getTestScenarioIds().isEmpty())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
         }
-        if(!projectService.existByProjectId(testGroupingRequest.getProjectId()))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage() ));
+        if (!projectService.existByProjectId(testGroupingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
-
+        if (testGroupingService.existsByTestGroupingNameByTestCaseAndProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+        }
+        if (testGroupingService.existsByTestGroupingNameByTestScenarioAndProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+        }
         if (testGroupingRequest.getTestCaseId() != null) {
             for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
                 if (!testCasesService.existsByTestCasesId(testCaseId)) {
