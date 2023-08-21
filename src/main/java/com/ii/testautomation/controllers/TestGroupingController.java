@@ -225,7 +225,6 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
 
-
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_CASE_ID)
     public ResponseEntity<Object> getTestGroupingByTestCaseId(@PathVariable Long id) {
         if (!testCasesService.existsByTestCasesId(id)) {

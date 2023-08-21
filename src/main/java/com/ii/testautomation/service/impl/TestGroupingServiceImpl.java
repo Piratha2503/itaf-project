@@ -2,9 +2,7 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
-import com.ii.testautomation.dto.response.TestCaseResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
-import com.ii.testautomation.dto.response.TestScenariosResponse;
+import com.ii.testautomation.dto.response.*;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -280,7 +278,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
-
     @Override
     public boolean existsByTestCasesId(Long testCaseId) {
         return testGroupingRepository.existsByTestCasesId(testCaseId);
@@ -290,7 +287,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsByTestTypesId(Long testTypeId) {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
-
 
     @Override
     public TestGroupingResponse getTestGroupingById(Long id) {
@@ -352,6 +348,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existByProjectId(Long projectId) {
         return testGroupingRepository.existsByTestCases_SubModule_MainModule_Modules_ProjectId(projectId);
     }
+
 
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId) {
