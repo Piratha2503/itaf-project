@@ -347,7 +347,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         BooleanBuilder testScenariosbooleanBuilder = new BooleanBuilder();
         QTestGrouping qTestGrouping = QTestGrouping.testGrouping;
 
-        if (qTestGrouping.testCases!=null &&
+        if (qTestGrouping.testCases != null &&
                 qTestGrouping.testCases.any().subModule != null &&
                 qTestGrouping.testCases.any().subModule.mainModule != null &&
                 qTestGrouping.testCases.any().subModule.mainModule.modules != null &&
@@ -357,9 +357,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findAll(booleanBuilder, pageable);
 
-        if (qTestGrouping.testScenarios!=null &&
+        if (qTestGrouping.testScenarios != null &&
                 qTestGrouping.testScenarios.any().testCases != null &&
-                qTestGrouping.testScenarios.any().testCases.any().subModule!=null&&
+                qTestGrouping.testScenarios.any().testCases.any().subModule != null &&
                 qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule != null &&
                 qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule.modules != null &&
                 qTestGrouping.testScenarios.any().testCases.any().subModule.mainModule.modules.name != null) {
@@ -367,76 +367,82 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         }
         Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findAll(testScenariosbooleanBuilder, pageable);
-            Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
-            List<String> testCaseNames = new ArrayList<>();
-            List<String> testScenariosNames = new ArrayList<>();
-            List<Long> testScenariosIds = new ArrayList<>();
-            List<Long> testCaseIds = new ArrayList<>();
-            pagination.setTotalRecords(testGroupingPage.getTotalElements());
-            pagination.setPageSize(testGroupingPage.getTotalPages());
+        Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
 
-            for (TestGrouping testGrouping : testGroupingPage) {
-                TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+        for (TestGrouping testGrouping : testGroupingPage) {
+            TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+            if (testGrouping.getTestType() != null) {
                 testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
-                testGroupingResponse.setName(testGrouping.getName());
-                testGroupingResponse.setId(testGrouping.getId());
-                for (TestCases testCases : testGrouping.getTestCases()) {
-                    testCaseNames.add(testCases.getName());
-                    testCaseIds.add(testCases.getId());
-                }
-                for (TestScenarios testScenarios : testGrouping.getTestScenarios()) {
-                    testScenariosNames.add(testScenarios.getName());
-                    testScenariosIds.add(testScenarios.getId());
-                }
                 testGroupingResponse.setTestTypeId(testGrouping.getTestType().getId());
-                List<String> sortedTestCaseNames = testCaseNames.stream().distinct().collect(Collectors.toList());
-                List<String> sortedTestScenarioNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
-                List<Long> sortedTestScenariosIds = testScenariosIds.stream().distinct().collect(Collectors.toList());
-                List<Long> sortedTestCasesIds = testCaseIds.stream().distinct().collect(Collectors.toList());
-                testGroupingResponse.setTestCaseIds(sortedTestCasesIds);
-                testGroupingResponse.setTestScenarioName(sortedTestScenarioNames);
-                testGroupingResponse.setTestScenarioIds(sortedTestScenariosIds);
-                testGroupingResponse.setTestCaseName(sortedTestCaseNames);
-                testGroupingResponseList.add(testGroupingResponse);
             }
-            return testGroupingResponseList;
-        }
-
-        private Page<TestGrouping> combineAndRemoveDuplicates (Page < TestGrouping > page1, Page < TestGrouping > page2)
-        {
-            Set<TestGrouping> uniqueTestGroupings = new HashSet<>(page1.getContent());
-            uniqueTestGroupings.addAll(page2.getContent());
-
-            List<TestGrouping> combinedContent = new ArrayList<>(uniqueTestGroupings);
-
-            return new PageImpl<>(combinedContent, page1.getPageable(), combinedContent.size());
-        }
-
-        @Override
-        public void execution (ExecutionRequest executionRequest) throws IOException {
-            TestGrouping testGrouping = testGroupingRepository.findById(executionRequest.getTestGroupingId()).orElse(null);
-            testGrouping.setExecutionStatus(true);
-            testGroupingRepository.save(testGrouping);
-            int mapSize = executionRequest.getTestScenario().size() + executionRequest.getTestScenario().size();
-            for (int i = 1; i <= mapSize + 1; i++) {
-                for (Map.Entry<Integer, Long> entry : executionRequest.getTestScenario().entrySet()) {
-                    if (entry.getKey() == i) {
-                        TestScenarios testScenarios = testScenarioRepository.findById(entry.getValue()).get();
-                        testScenarios.setExecutionStatus(true);
-                        List<TestCases> testCasesList = testScenarios.getTestCases();
-                        for (TestCases testCases : testCasesList
-                        ) {
-                            ExecutedTestCase executedTestCase = new ExecutedTestCase();
-                            executedTestCase.setTestCases(testCases);
-                            executedTestCase.setTestGrouping(testGrouping);
-                            executedTestCaseRepository.save(executedTestCase);
-                            testCases.setExecutionStatus(true);
-                        }
+            if (testGrouping.getName() != null) {
+                testGroupingResponse.setName(testGrouping.getName());
+            }
+            if (testGrouping.getId() != null) {
+                testGroupingResponse.setId(testGrouping.getId());
+            }
+            List<String> testCaseNames = new ArrayList<>();
+            List<Long> testCaseIds = new ArrayList<>();
+            if (testGrouping.getTestCases() != null && !testGrouping.getTestCases().isEmpty()) {
+                for (TestCases testCases : testGrouping.getTestCases()) {
+                    if (testCases.getName() != null) {
+                        testCaseNames.add(testCases.getName());
+                    }
+                    if (testCases.getId() != null) {
+                        testCaseIds.add(testCases.getId());
                     }
                 }
-                for (Map.Entry<Integer, Long> entry : executionRequest.getTestCase().entrySet()) {
-                    if (entry.getKey() == i) {
-                        TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
+            }
+            List<String> testScenariosNames = new ArrayList<>();
+            List<Long> testScenariosIds = new ArrayList<>();
+            if (testGrouping.getTestScenarios() != null && !testGrouping.getTestScenarios().isEmpty()) {
+                for (TestScenarios testScenarios : testGrouping.getTestScenarios()) {
+                    if (testScenarios.getName() != null) {
+                        testScenariosNames.add(testScenarios.getName());
+                    }
+                    if (testScenarios.getId() != null) {
+                        testScenariosIds.add(testScenarios.getId());
+                    }
+                }
+            }
+            List<String> sortedTestCaseNames = testCaseNames.stream().distinct().collect(Collectors.toList());
+            List<String> sortedTestScenarioNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
+            List<Long> sortedTestScenariosIds = testScenariosIds.stream().distinct().collect(Collectors.toList());
+            List<Long> sortedTestCasesIds = testCaseIds.stream().distinct().collect(Collectors.toList());
+
+            testGroupingResponse.setTestCaseIds(sortedTestCasesIds);
+            testGroupingResponse.setTestScenarioIds(sortedTestScenariosIds);
+            testGroupingResponse.setTestCaseName(sortedTestCaseNames);
+            testGroupingResponse.setTestScenarioName(sortedTestScenarioNames);
+            testGroupingResponseList.add(testGroupingResponse);
+        }
+
+        return testGroupingResponseList;
+    }
+
+    private Page<TestGrouping> combineAndRemoveDuplicates(Page<TestGrouping> page1, Page<TestGrouping> page2) {
+        Set<TestGrouping> uniqueTestGroupings = new HashSet<>(page1.getContent());
+        uniqueTestGroupings.addAll(page2.getContent());
+
+        List<TestGrouping> combinedContent = new ArrayList<>(uniqueTestGroupings);
+
+        return new PageImpl<>(combinedContent, page1.getPageable(), combinedContent.size());
+    }
+
+    @Override
+    public void execution(ExecutionRequest executionRequest) throws IOException {
+        TestGrouping testGrouping = testGroupingRepository.findById(executionRequest.getTestGroupingId()).orElse(null);
+        testGrouping.setExecutionStatus(true);
+        testGroupingRepository.save(testGrouping);
+        int mapSize = executionRequest.getTestScenario().size() + executionRequest.getTestScenario().size();
+        for (int i = 1; i <= mapSize + 1; i++) {
+            for (Map.Entry<Integer, Long> entry : executionRequest.getTestScenario().entrySet()) {
+                if (entry.getKey() == i) {
+                    TestScenarios testScenarios = testScenarioRepository.findById(entry.getValue()).get();
+                    testScenarios.setExecutionStatus(true);
+                    List<TestCases> testCasesList = testScenarios.getTestCases();
+                    for (TestCases testCases : testCasesList
+                    ) {
                         ExecutedTestCase executedTestCase = new ExecutedTestCase();
                         executedTestCase.setTestCases(testCases);
                         executedTestCase.setTestGrouping(testGrouping);
@@ -445,176 +451,187 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     }
                 }
             }
-            List<String> excelFiles = testGrouping.getExcelFilePath();
-            String projectPath = projectRepository.findById(executionRequest.getProjectId()).get().getProjectPath();
-            if (excelFiles != null) {
-                for (String excel : excelFiles) {
-                    Path excelPath = Path.of(excel);
-
-                    try {
-                        byte[] excelBytes = Files.readAllBytes(excelPath);
-                        String excelFileName = excelPath.getFileName().toString();
-                        Path destinationPath = Path.of(projectPath, excelFileName);
-                        Files.write(destinationPath, excelBytes);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            for (Map.Entry<Integer, Long> entry : executionRequest.getTestCase().entrySet()) {
+                if (entry.getKey() == i) {
+                    TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
+                    ExecutedTestCase executedTestCase = new ExecutedTestCase();
+                    executedTestCase.setTestCases(testCases);
+                    executedTestCase.setTestGrouping(testGrouping);
+                    executedTestCaseRepository.save(executedTestCase);
+                    testCases.setExecutionStatus(true);
                 }
             }
-            String savedFilePath = projectRepository.findById(executionRequest.getProjectId()).get().getJarFilePath();
-            File jarFile = new File(savedFilePath);
-            String jarFileName = jarFile.getName();
-            String jarDirectory = jarFile.getParent();
-            try {
-                ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
-                runProcessBuilder.directory(new File(jarDirectory));
-                runProcessBuilder.redirectErrorStream(true);
-                Process runProcess = runProcessBuilder.start();
-                runProcess.waitFor();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (!testGrouping.getExecutionStatus()) {
-                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Path.of(projectPath), "*.xlsx")) {
-                    StreamSupport.stream(directoryStream.spliterator(), false)
-                            .forEach(excelPath -> {
-                                try {
-                                    Files.delete(excelPath);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            });
+        }
+        List<String> excelFiles = testGrouping.getExcelFilePath();
+        String projectPath = projectRepository.findById(executionRequest.getProjectId()).get().getProjectPath();
+        if (excelFiles != null) {
+            for (String excel : excelFiles) {
+                Path excelPath = Path.of(excel);
+
+                try {
+                    byte[] excelBytes = Files.readAllBytes(excelPath);
+                    String excelFileName = excelPath.getFileName().toString();
+                    Path destinationPath = Path.of(projectPath, excelFileName);
+                    Files.write(destinationPath, excelBytes);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-
-        @Override
-        public boolean folderExists (Long groupId){
-            String groupPath = testGroupingRepository.findById(groupId).get().getGroupPath();
-            if (groupPath != null) {
-                File file = new File(groupPath);
-                if (file.exists()) return true;
-            }
-            return false;
+        String savedFilePath = projectRepository.findById(executionRequest.getProjectId()).get().getJarFilePath();
+        File jarFile = new File(savedFilePath);
+        String jarFileName = jarFile.getName();
+        String jarDirectory = jarFile.getParent();
+        try {
+            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+            runProcessBuilder.directory(new File(jarDirectory));
+            runProcessBuilder.redirectErrorStream(true);
+            Process runProcess = runProcessBuilder.start();
+            runProcess.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        public boolean existsByTestGroupingNameByProjectId (String name, Long projectId){
-            return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
-        }
-
-        @Override
-        public boolean isUpdateTestGroupingNameByProjectId (String name, Long projectId, Long groupingId){
-            return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, groupingId);
-        }
-
-        @Override
-        public boolean hasExcelPath (Long testGroupingId){
-            List<String> excelFilePath = testGroupingRepository.findById(testGroupingId).get().getExcelFilePath();
-            if (excelFilePath.isEmpty()) return false;
-            return true;
-
-        }
-
-        @Override
-        public List<TestGroupingResponse> getAllTestGroupingByTestCaseId (Long testCaseId){
-            List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-            List<TestGrouping> testGroupingList = testGroupingRepository.findAllTestGroupingByTestCasesId(testCaseId);
-
-            for (TestGrouping testGrouping : testGroupingList) {
-                TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
-                BeanUtils.copyProperties(testGrouping, testGroupingResponse);
-                testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
-                List<String> testCaseNames = new ArrayList<>();
-                List<String> subModuleName = new ArrayList<>();
-                List<String> mainModulesName = new ArrayList<>();
-                List<String> modulesName = new ArrayList<>();
-                for (TestCases testCase : testGrouping.getTestCases()) {
-                    testCaseNames.add(testCase.getName());
-                    subModuleName.add(testCase.getSubModule().getName());
-                    mainModulesName.add(testCase.getSubModule().getMainModule().getName());
-                    modulesName.add(testCase.getSubModule().getMainModule().getModules().getName());
-                }
-                testGroupingResponse.setTestCaseName(testCaseNames);
-                testGroupingResponse.setSubModuleName(subModuleName);
-                testGroupingResponse.setMainModuleName(mainModulesName);
-                testGroupingResponse.setModuleName(modulesName);
-                testGroupingResponseList.add(testGroupingResponse);
+        if (!testGrouping.getExecutionStatus()) {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Path.of(projectPath), "*.xlsx")) {
+                StreamSupport.stream(directoryStream.spliterator(), false)
+                        .forEach(excelPath -> {
+                            try {
+                                Files.delete(excelPath);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            return testGroupingResponseList;
-        }
-
-        @Override
-        public List<TestGroupingResponse> getAllTestGroupingByTestTypeId (Long testTypeId){
-            List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-            List<TestGrouping> testGroupingList = testGroupingRepository.findAllTestGroupingByTestTypeId(testTypeId);
-            for (TestGrouping testGrouping : testGroupingList) {
-                TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
-                testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
-                List<TestCases> testCasesList = testGrouping.getTestCases();
-                List<String> subModuleNameList = new ArrayList<>();
-                List<String> mainMooduleNameList = new ArrayList<>();
-                List<String> moduleNameList = new ArrayList<>();
-                List<String> testCaseNameList = new ArrayList<>();
-
-                for (TestCases testCases : testCasesList) {
-                    testCaseNameList.add(testCases.getName());
-                    subModuleNameList.add(testCases.getSubModule().getName());
-                    mainMooduleNameList.add(testCases.getSubModule().getMainModule().getName());
-                    moduleNameList.add(testCases.getSubModule().getMainModule().getModules().getName());
-
-                }
-                BeanUtils.copyProperties(testGrouping, testGroupingResponse);
-                testGroupingResponse.setTestCaseName(testCaseNameList);
-                testGroupingResponse.setSubModuleName(subModuleNameList);
-                testGroupingResponse.setMainModuleName(mainMooduleNameList);
-                testGroupingResponse.setModuleName(moduleNameList);
-                testGroupingResponseList.add(testGroupingResponse);
-
-            }
-            return testGroupingResponseList;
-
-        }
-
-        @Override
-        public List<TestGroupingResponse> multiSearchTestGrouping (Pageable
-        pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch){
-            BooleanBuilder booleanBuilder = new BooleanBuilder();
-            if (Utils.isNotNullAndEmpty(testGroupingSearch.getName())) {
-                booleanBuilder.and(QTestGrouping.testGrouping.name.containsIgnoreCase(testGroupingSearch.getName()));
-            }
-
-            if (Utils.isNotNullAndEmpty(testGroupingSearch.getTestTypeName())) {
-                booleanBuilder.and(QTestGrouping.testGrouping.testType.name.containsIgnoreCase(testGroupingSearch.getTestTypeName()));
-            }
-            List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
-            Page<TestGrouping> testGroupingPage = testGroupingRepository.findAll(booleanBuilder, pageable);
-            pagination.setTotalRecords(testGroupingPage.getTotalElements());
-            pagination.setPageSize(testGroupingPage.getTotalPages());
-            for (TestGrouping testGrouping : testGroupingPage) {
-                TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
-                testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
-                List<TestCases> testCasesList = testGrouping.getTestCases();
-                List<String> subModuleNameList = new ArrayList<>();
-                List<String> mainMooduleNameList = new ArrayList<>();
-                List<String> moduleNameList = new ArrayList<>();
-                List<String> testCaseNameList = new ArrayList<>();
-                for (TestCases testCases : testCasesList) {
-
-                    testCaseNameList.add(testCases.getName());
-                    subModuleNameList.add(testCases.getSubModule().getName());
-                    mainMooduleNameList.add(testCases.getSubModule().getMainModule().getName());
-                    moduleNameList.add(testCases.getSubModule().getMainModule().getModules().getName());
-                }
-                BeanUtils.copyProperties(testGrouping, testGroupingResponse);
-                testGroupingResponse.setTestCaseName(testCaseNameList);
-                testGroupingResponse.setSubModuleName(subModuleNameList);
-                testGroupingResponse.setMainModuleName(mainMooduleNameList);
-                testGroupingResponse.setModuleName(moduleNameList);
-                testGroupingResponseList.add(testGroupingResponse);
-            }
-            return testGroupingResponseList;
         }
     }
+
+    @Override
+    public boolean folderExists(Long groupId) {
+        String groupPath = testGroupingRepository.findById(groupId).get().getGroupPath();
+        if (groupPath != null) {
+            File file = new File(groupPath);
+            if (file.exists()) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean existsByTestGroupingNameByProjectId(String name, Long projectId) {
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
+    }
+
+    @Override
+    public boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId) {
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, groupingId);
+    }
+
+    @Override
+    public boolean hasExcelPath(Long testGroupingId) {
+        List<String> excelFilePath = testGroupingRepository.findById(testGroupingId).get().getExcelFilePath();
+        if (excelFilePath.isEmpty()) return false;
+        return true;
+
+    }
+
+    @Override
+    public List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId) {
+        List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
+        List<TestGrouping> testGroupingList = testGroupingRepository.findAllTestGroupingByTestCasesId(testCaseId);
+
+        for (TestGrouping testGrouping : testGroupingList) {
+            TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+            BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+            testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+            List<String> testCaseNames = new ArrayList<>();
+            List<String> subModuleName = new ArrayList<>();
+            List<String> mainModulesName = new ArrayList<>();
+            List<String> modulesName = new ArrayList<>();
+            for (TestCases testCase : testGrouping.getTestCases()) {
+                testCaseNames.add(testCase.getName());
+                subModuleName.add(testCase.getSubModule().getName());
+                mainModulesName.add(testCase.getSubModule().getMainModule().getName());
+                modulesName.add(testCase.getSubModule().getMainModule().getModules().getName());
+            }
+            testGroupingResponse.setTestCaseName(testCaseNames);
+            testGroupingResponse.setSubModuleName(subModuleName);
+            testGroupingResponse.setMainModuleName(mainModulesName);
+            testGroupingResponse.setModuleName(modulesName);
+            testGroupingResponseList.add(testGroupingResponse);
+        }
+        return testGroupingResponseList;
+    }
+
+    @Override
+    public List<TestGroupingResponse> getAllTestGroupingByTestTypeId(Long testTypeId) {
+        List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
+        List<TestGrouping> testGroupingList = testGroupingRepository.findAllTestGroupingByTestTypeId(testTypeId);
+        for (TestGrouping testGrouping : testGroupingList) {
+            TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+            testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+            List<TestCases> testCasesList = testGrouping.getTestCases();
+            List<String> subModuleNameList = new ArrayList<>();
+            List<String> mainMooduleNameList = new ArrayList<>();
+            List<String> moduleNameList = new ArrayList<>();
+            List<String> testCaseNameList = new ArrayList<>();
+
+            for (TestCases testCases : testCasesList) {
+                testCaseNameList.add(testCases.getName());
+                subModuleNameList.add(testCases.getSubModule().getName());
+                mainMooduleNameList.add(testCases.getSubModule().getMainModule().getName());
+                moduleNameList.add(testCases.getSubModule().getMainModule().getModules().getName());
+
+            }
+            BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+            testGroupingResponse.setTestCaseName(testCaseNameList);
+            testGroupingResponse.setSubModuleName(subModuleNameList);
+            testGroupingResponse.setMainModuleName(mainMooduleNameList);
+            testGroupingResponse.setModuleName(moduleNameList);
+            testGroupingResponseList.add(testGroupingResponse);
+
+        }
+        return testGroupingResponseList;
+
+    }
+
+    @Override
+    public List<TestGroupingResponse> multiSearchTestGrouping(Pageable
+                                                                      pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (Utils.isNotNullAndEmpty(testGroupingSearch.getName())) {
+            booleanBuilder.and(QTestGrouping.testGrouping.name.containsIgnoreCase(testGroupingSearch.getName()));
+        }
+
+        if (Utils.isNotNullAndEmpty(testGroupingSearch.getTestTypeName())) {
+            booleanBuilder.and(QTestGrouping.testGrouping.testType.name.containsIgnoreCase(testGroupingSearch.getTestTypeName()));
+        }
+        List<TestGroupingResponse> testGroupingResponseList = new ArrayList<>();
+        Page<TestGrouping> testGroupingPage = testGroupingRepository.findAll(booleanBuilder, pageable);
+        pagination.setTotalRecords(testGroupingPage.getTotalElements());
+        pagination.setPageSize(testGroupingPage.getTotalPages());
+        for (TestGrouping testGrouping : testGroupingPage) {
+            TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
+            testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
+            List<TestCases> testCasesList = testGrouping.getTestCases();
+            List<String> subModuleNameList = new ArrayList<>();
+            List<String> mainMooduleNameList = new ArrayList<>();
+            List<String> moduleNameList = new ArrayList<>();
+            List<String> testCaseNameList = new ArrayList<>();
+            for (TestCases testCases : testCasesList) {
+
+                testCaseNameList.add(testCases.getName());
+                subModuleNameList.add(testCases.getSubModule().getName());
+                mainMooduleNameList.add(testCases.getSubModule().getMainModule().getName());
+                moduleNameList.add(testCases.getSubModule().getMainModule().getModules().getName());
+            }
+            BeanUtils.copyProperties(testGrouping, testGroupingResponse);
+            testGroupingResponse.setTestCaseName(testCaseNameList);
+            testGroupingResponse.setSubModuleName(subModuleNameList);
+            testGroupingResponse.setMainModuleName(mainMooduleNameList);
+            testGroupingResponse.setModuleName(moduleNameList);
+            testGroupingResponseList.add(testGroupingResponse);
+        }
+        return testGroupingResponseList;
+    }
+}
