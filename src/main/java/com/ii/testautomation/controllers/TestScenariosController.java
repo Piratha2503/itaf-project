@@ -46,6 +46,10 @@ public class TestScenariosController {
 
         if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(), testScenariosRequest.getProjectId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
+        if (projectService.existByProjectId(testScenariosRequest.getProjectId()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
         testScenariosService.saveTestScenario(testScenariosRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTestScenariosSaveMessage()));
 
