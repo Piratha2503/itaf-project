@@ -28,4 +28,7 @@ public class TestGrouping extends DateAudit {
     @ElementCollection
     private List<String> excelFilePath;
     private String groupPath;
+    @ManyToOne
+    @JoinColumn(name = "project_id",nullable = false)
+    private Project project;
 }
