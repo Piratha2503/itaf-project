@@ -5,7 +5,9 @@ import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
 import com.ii.testautomation.entities.Project;
 import com.ii.testautomation.entities.QProject;
+import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.repositories.ProjectRepository;
+import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Utils;
@@ -27,16 +29,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
 @Component
 @PropertySource("classpath:application.properties")
 public class ProjectServiceImpl implements ProjectService {
-    @Value("${jar.import.file.ubuntu.path}")
+    @Value("${jar.import.file.windows.path}")
     private String fileFolder;
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private TestGroupingRepository testGroupingRepository;
 
     @Override
     public boolean checkJarFile(MultipartFile jarFile) {
@@ -62,79 +70,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return true;
     }
-//        @Override
-//    public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
-//        Project project = new Project();
-//        BeanUtils.copyProperties(projectRequest, project);
-//        if (project.getId() != null) {
-//            Project eixstingProject = projectRepository.findById(projectRequest.getId()).get();
-//            String existingFolderPath = eixstingProject.getProjectPath();
-//            String newFolderPath = fileFolder + File.separator + projectRequest.getName();
-//            File existingFolder = new File(existingFolderPath);
-//            File newFolder = new File(newFolderPath);
-//            if (existingFolder.exists()) {
-//                existingFolder.renameTo(newFolder);
-//                if (jarFile != null) {
-//                    String existingJarPath = projectRepository.findById(projectRequest.getId()).get().getJarFilePath();
-//                    if (existingJarPath != null) {
-//                        File existingJarFolder = new File(existingJarPath);
-//                        existingJarFolder.delete();
-//                    }
-//                }
-//                if (configFile != null) {
-//                    String existingConfigPath = projectRepository.findById(projectRequest.getId()).get().getConfigFilePath();
-//                    if (existingConfigPath != null) {
-//                        File existingConfigFolder = new File(existingConfigPath);
-//                        existingConfigFolder.delete();
-//                    }
-//                }
-//            }
-//            else {
-//                if (jarFile != null) {
-//                    String existingJarPath = projectRepository.findById(projectRequest.getId()).get().getJarFilePath();
-//                    if (existingJarPath != null) {
-//                        File existingJarFolder = new File(existingJarPath);
-//                        existingJarFolder.delete();
-//                    }
-//                }
-//                if (configFile != null) {
-//                    String existingConfigPath = projectRepository.findById(projectRequest.getId()).get().getConfigFilePath();
-//                    if (existingConfigPath != null) {
-//                        File existingConfigFolder = new File(existingConfigPath);
-//                        existingConfigFolder.delete();
-//                    }
-//                }
-//            }
-//        }
-//        String directoryPath = fileFolder + File.separator + projectRequest.getName();
-//        String uploadedJarFilePath = null;
-//        String uploadedConfigFilePath = null;
-//        File jarDirectory = new File(directoryPath);
-//        if (!jarDirectory.exists()) {
-//            jarDirectory.mkdirs();
-//        }
-//        project.setProjectPath(directoryPath);
-//        try {
-//            if (jarFile != null && !jarFile.isEmpty()) {
-//                String jarFilename = jarFile.getOriginalFilename();
-//                uploadedJarFilePath = directoryPath + File.separator + jarFilename;
-//                File savedJarFile = new File(uploadedJarFilePath);
-//                jarFile.transferTo(savedJarFile);
-//
-//            }
-//            if (configFile != null && !configFile.isEmpty()) {
-//                String configFilename = configFile.getOriginalFilename();
-//                uploadedConfigFilePath = directoryPath + File.separator + configFilename;
-//                File savedConfigFile = new File(uploadedConfigFilePath);
-//                configFile.transferTo(savedConfigFile);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        project.setJarFilePath(uploadedJarFilePath);
-//        project.setConfigFilePath(uploadedConfigFilePath);
-//        projectRepository.save(project);
-//    }
+
     @Override
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
@@ -180,18 +116,29 @@ public class ProjectServiceImpl implements ProjectService {
         String uploadedJarFilePath = eixstingProject.getJarFilePath();
         String uploadedConfigPath = eixstingProject.getConfigFilePath();
         if (existingFolder.exists()) {
-                existingFolder.renameTo(newFolder);
             try {
                 if (jarFile != null && !jarFile.isEmpty()) {
                     if (uploadedJarFilePath != null) {
                         File existingJarFolder = new File(uploadedJarFilePath);
                         existingJarFolder.delete();
                     }
-
                     String jarFilename = jarFile.getOriginalFilename();
+                    existingFolder.renameTo(newFolder);
+                    eixstingProject.setProjectPath(newProjectFolderPath);
                     uploadedJarFilePath = newProjectFolderPath + File.separator + jarFilename;
                     File savedJarFile = new File(uploadedJarFilePath);
                     jarFile.transferTo(savedJarFile);
+                    eixstingProject.setJarFilePath(uploadedJarFilePath);
+                } else {
+                    if (uploadedJarFilePath != null) {
+                        existingFolder.renameTo(newFolder);
+                        eixstingProject.setProjectPath(newProjectFolderPath);
+                        Path path = Paths.get(uploadedJarFilePath);
+                        String fileName = path.getFileName().toString();
+                        String newJarFilePath = newProjectFolderPath + File.separator + fileName;
+                        eixstingProject.setJarFilePath(newJarFilePath);
+                    }
+
                 }
 
                 if (configFile != null && !configFile.isEmpty()) {
@@ -201,49 +148,44 @@ public class ProjectServiceImpl implements ProjectService {
                     }
 
                     String configFilename = configFile.getOriginalFilename();
+                    existingFolder.renameTo(newFolder);
+                    eixstingProject.setProjectPath(newProjectFolderPath);
                     uploadedConfigPath = newProjectFolderPath + File.separator + configFilename;
                     File savedConfigFile = new File(uploadedConfigPath);
                     configFile.transferTo(savedConfigFile);
-                }
-
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            try {
-                if (jarFile != null && !jarFile.isEmpty()) {
-                    if (uploadedJarFilePath != null) {
-                        File existingJarFolder = new File(uploadedJarFilePath);
-                        existingJarFolder.delete();
-                    }
-
-                    String jarFilename = jarFile.getOriginalFilename();
-                    uploadedJarFilePath = newProjectFolderPath + File.separator + jarFilename;
-                    File savedJarFile = new File(uploadedJarFilePath);
-                    jarFile.transferTo(savedJarFile);
-                }
-
-                if (configFile != null && !configFile.isEmpty()) {
+                    eixstingProject.setConfigFilePath(uploadedConfigPath);
+                } else {
                     if (uploadedConfigPath != null) {
-                        File existingConfigFolder = new File(uploadedConfigPath);
-                        existingConfigFolder.delete();
+                        existingFolder.renameTo(newFolder);
+                        eixstingProject.setProjectPath(newProjectFolderPath);
+                        Path path = Paths.get(uploadedConfigPath);
+                        String fileName = path.getFileName().toString();
+                        String newConfigPath = newProjectFolderPath + File.separator + fileName;
+                        eixstingProject.setConfigFilePath(newConfigPath);
                     }
-
-                    String configFilename = configFile.getOriginalFilename();
-                    uploadedConfigPath = newProjectFolderPath + File.separator + configFilename;
-                    File savedConfigFile = new File(uploadedConfigPath);
-                    configFile.transferTo(savedConfigFile);
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        eixstingProject.setProjectPath(newProjectFolderPath);
-        eixstingProject.setJarFilePath(uploadedJarFilePath);
-        eixstingProject.setConfigFilePath(uploadedConfigPath);
+        List<TestGrouping> testGroupingList = testGroupingRepository.findDistinctTestGroupingByTestCases_SubModule_MainModule_Modules_Project_Id(projectRequest.getId());
+        for (TestGrouping testGrouping : testGroupingList) {
+            Path groupingPath = Paths.get(testGrouping.getGroupPath());
+            String groupName = groupingPath.getFileName().toString();
+            String newGroupingPath = newProjectFolderPath + File.separator + groupName;
+            testGrouping.setGroupPath(newGroupingPath);
+            List<String> excelPathList = testGrouping.getExcelFilePath();
+            List<String> newExcelPathList = new ArrayList<>();
+            for (String excelPath : excelPathList) {
+                Path groupingExcelPath = Paths.get(excelPath);
+                String newExcelName = groupingExcelPath.getFileName().toString();
+                String newExcelPath = newGroupingPath + File.separator + newExcelName;
+                newExcelPathList.add(newExcelPath);
+            }
+            testGrouping.setExcelFilePath(newExcelPathList);
+            testGroupingRepository.save(testGrouping);
+        }
+        BeanUtils.copyProperties(projectRequest, eixstingProject);
         projectRepository.save(eixstingProject);
 
     }
@@ -278,16 +220,23 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponse getProjectById(Long projectId) {
+    public ProjectResponse getProjectById(Long projectId) throws IOException {
         Project project;
         project = projectRepository.findById(projectId).get();
         ProjectResponse projectResponse = new ProjectResponse();
         BeanUtils.copyProperties(project, projectResponse);
+        String existingConfigFile = project.getConfigFilePath();
+        String existingJarFile = project.getJarFilePath();
+        Path config = Paths.get(existingConfigFile);
+        Path jar = Paths.get(existingJarFile);
+        String jarFileName = config.getFileName().toString();
+        String configFileName = jar.getFileName().toString();
+        projectResponse.setConfigFile(jarFileName);
+        projectResponse.setJarFile(configFileName);
         return projectResponse;
     }
 
-    public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination
-            pagination, ProjectSearch projectSearch) {
+    public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
             booleanBuilder.and(QProject.project.name.containsIgnoreCase(projectSearch.getName()));
@@ -339,8 +288,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Map<Integer, ProjectRequest> csvToProjectRequest(InputStream inputStream) {
         Map<Integer, ProjectRequest> projectRequestList = new HashMap<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
@@ -405,8 +353,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
-        try (InputStream inputStream = multipartFile.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
+        try (InputStream inputStream = multipartFile.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
             String[] actualHeaders = new String[headerRow.getLastCellNum()];
@@ -443,7 +390,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public boolean hasJarPath(Long projectId) {
         Project project = projectRepository.findById(projectId).get();
-        if (project.getConfigFilePath() != null) return true;
+        if (project.getJarFilePath() != null) return true;
         return false;
     }
 

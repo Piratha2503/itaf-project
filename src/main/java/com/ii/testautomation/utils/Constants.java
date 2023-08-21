@@ -16,6 +16,5 @@ public class Constants {
   public static final String TESTCASES="testcases";
   public static final String TESTSCENARIO="TestScenario";
   public static final String TESTSCENARIOS="TestScenarios";
-
-
+  public static final String EXECUTION_HISTORY = "ExecutionHistories";
 }

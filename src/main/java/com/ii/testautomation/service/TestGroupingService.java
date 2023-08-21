@@ -1,5 +1,6 @@
 package com.ii.testautomation.service;
 
+import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
@@ -7,10 +8,13 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface TestGroupingService {
     void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles);
+
+    void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles);
 
     boolean hasExcelFormat(List<MultipartFile> multipartFiles);
 
@@ -34,10 +38,7 @@ public interface TestGroupingService {
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId);
 
-    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds);
-
     boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
-
 
     boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);
 
@@ -45,6 +46,7 @@ public interface TestGroupingService {
 
     boolean existsTestGroupingByTestScenarioId(Long id);
 
-    void deleteTestGroupingById(Long id,Long projectId);
+    void deleteTestGroupingById(Long id, Long projectId);
 
+    void execution(ExecutionRequest executionRequest) throws IOException;
 }

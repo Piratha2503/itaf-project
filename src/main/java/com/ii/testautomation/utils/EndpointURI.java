@@ -10,6 +10,7 @@ public final class EndpointURI {
     private static final String SEARCH_WITH_PAGE = "page";
     private static final String ID = "/{id}";
     private static final String PROJECT_ID = "/{projectId}";
+
     // URLs for Project
     public static final String PROJECT = BASE_API_PATH + "project";
     public static final String PROJECT_FILE = PROJECT+"/updateFile";
@@ -62,16 +63,22 @@ public final class EndpointURI {
     public static final String TEST_GROUPING_IMPORT = TEST_GROUPING + "/import";
     public static final String TEST_GROUPING_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testGrouping";
     public static final String TEST_GROUPING_BY_ID = TEST_GROUPING + ID+PROJECT_ID;
+    public static final String TEST_GROUPINGS_BY_ID = TEST_GROUPING + ID;
+   public static final String TEST_GROUPINGS_EXCEL_BY_ID = TEST_GROUPING +"excel"+ID;
     public static final String TEST_GROUPING_BY_TEST_CASE_ID = TEST_GROUPING + "/testCase" + ID;
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;
-    public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update" + ID+PROJECT_ID;
+    public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update";
     // URLs for TestScenario
     public static final String TEST_SCENARIO = BASE_API_PATH + "testScenario";
     public static final String TEST_SCENARIO_BY_PROJECT_ID = BASE_API_PATH+"TestScenarioByProjectIdWithPagination"+ID;
     public static final String TEST_SCENARIO_BY_ID = TEST_SCENARIO + ID;
     public static final String TEST_SCENARIO_UPDATE_EXECUTION_STATUS = TEST_SCENARIO + "/update" + ID+PROJECT_ID;
 
+    // Execution History
+    public static final String EXECUTION_HISTORY = BASE_API_PATH + "ExecutionHistory";
+    public static final String EXECUTION_HISTORY_BY_TEST_GROUPING_ID = EXECUTION_HISTORY+"/testGrouping"+ID;
+    public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
     private EndpointURI() {
     }
 }
