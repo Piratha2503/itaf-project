@@ -52,7 +52,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
 
-    @Value("${jar.import.file.windows.path}")
+    @Value("${jar.import.file.ubuntu.path}")
     private String fileFolder;
 
     @Override
@@ -140,6 +140,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             e.printStackTrace();
         }
         testGrouping.setExcelFilePath(filePaths);
+        Project project=projectRepository.findById(testGroupingRequest.getProjectId()).get();
+        testGrouping.setProject(project);
         testGroupingRepository.save(testGrouping);
     }
 
@@ -498,8 +500,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public boolean existsByTestGroupingNameByProjectId(String name, Long projectId) {
+    public boolean existsByTestGroupingNameByTestCaseAndProjectId(String name, Long projectId) {
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
+    }
+
+    @Override
+    public boolean existsByTestGroupingNameByTestScenarioAndProjectId(String name, Long projectId) {
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestScenarios_testCases_SubModule_MainModule_Modules_Project_Id(name,projectId);
     }
 
     @Override
