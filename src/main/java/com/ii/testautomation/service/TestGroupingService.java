@@ -8,11 +8,14 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface TestGroupingService {
     void saveTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles);
+
     void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles);
+
     boolean hasExcelFormat(List<MultipartFile> multipartFiles);
 
     boolean allTestCasesInSameProject(List<Long> testCaseIds);
@@ -35,10 +38,8 @@ public interface TestGroupingService {
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId);
 
-//    void updateTestGroupingExecutionStatus(Long testGroupingId, Long projectId, List<Long> testScenarioIds, List<Long> testCaseIds);
-
-    boolean existsByTestGroupingNameByProjectId(String name, Long projectId);
-
+    boolean existsByTestGroupingNameByTestCaseAndProjectId(String name, Long projectId);
+    boolean existsByTestGroupingNameByTestScenarioAndProjectId(String name, Long projectId);
 
     boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);
 
@@ -48,5 +49,7 @@ public interface TestGroupingService {
 
     void deleteTestGroupingById(Long id, Long projectId);
 
-    void execution(ExecutionRequest executionRequest);
+    void execution(ExecutionRequest executionRequest) throws IOException;
+
+    boolean folderExists(Long groupId);
 }

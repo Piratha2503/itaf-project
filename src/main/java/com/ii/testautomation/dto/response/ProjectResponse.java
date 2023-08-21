@@ -6,9 +6,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ProjectResponse {
-  private Long id;
-  private String name;
-  private String description;
-  private String code;
-
+    private Long id;
+    private String name;
+    private String description;
+    private String code;
+    private String jarFile;
+    private String configFile;
 }

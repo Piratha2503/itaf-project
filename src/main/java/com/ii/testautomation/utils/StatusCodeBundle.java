@@ -374,6 +374,8 @@ public class StatusCodeBundle {
     private String testGroupingByProjectId;
     @Value("${message.success.getTestGrouping.testType}")
     private String testGroupingByTestType;
+    @Value("${message.validation.testGrouping.have.testCases}")
+    private String WantToOneHaveOneTestScenarioOrOneTestCase;
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;
@@ -417,4 +419,11 @@ public class StatusCodeBundle {
     private String executionHistoryIdNull;
     @Value("${message.success.executionHistory.notExist}")
     private String executionHistoryNotFound;
+    @Value("${message.success.testGrouping.notMapped}")
+    private String TestGroupingNotMappedMessage;
+    @Value("${message.success.executionHistory.view}")
+    private String viewExecutionHistoryMessage;
+    @Value("${message.success.delete.executionHistory}")
+    private String executionHistoryDeleteSuccessMessage;
+
 }

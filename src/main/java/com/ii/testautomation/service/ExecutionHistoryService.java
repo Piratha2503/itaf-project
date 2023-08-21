@@ -19,4 +19,6 @@ public interface ExecutionHistoryService {
     URL viewReportByExecutionHistoryId(Long id) throws IOException;
 
     boolean existByExecutionHistoryId(Long id);
+
+    void deleteExecutionHistory(Long id);
 }
