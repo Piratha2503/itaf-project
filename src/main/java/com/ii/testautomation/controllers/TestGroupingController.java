@@ -59,14 +59,16 @@ public class TestGroupingController {
                 (testGroupingRequest.getTestScenarioIds() == null || testGroupingRequest.getTestScenarioIds().isEmpty())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
         }
-        if(!projectService.existByProjectId(testGroupingRequest.getProjectId()))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage() ));
+        if (!projectService.existByProjectId(testGroupingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
-        if (testGroupingService.existsByTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
+        if (testGroupingService.existsByTestGroupingNameByTestCaseAndProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
+        }
+        if (testGroupingService.existsByTestGroupingNameByTestScenarioAndProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
         }
         if (testGroupingRequest.getTestCaseId() != null) {
