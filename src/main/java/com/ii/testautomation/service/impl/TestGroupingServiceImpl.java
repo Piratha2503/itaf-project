@@ -250,7 +250,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsById(testGroupingId);
     }
 
-
     @Override
     public void deleteTestGroupingById(Long id, Long projectId) {
         String projectName = projectRepository.findById(projectId).get().getName();
@@ -366,11 +365,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 qTestGrouping.testCases.any().subModule.mainModule != null &&
                 qTestGrouping.testCases.any().subModule.mainModule.modules != null &&
                 qTestGrouping.testCases.any().subModule.mainModule.modules.name != null) {
-            booleanBuilder.and(qTestGrouping.testCases.any().subModule.mainModule.modules.project.id.eq(projectId));
+            booleanBuilder.and(qTestGrouping.project.id.eq(projectId));
 
         }
-        Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findAll(booleanBuilder, pageable);
-
+        //Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findAll(booleanBuilder, pageable);
+       Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findByProjectId(projectId,pageable);
         if (qTestGrouping.testScenarios != null &&
                 qTestGrouping.testScenarios.any().testCases != null &&
                 qTestGrouping.testScenarios.any().testCases.any().subModule != null &&
@@ -380,10 +379,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testScenariosbooleanBuilder.and(qTestGrouping.testCases.any().subModule.mainModule.modules.project.id.eq(projectId));
 
         }
-        Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findAll(testScenariosbooleanBuilder, pageable);
-        Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
+       // Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findAll(testScenariosbooleanBuilder, pageable);
+       // Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
 
-        for (TestGrouping testGrouping : testGroupingPage) {
+        for (TestGrouping testGrouping : testGroupingPageByTestCase) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             if (testGrouping.getTestType() != null) {
                 testGroupingResponse.setTestTypeName(testGrouping.getTestType().getName());
