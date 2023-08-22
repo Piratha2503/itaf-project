@@ -42,17 +42,17 @@ public class TestCasesController {
     @Autowired
     private MainModulesService mainModulesService;
 
-    @PostMapping(value = EndpointURI.TESTCASE)
-    public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
-        if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
-        }
-        if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
-        }
-        testCasesService.saveTestCase(testCaseRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestCaseSuccessMessage()));
+@PostMapping(value = EndpointURI.TESTCASE)
+public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
+    if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
     }
+    if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
+    }
+    testCasesService.saveTestCase(testCaseRequest);
+    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestCaseSuccessMessage()));
+}
 
     @GetMapping(value = EndpointURI.TESTCASE_BY_ID)
     public ResponseEntity<Object> GetTestcaseById(@PathVariable Long id) {
@@ -69,7 +69,7 @@ public class TestCasesController {
                     statusCodeBundle.getTestCasesNotExistCode(),
                     statusCodeBundle.getTestCasesNotExistsMessage()));
         }
-        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getId(), testCaseRequest.getName())) {
+        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(),testCaseRequest.getId(),testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestCasesAlreadyExistsCode(),
                     statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));

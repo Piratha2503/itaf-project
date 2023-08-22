@@ -61,8 +61,7 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public boolean existsByTestCasesName(String testCaseName, Long subModulesId) {
-        Long projectId = subModulesRepository.findById(subModulesId).get().getMainModule().getModules().getProject().getId();
-        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(testCaseName, projectId);
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModuleId(testCaseName, subModulesId);
     }
 
     @Override
@@ -84,9 +83,8 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public boolean isUpdateTestCaseNameExists(Long id, String name) {
-        Long projectId = testCasesRepository.findById(id).get().getSubModule().getMainModule().getModules().getProject().getId();
-        return testCasesRepository.existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(name, projectId, id);
+    public boolean isUpdateTestCaseNameExists(String name, Long id, Long subModuleId) {
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModuleIdAndIdNot(name, subModuleId, id);
     }
 
 
@@ -361,7 +359,7 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public void updateExecutionStatus(Long testCaseId) {
-        TestCases testCases=testCasesRepository.findById(testCaseId).get();
+        TestCases testCases = testCasesRepository.findById(testCaseId).get();
         testCases.setExecutionStatus(true);
         testCasesRepository.save(testCases);
     }
