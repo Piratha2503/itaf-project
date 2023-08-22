@@ -48,11 +48,10 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     public List<ExecutionHistoryResponse> viewByTestGroupingId(Long id) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
         List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findAllByTestGroupingIdOrderByCreatedAtDesc(id);
-        for (ExecutionHistory executionHistory : executionHistoryList)
-        {
+        for (ExecutionHistory executionHistory : executionHistoryList) {
             ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
             executionHistoryResponse.setTestGroupingId(id);
-            BeanUtils.copyProperties(executionHistory,executionHistoryResponse);
+            BeanUtils.copyProperties(executionHistory, executionHistoryResponse);
             executionHistoryResponseList.add(executionHistoryResponse);
         }
 
@@ -64,11 +63,12 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         String reportName = executionHistoryRepository.findById(id).get().getReportName();
         Long projectId = testGroupingRepository.findById(id).get().getProject().getId();
         String path = projectRepository.findById(projectId).get().getProjectPath();
-        Path reportPath = Path.of(path+File.separator+reportName.toString()+".html");
+        Path reportPath = Path.of(path + File.separator + reportName.toString() + ".html");
         String myfile = Files.readString(reportPath);
         return myfile;
 
     }
+
     @Override
     public String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException {
         ExecutionHistory latestUpdate = executionHistoryRepository.findFirstByTestGroupingIdOrderByCreatedAtDesc(id);
@@ -77,8 +77,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         String reportContent = Files.readString(path);
         return reportContent;
     }
-
-
 
     @Override
     public boolean existByExecutionHistoryId(Long id) {
@@ -89,7 +87,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     public void deleteExecutionHistory(Long id) {
         executionHistoryRepository.deleteById(id);
     }
-
 
     @Override
     public boolean existByTestGropingId(Long id) {
