@@ -22,5 +22,4 @@ public interface ExecutionHistoryService {
 
     void deleteExecutionHistory(Long id);
 
-    List<ExecutionHistoryResponse> viewReportByTestGroupingIdAndDate(Long testGroupingId);
 }

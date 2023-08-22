@@ -49,26 +49,15 @@ public class ExecutionHistoryController {
             return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryNotFound());
         return ResponseEntity.ok(executionHistoryService.viewReportByExecutionHistoryId(id));
     }
-    @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_ID)
-    public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id)
-    {
-        if(!executionHistoryService.existByExecutionHistoryId(id))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),statusCodeBundle.getTestGroupingNotExistsMessage()));
-        }
-        executionHistoryService.deleteExecutionHistory(id);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
-    }
 
-    @GetMapping(EndpointURI.EXECUTION_HISTORY_BY_DATE)
-    public ResponseEntity<Object> viewHistoryByDate(@PathVariable Long id) throws MissingPathVariableException
-    {
-        if (!testGroupingService.existsByTestGroupingId(id)) {
+    @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_ID)
+    public ResponseEntity<Object> deleteExecutionHistoryById(@PathVariable Long id) {
+        if (!executionHistoryService.existByExecutionHistoryId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        if (!executionHistoryService.existByTestGropingId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingNotMappedMessage()));
-
-       return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY,executionHistoryService.viewReportByTestGroupingIdAndDate(id),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getViewExecutionHistoryMessage()));
+        executionHistoryService.deleteExecutionHistory(id);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
+
+
 }

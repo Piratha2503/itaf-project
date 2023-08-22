@@ -39,7 +39,7 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Override
     public List<ExecutionHistoryResponse> viewByTestGroupingId(Long id) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
-        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findAllByTestGroupingId(id);
+        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findAllByTestGroupingIdOrderByCreatedAtDesc(id);
         for (ExecutionHistory executionHistory : executionHistoryList)
         {
             ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
@@ -58,13 +58,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         String myfile = Files.readString(path);
         return myfile;
 
-    }
-
-    @Override
-    public List<ExecutionHistoryResponse> viewReportByTestGroupingIdAndDate(Long testGroupingId) {
-        List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
-        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findAllByTestGroupingIdOrderByCreatedAtDesc(testGroupingId);
-        return executionHistoryResponseList;
     }
 
     @Override
