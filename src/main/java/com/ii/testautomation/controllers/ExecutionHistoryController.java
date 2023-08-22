@@ -49,14 +49,7 @@ public class ExecutionHistoryController {
             return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryNotFound());
         return ResponseEntity.ok(executionHistoryService.viewReportByExecutionHistoryId(id));
     }
-
-    @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_ID)
-    public ResponseEntity<Object> deleteExecutionHistoryById(@PathVariable Long id) {
-        if (!executionHistoryService.existByExecutionHistoryId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
-
-    @GetMapping(EndpointURI.EXECUTION_HISTORY_ID)
-
+    @GetMapping(EndpointURI.EXECUTION_HISTORY_BY_DATE)
     public ResponseEntity<String> viewReportWithLastUpdateByExecutionHistoryId(@PathVariable Long id) throws IOException {
         if (id == null) {
             return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryIdNull());

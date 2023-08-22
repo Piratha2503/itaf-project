@@ -13,9 +13,11 @@ public interface ExecutionHistoryRepository extends JpaRepository<ExecutionHisto
 
     ExecutionHistory findByTestGroupingId(Long id);
 
-    ExecutionHistory findFirstByIdAndOrderByCreatedDateDesc(Long id);
+    ExecutionHistory findFirstByIdOrderByCreatedAtDesc(Long id);
 
     List<ExecutionHistory> findAllByTestGroupingId(Long id);
 
     List<ExecutionHistory> findAllByTestGroupingIdOrderByCreatedAtDesc(Long testGroupingId);
+
+    ExecutionHistory findFirstByTestGroupingIdOrderByCreatedAtDesc(Long id);
 }

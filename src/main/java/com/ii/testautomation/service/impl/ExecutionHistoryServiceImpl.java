@@ -2,9 +2,13 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
 import com.ii.testautomation.entities.ExecutionHistory;
+import com.ii.testautomation.entities.Project;
+import com.ii.testautomation.entities.TestGrouping;
 import com.ii.testautomation.repositories.ExecutionHistoryRepository;
+import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.service.ExecutionHistoryService;
+import com.ii.testautomation.service.ProjectService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +38,8 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     private ExecutionHistoryRepository executionHistoryRepository;
     @Autowired
     private TestGroupingRepository testGroupingRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Value("${reports.file.save.path}")
     private String fileFolder;
@@ -56,18 +62,19 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Override
     public String viewReportByExecutionHistoryId(Long id) throws IOException {
         String reportName = executionHistoryRepository.findById(id).get().getReportName();
-        Path path = Path.of(fileFolder+reportName.toString()+".html");
-        String myfile = Files.readString(path);
+        Long projectId = testGroupingRepository.findById(id).get().getProject().getId();
+        String path = projectRepository.findById(projectId).get().getProjectPath();
+        Path reportPath = Path.of(path+File.separator+reportName.toString()+".html");
+        String myfile = Files.readString(reportPath);
         return myfile;
 
     }
     @Override
     public String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException {
-        ExecutionHistory latestUpdate = executionHistoryRepository.findFirstByIdAndOrderByCreatedDateDesc(id);
+        ExecutionHistory latestUpdate = executionHistoryRepository.findFirstByTestGroupingIdOrderByCreatedAtDesc(id);
         String reportName = latestUpdate.getReportName();
-        Path path = Path.of(fileFolder + reportName + ".html");
+        Path path = Path.of(fileFolder + reportName.toString() + ".html");
         String reportContent = Files.readString(path);
-
         return reportContent;
     }
 
