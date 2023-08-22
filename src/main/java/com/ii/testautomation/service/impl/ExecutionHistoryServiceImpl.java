@@ -47,8 +47,10 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
 
     @Override
     public String viewReportByExecutionHistoryId(Long id) throws IOException {
-        String reportName = executionHistoryRepository.findById(id).get().getReportName();
-        Long projectId = testGroupingRepository.findById(id).get().getProject().getId();
+        ExecutionHistory executionHistory = executionHistoryRepository.findById(id).get();
+        String reportName = executionHistory.getReportName();
+        Long testGroupingId = executionHistory.getTestGrouping().getId();
+        Long projectId = testGroupingRepository.findById(testGroupingId).get().getProject().getId();
         String path = projectRepository.findById(projectId).get().getProjectPath();
         Path reportPath = Path.of(path + File.separator + reportName.toString() + ".html");
         String myfile = Files.readString(reportPath);
