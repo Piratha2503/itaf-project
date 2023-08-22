@@ -10,6 +10,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,15 +36,15 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
 
     @Value("${reports.file.save.path}")
     private String fileFolder;
+
     @Override
     public List<ExecutionHistoryResponse> viewByTestGroupingId(Long id) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
         List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findAllByTestGroupingId(id);
-        for (ExecutionHistory executionHistory : executionHistoryList)
-        {
+        for (ExecutionHistory executionHistory : executionHistoryList) {
             ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
             executionHistoryResponse.setTestGroupingId(id);
-            BeanUtils.copyProperties(executionHistory,executionHistoryResponse);
+            BeanUtils.copyProperties(executionHistory, executionHistoryResponse);
             executionHistoryResponseList.add(executionHistoryResponse);
         }
 
@@ -53,11 +54,23 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Override
     public String viewReportByExecutionHistoryId(Long id) throws IOException {
         String reportName = executionHistoryRepository.findById(id).get().getReportName();
-        Path path = Path.of(fileFolder+reportName.toString()+".html");
+        Path path = Path.of(fileFolder + reportName.toString() + ".html");
         String myfile = Files.readString(path);
         return myfile;
 
+
     }
+    @Override
+    public String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException {
+        ExecutionHistory latestUpdate = executionHistoryRepository.findFirstByIdAndOrderByCreatedDateDesc(id);
+        String reportName = latestUpdate.getReportName();
+        Path path = Path.of(fileFolder + reportName + ".html");
+        String reportContent = Files.readString(path);
+
+        return reportContent;
+    }
+
+
 
     @Override
     public boolean existByExecutionHistoryId(Long id) {
