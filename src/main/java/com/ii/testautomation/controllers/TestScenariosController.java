@@ -36,11 +36,6 @@ public class TestScenariosController {
         if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(),testScenariosRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
         }
-        if(!projectService.existByProjectId(testScenariosRequest.getProjectId())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),
-                    statusCodeBundle.getProjectNotExistsMessage()));
-        }
-
         if (testScenariosRequest.getTestCasesId() == null && testScenariosRequest.getMainModuleIds() == null
                 && testScenariosRequest.getModuleIds() == null && testScenariosRequest.getSubModuleIds() == null)
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
