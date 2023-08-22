@@ -7,6 +7,7 @@ import org.w3c.dom.html.HTMLDocument;
 
 import javax.swing.text.html.HTML;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 public interface ExecutionHistoryService {
@@ -20,4 +21,6 @@ public interface ExecutionHistoryService {
     boolean existByExecutionHistoryId(Long id);
 
     void deleteExecutionHistory(Long id);
+
+    List<ExecutionHistoryResponse> viewReportByTestGroupingIdAndDate(Long testGroupingId);
 }

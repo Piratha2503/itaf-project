@@ -13,6 +13,7 @@ import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.html.HTMLDocument;
@@ -48,13 +49,26 @@ public class ExecutionHistoryController {
             return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryNotFound());
         return ResponseEntity.ok(executionHistoryService.viewReportByExecutionHistoryId(id));
     }
-
     @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_ID)
-    public ResponseEntity<Object> deleteExecutionHistoryById(@PathVariable Long id) {
-        if (!executionHistoryService.existByExecutionHistoryId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+    public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id)
+    {
+        if(!executionHistoryService.existByExecutionHistoryId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
         executionHistoryService.deleteExecutionHistory(id);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
+    }
+
+    @GetMapping(EndpointURI.EXECUTION_HISTORY_BY_DATE)
+    public ResponseEntity<Object> viewHistoryByDate(@PathVariable Long id) throws MissingPathVariableException
+    {
+        if (!testGroupingService.existsByTestGroupingId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        if (!executionHistoryService.existByTestGropingId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingNotMappedMessage()));
+
+       return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY,executionHistoryService.viewReportByTestGroupingIdAndDate(id),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getViewExecutionHistoryMessage()));
     }
 }

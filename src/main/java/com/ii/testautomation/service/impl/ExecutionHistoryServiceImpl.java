@@ -19,6 +19,7 @@ import org.w3c.dom.Document;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,6 +58,13 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         String myfile = Files.readString(path);
         return myfile;
 
+    }
+
+    @Override
+    public List<ExecutionHistoryResponse> viewReportByTestGroupingIdAndDate(Long testGroupingId) {
+        List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
+        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findAllByTestGroupingIdOrderByCreatedAtDesc(testGroupingId);
+        return executionHistoryResponseList;
     }
 
     @Override
