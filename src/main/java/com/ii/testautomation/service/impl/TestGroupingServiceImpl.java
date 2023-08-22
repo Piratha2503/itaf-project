@@ -250,7 +250,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsById(testGroupingId);
     }
 
-
     @Override
     public void deleteTestGroupingById(Long id, Long projectId) {
         String projectName = projectRepository.findById(projectId).get().getName();
