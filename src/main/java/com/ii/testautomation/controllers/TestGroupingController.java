@@ -227,7 +227,6 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getTestGroupingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
 
-
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_TEST_CASE_ID)
     public ResponseEntity<Object> getTestGroupingByTestCaseId(@PathVariable Long id) {
         if (!testCasesService.existsByTestCasesId(id)) {
@@ -241,9 +240,11 @@ public class TestGroupingController {
     }
 
     @GetMapping(value = EndpointURI.TEST_GROUPING_BY_PROJECT_ID)
-    public ResponseEntity<Object> getTestGroupingByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+    public ResponseEntity<Object> getTestGroupingByProjectId(@RequestParam(name = "page") int page,
+                                                             @RequestParam(name = "size") int size,
                                                              @RequestParam(name = "direction") String direction,
-                                                             @RequestParam(name = "sortField") String sortField, @PathVariable Long id) {
+                                                             @RequestParam(name = "sortField") String sortField,
+                                                             @PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
