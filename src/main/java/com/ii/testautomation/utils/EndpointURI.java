@@ -80,7 +80,7 @@ public final class EndpointURI {
     public static final String EXECUTION_HISTORY_BY_TEST_GROUPING_ID = EXECUTION_HISTORY+"/testGrouping"+ID;
     public static final String EXECUTION_HISTORY_BY_DATE = EXECUTION_HISTORY+"/Date"+ID;
     public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
-    public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID+PROJECT_ID;
+    public static final String EXECUTION_HISTORY_PROJECT_ID = EXECUTION_HISTORY+ID+"/project"+PROJECT_ID;
     private EndpointURI() {
     }
 }

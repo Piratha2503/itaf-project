@@ -61,7 +61,7 @@ public class ExecutionHistoryController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_ID)
+    @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_PROJECT_ID)
     public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id,@PathVariable Long projectId)
     {
         if(!executionHistoryService.existByExecutionHistoryId(id))
