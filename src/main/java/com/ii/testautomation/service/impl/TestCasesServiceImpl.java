@@ -84,8 +84,8 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
-    public boolean isUpdateTestCaseNameExists(Long id, String name,Long subModuleId) {
-        return testCasesRepository.existsByNameIgnoreCaseAndSubModuleIdAndIdNot(name,subModuleId,id);
+    public boolean isUpdateTestCaseNameExists(String name,Long id,Long subModuleId) {
+        return testCasesRepository.existsByNameIgnoreCaseAndSubModuleIdAndIdNot(name, subModuleId, id);
     }
 
 

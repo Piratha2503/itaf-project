@@ -16,7 +16,8 @@ public interface TestCasesRepository extends JpaRepository<TestCases, Long>, Que
 
     boolean existsByNameIgnoreCaseAndSubModuleId(String name, Long submoduleId);
 
-    boolean existsByNameIgnoreCaseAndSubModuleIdAndIdNot(String Name, Long SubModuleId, Long id);
+    boolean existsByNameIgnoreCaseAndSubModuleIdAndIdNot(String name, Long subModuleId,Long id);;
+
 
     List<TestCases> findAllTestCasesBySubModuleId(Long id);
 
