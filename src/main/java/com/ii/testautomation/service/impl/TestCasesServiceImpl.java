@@ -61,7 +61,6 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public boolean existsByTestCasesName(String testCaseName, Long subModulesId) {
-        // Long projectId = subModulesRepository.findById(subModulesId).get().getMainModule().getModules().getProject().getId();
         return testCasesRepository.existsByNameIgnoreCaseAndSubModuleId(testCaseName, subModulesId);
     }
 
