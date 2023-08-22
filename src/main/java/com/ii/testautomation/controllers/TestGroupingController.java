@@ -50,6 +50,9 @@ public class TestGroupingController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
+    @Autowired
+    private ExecutionHistoryService executionHistoryService;
+
     @PostMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
 
@@ -214,6 +217,9 @@ public class TestGroupingController {
     public ResponseEntity<Object> deleteTestGroupingById(@PathVariable Long id, @PathVariable Long projectId) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        if(executionHistoryService.existByTestGropingId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getTestGroupingDeleteDependentMessage() ));
         }
         testGroupingService.deleteTestGroupingById(id, projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestGroupingSuccessMessage()));

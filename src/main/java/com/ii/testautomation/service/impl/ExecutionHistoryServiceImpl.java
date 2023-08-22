@@ -3,23 +3,16 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
 import com.ii.testautomation.entities.ExecutionHistory;
 import com.ii.testautomation.repositories.ExecutionHistoryRepository;
+import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.service.ExecutionHistoryService;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.w3c.dom.Document;
 
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -33,17 +26,19 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Autowired
     private TestGroupingRepository testGroupingRepository;
 
+    @Autowired
+    private ProjectRepository projectRepository;
     @Value("${reports.file.save.path}")
     private String fileFolder;
+
     @Override
     public List<ExecutionHistoryResponse> viewByTestGroupingId(Long id) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
         List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findAllByTestGroupingId(id);
-        for (ExecutionHistory executionHistory : executionHistoryList)
-        {
+        for (ExecutionHistory executionHistory : executionHistoryList) {
             ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
             executionHistoryResponse.setTestGroupingId(id);
-            BeanUtils.copyProperties(executionHistory,executionHistoryResponse);
+            BeanUtils.copyProperties(executionHistory, executionHistoryResponse);
             executionHistoryResponseList.add(executionHistoryResponse);
         }
 
@@ -53,7 +48,7 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Override
     public String viewReportByExecutionHistoryId(Long id) throws IOException {
         String reportName = executionHistoryRepository.findById(id).get().getReportName();
-        Path path = Path.of(fileFolder+reportName.toString()+".html");
+        Path path = Path.of(fileFolder + reportName.toString() + ".html");
         String myfile = Files.readString(path);
         return myfile;
 
@@ -65,15 +60,25 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     }
 
     @Override
-    public void deleteExecutionHistory(Long id) {
+    public void deleteExecutionHistory(Long id, Long projectId) {
         executionHistoryRepository.deleteById(id);
+        String historyReport = fileFolder + File.separator + projectRepository.findById(id).get().getName() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
+        deleteReport(historyReport);
     }
 
+    private boolean deleteReport(String filePath) {
+        File fileToDelete = new File(filePath);
+
+        if (fileToDelete.exists() && fileToDelete.isFile()) {
+            return fileToDelete.delete();
+        }
+
+        return false;
+    }
 
     @Override
     public boolean existByTestGropingId(Long id) {
         return executionHistoryRepository.existsByTestGroupingId(id);
     }
-
 
 }

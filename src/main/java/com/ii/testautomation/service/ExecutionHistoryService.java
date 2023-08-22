@@ -19,5 +19,5 @@ public interface ExecutionHistoryService {
 
     boolean existByExecutionHistoryId(Long id);
 
-    void deleteExecutionHistory(Long id);
+     void deleteExecutionHistory(Long id,Long projectId);
 }

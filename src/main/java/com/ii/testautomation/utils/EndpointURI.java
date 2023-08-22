@@ -78,7 +78,7 @@ public final class EndpointURI {
     // Execution History
     public static final String EXECUTION_HISTORY = BASE_API_PATH + "ExecutionHistory";
     public static final String EXECUTION_HISTORY_BY_TEST_GROUPING_ID = EXECUTION_HISTORY+"/testGrouping"+ID;
-    public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
+    public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID+PROJECT_ID;
     private EndpointURI() {
     }
 }

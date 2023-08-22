@@ -376,6 +376,8 @@ public class StatusCodeBundle {
     private String testGroupingByTestType;
     @Value("${message.validation.testGrouping.have.testCases}")
     private String WantToOneHaveOneTestScenarioOrOneTestCase;
+    @Value("${message.validation.testGrouping.assigned}")
+    private String TestGroupingDeleteDependentMessage;
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;

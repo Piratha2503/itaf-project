@@ -49,13 +49,13 @@ public class ExecutionHistoryController {
         return ResponseEntity.ok(executionHistoryService.viewReportByExecutionHistoryId(id));
     }
     @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_ID)
-    public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id)
+    public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id,@PathVariable Long projectId)
     {
         if(!executionHistoryService.existByExecutionHistoryId(id))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        executionHistoryService.deleteExecutionHistory(id);
+        executionHistoryService.deleteExecutionHistory(id,projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
 }
