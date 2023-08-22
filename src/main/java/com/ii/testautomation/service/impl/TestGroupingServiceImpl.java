@@ -280,6 +280,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
+
     @Override
     public boolean existsByTestCasesId(Long testCaseId) {
         return testGroupingRepository.existsByTestCasesId(testCaseId);
@@ -289,6 +290,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsByTestTypesId(Long testTypeId) {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
+
 
     @Override
     public TestGroupingResponse getTestGroupingById(Long id) {
