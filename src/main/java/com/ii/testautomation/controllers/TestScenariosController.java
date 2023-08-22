@@ -33,9 +33,9 @@ public class TestScenariosController {
 
     @PostMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
-        if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(),testScenariosRequest.getProjectId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
-        }
+        if (testScenariosRequest.getName() == null || testScenariosRequest.getProjectId() == null)
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenarioNameAndIdNullMessage()));
+
         if (testScenariosRequest.getTestCasesId() == null && testScenariosRequest.getMainModuleIds() == null
                 && testScenariosRequest.getModuleIds() == null && testScenariosRequest.getSubModuleIds() == null)
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
