@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface TestScenariosRepository extends JpaRepository<TestScenarios, Long> {
-    Page<TestScenarios> findDistinctTestScenariosByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId,Pageable pageable);
+    Page<TestScenarios> findDistinctTestScenariosByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId, Pageable pageable);
+
     boolean existsByTestCasesSubModuleMainModuleModulesProject_id(Long projectId);
 
-    boolean existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(String name,Long projectId);
+    boolean existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(String name, Long projectId);
 
-    boolean existsByNameIgnoreCaseAndIdNot(String name,Long id);
+    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 
     TestScenarios findByIdAndTestCases_SubModule_MainModule_Modules_Project_Id(Long id, Long projectId);
 

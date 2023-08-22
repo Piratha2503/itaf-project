@@ -1,13 +1,8 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.w3c.dom.html.HTMLDocument;
 
-import javax.swing.text.html.HTML;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 public interface ExecutionHistoryService {
@@ -21,11 +16,7 @@ public interface ExecutionHistoryService {
     String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException;
 
 
-
     boolean existByExecutionHistoryId(Long id);
 
-
-
-    void deleteExecutionHistory(Long id);
-
+    void deleteExecutionHistory(Long id, Long projectId);
 }

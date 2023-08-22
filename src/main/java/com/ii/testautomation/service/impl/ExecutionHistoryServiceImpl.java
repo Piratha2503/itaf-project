@@ -13,6 +13,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -57,7 +64,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return myfile;
 
     }
-
     @Override
     public String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException {
         ExecutionHistory latestUpdate = executionHistoryRepository.findFirstByTestGroupingIdOrderByCreatedAtDesc(id);
@@ -68,10 +74,20 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         String reportContent = Files.readString(reportpath);
         return reportContent;
     }
-
     @Override
-    public void deleteExecutionHistory(Long id) {
+    public void deleteExecutionHistory(Long id, Long projectId) {
         executionHistoryRepository.deleteById(id);
+        String historyReport = fileFolder + File.separator + projectRepository.findById(id).get().getName() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
+        deleteReport(historyReport);
+    }
+
+    private boolean deleteReport(String filePath) {
+        File fileToDelete = new File(filePath);
+
+        if (fileToDelete.exists() && fileToDelete.isFile()) {
+            return fileToDelete.delete();
+        }
+        return false;
     }
 
     @Override
