@@ -69,7 +69,7 @@ public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCase
                     statusCodeBundle.getTestCasesNotExistCode(),
                     statusCodeBundle.getTestCasesNotExistsMessage()));
         }
-        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getId(), testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
+        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(),testCaseRequest.getId(),testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestCasesAlreadyExistsCode(),
                     statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
