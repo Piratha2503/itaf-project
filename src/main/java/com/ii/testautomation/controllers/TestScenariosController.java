@@ -86,7 +86,6 @@ public class TestScenariosController {
 
     }
 
-
     @GetMapping(EndpointURI.TEST_SCENARIO_BY_ID)
     public ResponseEntity<Object> viewScenarioById(@PathVariable Long id) {
         if (!testScenariosService.existsByTestScenarioId(id))

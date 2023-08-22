@@ -18,9 +18,9 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.w3c.dom.Document;
 
+import java.io.File;
+import java.io.IOException;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import java.io.*;
@@ -80,23 +80,30 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return reportContent;
     }
 
-
-
     @Override
     public boolean existByExecutionHistoryId(Long id) {
         return executionHistoryRepository.existsById(id);
     }
 
     @Override
-    public void deleteExecutionHistory(Long id) {
+    public void deleteExecutionHistory(Long id, Long projectId) {
         executionHistoryRepository.deleteById(id);
+        String historyReport = fileFolder + File.separator + projectRepository.findById(id).get().getName() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
+        deleteReport(historyReport);
     }
 
+    private boolean deleteReport(String filePath) {
+        File fileToDelete = new File(filePath);
+
+        if (fileToDelete.exists() && fileToDelete.isFile()) {
+            return fileToDelete.delete();
+        }
+        return false;
+    }
 
     @Override
     public boolean existByTestGropingId(Long id) {
         return executionHistoryRepository.existsByTestGroupingId(id);
     }
-
 
 }
