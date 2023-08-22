@@ -10,6 +10,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
 
     @Value("${reports.file.save.path}")
     private String fileFolder;
+
     @Override
     public List<ExecutionHistoryResponse> viewByTestGroupingId(Long id) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
@@ -59,6 +61,17 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return myfile;
 
     }
+    @Override
+    public String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException {
+        ExecutionHistory latestUpdate = executionHistoryRepository.findFirstByIdAndOrderByCreatedDateDesc(id);
+        String reportName = latestUpdate.getReportName();
+        Path path = Path.of(fileFolder + reportName + ".html");
+        String reportContent = Files.readString(path);
+
+        return reportContent;
+    }
+
+
 
     @Override
     public boolean existByExecutionHistoryId(Long id) {
@@ -69,6 +82,7 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     public void deleteExecutionHistory(Long id) {
         executionHistoryRepository.deleteById(id);
     }
+
 
     @Override
     public boolean existByTestGropingId(Long id) {

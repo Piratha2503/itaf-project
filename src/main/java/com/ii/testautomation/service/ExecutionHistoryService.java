@@ -18,7 +18,13 @@ public interface ExecutionHistoryService {
 
     String viewReportByExecutionHistoryId(Long id) throws IOException;
 
+    String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException;
+
+
+
     boolean existByExecutionHistoryId(Long id);
+
+
 
     void deleteExecutionHistory(Long id);
 

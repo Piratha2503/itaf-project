@@ -54,10 +54,28 @@ public class ExecutionHistoryController {
     public ResponseEntity<Object> deleteExecutionHistoryById(@PathVariable Long id) {
         if (!executionHistoryService.existByExecutionHistoryId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+
+    @GetMapping(EndpointURI.EXECUTION_HISTORY_ID)
+
+    public ResponseEntity<String> viewReportWithLastUpdateByExecutionHistoryId(@PathVariable Long id) throws IOException {
+        if (id == null) {
+            return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryIdNull());
+        }
+        if (!executionHistoryService.existByExecutionHistoryId(id)) {
+            return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryNotFound());
+        }
+        String response = executionHistoryService.viewReportWithLastUpdateByExecutionHistoryId(id);
+        return ResponseEntity.ok(response);
+    }
+
+     @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_ID)
+    public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id)
+    {
+        if(!executionHistoryService.existByExecutionHistoryId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
         executionHistoryService.deleteExecutionHistory(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
-
-
 }
