@@ -10,6 +10,7 @@ import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -71,10 +72,10 @@ public class ExecutionHistoryController {
         Timestamp startingDate;
         Timestamp endingDate;
 
-        if (startDate == null && endDate == null)
+        if (startDate.isEmpty() || startDate.isBlank())
         {
-            startingDate = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1));
-            endingDate = Timestamp.valueOf(LocalDateTime.now());
+                startingDate = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1));
+                endingDate = Timestamp.valueOf(LocalDateTime.now());
         }
         else {
             startingDate = new Timestamp(Date.valueOf(startDate).getTime());
@@ -94,6 +95,5 @@ public class ExecutionHistoryController {
         executionHistoryService.deleteExecutionHistory(id,projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
-
 
 }
