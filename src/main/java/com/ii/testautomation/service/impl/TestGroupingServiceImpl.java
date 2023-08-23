@@ -52,7 +52,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
 
-    @Value("${jar.import.file.ubuntu.path}")
+    @Value("${jar.import.file.windows.path}")
     private String fileFolder;
 
     @Override
@@ -119,7 +119,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         testGrouping.setTestScenarios(testScenariosList);
         testGrouping.setTestCases(testCasesList);
-        String folderPath = fileFolder + File.separator+projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
+        String folderPath = fileFolder + projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
         List<String> filePaths = new ArrayList<>();
         try {
             File folder = new File(folderPath);

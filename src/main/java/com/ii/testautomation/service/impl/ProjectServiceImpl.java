@@ -37,7 +37,7 @@ import java.util.*;
 @Component
 @PropertySource("classpath:application.properties")
 public class ProjectServiceImpl implements ProjectService {
-    @Value("${jar.import.file.ubuntu.path}")
+    @Value("${jar.import.file.windows.path}")
     private String fileFolder;
     @Autowired
     private ProjectRepository projectRepository;
@@ -74,7 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
-        String directoryPath = fileFolder + File.separator + projectRequest.getName();
+        String directoryPath = fileFolder + projectRequest.getName();
         String uploadedJarFilePath = null;
         String uploadedConfigFilePath = null;
         File jarDirectory = new File(directoryPath);
