@@ -119,7 +119,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         testGrouping.setTestScenarios(testScenariosList);
         testGrouping.setTestCases(testCasesList);
-        String folderPath = fileFolder + projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
+        String folderPath = fileFolder +File.separator+ projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
         List<String> filePaths = new ArrayList<>();
         try {
             File folder = new File(folderPath);
@@ -596,8 +596,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public List<TestGroupingResponse> multiSearchTestGrouping(Pageable
-                                                                      pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch) {
+    public List<TestGroupingResponse> multiSearchTestGrouping(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(testGroupingSearch.getName())) {
             booleanBuilder.and(QTestGrouping.testGrouping.name.containsIgnoreCase(testGroupingSearch.getName()));
