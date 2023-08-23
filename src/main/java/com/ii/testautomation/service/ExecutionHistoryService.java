@@ -3,6 +3,7 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 
 public interface ExecutionHistoryService {
@@ -15,8 +16,9 @@ public interface ExecutionHistoryService {
 
     String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException;
 
-
     boolean existByExecutionHistoryId(Long id);
 
     void deleteExecutionHistory(Long id, Long projectId);
+
+    List<ExecutionHistoryResponse> getByTestGroupingIdWithDate(Long id,Date date);
 }
