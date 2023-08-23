@@ -446,7 +446,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         TestGrouping testGrouping = testGroupingRepository.findById(executionRequest.getTestGroupingId()).orElse(null);
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
-        int mapSize = executionRequest.getTestScenario().size() + executionRequest.getTestScenario().size();
+        int mapSize = executionRequest.getTestScenario().size() + executionRequest.getTestCase().size();
         for (int i = 0; i <= mapSize; i++) {
             for (Map.Entry<Integer, Long> entry : executionRequest.getTestScenario().entrySet()) {
                 if (entry.getKey() == i) {
@@ -471,6 +471,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     executedTestCase.setTestGrouping(testGrouping);
                     executedTestCaseRepository.save(executedTestCase);
                     testCases.setExecutionStatus(true);
+                    break;
                 }
             }
         }
