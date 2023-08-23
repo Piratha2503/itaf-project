@@ -19,7 +19,7 @@ public class Scheduling extends DateAudit {
     @ManyToMany
     @JoinColumn(name = "test_cases_id",nullable = false)
     private List<TestCases> testCases;
-    @ManyToMany
-    @JoinColumn(name = "test_scenarios_id",nullable = false)
-    private List<TestScenarios> testScenarios;
+    @ManyToOne
+    @JoinColumn(name = "testGrouping_id",nullable = false)
+    private TestGrouping testGrouping;
 }

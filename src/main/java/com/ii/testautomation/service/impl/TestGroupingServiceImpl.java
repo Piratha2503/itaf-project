@@ -441,7 +441,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         return new PageImpl<>(combinedContent, page1.getPageable(), combinedContent.size());
     }
-
     @Scheduled(cron = "0 0 9 * * *")
     public void statusAutoUpdate() {
         List<Scheduling> schedulingList = schedulingRepository.findAll();
@@ -451,76 +450,24 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         for (Scheduling scheduling : schedulingList
         ) {
-            schedulingId=scheduling.getId();
-            if(scheduling.getTestScenarios()!=null)
-            {
-                for (TestScenarios testScenarios : scheduling.getTestScenarios()
-                ) {
-                    for (TestCases testCases : testScenarios.getTestCases()){
-                        projectId=testCases.getSubModule().getMainModule().getModules().getProject().getId();
-
+            if(scheduling.isStatus()) {
+                schedulingId = scheduling.getId();
+                groupId = scheduling.getTestGrouping().getId();
+                if (scheduling.getTestCases() != null) {
+                    for (TestCases testCases : scheduling.getTestCases()) {
+                        projectId = testCases.getSubModule().getMainModule().getModules().getProject().getId();
+                        try {
+                            schedulingExecution(schedulingId, projectId, groupId);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
-
-            if (scheduling.isStatus()) {
-                execution(scheduling.getId(), scheduling.getTestScenarios());
-            }
         }
 
     }
 
-    public void schedulingExecution(Long schedulingId, Long projectId, Long groupingId) throws IOException {
-        Scheduling scheduling = schedulingRepository.findById(schedulingId).get();
-        if (scheduling.getTestCases() != null && !scheduling.getTestCases().isEmpty()) {
-            for (TestCases testCases : scheduling.getTestCases()
-            ) {
-                ExecutedTestCase executedTestCase = new ExecutedTestCase();
-                executedTestCase.setTestCases(testCases);
-                executedTestCaseRepository.save(executedTestCase);
-            }
-        }
-        if (scheduling.getTestScenarios() != null && !scheduling.getTestScenarios().isEmpty()) {
-            List<TestScenarios> testScenariosList = scheduling.getTestScenarios();
-            for (TestScenarios testScenarios : testScenariosList
-            ) {
-                for (TestCases testCases : testScenarios.getTestCases()
-                ) {
-                    ExecutedTestCase executedTestCase = new ExecutedTestCase();
-                    executedTestCase.setTestCases(testCases);
-                    executedTestCaseRepository.save(executedTestCase);
-                }
-            }
-        }
-        List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
-        String projectPath = projectRepository.findById(projectId).get().getProjectPath();
-        if (excelFiles != null) {
-            for (String excel : excelFiles) {
-                Path excelPath = Path.of(excel);
-                try {
-                    byte[] excelBytes = Files.readAllBytes(excelPath);
-                    String excelFileName = excelPath.getFileName().toString();
-                    Path destinationPath = Path.of(projectPath, excelFileName);
-                    Files.write(destinationPath, excelBytes);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
-        File jarFile = new File(savedFilePath);
-        String jarFileName = jarFile.getName();
-        String jarDirectory = jarFile.getParent();
-        try {
-            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
-            runProcessBuilder.directory(new File(jarDirectory));
-            runProcessBuilder.redirectErrorStream(true);
-            Process runProcess = runProcessBuilder.start();
-            runProcess.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void execution(ExecutionRequest executionRequest) throws IOException {

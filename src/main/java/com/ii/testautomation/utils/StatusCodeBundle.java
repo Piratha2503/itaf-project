@@ -429,4 +429,12 @@ public class StatusCodeBundle {
     private String viewExecutionHistoryMessage;
     @Value("${message.success.delete.executionHistory}")
     private String executionHistoryDeleteSuccessMessage;
+
+    //Scheduling History
+    @Value("${message.failure.Id.notExist.scheduling}")
+    private String schedulingNotExistMessage;
+    @Value("${code.failure.Id.notExist.scheduling}")
+    private String schedulingNotExistCode;
+    @Value("${message.success.delete.scheduling}")
+    private String deleteSchedulingSuccessMessage;
 }
