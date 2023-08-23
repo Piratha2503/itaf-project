@@ -20,7 +20,7 @@ public interface TestCasesService {
 
     TestCaseResponse getById(Long id);
 
-    boolean isUpdateTestCaseNameExists(Long id, String name);
+    boolean isUpdateTestCaseNameExists(String name,Long id,Long subModuleId);
 
     List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch);
 

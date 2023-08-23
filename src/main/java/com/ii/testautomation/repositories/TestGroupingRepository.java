@@ -20,8 +20,6 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
 
     List<TestGrouping> findAllTestGroupingByTestTypeId(Long testTypeId);
 
-    boolean existsByTestCases_SubModule_MainModule_Modules_ProjectId(Long projectId);
-
     List<TestGrouping> findAllTestGroupingByTestCasesId(Long testCaseId);
 
     Page<TestGrouping> findDistinctByTestCases_SubModule_MainModule_Modules_Project_Id(Pageable pageable, Long projectId);
@@ -35,4 +33,8 @@ public interface TestGroupingRepository extends JpaRepository<TestGrouping, Long
     boolean existsByTestScenariosId(Long id);
 
     boolean existsByNameIgnoreCaseAndTestScenarios_testCases_SubModule_MainModule_Modules_Project_Id(String name, Long projectId);
+
+    boolean existsByProjectId(Long projectId);
+
+    Page<TestGrouping> findByProjectId(Long projectId, Pageable pageable);
 }
