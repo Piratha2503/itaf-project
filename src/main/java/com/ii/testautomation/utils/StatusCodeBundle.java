@@ -421,11 +421,12 @@ public class StatusCodeBundle {
     private String executionHistoryIdNull;
     @Value("${message.success.executionHistory.notExist}")
     private String executionHistoryNotFound;
+    @Value("${code.failure.executionHistory.notExist}")
+    private String executionHistoryNotExistsCode;
     @Value("${message.success.testGrouping.notMapped}")
     private String TestGroupingNotMappedMessage;
     @Value("${message.success.executionHistory.view}")
     private String viewExecutionHistoryMessage;
     @Value("${message.success.delete.executionHistory}")
     private String executionHistoryDeleteSuccessMessage;
-
 }
