@@ -2,7 +2,9 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
-import com.ii.testautomation.dto.response.*;
+import com.ii.testautomation.dto.response.TestCaseResponse;
+import com.ii.testautomation.dto.response.TestGroupingResponse;
+import com.ii.testautomation.dto.response.TestScenariosResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -12,24 +14,24 @@ import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class TestGroupingServiceImpl implements TestGroupingService {
@@ -51,6 +53,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private MainModulesRepository mainModulesRepository;
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
+    @Autowired
+    private SchedulingRepository schedulingRepository;
 
     @Value("${jar.import.file.windows.path}")
     private String fileFolder;
@@ -119,7 +123,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         testGrouping.setTestScenarios(testScenariosList);
         testGrouping.setTestCases(testCasesList);
-        String folderPath = fileFolder +File.separator+ projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
+        String folderPath = fileFolder + File.separator + projectRepository.findById(testGroupingRequest.getProjectId()).get().getName() + File.separator + testGroupingRequest.getName();
         List<String> filePaths = new ArrayList<>();
         try {
             File folder = new File(folderPath);
@@ -140,7 +144,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             e.printStackTrace();
         }
         testGrouping.setExcelFilePath(filePaths);
-        Project project=projectRepository.findById(testGroupingRequest.getProjectId()).get();
+        Project project = projectRepository.findById(testGroupingRequest.getProjectId()).get();
         testGrouping.setProject(project);
         testGroupingRepository.save(testGrouping);
     }
@@ -315,7 +319,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 testCaseIds.add(testCase.getId());
                 addedTestCaseNames.add(testCaseName);
             }
-            BeanUtils.copyProperties(testCase,testCaseResponse);
+            BeanUtils.copyProperties(testCase, testCaseResponse);
             testCaseResponse.setName(testCaseName);
             testCaseResponseList.add(testCaseResponse);
         }
@@ -323,7 +327,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
             testScenarioNames.add(testScenario.getName());
             testScenarioIds.add(testScenario.getId());
-            BeanUtils.copyProperties(testScenario,testScenariosResponse);
+            BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
         }
         List<String> excelFileNames = testGrouping.getExcelFilePath();
@@ -368,7 +372,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             booleanBuilder.and(qTestGrouping.project.id.eq(projectId));
 
         }
-       Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findByProjectId(projectId,pageable);
+        Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findByProjectId(projectId, pageable);
         if (qTestGrouping.testScenarios != null &&
                 qTestGrouping.testScenarios.any().testCases != null &&
                 qTestGrouping.testScenarios.any().testCases.any().subModule != null &&
@@ -428,6 +432,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         return testGroupingResponseList;
     }
+
     private Page<TestGrouping> combineAndRemoveDuplicates(Page<TestGrouping> page1, Page<TestGrouping> page2) {
         Set<TestGrouping> uniqueTestGroupings = new HashSet<>(page1.getContent());
         uniqueTestGroupings.addAll(page2.getContent());
@@ -435,6 +440,86 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<TestGrouping> combinedContent = new ArrayList<>(uniqueTestGroupings);
 
         return new PageImpl<>(combinedContent, page1.getPageable(), combinedContent.size());
+    }
+
+    @Scheduled(cron = "0 0 9 * * *")
+    public void statusAutoUpdate() {
+        List<Scheduling> schedulingList = schedulingRepository.findAll();
+        Long projectId = null;
+        Long groupId = null;
+        Long schedulingId = null;
+
+        for (Scheduling scheduling : schedulingList
+        ) {
+            schedulingId=scheduling.getId();
+            if(scheduling.getTestScenarios()!=null)
+            {
+                for (TestScenarios testScenarios : scheduling.getTestScenarios()
+                ) {
+                    for (TestCases testCases : testScenarios.getTestCases()){
+                        projectId=testCases.getSubModule().getMainModule().getModules().getProject().getId();
+
+                    }
+                }
+            }
+
+            if (scheduling.isStatus()) {
+                execution(scheduling.getId(), scheduling.getTestScenarios());
+            }
+        }
+
+    }
+
+    public void schedulingExecution(Long schedulingId, Long projectId, Long groupingId) throws IOException {
+        Scheduling scheduling = schedulingRepository.findById(schedulingId).get();
+        if (scheduling.getTestCases() != null && !scheduling.getTestCases().isEmpty()) {
+            for (TestCases testCases : scheduling.getTestCases()
+            ) {
+                ExecutedTestCase executedTestCase = new ExecutedTestCase();
+                executedTestCase.setTestCases(testCases);
+                executedTestCaseRepository.save(executedTestCase);
+            }
+        }
+        if (scheduling.getTestScenarios() != null && !scheduling.getTestScenarios().isEmpty()) {
+            List<TestScenarios> testScenariosList = scheduling.getTestScenarios();
+            for (TestScenarios testScenarios : testScenariosList
+            ) {
+                for (TestCases testCases : testScenarios.getTestCases()
+                ) {
+                    ExecutedTestCase executedTestCase = new ExecutedTestCase();
+                    executedTestCase.setTestCases(testCases);
+                    executedTestCaseRepository.save(executedTestCase);
+                }
+            }
+        }
+        List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
+        String projectPath = projectRepository.findById(projectId).get().getProjectPath();
+        if (excelFiles != null) {
+            for (String excel : excelFiles) {
+                Path excelPath = Path.of(excel);
+                try {
+                    byte[] excelBytes = Files.readAllBytes(excelPath);
+                    String excelFileName = excelPath.getFileName().toString();
+                    Path destinationPath = Path.of(projectPath, excelFileName);
+                    Files.write(destinationPath, excelBytes);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+        File jarFile = new File(savedFilePath);
+        String jarFileName = jarFile.getName();
+        String jarDirectory = jarFile.getParent();
+        try {
+            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+            runProcessBuilder.directory(new File(jarDirectory));
+            runProcessBuilder.redirectErrorStream(true);
+            Process runProcess = runProcessBuilder.start();
+            runProcess.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -519,7 +604,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
     @Override
     public boolean existsByTestGroupingNameByTestScenarioAndProjectId(String name, Long projectId) {
-        return testGroupingRepository.existsByNameIgnoreCaseAndTestScenarios_testCases_SubModule_MainModule_Modules_Project_Id(name,projectId);
+        return testGroupingRepository.existsByNameIgnoreCaseAndTestScenarios_testCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
 
     @Override
