@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,21 +65,30 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return myfile;
 
     }
+
     @Override
     public String viewReportWithLastUpdateByExecutionHistoryId(Long id) throws IOException {
         ExecutionHistory latestUpdate = executionHistoryRepository.findFirstByTestGroupingIdOrderByCreatedAtDesc(id);
         Long projectId = testGroupingRepository.findById(id).get().getProject().getId();
         String path = projectRepository.findById(projectId).get().getProjectPath();
         String reportName = latestUpdate.getReportName();
-        Path reportpath = Path.of(path+File.separator + reportName.toString() + ".html");
+        Path reportpath = Path.of(path + File.separator + reportName.toString() + ".html");
         String reportContent = Files.readString(reportpath);
         return reportContent;
     }
+
     @Override
     public void deleteExecutionHistory(Long id, Long projectId) {
         executionHistoryRepository.deleteById(id);
         String historyReport =  projectRepository.findById(id).get().getProjectPath() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
         deleteReport(historyReport);
+    }
+
+    @Override
+    public List<ExecutionHistoryResponse> getByTestGroupingIdWithDate(Long id,Date date) {
+        List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
+        List<ExecutionHistory> executionHistoryList = new ArrayList<>();
+        return executionHistoryResponseList;
     }
 
     private boolean deleteReport(String filePath) {
