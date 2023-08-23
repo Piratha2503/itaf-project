@@ -368,7 +368,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             booleanBuilder.and(qTestGrouping.project.id.eq(projectId));
 
         }
-        //Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findAll(booleanBuilder, pageable);
        Page<TestGrouping> testGroupingPageByTestCase = testGroupingRepository.findByProjectId(projectId,pageable);
         if (qTestGrouping.testScenarios != null &&
                 qTestGrouping.testScenarios.any().testCases != null &&
@@ -379,9 +378,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testScenariosbooleanBuilder.and(qTestGrouping.testCases.any().subModule.mainModule.modules.project.id.eq(projectId));
 
         }
-       // Page<TestGrouping> testGroupingPageByTestScenarios = testGroupingRepository.findAll(testScenariosbooleanBuilder, pageable);
-       // Page<TestGrouping> testGroupingPage = combineAndRemoveDuplicates(testGroupingPageByTestCase, testGroupingPageByTestScenarios);
-
         for (TestGrouping testGrouping : testGroupingPageByTestCase) {
             TestGroupingResponse testGroupingResponse = new TestGroupingResponse();
             if (testGrouping.getTestType() != null) {
