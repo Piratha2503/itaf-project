@@ -13,6 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 
 @RestController
 @CrossOrigin
@@ -54,9 +59,34 @@ public class ExecutionHistoryController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(EndpointURI.EXECUTION_HISTORY_DATE_FILTER)
+    public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id,@RequestParam(value = "startDate",required = false) String startDate,
+                                                             @RequestParam(value = "endDate",required = false) String endDate) throws ParseException {
+
+         if (!testGroupingService.existsByTestGroupingId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+        if (!executionHistoryService.existByTestGropingId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingNotMappedMessage()));
+
+        Timestamp startingDate;
+        Timestamp endingDate;
+
+        if (startDate == null && endDate == null)
+        {
+            startingDate = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1));
+            endingDate = Timestamp.valueOf(LocalDateTime.now());
+        }
+        else {
+            startingDate = new Timestamp(Date.valueOf(startDate).getTime());
+            endingDate = new Timestamp(Date.valueOf(endDate).getTime());
+        }
+
+        return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY,executionHistoryService.executionHistoryDateFilter(id,startingDate,endingDate),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getViewExecutionHistoryMessage()));
+
+    }
+
     @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_PROJECT_ID)
-    public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id,@PathVariable Long projectId)
-    {
+    public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id,@PathVariable Long projectId) {
         if(!executionHistoryService.existByExecutionHistoryId(id))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(),statusCodeBundle.getTestGroupingNotExistsMessage()));
@@ -64,4 +94,6 @@ public class ExecutionHistoryController {
         executionHistoryService.deleteExecutionHistory(id,projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
+
+
 }
