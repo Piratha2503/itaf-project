@@ -504,20 +504,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        if (!testGrouping.getExecutionStatus()) {
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Path.of(projectPath), "*.xlsx")) {
-                StreamSupport.stream(directoryStream.spliterator(), false)
-                        .forEach(excelPath -> {
-                            try {
-                                Files.delete(excelPath);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
