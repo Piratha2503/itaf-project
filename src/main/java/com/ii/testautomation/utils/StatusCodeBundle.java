@@ -440,6 +440,6 @@ public class StatusCodeBundle {
     private String deleteSchedulingSuccessMessage;
     @Value("${message.success.scheduling.viewBY.projectId}")
     private String scheduleViewSuccessMessage;
-    @Value("${message.success.save.testGrouping}")
+    @Value("${message.success.save.scheduling}")
     private String saveTestSchedulingSuccessMessage;
 }
