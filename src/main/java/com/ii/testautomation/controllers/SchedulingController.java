@@ -99,6 +99,9 @@ public class SchedulingController {
 
     @PostMapping(value = EndpointURI.TEST_SCHEDULING)
     public ResponseEntity<Object> saveScheduling(@RequestBody SchedulingRequest schedulingRequest) {
+        if((schedulingRequest.getTestScenario()==null||schedulingRequest.getTestScenario().isEmpty())&& (schedulingRequest.getTestCase()==null||schedulingRequest.getTestCase().isEmpty())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getSchedulingTestCasesAndScenarioEmpty()));
+        }
         if (!projectService.existByProjectId(schedulingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
@@ -125,7 +128,7 @@ public class SchedulingController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExcelPathNotProvideMessage()));
         }
         if (schedulingService.existsBySchedulingNameByTestGroupingAndProjectId(schedulingRequest.getName(), schedulingRequest.getProjectId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(), statusCodeBundle.getSchedulingNameAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(), statusCodeBundle.getSchedulingNameAlreadyExists()));
         }
         schedulingService.saveTestScheduling(schedulingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestSchedulingSuccessMessage()));

@@ -102,6 +102,10 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
     }
 
+    @Override
+    public boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId) {
+        return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
+    }
 
 
     @Override
@@ -129,6 +133,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
         jarExecution(projectId);
     }
+
     private void jarExecution(Long projectId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
@@ -155,7 +160,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         schedulingRepository.deleteById(schedulingId);
     }
 
-            @Override
+    @Override
             public List<SchedulingResponse> viewByProjectId (Long projectId, Pageable
             pageable, PaginatedContentResponse.Pagination pagination){
                 List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
