@@ -20,6 +20,5 @@ public interface ExecutionHistoryService {
     boolean existByExecutionHistoryId(Long id);
 
     void deleteExecutionHistory(Long id, Long projectId);
-
     List<ExecutionHistoryResponse> executionHistoryDateFilter(Long id, Timestamp startDate, Timestamp endDate);
 }
