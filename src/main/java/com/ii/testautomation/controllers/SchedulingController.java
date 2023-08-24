@@ -86,6 +86,9 @@ public class SchedulingController {
         if (!testGroupingService.hasExcelPath(schedulingRequest.getGroupId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExcelPathNotProvideMessage()));
         }
+        if (schedulingService.existsBySchedulingNameByTestGroupingAndProjectId(schedulingRequest.getName(), schedulingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(), statusCodeBundle.getSchedulingNameAlreadyExistMessage()));
+        }
         schedulingService.saveTestScheduling(schedulingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestSchedulingSuccessMessage()));
     }

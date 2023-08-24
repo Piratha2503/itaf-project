@@ -442,4 +442,6 @@ public class StatusCodeBundle {
     private String scheduleViewSuccessMessage;
     @Value("${message.success.save.scheduling}")
     private String saveTestSchedulingSuccessMessage;
+    @Value("${message.failure.name.AlreadyExist.scheduling}")
+    private String schedulingNameAlreadyExistMessage;
 }

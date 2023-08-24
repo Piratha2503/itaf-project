@@ -88,7 +88,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         ) {
             if (scheduling.isStatus()) {
                 groupId = scheduling.getTestGrouping().getId();
-                if (scheduling.getTestCasesIds() != null) {
+                if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
                     for (Long testCaseId : scheduling.getTestCasesIds()) {
                         projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
                         break;
@@ -166,5 +166,10 @@ public class SchedulingServiceImpl implements SchedulingService {
             schedulingResponseList.add(schedulingResponse);
         }
         return schedulingResponseList;
+    }
+
+    @Override
+    public boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId) {
+        return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
 }
