@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface ExecutionHistoryService {
@@ -20,5 +21,5 @@ public interface ExecutionHistoryService {
 
     void deleteExecutionHistory(Long id, Long projectId);
 
-    List<ExecutionHistoryResponse> getByTestGroupingIdWithDate(Long id,Date date);
+    List<ExecutionHistoryResponse> executionHistoryDateFilter(Long id, Timestamp startDate, Timestamp endDate);
 }

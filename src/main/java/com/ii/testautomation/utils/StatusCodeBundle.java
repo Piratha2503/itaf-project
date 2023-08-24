@@ -415,7 +415,9 @@ public class StatusCodeBundle {
     private String testCasesNotProvidedMessage;
     @Value("${message.validation.testScenario.nameAndId.null}")
     private String testScenarioNameAndIdNullMessage;
-
+    //Execution Code
+    @Value("${code.failure.executionHistory.notExist}")
+    private String executionHistoryNotExistsCode;
     //Execution History
     @Value("${message.success.executionHistory.Null}")
     private String executionHistoryIdNull;
@@ -428,4 +430,14 @@ public class StatusCodeBundle {
     @Value("${message.success.delete.executionHistory}")
     private String executionHistoryDeleteSuccessMessage;
 
+    //Scheduling Code
+    @Value("${code.failure.Id.notExist.scheduling}")
+    private String schedulingNotExistCode;
+    //Scheduling
+    @Value("${message.failure.Id.notExist.scheduling}")
+    private String schedulingNotExistMessage;
+    @Value("${message.success.delete.scheduling}")
+    private String deleteSchedulingSuccessMessage;
+    @Value("${message.success.scheduling.viewBY.projectId}")
+    private String scheduleViewSuccessMessage;
 }

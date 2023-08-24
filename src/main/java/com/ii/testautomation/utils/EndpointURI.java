@@ -4,6 +4,7 @@ package com.ii.testautomation.utils;
  * Contains all the rest EndPoint URL constants
  */
 public final class EndpointURI {
+
     private static final String BASE_API_PATH = "/api/v1/";
     private static final String SLASH = "/";
     private static final String SEARCH = "search";
@@ -64,7 +65,7 @@ public final class EndpointURI {
     public static final String TEST_GROUPING_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testGrouping";
     public static final String TEST_GROUPING_BY_ID = TEST_GROUPING + ID+PROJECT_ID;
     public static final String TEST_GROUPINGS_BY_ID = TEST_GROUPING + ID;
-   public static final String TEST_GROUPINGS_EXCEL_BY_ID = TEST_GROUPING +"excel"+ID;
+    public static final String TEST_GROUPINGS_EXCEL_BY_ID = TEST_GROUPING +"excel"+ID;
     public static final String TEST_GROUPING_BY_TEST_CASE_ID = TEST_GROUPING + "/testCase" + ID;
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;
@@ -81,6 +82,12 @@ public final class EndpointURI {
     public static final String EXECUTION_HISTORY_BY_DATE = EXECUTION_HISTORY+"/Date"+ID;
     public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
     public static final String EXECUTION_HISTORY_PROJECT_ID = EXECUTION_HISTORY+ID+"/project"+PROJECT_ID;
+    public static final String EXECUTION_HISTORY_DATE_FILTER = EXECUTION_HISTORY+"/DateFilter"+ID;
+
+    // URLs for Scheduling History
+    public static final String SCHEDULING_BY_ID = BASE_API_PATH + "Scheduling"+ID;
+    public static final String SHEDULING_PROJECTID = BASE_API_PATH+"Scheduling"+"/Project"+ID;
+
     private EndpointURI() {
     }
 }

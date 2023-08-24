@@ -1,8 +1,19 @@
 package com.ii.testautomation.service;
 
+import com.ii.testautomation.dto.response.SchedulingResponse;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
 import com.ii.testautomation.dto.request.SchedulingRequest;
 
 public interface SchedulingService {
+    void deleteScheduling(Long schedulingId);
+
+    public boolean existById(Long id);
+
+    List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
     public void saveTestScheduling(SchedulingRequest schedulingRequest);
     public void updateScheduling(SchedulingRequest schedulingRequest);
 }

@@ -1,15 +1,26 @@
 package com.ii.testautomation.service.impl;
 
+import com.ii.testautomation.dto.response.SchedulingResponse;
+import com.ii.testautomation.entities.Scheduling;
+import com.ii.testautomation.repositories.SchedulingRepository;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.dto.request.SchedulingRequest;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
 import com.ii.testautomation.service.SchedulingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +33,6 @@ import java.util.Map;
 @PropertySource("classpath:application.properties")
 @Service
 public class SchedulingServiceImpl implements SchedulingService {
-
     @Autowired
     private SchedulingRepository schedulingRepository;
     @Autowired
@@ -38,6 +48,29 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
 
+    @Override
+    public boolean existById(Long id) {
+        return schedulingRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteScheduling(Long schedulingId) {
+        schedulingRepository.deleteById(schedulingId);
+    }
+
+    @Override
+    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+        List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
+        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
+        pagination.setTotalRecords(schedulingList.getTotalElements());
+        pagination.setTotalPages(schedulingList.getTotalPages());
+        for (Scheduling scheduling : schedulingList) {
+            SchedulingResponse schedulingResponse = new SchedulingResponse();
+            BeanUtils.copyProperties(scheduling, schedulingResponse);
+            schedulingResponseList.add(schedulingResponse);
+        }
+        return schedulingResponseList;
+    }
     @Override
     public void saveTestScheduling(SchedulingRequest schedulingRequest) {
         Scheduling scheduling = new Scheduling();
@@ -168,4 +201,5 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduling.setTestCases(testCasesList);
         schedulingRepository.save(scheduling);
     }
+
 }

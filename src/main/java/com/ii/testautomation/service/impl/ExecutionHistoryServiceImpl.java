@@ -6,6 +6,8 @@ import com.ii.testautomation.repositories.ExecutionHistoryRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.service.ExecutionHistoryService;
+import com.ii.testautomation.utils.Utils;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,16 +83,25 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Override
     public void deleteExecutionHistory(Long id, Long projectId) {
         executionHistoryRepository.deleteById(id);
-        String historyReport = fileFolder + File.separator + projectRepository.findById(id).get().getName() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
+        String historyReport =  projectRepository.findById(id).get().getProjectPath() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
         deleteReport(historyReport);
     }
 
     @Override
-    public List<ExecutionHistoryResponse> getByTestGroupingIdWithDate(Long id,Date date) {
+    public List<ExecutionHistoryResponse> executionHistoryDateFilter(Long id, Timestamp startDate, Timestamp endDate) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
-        List<ExecutionHistory> executionHistoryList = new ArrayList<>();
+        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findByTestGroupingIdAndCreatedAtBetween(id,startDate, endDate);
+        for (ExecutionHistory executionHistory : executionHistoryList)
+        {
+            ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
+            BeanUtils.copyProperties(executionHistory,executionHistoryResponse);
+            executionHistoryResponse.setTestGroupingId(id);
+            executionHistoryResponseList.add(executionHistoryResponse);
+        }
+
         return executionHistoryResponseList;
     }
+
 
     private boolean deleteReport(String filePath) {
         File fileToDelete = new File(filePath);
