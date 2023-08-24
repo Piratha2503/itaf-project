@@ -64,7 +64,7 @@ public class TestScenariosController {
                     statusCodeBundle.getTestScenariosIdNotExistMessage()));
 
         }
-        if (testScenariosRequest.getName() == null || testScenariosRequest.getProjectId() == null||testScenariosRequest.getId()==null) {
+        if (testScenariosRequest.getName() == null || testScenariosRequest.getProjectId() == null || testScenariosRequest.getId() == null) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestScenariosAlreadyExistCode(),
                     statusCodeBundle.getTestScenarioNameAndIdNullMessage()));
@@ -80,10 +80,6 @@ public class TestScenariosController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateTestScenarioSuccessMessage()));
-
-
-
-
     }
 
     @GetMapping(EndpointURI.TEST_SCENARIO_BY_ID)
@@ -123,5 +119,4 @@ public class TestScenariosController {
         testScenariosService.DeleteTestScenariosById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestScenarioSuccessMessage()));
     }
-
 }
