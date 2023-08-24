@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
-
-@Getter
 @Setter
+@Getter
 public class SchedulingRequest {
     private Long id;
     private String name;

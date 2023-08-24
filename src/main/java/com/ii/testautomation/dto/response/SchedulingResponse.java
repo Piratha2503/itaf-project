@@ -10,13 +10,11 @@ import java.util.List;
 public class SchedulingResponse {
     private Long id;
     private String name;
-    private String testGroupingName;
     private Long testGroupingId;
-    private List<Long> testCasesId;
-    private  List<String> testCasesName;
-    private List<Long> testScenariosId;
-    private  List<String> testScenariosName;
-
-
+    private String testGroupingName;
+    private List<Long> testCasesIds;
+    private List<String> testCasesNames;
+    private List<Long> testScenarioIds;
+    private List<String> testScenarioNames;
 
 }

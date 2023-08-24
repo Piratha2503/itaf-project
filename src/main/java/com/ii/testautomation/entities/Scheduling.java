@@ -14,9 +14,8 @@ public class Scheduling extends DateAudit {
     @Id
     private Long id;
     private String name;
-    @ManyToMany
-    @JoinColumn
-    (name = "testCases_id", nullable = true)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "testCases_id", nullable = true)
     private List<TestCases> testCases;
     @ManyToMany
     @JoinColumn(name = "testScenarios_id", nullable = true)
@@ -28,5 +27,6 @@ public class Scheduling extends DateAudit {
     private List<Long> testCasesIds;
     private boolean status = true;
 }
+
 
 
