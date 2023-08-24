@@ -428,4 +428,8 @@ public class StatusCodeBundle {
     @Value("${message.success.delete.executionHistory}")
     private String executionHistoryDeleteSuccessMessage;
 
+    @Value("${message.success.save.testGrouping}")
+    private String saveTestSchedulingSuccessMessage;
+
+
 }
