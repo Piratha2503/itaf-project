@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 @RestController
 @CrossOrigin
 public class ExecutionHistoryController {
-
     @Autowired
     private ExecutionHistoryService executionHistoryService;
     @Autowired
@@ -56,12 +55,9 @@ public class ExecutionHistoryController {
 
     @GetMapping(EndpointURI.EXECUTION_HISTORY_ID)
     public ResponseEntity<String> viewReportByExecutionHistoryId(@PathVariable Long id) throws IOException {
-        if (id == null) {
-            return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryIdNull());
-        }
-        if (!executionHistoryService.existByExecutionHistoryId(id)) {
+        if (id == null) return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryIdNull());
+        if (!executionHistoryService.existByExecutionHistoryId(id))
             return ResponseEntity.ok(statusCodeBundle.getExecutionHistoryNotFound());
-        }
         return ResponseEntity.ok(executionHistoryService.viewReportByExecutionHistoryId(id));
     }
 
@@ -81,6 +77,8 @@ public class ExecutionHistoryController {
     public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id,
                                                              @RequestParam(value = "startDate", required = false) String startDate,
                                                              @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
+    public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id, @RequestParam(value = "startDate", required = false) String startDate,
+                                                             @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
 
         if (!testGroupingService.existsByTestGroupingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -92,6 +90,10 @@ public class ExecutionHistoryController {
                     new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                             statusCodeBundle.getTestGroupingNotMappedMessage()));
         }
+        if (!testGroupingService.existsByTestGroupingId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+        if (!executionHistoryService.existByTestGropingId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingNotMappedMessage()));
 
         Timestamp startingDate;
         Timestamp endingDate;
@@ -108,6 +110,7 @@ public class ExecutionHistoryController {
                 executionHistoryService.executionHistoryDateFilter(id, startingDate, endingDate),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getViewExecutionHistoryMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.executionHistoryDateFilter(id, startingDate, endingDate), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getViewExecutionHistoryMessage()));
 
     }
 
@@ -115,16 +118,24 @@ public class ExecutionHistoryController {
         if(!executionHistoryService.existByExecutionHistoryId(id))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryNotExistsCode(),statusCodeBundle.getExecutionHistoryNotFound()));
+    @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_PROJECT_ID)
+    public ResponseEntity<Object> deleteExecutionHistoryById(@PathVariable Long id, @PathVariable Long projectId) {
+        if (!executionHistoryService.existByExecutionHistoryId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryNotExistsCode(), statusCodeBundle.getExecutionHistoryNotFound()));
         }
-        if(!projectService.existByProjectId(projectId))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
+        if (!projectService.existByProjectId(projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         executionHistoryService.deleteExecutionHistory(id, projectId);
         return ResponseEntity.ok(
                 new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                         statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
-    }
 
+        if(!executionHistoryService.deleteExecutionHistory(id, projectId))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),statusCodeBundle.getGetFileNotExits()));
+        }
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
+    }
 
 }
