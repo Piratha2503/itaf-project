@@ -17,4 +17,6 @@ public class Constants {
   public static final String TESTSCENARIO="TestScenario";
   public static final String TESTSCENARIOS="TestScenarios";
   public static final String EXECUTION_HISTORY = "ExecutionHistories";
+
+  public static final String SCHEDULING="scheduling";
 }

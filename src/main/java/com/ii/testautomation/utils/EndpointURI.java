@@ -69,11 +69,14 @@ public final class EndpointURI {
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;
     public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update";
+
+
     // URLs for TestScenario
     public static final String TEST_SCENARIO = BASE_API_PATH + "testScenario";
     public static final String TEST_SCENARIO_BY_PROJECT_ID = BASE_API_PATH+"TestScenarioByProjectIdWithPagination"+ID;
     public static final String TEST_SCENARIO_BY_ID = TEST_SCENARIO + ID;
     public static final String TEST_SCENARIO_UPDATE_EXECUTION_STATUS = TEST_SCENARIO + "/update" + ID+PROJECT_ID;
+
 
     // Execution History
     public static final String EXECUTION_HISTORY = BASE_API_PATH + "ExecutionHistory";
@@ -81,6 +84,13 @@ public final class EndpointURI {
     public static final String EXECUTION_HISTORY_BY_DATE = EXECUTION_HISTORY+"/Date"+ID;
     public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
     public static final String EXECUTION_HISTORY_PROJECT_ID = EXECUTION_HISTORY+ID+"/project"+PROJECT_ID;
+
+
+    //URLs for Scheduling
+    public static final String SCHEDULING = BASE_API_PATH + "scheduling";
+
+    public static final String SCHEDULING_BY_ID = SCHEDULING + ID;
+
     private EndpointURI() {
     }
 }

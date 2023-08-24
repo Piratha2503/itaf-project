@@ -327,6 +327,7 @@ public class StatusCodeBundle {
     private String getAllTestCasesSuccessMainModuleIdMessage;
     @Value("${message.success.testcase.byModuleId}")
     private String getTestCasesByModuleIdSuccessMessage;
+
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
@@ -427,5 +428,21 @@ public class StatusCodeBundle {
     private String viewExecutionHistoryMessage;
     @Value("${message.success.delete.executionHistory}")
     private String executionHistoryDeleteSuccessMessage;
+
+    //Scheduling Code
+    @Value("${code.validation.scheduling.notExists}")
+    private String schedulingNotExistCode;
+
+
+    //Scheduling Messages
+    @Value("${message.failure.scheduling.notExist}")
+    private String schedulingIdNotExistMessage;
+
+    @Value("${message.success.get.scheduling}")
+    private String getSchedulingSuccessMessage;
+
+
+
+
 
 }
