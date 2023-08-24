@@ -1,5 +1,4 @@
 package com.ii.testautomation.controllers;
-
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -11,15 +10,11 @@ import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
 @RestController
@@ -74,11 +69,7 @@ public class ExecutionHistoryController {
     }
 
     @GetMapping(EndpointURI.EXECUTION_HISTORY_DATE_FILTER)
-    public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id,
-                                                             @RequestParam(value = "startDate", required = false) String startDate,
-                                                             @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
-    public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id, @RequestParam(value = "startDate", required = false) String startDate,
-                                                             @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
+    public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id, @RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
 
         if (!testGroupingService.existsByTestGroupingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -106,18 +97,10 @@ public class ExecutionHistoryController {
             endingDate = new Timestamp(Date.valueOf(endDate).getTime());
         }
 
-        return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY,
-                executionHistoryService.executionHistoryDateFilter(id, startingDate, endingDate),
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getViewExecutionHistoryMessage()));
         return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.executionHistoryDateFilter(id, startingDate, endingDate), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getViewExecutionHistoryMessage()));
 
     }
 
-        public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id,@PathVariable Long projectId) {
-        if(!executionHistoryService.existByExecutionHistoryId(id))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryNotExistsCode(),statusCodeBundle.getExecutionHistoryNotFound()));
     @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_PROJECT_ID)
     public ResponseEntity<Object> deleteExecutionHistoryById(@PathVariable Long id, @PathVariable Long projectId) {
         if (!executionHistoryService.existByExecutionHistoryId(id)) {
@@ -126,14 +109,8 @@ public class ExecutionHistoryController {
         if (!projectService.existByProjectId(projectId)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
-        executionHistoryService.deleteExecutionHistory(id, projectId);
-        return ResponseEntity.ok(
-                new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
-
-        if(!executionHistoryService.deleteExecutionHistory(id, projectId))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),statusCodeBundle.getGetFileNotExits()));
+        if (!executionHistoryService.deleteExecutionHistory(id, projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getGetFileNotExits()));
         }
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
