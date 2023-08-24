@@ -1,7 +1,6 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
-import com.ii.testautomation.dto.request.SchedulingRequest;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -9,7 +8,6 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SchedulingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @PropertySource("classpath:application.properties")
@@ -42,6 +41,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ProjectRepository projectRepository;
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
+
 
     @Override
     public void saveTestScheduling(SchedulingRequest schedulingRequest) {
@@ -103,6 +103,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
 
+
     @Override
     public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
         for (Long testCaseId : testCaseIds) {
@@ -128,7 +129,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
         jarExecution(projectId);
     }
-
     private void jarExecution(Long projectId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
@@ -155,24 +155,38 @@ public class SchedulingServiceImpl implements SchedulingService {
         schedulingRepository.deleteById(schedulingId);
     }
 
-    @Override
-    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
-        List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
-        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
-        pagination.setTotalRecords(schedulingList.getTotalElements());
-        pagination.setTotalPages(schedulingList.getTotalPages());
-        for (Scheduling scheduling : schedulingList) {
-            SchedulingResponse schedulingResponse = new SchedulingResponse();
-            BeanUtils.copyProperties(scheduling, schedulingResponse);
-            schedulingResponseList.add(schedulingResponse);
-        }
-        return schedulingResponseList;
-    }
+            @Override
+            public List<SchedulingResponse> viewByProjectId (Long projectId, Pageable
+            pageable, PaginatedContentResponse.Pagination pagination){
+                List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
+                Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
+                pagination.setTotalRecords(schedulingList.getTotalElements());
+                pagination.setTotalPages(schedulingList.getTotalPages());
 
-    @Override
-    public boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId) {
-        return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
-    }
+                for (Scheduling scheduling : schedulingList) {
+                    SchedulingResponse schedulingResponse = new SchedulingResponse();
+                    BeanUtils.copyProperties(scheduling, schedulingResponse);
+                    schedulingResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
+                    schedulingResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
+                    List<String> testCaseNames = new ArrayList<>();
+                    List<Long> testScenariosId = new ArrayList<>();
+                    List<String> testScenariosNames = new ArrayList<>();
+                    for (Long testCaseId : scheduling.getTestCasesIds()) {
+                        testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName());
+                    }
+                    for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
+                        testScenariosId.add(testScenarios.getId());
+                        testScenariosNames.add(testScenarios.getName());
+                    }
+                    testScenariosId = testScenariosId.stream().distinct().collect(Collectors.toList());
+                    testScenariosNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
+                    schedulingResponse.setTestScenarioIds(testScenariosId);
+                    schedulingResponse.setTestScenarioNames(testScenariosNames);
+                    schedulingResponse.setTestCasesNames(testCaseNames);
+                    schedulingResponseList.add(schedulingResponse);
+                }
+                return schedulingResponseList;
+            }
 
 
     @Override
