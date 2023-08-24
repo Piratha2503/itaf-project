@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
+import com.ii.testautomation.dto.request.SchedulingRequest;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -8,6 +9,7 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SchedulingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -142,6 +144,17 @@ public class SchedulingServiceImpl implements SchedulingService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Override
+    public boolean existById(Long id) {
+        return schedulingRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteScheduling(Long schedulingId) {
+        schedulingRepository.deleteById(schedulingId);
     }
 
     @Override

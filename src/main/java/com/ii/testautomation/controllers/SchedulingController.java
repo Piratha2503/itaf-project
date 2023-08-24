@@ -48,9 +48,20 @@ public class SchedulingController {
         }
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
-        return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.viewByProjectId(id,pageable,pagination), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getScheduleViewSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.viewByProjectId(id, pageable, pagination), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getScheduleViewSuccessMessage()));
     }
 
+    @DeleteMapping(value = EndpointURI.SCHEDULING_BY_ID)
+    public ResponseEntity<Object> deleteSchedulingById(@PathVariable Long id) {
+        if (!schedulingService.existById(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getSchedulingNotExistCode(),
+                    statusCodeBundle.getSchedulingNotExistMessage()));
+        }
+        schedulingService.deleteScheduling(id);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteSchedulingSuccessMessage()));
+    }
 
     @PostMapping(value = EndpointURI.TEST_SCHEDULING)
     public ResponseEntity<Object> saveScheduling(@RequestBody SchedulingRequest schedulingRequest) {
