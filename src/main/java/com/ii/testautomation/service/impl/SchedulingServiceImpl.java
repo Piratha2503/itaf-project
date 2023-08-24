@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
+import com.ii.testautomation.dto.request.SchedulingRequest;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -8,6 +9,7 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SchedulingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @PropertySource("classpath:application.properties")
@@ -40,7 +43,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
 
-
     @Override
     public void saveTestScheduling(SchedulingRequest schedulingRequest) {
         Scheduling scheduling = new Scheduling();
@@ -57,8 +59,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                     TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
                     testScenariosList.add(testScenarios);
                     List<TestCases> testCasesList = testScenarios.getTestCases();
-                    for (TestCases testCases : testCasesList
-                    ) {
+                    for (TestCases testCases : testCasesList) {
                         testCasesId.add(testCases.getId());
                     }
                 }
@@ -85,8 +86,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         Long projectId = null;
         Long groupId = null;
         if (schedulingList != null && !schedulingList.isEmpty()) {
-            for (Scheduling scheduling : schedulingList
-            ) {
+            for (Scheduling scheduling : schedulingList) {
                 if (scheduling.isStatus()) {
                     groupId = scheduling.getTestGrouping().getId();
                     if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
@@ -94,6 +94,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                             projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
                             break;
                         }
+
                     }
                 }
                 schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
@@ -102,9 +103,9 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
 
+    @Override
     public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
-        for (Long testCaseId : testCaseIds
-        ) {
+        for (Long testCaseId : testCaseIds) {
             TestCases testCases = testCasesRepository.findById(testCaseId).get();
             ExecutedTestCase executedTestCase = new ExecutedTestCase();
             executedTestCase.setTestCases(testCases);
@@ -144,7 +145,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
     }
 
-
     @Override
     public boolean existById(Long id) {
         return schedulingRepository.existsById(id);
@@ -173,4 +173,47 @@ public class SchedulingServiceImpl implements SchedulingService {
     public boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId) {
         return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
+
+
+    @Override
+    public void updateScheduling(SchedulingRequest schedulingRequest) {
+        Scheduling scheduling = new Scheduling();
+        BeanUtils.copyProperties(schedulingRequest, scheduling);
+        TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getId()).get();
+        List<TestScenarios> testScenariosList = new ArrayList<>();
+        List<Long> testCasesId = new ArrayList<>();
+        List<TestCases> testCasesList = new ArrayList<>();
+        int mapSize = schedulingRequest.getTestScenario().size() + schedulingRequest.getTestCase().size();
+        for (int i = 0; i <= mapSize; i++) {
+            for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
+                if (entry.getKey() == i) {
+                    TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
+                    testScenariosList.add(testScenarios);
+                    List<TestCases> testCasesList1 = testScenarios.getTestCases();
+                    for (TestCases testCases : testCasesList1) {
+                        testCasesId.add(testCases.getId());
+                    }
+                }
+            }
+            for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestCase().entrySet()) {
+                if (entry.getKey() == i) {
+                    TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
+                    testCasesList.add(testCases);
+                    testCasesId.add(testCases.getId());
+                    break;
+                }
+            }
+        }
+        scheduling.setTestGrouping(testGrouping);
+        scheduling.setTestCasesIds(testCasesId);
+        scheduling.setTestCases(testCasesList);
+        scheduling.setTestScenarios(testScenariosList);
+        schedulingRepository.save(scheduling);
+    }
+
+    @Override
+    public boolean isUpdateNameExists(String Name, Long schedulingId) {
+        return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
+    }
 }
+
