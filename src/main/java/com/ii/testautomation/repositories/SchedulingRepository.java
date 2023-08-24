@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SchedulingRepository extends JpaRepository<Scheduling, Long> {
     Page<Scheduling> findByTestGrouping_ProjectId(Pageable pageable, Long projectId);
+    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 }
