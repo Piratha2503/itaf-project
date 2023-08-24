@@ -16,4 +16,5 @@ public interface SchedulingService {
     List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
     public void saveTestScheduling(SchedulingRequest schedulingRequest);
     public void updateScheduling(SchedulingRequest schedulingRequest);
+    boolean isUpdateNameExists(String Name, Long SchedulingId);
 }

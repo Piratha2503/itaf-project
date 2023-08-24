@@ -440,4 +440,10 @@ public class StatusCodeBundle {
     private String deleteSchedulingSuccessMessage;
     @Value("${message.success.scheduling.viewBY.projectId}")
     private String scheduleViewSuccessMessage;
+    @Value("${message.failure.name.AlreadyExist.Scheduling}")
+    private String schedulingNameAlreadyExists;
+    @Value("${message.failure.scheduling.Empty}")
+    private String schedulingTestCasesAndScenarioEmpty;
+    @Value("${message.success.update.scheduling}")
+    private String schedulingUpdateSuccessMessage;
 }
