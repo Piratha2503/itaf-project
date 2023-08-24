@@ -279,7 +279,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
-
     @Override
     public boolean existsByTestCasesId(Long testCaseId) {
         return testGroupingRepository.existsByTestCasesId(testCaseId);
@@ -289,7 +288,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existsByTestTypesId(Long testTypeId) {
         return testGroupingRepository.existsByTestTypeId(testTypeId);
     }
-
 
     @Override
     public TestGroupingResponse getTestGroupingById(Long id) {
@@ -351,7 +349,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     public boolean existByProjectId(Long projectId) {
         return testGroupingRepository.existsByProjectId(projectId);
     }
-
 
     @Override
     public List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId) {
@@ -432,6 +429,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         return testGroupingResponseList;
     }
+
     private Page<TestGrouping> combineAndRemoveDuplicates(Page<TestGrouping> page1, Page<TestGrouping> page2) {
         Set<TestGrouping> uniqueTestGroupings = new HashSet<>(page1.getContent());
         uniqueTestGroupings.addAll(page2.getContent());
@@ -613,8 +611,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
-    public List<TestGroupingResponse> multiSearchTestGrouping(Pageable
-                                                                      pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch) {
+    public List<TestGroupingResponse> multiSearchTestGrouping(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestGroupingSearch testGroupingSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(testGroupingSearch.getName())) {
             booleanBuilder.and(QTestGrouping.testGrouping.name.containsIgnoreCase(testGroupingSearch.getName()));
@@ -651,4 +648,5 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponseList;
     }
+
 }
