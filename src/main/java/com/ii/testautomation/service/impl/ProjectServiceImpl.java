@@ -74,7 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
-        String directoryPath = fileFolder + File.separator + projectRequest.getName();
+        String directoryPath = fileFolder + projectRequest.getName();
         String uploadedJarFilePath = null;
         String uploadedConfigFilePath = null;
         File jarDirectory = new File(directoryPath);
@@ -255,6 +255,18 @@ public class ProjectServiceImpl implements ProjectService {
         for (Project project : projectList) {
             ProjectResponse projectResponse = new ProjectResponse();
             BeanUtils.copyProperties(project, projectResponse);
+            String existingConfigFile = project.getConfigFilePath();
+            String existingJarFile = project.getJarFilePath();
+            if (existingConfigFile != null && !existingConfigFile.isEmpty()) {
+                Path config = Paths.get(existingConfigFile);
+                String jarFileName = config.getFileName().toString();
+                projectResponse.setConfigFile(jarFileName);
+            }
+            if (existingJarFile != null && !existingJarFile.isEmpty()) {
+                Path jar = Paths.get(existingJarFile);
+                String configFileName = jar.getFileName().toString();
+                projectResponse.setJarFile(configFileName);
+            }
             projectResponseList.add(projectResponse);
         }
         return projectResponseList;

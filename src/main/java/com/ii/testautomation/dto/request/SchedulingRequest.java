@@ -16,5 +16,5 @@ public class SchedulingRequest {
     private Long groupId;
     private Long projectId;
 
-}
 
+}

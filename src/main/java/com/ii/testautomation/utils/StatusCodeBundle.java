@@ -35,8 +35,8 @@ public class StatusCodeBundle {
     private String headerNotExistsMessage;
     @Value("${message.failure.excelPath}")
     private String ExcelPathNotProvideMessage;
-    @Value("${message.success.execution}")
-    private String executionSuccessMessage;
+    @Value("${message.failure.file.notExits}")
+    private String getFileNotExits;
 
     //Project Code
     @Value("${code.validation.project.alreadyExists}")
@@ -327,7 +327,6 @@ public class StatusCodeBundle {
     private String getAllTestCasesSuccessMainModuleIdMessage;
     @Value("${message.success.testcase.byModuleId}")
     private String getTestCasesByModuleIdSuccessMessage;
-
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
@@ -379,6 +378,8 @@ public class StatusCodeBundle {
     private String WantToOneHaveOneTestScenarioOrOneTestCase;
     @Value("${message.validation.testGrouping.assigned}")
     private String TestGroupingDeleteDependentMessage;
+    @Value("${message.success.execution}")
+    private String executionSuccessMessage;
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;
@@ -416,7 +417,9 @@ public class StatusCodeBundle {
     private String testCasesNotProvidedMessage;
     @Value("${message.validation.testScenario.nameAndId.null}")
     private String testScenarioNameAndIdNullMessage;
-
+    //Execution Code
+    @Value("${code.failure.executionHistory.notExist}")
+    private String executionHistoryNotExistsCode;
     //Execution History
     @Value("${message.success.executionHistory.Null}")
     private String executionHistoryIdNull;
@@ -429,6 +432,18 @@ public class StatusCodeBundle {
     @Value("${message.success.delete.executionHistory}")
     private String executionHistoryDeleteSuccessMessage;
 
+    //Scheduling Code
+    @Value("${code.failure.Id.notExist.scheduling}")
+    private String schedulingNotExistCode;
+    //Scheduling
+    @Value("${message.failure.Id.notExist.scheduling}")
+    private String schedulingNotExistMessage;
+    @Value("${message.success.delete.scheduling}")
+    private String deleteSchedulingSuccessMessage;
+    @Value("${message.success.scheduling.viewBY.projectId}")
+    private String scheduleViewSuccessMessage;
+    @Value("${message.success.save.scheduling}")
+    private String saveTestSchedulingSuccessMessage;
     //Scheduling Code
     @Value("${code.validation.scheduling.notExists}")
     private String schedulingNotExistCode;

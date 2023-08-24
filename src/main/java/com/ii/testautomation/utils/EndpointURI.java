@@ -4,6 +4,7 @@ package com.ii.testautomation.utils;
  * Contains all the rest EndPoint URL constants
  */
 public final class EndpointURI {
+
     private static final String BASE_API_PATH = "/api/v1/";
     private static final String SLASH = "/";
     private static final String SEARCH = "search";
@@ -33,12 +34,14 @@ public final class EndpointURI {
     public static final String SUBMODULE_BY_ID = SUBMODULE + ID;
     public static final String SUBMODULE_BY_MAIN_MODULE_ID = SUBMODULE + "/mainModuleId" + ID;
     public static final String SUBMODULE_BY_PROJECT_ID = SUBMODULE + "/project" + ID;
+
     //URLs for modules
     public static final String MODULE = BASE_API_PATH + "module";
     public static final String MODULE_BY_ID = MODULE + ID;
     public static final String MODULE_BY_PROJECT_ID = MODULE +"/project" +ID;
     public static final String MODULES = BASE_API_PATH + SEARCH + SLASH + "modules";
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectIdWithPagination" + ID;
+
     // URLs for Test Types
 
     public static final String TEST_TYPE = BASE_API_PATH + "testType";
@@ -64,12 +67,11 @@ public final class EndpointURI {
     public static final String TEST_GROUPING_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testGrouping";
     public static final String TEST_GROUPING_BY_ID = TEST_GROUPING + ID+PROJECT_ID;
     public static final String TEST_GROUPINGS_BY_ID = TEST_GROUPING + ID;
-   public static final String TEST_GROUPINGS_EXCEL_BY_ID = TEST_GROUPING +"excel"+ID;
+    public static final String TEST_GROUPINGS_EXCEL_BY_ID = TEST_GROUPING +"excel"+ID;
     public static final String TEST_GROUPING_BY_TEST_CASE_ID = TEST_GROUPING + "/testCase" + ID;
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;
     public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update";
-
 
     // URLs for TestScenario
     public static final String TEST_SCENARIO = BASE_API_PATH + "testScenario";
@@ -77,20 +79,18 @@ public final class EndpointURI {
     public static final String TEST_SCENARIO_BY_ID = TEST_SCENARIO + ID;
     public static final String TEST_SCENARIO_UPDATE_EXECUTION_STATUS = TEST_SCENARIO + "/update" + ID+PROJECT_ID;
 
-
     // Execution History
     public static final String EXECUTION_HISTORY = BASE_API_PATH + "ExecutionHistory";
     public static final String EXECUTION_HISTORY_BY_TEST_GROUPING_ID = EXECUTION_HISTORY+"/testGrouping"+ID;
     public static final String EXECUTION_HISTORY_BY_DATE = EXECUTION_HISTORY+"/Date"+ID;
     public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
     public static final String EXECUTION_HISTORY_PROJECT_ID = EXECUTION_HISTORY+ID+"/project"+PROJECT_ID;
+    public static final String EXECUTION_HISTORY_DATE_FILTER = EXECUTION_HISTORY+"/DateFilter"+ID;
 
-
-    //URLs for Scheduling
-    public static final String SCHEDULING = BASE_API_PATH + "scheduling";
-
-    public static final String SCHEDULING_BY_ID = SCHEDULING + ID;
-
+    // URLs for Scheduling History
+    public static final String SCHEDULING_BY_ID = BASE_API_PATH + "Scheduling"+ID;
+    public static final String SHEDULING_PROJECTID = BASE_API_PATH+"Scheduling"+"/Project"+ID;
+    public static final String TEST_SCHEDULING = BASE_API_PATH + "scheduling";
     private EndpointURI() {
     }
 }
