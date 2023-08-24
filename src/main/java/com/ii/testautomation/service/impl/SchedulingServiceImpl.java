@@ -1,7 +1,6 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
-import com.ii.testautomation.dto.request.SchedulingRequest;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -9,7 +8,6 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.SchedulingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -80,43 +78,36 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Scheduled(cron = "${schedule.time.cron}")
-    public void autoScheduling() {
+    public void autoScheduling() throws IOException {
 
         List<Scheduling> schedulingList = schedulingRepository.findAll();
         Long projectId = null;
         Long groupId = null;
-        Long schedulingId = null;
 
         for (Scheduling scheduling : schedulingList
         ) {
             if (scheduling.isStatus()) {
-                schedulingId = scheduling.getId();
                 groupId = scheduling.getTestGrouping().getId();
-                if (scheduling.getTestCases() != null) {
-                    for (TestCases testCases : scheduling.getTestCases()) {
-                        projectId = testCases.getSubModule().getMainModule().getModules().getProject().getId();
-                        try {
-                            schedulingExecution(schedulingId, projectId, groupId);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                if (scheduling.getTestCasesIds() != null) {
+                    for (Long testCaseId : scheduling.getTestCasesIds()) {
+                        projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
+                        break;
                     }
+
                 }
             }
+            schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
         }
-
     }
 
 
-    public void schedulingExecution(Long schedulingId, Long projectId, Long groupingId) throws IOException {
-        Scheduling scheduling = schedulingRepository.findById(schedulingId).get();
-        if (scheduling.getTestCases() != null && !scheduling.getTestCases().isEmpty()) {
-            for (TestCases testCases : scheduling.getTestCases()
-            ) {
-                ExecutedTestCase executedTestCase = new ExecutedTestCase();
-                executedTestCase.setTestCases(testCases);
-                executedTestCaseRepository.save(executedTestCase);
-            }
+    public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
+        for (Long testCaseId : testCaseIds
+        ) {
+            TestCases testCases = testCasesRepository.findById(testCaseId).get();
+            ExecutedTestCase executedTestCase = new ExecutedTestCase();
+            executedTestCase.setTestCases(testCases);
+            executedTestCaseRepository.save(executedTestCase);
         }
         List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
         String projectPath = projectRepository.findById(projectId).get().getProjectPath();

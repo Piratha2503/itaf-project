@@ -19,7 +19,6 @@ public interface SchedulingService {
 
     public void saveTestScheduling(SchedulingRequest SchedulingRequest);
 
-    public void autoScheduling();
+     void autoScheduling() throws IOException;
 
-    void schedulingExecution(Long schedulingId, Long projectId, Long groupingId) throws IOException;
 }
