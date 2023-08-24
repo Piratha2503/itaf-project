@@ -4,6 +4,7 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.ExecutionHistoryService;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
@@ -29,6 +30,8 @@ public class ExecutionHistoryController {
     private ExecutionHistoryService executionHistoryService;
     @Autowired
     private TestGroupingService testGroupingService;
+    @Autowired
+    private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
@@ -108,12 +111,14 @@ public class ExecutionHistoryController {
 
     }
 
-    @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_PROJECT_ID)
-    public ResponseEntity<Object> deleteExecutionHistoryById(@PathVariable Long id, @PathVariable Long projectId) {
-        if (!executionHistoryService.existByExecutionHistoryId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestGroupingNotExistCode(),
-                    statusCodeBundle.getTestGroupingNotExistsMessage()));
+        public ResponseEntity<Object>deleteExecutionHistoryById(@PathVariable Long id,@PathVariable Long projectId) {
+        if(!executionHistoryService.existByExecutionHistoryId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryNotExistsCode(),statusCodeBundle.getExecutionHistoryNotFound()));
+        }
+        if(!projectService.existByProjectId(projectId))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
         }
         executionHistoryService.deleteExecutionHistory(id, projectId);
         return ResponseEntity.ok(

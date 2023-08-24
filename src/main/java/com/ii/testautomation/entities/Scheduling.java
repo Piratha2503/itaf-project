@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,8 +15,19 @@ public class Scheduling extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @ManyToMany
+    @JoinColumn(name = "testCases_id", nullable = true)
+    private List<TestCases> testCases;
+    @ManyToMany
+    @JoinColumn(name = "testCases_id", nullable = true)
+    private List<TestScenarios> testScenarios;
     @ManyToOne
-    @JoinColumn(name = "test_grouping_id",nullable = false)
+    @JoinColumn(name = "testGrouping_id", nullable = false)
     private TestGrouping testGrouping;
-
+    @ElementCollection
+    private List<Long> testCasesIds;
+    private boolean status = true;
 }
+
+
+
