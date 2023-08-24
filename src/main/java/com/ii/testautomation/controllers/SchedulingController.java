@@ -100,20 +100,16 @@ public class SchedulingController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExcelPathNotProvideMessage()));
         }
 
-     @GetMapping(EndpointURI.SCHEDULING_BY_ID)
-
-    public ResponseEntity<Object>getSchedulingById(@PathVariable Long id){
-      if (!schedulingService.existsById(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getSchedulingIdNotExistMessage() , statusCodeBundle.getSchedulingIdNotExistMessage()));
-        }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULING, schedulingService.getSchedulingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetSchedulingSuccessMessage()));
-
-    }
-
-}
-
         schedulingService.saveTestScheduling(schedulingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestSchedulingSuccessMessage()));
+    }
+    @GetMapping(value = EndpointURI.SCHEDULING_BY_ID)
+    public ResponseEntity<Object>getSchedulingById(@PathVariable Long id){
+        if (!schedulingService.existsById(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getSchedulingIdNotExistMessage() , statusCodeBundle.getSchedulingIdNotExistMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.getSchedulingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetSchedulingSuccessMessage()));
+
     }
 
     public ResponseEntity<Object> Execution() {

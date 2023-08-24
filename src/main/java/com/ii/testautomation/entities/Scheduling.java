@@ -12,8 +12,9 @@ import java.util.List;
 @Setter
 public class Scheduling extends DateAudit {
     @Id
+    private Long id;
+    private String name;
     @ManyToMany
-
     @JoinColumn
     (name = "testCases_id", nullable = true)
     private List<TestCases> testCases;

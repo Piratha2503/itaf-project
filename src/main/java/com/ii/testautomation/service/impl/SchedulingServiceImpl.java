@@ -99,8 +99,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         Long groupId = null;
         Long schedulingId = null;
 
-        for (Scheduling scheduling : schedulingList
-        ) {
+        for (Scheduling scheduling : schedulingList) {
             if (scheduling.isStatus()) {
                 schedulingId = scheduling.getId();
                 groupId = scheduling.getTestGrouping().getId();
@@ -163,11 +162,6 @@ public class SchedulingServiceImpl implements SchedulingService {
             e.printStackTrace();
         }
     }
-
-
-
-    @Autowired
-    SchedulingRepository schedulingRepository;
 
     @Override
     public boolean existsById(Long id) {
