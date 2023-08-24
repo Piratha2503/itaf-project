@@ -433,6 +433,4 @@ public class StatusCodeBundle {
     private String scheduleViewSuccessMessage;
     @Value("${message.success.save.testGrouping}")
     private String saveTestSchedulingSuccessMessage;
-
-
 }

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,7 +38,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ProjectRepository projectRepository;
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
-
 
 
     @Override
@@ -125,6 +125,10 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
+        jarExecution(projectId);
+    }
+
+    private void jarExecution(Long projectId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
@@ -139,16 +143,16 @@ public class SchedulingServiceImpl implements SchedulingService {
             e.printStackTrace();
         }
     }
+
     @Override
     public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
         List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
-        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable,projectId);
+        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
         pagination.setTotalRecords(schedulingList.getTotalElements());
         pagination.setTotalPages(schedulingList.getTotalPages());
-        for (Scheduling scheduling : schedulingList)
-        {
+        for (Scheduling scheduling : schedulingList) {
             SchedulingResponse schedulingResponse = new SchedulingResponse();
-            BeanUtils.copyProperties(scheduling,schedulingResponse);
+            BeanUtils.copyProperties(scheduling, schedulingResponse);
             schedulingResponseList.add(schedulingResponse);
         }
         return schedulingResponseList;
