@@ -441,33 +441,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 
         return new PageImpl<>(combinedContent, page1.getPageable(), combinedContent.size());
     }
-    @Scheduled(cron = "0 0 9 * * *")
-    public void statusAutoUpdate() {
-        List<Scheduling> schedulingList = schedulingRepository.findAll();
-        Long projectId = null;
-        Long groupId = null;
-        Long schedulingId = null;
-
-        for (Scheduling scheduling : schedulingList
-        ) {
-            if(scheduling.isStatus()) {
-                schedulingId = scheduling.getId();
-                groupId = scheduling.getTestGrouping().getId();
-                if (scheduling.getTestCases() != null) {
-                    for (TestCases testCases : scheduling.getTestCases()) {
-                        projectId = testCases.getSubModule().getMainModule().getModules().getProject().getId();
-                        try {
-                            schedulingExecution(schedulingId, projectId, groupId);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-
 
     @Override
     public void execution(ExecutionRequest executionRequest) throws IOException {
@@ -519,7 +492,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 }
             }
         }
-        String savedFilePath = projectRepository.findById(executionRequest.getProjectId()).get().getJarFilePath();
+      jarExecution(executionRequest.getProjectId());
+    }
+    private void jarExecution(Long projectId) {
+        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();
