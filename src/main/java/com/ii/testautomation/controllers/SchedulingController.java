@@ -68,12 +68,15 @@ public class SchedulingController {
     @PostMapping(value = EndpointURI.TEST_SCHEDULING)
     public ResponseEntity<Object> saveScheduling(@RequestBody SchedulingRequest schedulingRequest) {
 
-        if (schedulingRequest.getTestCase() == null && schedulingRequest.getTestScenario() == null
+        if (schedulingRequest.getTestCase().isEmpty() && schedulingRequest.getTestScenario().isEmpty()
         ) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
         }
         if (!projectService.existByProjectId(schedulingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        if (!testGroupingService.existsByTestGroupingId(schedulingRequest.getGroupId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode() ,statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
         for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
             if (!testScenariosService.existsByTestScenarioId(entry.getValue())) {
