@@ -26,26 +26,3 @@ public class Scheduling extends DateAudit {
 
 
 
-
-
-
-
-
-
-  //  private LocalDateTime dateTime;
-//    private Long times;
- //   private Long duration;
- //   private boolean status=false;
-
-
-
-
-
-//    private boolean year=false;
-//    private boolean month=false;
-//    private boolean week=false;
-//    private boolean hours=false;
-//    private boolean  minute=false;
-//    private List<TestCases> testCases;
-
-
