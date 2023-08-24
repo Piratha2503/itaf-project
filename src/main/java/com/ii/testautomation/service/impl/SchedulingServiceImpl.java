@@ -88,16 +88,16 @@ public class SchedulingServiceImpl implements SchedulingService {
 
         for (Scheduling scheduling : schedulingList
         ) {
-            if (scheduling.isStatus()) {
-                groupId = scheduling.getTestGrouping().getId();
-                if (scheduling.getTestCasesIds() != null) {
-                    for (Long testCaseId : scheduling.getTestCasesIds()) {
-                        projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
-                        break;
-                    }
-
-                }
-            }
+//            if (scheduling.isStatus()) {
+//                groupId = scheduling.getTestGrouping().getId();
+//                if (scheduling.getTestCasesIds() != null) {
+//                    for (Long testCaseId : scheduling.getTestCasesIds()) {
+//                        projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
+//                        break;
+//                    }
+//
+//                }
+//            }
             schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
         }
     }
@@ -199,6 +199,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                     }
                 }
             }
+            scheduling.setTestGrouping(testGrouping);
             scheduling.setTestCasesIds(testCasesId);
             scheduling.setTestCases(testCasesList);
             scheduling.setTestScenarios(testScenariosList);
