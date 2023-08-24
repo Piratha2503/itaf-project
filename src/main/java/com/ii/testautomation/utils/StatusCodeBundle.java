@@ -448,7 +448,7 @@ public class StatusCodeBundle {
 
 
     //Scheduling Messages
-    @Value("${message.failure.scheduling.notExist}")
+    @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingIdNotExistMessage;
 
     @Value("${message.success.get.scheduling}")
