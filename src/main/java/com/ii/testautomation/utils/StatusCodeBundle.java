@@ -444,6 +444,4 @@ public class StatusCodeBundle {
     private String scheduleViewSuccessMessage;
     @Value("${message.success.save.scheduling}")
     private String saveTestSchedulingSuccessMessage;
-
-
 }
