@@ -184,10 +184,11 @@ public class SchedulingServiceImpl implements SchedulingService {
         for (TestScenarios testScenario : scheduling.getTestScenarios()) {
             testScenarioNames.add(testScenario.getName());
             testScenarioIds.add(testScenario.getId());
-
-            for (TestCases testCase : testScenario.getTestCases()) {
-                testCaseNames.add(testCase.getName());
-                testCaseIds.add(testCase.getId());
+        }
+        {
+         for (TestCases testCase : scheduling.getTestCases()) {
+         testCaseNames.add(testCase.getName());
+         testCaseIds.add(testCase.getId());
 
             }
         }
