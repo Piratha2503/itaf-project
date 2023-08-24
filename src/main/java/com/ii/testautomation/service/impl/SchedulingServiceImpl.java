@@ -16,19 +16,28 @@ import java.util.List;
 
 @Service
 public class SchedulingServiceImpl implements SchedulingService {
-
     @Autowired
     private SchedulingRepository schedulingRepository;
+
+    @Override
+    public boolean existById(Long id) {
+        return schedulingRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteScheduling(Long schedulingId) {
+        schedulingRepository.deleteById(schedulingId);
+    }
+
     @Override
     public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
         List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
-        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable,projectId);
+        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
         pagination.setTotalRecords(schedulingList.getTotalElements());
         pagination.setTotalPages(schedulingList.getTotalPages());
-        for (Scheduling scheduling : schedulingList)
-        {
+        for (Scheduling scheduling : schedulingList) {
             SchedulingResponse schedulingResponse = new SchedulingResponse();
-            BeanUtils.copyProperties(scheduling,schedulingResponse);
+            BeanUtils.copyProperties(scheduling, schedulingResponse);
             schedulingResponseList.add(schedulingResponse);
         }
         return schedulingResponseList;

@@ -74,7 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
         BeanUtils.copyProperties(projectRequest, project);
-        String directoryPath = fileFolder + File.separator + projectRequest.getName();
+        String directoryPath = fileFolder + projectRequest.getName();
         String uploadedJarFilePath = null;
         String uploadedConfigFilePath = null;
         File jarDirectory = new File(directoryPath);

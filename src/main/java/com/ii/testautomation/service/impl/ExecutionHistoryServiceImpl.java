@@ -83,7 +83,7 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Override
     public void deleteExecutionHistory(Long id, Long projectId) {
         executionHistoryRepository.deleteById(id);
-        String historyReport = fileFolder + File.separator + projectRepository.findById(id).get().getName() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
+        String historyReport =  projectRepository.findById(id).get().getProjectPath() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
         deleteReport(historyReport);
     }
 
