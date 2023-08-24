@@ -3,9 +3,16 @@ package com.ii.testautomation.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
+import java.util.Map;
 @Setter
+@Getter
 public class SchedulingRequest {
     private Long id;
     private String name;
+    private boolean status;
+    private Map<Integer, Long> testScenario;
+    private Map<Integer, Long> testCase;
+    private Long groupId;
+    private Long projectId;
+
 }

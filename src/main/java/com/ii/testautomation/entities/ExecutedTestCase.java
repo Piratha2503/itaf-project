@@ -3,7 +3,6 @@ package com.ii.testautomation.entities;
 import com.ii.testautomation.utils.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 
 @Entity
