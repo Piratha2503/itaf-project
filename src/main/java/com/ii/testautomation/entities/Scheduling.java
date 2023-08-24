@@ -3,6 +3,7 @@ package com.ii.testautomation.entities;
 import com.ii.testautomation.utils.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Scheduling extends DateAudit {
     @JoinColumn(name = "testGrouping_id", nullable = false)
     private TestGrouping testGrouping;
 
-    private boolean status=true;
+    private boolean status = true;
 }
 
 
