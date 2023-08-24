@@ -94,7 +94,10 @@ public class ExecutionHistoryController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
 
-        executionHistoryService.deleteExecutionHistory(id, projectId);
+        if(!executionHistoryService.deleteExecutionHistory(id, projectId))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),statusCodeBundle.getGetFileNotExits()));
+        }
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
 

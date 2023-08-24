@@ -2,6 +2,7 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
 import com.ii.testautomation.entities.ExecutionHistory;
+import com.ii.testautomation.entities.Project;
 import com.ii.testautomation.repositories.ExecutionHistoryRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
@@ -71,12 +72,26 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     }
 
     @Override
-    public void deleteExecutionHistory(Long id, Long projectId) {
-        String historyReport = projectRepository.findById(id).get().getProjectPath() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
-        if (!historyReport.isEmpty() && historyReport != null) {
-            deleteReport(historyReport);
-            executionHistoryRepository.deleteById(id);
+    public boolean deleteExecutionHistory(Long id, Long projectId) {
+        Project projectOptional = projectRepository.findById(projectId).get();
+        if (projectOptional != null) {
+            String historyReport = projectOptional.getProjectPath() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
+            if (historyReport != null && !historyReport.isEmpty()) {
+                if (deleteReport(historyReport)) {
+                    executionHistoryRepository.deleteById(id);
+                    return true;
+                }
+            }
         }
+        return false;
+    }
+
+    private boolean deleteReport(String filePath) {
+        File fileToDelete = new File(filePath);
+        if (fileToDelete.exists() && fileToDelete.isFile()) {
+            return fileToDelete.delete();
+        }
+        return false;
     }
 
     @Override
@@ -93,13 +108,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return executionHistoryResponseList;
     }
 
-    private boolean deleteReport(String filePath) {
-        File fileToDelete = new File(filePath);
-        if (fileToDelete.exists() && fileToDelete.isFile()) {
-            return fileToDelete.delete();
-        }
-        return false;
-    }
 
     @Override
     public boolean existByTestGropingId(Long id) {
