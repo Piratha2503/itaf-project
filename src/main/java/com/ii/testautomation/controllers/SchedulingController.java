@@ -106,7 +106,7 @@ public class SchedulingController {
     @GetMapping(value = EndpointURI.SCHEDULING_BY_ID)
     public ResponseEntity<Object>getSchedulingById(@PathVariable Long id){
         if (!schedulingService.existsById(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getSchedulingIdNotExistMessage() , statusCodeBundle.getSchedulingIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getSchedulingNotExistCode() , statusCodeBundle.getSchedulingIdNotExistMessage()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.getSchedulingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetSchedulingSuccessMessage()));
 
