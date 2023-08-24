@@ -1,5 +1,4 @@
 package com.ii.testautomation.controllers;
-
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -12,7 +11,6 @@ import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -34,11 +32,20 @@ public class ExecutionHistoryController {
     @GetMapping(EndpointURI.EXECUTION_HISTORY_BY_TEST_GROUPING_ID)
     public ResponseEntity<Object> viewByTestGroupingId(@PathVariable Long id) {
 
-        if (!testGroupingService.existsByTestGroupingId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
-        if (!executionHistoryService.existByTestGropingId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingNotMappedMessage()));
-        return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.viewByTestGroupingId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getViewExecutionHistoryMessage()));
+        if (!testGroupingService.existsByTestGroupingId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestGroupingNotExistCode(),
+                    statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        if (!executionHistoryService.existByTestGropingId(id)) {
+            return ResponseEntity.ok(
+                    new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
+                            statusCodeBundle.getTestGroupingNotMappedMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY,
+                executionHistoryService.viewByTestGroupingId(id), RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getViewExecutionHistoryMessage()));
     }
 
     @GetMapping(EndpointURI.EXECUTION_HISTORY_ID)
@@ -62,9 +69,18 @@ public class ExecutionHistoryController {
     }
 
     @GetMapping(EndpointURI.EXECUTION_HISTORY_DATE_FILTER)
-    public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id, @RequestParam(value = "startDate", required = false) String startDate,
-                                                             @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
+    public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id, @RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
 
+        if (!testGroupingService.existsByTestGroupingId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getTestGroupingNotExistCode(),
+                    statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        if (!executionHistoryService.existByTestGropingId(id)) {
+            return ResponseEntity.ok(
+                    new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
+                            statusCodeBundle.getTestGroupingNotMappedMessage()));
+        }
         if (!testGroupingService.existsByTestGroupingId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
         if (!executionHistoryService.existByTestGropingId(id))
@@ -93,10 +109,8 @@ public class ExecutionHistoryController {
         if (!projectService.existByProjectId(projectId)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
-
-        if(!executionHistoryService.deleteExecutionHistory(id, projectId))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),statusCodeBundle.getGetFileNotExits()));
+        if (!executionHistoryService.deleteExecutionHistory(id, projectId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(), statusCodeBundle.getGetFileNotExits()));
         }
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
