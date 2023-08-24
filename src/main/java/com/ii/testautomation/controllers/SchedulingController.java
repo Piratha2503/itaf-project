@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
+
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -84,13 +85,13 @@ public class SchedulingController {
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        if ( schedulingRequest.getTestCase().isEmpty() &&
+        if (schedulingRequest.getTestCase().isEmpty() &&
                 schedulingRequest.getTestScenario().isEmpty()) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSchedulingTestCasesAndScenarioEmpty()));
         }
-        if(!projectService.existByProjectId(schedulingRequest.getProjectId())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),
+        if (!projectService.existByProjectId(schedulingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(),
                     statusCodeBundle.getProjectNotExistsMessage()));
         }
         schedulingService.updateScheduling(schedulingRequest);
@@ -112,14 +113,14 @@ public class SchedulingController {
 
     @PostMapping(value = EndpointURI.TEST_SCHEDULING)
     public ResponseEntity<Object> saveScheduling(@RequestBody SchedulingRequest schedulingRequest) {
-        if((schedulingRequest.getTestScenario()==null||schedulingRequest.getTestScenario().isEmpty())&& (schedulingRequest.getTestCase()==null||schedulingRequest.getTestCase().isEmpty())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getSchedulingTestCasesAndScenarioEmpty()));
+        if ((schedulingRequest.getTestScenario() == null || schedulingRequest.getTestScenario().isEmpty()) && (schedulingRequest.getTestCase() == null || schedulingRequest.getTestCase().isEmpty())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSchedulingTestCasesAndScenarioEmpty()));
         }
         if (!projectService.existByProjectId(schedulingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         if (!testGroupingService.existsByTestGroupingId(schedulingRequest.getGroupId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode() ,statusCodeBundle.getTestGroupingNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
         for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
             if (!testScenariosService.existsByTestScenarioId(entry.getValue())) {
@@ -146,10 +147,11 @@ public class SchedulingController {
         schedulingService.saveTestScheduling(schedulingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestSchedulingSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.SCHEDULING_BY_ID)
-    public ResponseEntity<Object>getSchedulingById(@PathVariable Long id){
+    public ResponseEntity<Object> getSchedulingById(@PathVariable Long id) {
         if (!schedulingService.existById(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getSchedulingNotExistCode() , statusCodeBundle.getSchedulingIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(), statusCodeBundle.getSchedulingIdNotExistMessage()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.getSchedulingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetSchedulingSuccessMessage()));
 

@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 public class Scheduling extends DateAudit {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     @ManyToMany(fetch = FetchType.LAZY)
