@@ -49,8 +49,8 @@ public class SchedulingServiceImpl implements SchedulingService {
         TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getGroupId()).get();
         scheduling.setTestGrouping(testGrouping);
         List<Long> testCasesId = new ArrayList<>();
-        List<TestScenarios> testScenariosList=new ArrayList<>();
-        List<TestCases> testCasessList=new ArrayList<>();
+        List<TestScenarios> testScenariosList = new ArrayList<>();
+        List<TestCases> testCasessList = new ArrayList<>();
         int mapSize = schedulingRequest.getTestScenario().size() + schedulingRequest.getTestCase().size();
         for (int i = 0; i <= mapSize; i++) {
             for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
@@ -60,7 +60,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                     List<TestCases> testCasesList = testScenarios.getTestCases();
                     for (TestCases testCases : testCasesList
                     ) {
-                       testCasesId.add(testCases.getId());
+                        testCasesId.add(testCases.getId());
                     }
                 }
             }
