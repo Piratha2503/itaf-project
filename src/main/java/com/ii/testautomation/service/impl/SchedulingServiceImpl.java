@@ -189,18 +189,18 @@ public class SchedulingServiceImpl implements SchedulingService {
             testScenarioNames.add(testScenario.getName());
             testScenarioIds.add(testScenario.getId());
         }
-        {
+
          for (TestCases testCase : scheduling.getTestCases()) {
          testCaseNames.add(testCase.getName());
          testCaseIds.add(testCase.getId());
 
-            }
-        }
+         }
 
-        schedulingResponse.setTestScenariosName(testScenarioNames);
-        schedulingResponse.setTestScenariosId(testScenarioIds);
-        schedulingResponse.setTestCasesName(testCaseNames);
-        schedulingResponse.setTestCasesId(testCaseIds);
+
+        schedulingResponse.setTestScenarioNames(testScenarioNames);
+        schedulingResponse.setTestScenarioIds(testScenarioIds);
+        schedulingResponse.setTestCasesNames(testCaseNames);
+        schedulingResponse.setTestCasesIds(testCaseIds);
         BeanUtils.copyProperties(scheduling, schedulingResponse);
         return schedulingResponse;
     }
