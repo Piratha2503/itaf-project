@@ -38,6 +38,8 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
 
+
+
     @Override
     public void saveTestScheduling(SchedulingRequest schedulingRequest) {
         Scheduling scheduling = new Scheduling();
@@ -49,7 +51,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         for (int i = 0; i <= mapSize; i++) {
             for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
                 if (entry.getKey() == i) {
-                    TestScenarios testScenarios = testScenarioRepository.findById(entry.getValue()).get();
+                    TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
                     List<TestCases> testCasesList = testScenarios.getTestCases();
                     for (TestCases testCases : testCasesList
                     ) {
