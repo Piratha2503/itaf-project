@@ -65,7 +65,7 @@ public class SchedulingController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(),
                     statusCodeBundle.getSchedulingNotExistMessage()));
         }
-        if (testGroupingService.existsByTestGroupingId(schedulingRequest.getGroupId())) {
+        if (!testGroupingService.existsByTestGroupingId(schedulingRequest.getGroupId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
