@@ -15,6 +15,8 @@ import com.ii.testautomation.dto.request.SchedulingRequest;
 public interface SchedulingService {
     void deleteScheduling(Long schedulingId);
 
+    SchedulingResponse getSchedulingById(Long id) throws NullPointerException;
+
     public boolean existById(Long id);
 
     List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
