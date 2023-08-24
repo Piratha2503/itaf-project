@@ -31,7 +31,6 @@ public class SchedulingController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private ProjectService projectService;
-
     @Autowired
     private TestGroupingService testGroupingService;
 
@@ -91,7 +90,6 @@ public class SchedulingController {
         schedulingService.saveTestScheduling(schedulingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestSchedulingSuccessMessage()));
     }
-
 
     public ResponseEntity<Object> Execution() {
         schedulingService.autoScheduling();
