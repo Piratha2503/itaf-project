@@ -19,9 +19,9 @@ public interface SchedulingService {
 
     List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
-    public void autoScheduling();
+    public void autoScheduling() throws IOException;
 
-    void schedulingExecution(Long schedulingId, Long projectId, Long groupingId) throws IOException;
+    void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException;
     public void saveTestScheduling(SchedulingRequest schedulingRequest);
     public void updateScheduling(SchedulingRequest schedulingRequest);
     boolean isUpdateNameExists(String Name, Long SchedulingId);
