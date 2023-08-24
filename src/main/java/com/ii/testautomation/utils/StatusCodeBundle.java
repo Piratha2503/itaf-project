@@ -428,4 +428,7 @@ public class StatusCodeBundle {
     @Value("${message.success.delete.executionHistory}")
     private String executionHistoryDeleteSuccessMessage;
 
+    //Scheduling
+    @Value("${message.success.scheduling.viewBY.projectId}")
+    private String scheduleViewSuccessMessage;
 }
