@@ -2,6 +2,7 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
 import com.ii.testautomation.dto.request.SchedulingRequest;
+import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -111,8 +112,14 @@ public class SchedulingController {
 
     @PostMapping(value = EndpointURI.TEST_SCHEDULING)
     public ResponseEntity<Object> saveScheduling(@RequestBody SchedulingRequest schedulingRequest) {
+        if((schedulingRequest.getTestScenario()==null||schedulingRequest.getTestScenario().isEmpty())&& (schedulingRequest.getTestCase()==null||schedulingRequest.getTestCase().isEmpty())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getSchedulingTestCasesAndScenarioEmpty()));
+        }
         if (!projectService.existByProjectId(schedulingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+        }
+        if (!testGroupingService.existsByTestGroupingId(schedulingRequest.getGroupId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode() ,statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
         for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
             if (!testScenariosService.existsByTestScenarioId(entry.getValue())) {
@@ -133,7 +140,9 @@ public class SchedulingController {
         if (!testGroupingService.hasExcelPath(schedulingRequest.getGroupId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExcelPathNotProvideMessage()));
         }
-
+        if (schedulingService.existsBySchedulingNameByTestGroupingAndProjectId(schedulingRequest.getName(), schedulingRequest.getProjectId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(), statusCodeBundle.getSchedulingNameAlreadyExists()));
+        }
         schedulingService.saveTestScheduling(schedulingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestSchedulingSuccessMessage()));
     }
