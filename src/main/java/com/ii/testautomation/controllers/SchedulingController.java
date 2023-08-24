@@ -1,6 +1,7 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
+import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
+
+
 @RestController
 @CrossOrigin
 public class SchedulingController {
@@ -64,6 +67,11 @@ public class SchedulingController {
 
     @PostMapping(value = EndpointURI.TEST_SCHEDULING)
     public ResponseEntity<Object> saveScheduling(@RequestBody SchedulingRequest schedulingRequest) {
+
+        if (schedulingRequest.getTestCase() == null && schedulingRequest.getTestScenario() == null
+        ) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
+        }
         if (!projectService.existByProjectId(schedulingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }

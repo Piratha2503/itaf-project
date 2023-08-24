@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,26 +78,26 @@ public class SchedulingServiceImpl implements SchedulingService {
         schedulingRepository.save(scheduling);
     }
 
+    @Transactional
     @Scheduled(cron = "${schedule.time.cron}")
     public void autoScheduling() throws IOException {
-
         List<Scheduling> schedulingList = schedulingRepository.findAll();
         Long projectId = null;
         Long groupId = null;
-
-        for (Scheduling scheduling : schedulingList
-        ) {
-            if (scheduling.isStatus()) {
-                groupId = scheduling.getTestGrouping().getId();
-                if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
-                    for (Long testCaseId : scheduling.getTestCasesIds()) {
-                        projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
-                        break;
+        if (schedulingList != null && !schedulingList.isEmpty()) {
+            for (Scheduling scheduling : schedulingList
+            ) {
+                if (scheduling.isStatus()) {
+                    groupId = scheduling.getTestGrouping().getId();
+                    if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
+                        for (Long testCaseId : scheduling.getTestCasesIds()) {
+                            projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
+                            break;
+                        }
                     }
-
                 }
+                schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
             }
-            schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
         }
     }
 

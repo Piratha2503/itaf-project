@@ -15,7 +15,7 @@ public class Scheduling extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "testCases_id", nullable = true)
     private List<TestCases> testCases;
     @ManyToMany
