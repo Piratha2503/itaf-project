@@ -35,8 +35,8 @@ public class StatusCodeBundle {
     private String headerNotExistsMessage;
     @Value("${message.failure.excelPath}")
     private String ExcelPathNotProvideMessage;
-    @Value("${message.success.execution}")
-    private String executionSuccessMessage;
+    @Value("${message.failure.file.notExits}")
+    private String getFileNotExits;
 
     //Project Code
     @Value("${code.validation.project.alreadyExists}")
@@ -378,6 +378,8 @@ public class StatusCodeBundle {
     private String WantToOneHaveOneTestScenarioOrOneTestCase;
     @Value("${message.validation.testGrouping.assigned}")
     private String TestGroupingDeleteDependentMessage;
+    @Value("${message.success.execution}")
+    private String executionSuccessMessage;
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;

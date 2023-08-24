@@ -2,12 +2,11 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
 import com.ii.testautomation.entities.ExecutionHistory;
+import com.ii.testautomation.entities.Project;
 import com.ii.testautomation.repositories.ExecutionHistoryRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.service.ExecutionHistoryService;
-import com.ii.testautomation.utils.Utils;
-import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,16 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.File;
-import java.io.IOException;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,20 +72,35 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     }
 
     @Override
-    public void deleteExecutionHistory(Long id, Long projectId) {
-        executionHistoryRepository.deleteById(id);
-        String historyReport =  projectRepository.findById(id).get().getProjectPath() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
-        deleteReport(historyReport);
+    public boolean deleteExecutionHistory(Long id, Long projectId) {
+        Project projectOptional = projectRepository.findById(projectId).get();
+        if (projectOptional != null) {
+            String historyReport = projectOptional.getProjectPath() + File.separator + executionHistoryRepository.findById(id).get().getReportName().toString() + ".html";
+            if (historyReport != null && !historyReport.isEmpty()) {
+                if (deleteReport(historyReport)) {
+                    executionHistoryRepository.deleteById(id);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean deleteReport(String filePath) {
+        File fileToDelete = new File(filePath);
+        if (fileToDelete.exists() && fileToDelete.isFile()) {
+            return fileToDelete.delete();
+        }
+        return false;
     }
 
     @Override
     public List<ExecutionHistoryResponse> executionHistoryDateFilter(Long id, Timestamp startDate, Timestamp endDate) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
-        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findByTestGroupingIdAndCreatedAtBetween(id,startDate, endDate);
-        for (ExecutionHistory executionHistory : executionHistoryList)
-        {
+        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findByTestGroupingIdAndCreatedAtBetween(id, startDate, endDate);
+        for (ExecutionHistory executionHistory : executionHistoryList) {
             ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
-            BeanUtils.copyProperties(executionHistory,executionHistoryResponse);
+            BeanUtils.copyProperties(executionHistory, executionHistoryResponse);
             executionHistoryResponse.setTestGroupingId(id);
             executionHistoryResponseList.add(executionHistoryResponse);
         }
@@ -102,15 +108,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return executionHistoryResponseList;
     }
 
-
-    private boolean deleteReport(String filePath) {
-        File fileToDelete = new File(filePath);
-
-        if (fileToDelete.exists() && fileToDelete.isFile()) {
-            return fileToDelete.delete();
-        }
-        return false;
-    }
 
     @Override
     public boolean existByTestGropingId(Long id) {
