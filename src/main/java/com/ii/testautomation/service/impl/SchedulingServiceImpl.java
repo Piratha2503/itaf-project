@@ -48,28 +48,34 @@ public class SchedulingServiceImpl implements SchedulingService {
         BeanUtils.copyProperties(schedulingRequest, scheduling);
         TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getGroupId()).get();
         scheduling.setTestGrouping(testGrouping);
-        List<TestCases> schedulingTestCasesLists = new ArrayList<>();
+        List<Long> testCasesId = new ArrayList<>();
+        List<TestScenarios> testScenariosList=new ArrayList<>();
+        List<TestCases> testCasessList=new ArrayList<>();
         int mapSize = schedulingRequest.getTestScenario().size() + schedulingRequest.getTestCase().size();
         for (int i = 0; i <= mapSize; i++) {
             for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
                 if (entry.getKey() == i) {
                     TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
+                    testScenariosList.add(testScenarios);
                     List<TestCases> testCasesList = testScenarios.getTestCases();
                     for (TestCases testCases : testCasesList
                     ) {
-                        schedulingTestCasesLists.add(testCases);
+                       testCasesId.add(testCases.getId());
                     }
                 }
             }
             for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestCase().entrySet()) {
                 if (entry.getKey() == i) {
                     TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
-                    schedulingTestCasesLists.add(testCases);
+                    testCasessList.add(testCases);
+                    testCasesId.add(testCases.getId());
                     break;
                 }
             }
         }
-        scheduling.setTestCases(schedulingTestCasesLists);
+        scheduling.setTestCasesIds(testCasesId);
+        scheduling.setTestCases(testCasessList);
+        scheduling.setTestScenarios(testScenariosList);
         schedulingRepository.save(scheduling);
     }
 
