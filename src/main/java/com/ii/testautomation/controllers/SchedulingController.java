@@ -70,10 +70,14 @@ public class SchedulingController {
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        if (schedulingRequest.getTestCase() == null && schedulingRequest.getTestCase().isEmpty() && schedulingRequest.getTestScenario() == null &&
+        if ( schedulingRequest.getTestCase().isEmpty() &&
                 schedulingRequest.getTestScenario().isEmpty()) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSchedulingTestCasesAndScenarioEmpty()));
+        }
+        if(!projectService.existByProjectId(schedulingRequest.getProjectId())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getProjectNotExistCode(),
+                    statusCodeBundle.getProjectNotExistsMessage()));
         }
         schedulingService.updateScheduling(schedulingRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
