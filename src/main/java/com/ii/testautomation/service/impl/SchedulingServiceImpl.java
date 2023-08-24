@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @PropertySource("classpath:application.properties")
@@ -40,6 +41,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ProjectRepository projectRepository;
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
+
 
     @Override
     public void saveTestScheduling(SchedulingRequest schedulingRequest) {
@@ -95,125 +97,155 @@ public class SchedulingServiceImpl implements SchedulingService {
                             projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
                             break;
                         }
-
                     }
                 }
                 schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
             }
         }
+
     }
 
-    @Override
-    public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
-        for (Long testCaseId : testCaseIds
-        ) {
-            TestCases testCases = testCasesRepository.findById(testCaseId).get();
-            ExecutedTestCase executedTestCase = new ExecutedTestCase();
-            executedTestCase.setTestCases(testCases);
-            executedTestCaseRepository.save(executedTestCase);
+    public void schedulingExecution(Long schedulingId, Long projectId, Long groupingId) throws IOException {
+        Scheduling scheduling = schedulingRepository.findById(schedulingId).get();
+        if (scheduling.getTestCases() != null && !scheduling.getTestCases().isEmpty()) {
+            for (TestCases testCases : scheduling.getTestCases()) {
+                ExecutedTestCase executedTestCase = new ExecutedTestCase();
+                executedTestCase.setTestCases(testCases);
+                executedTestCaseRepository.save(executedTestCase);
+            }
         }
-        List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
-        Optional<Project> projectOptional = projectRepository.findById(projectId);
-        if (projectOptional.isPresent()) {
-           String projectPath = projectOptional.get().getProjectPath();
-            if (excelFiles != null) {
-                for (String excel : excelFiles) {
-                    Path excelPath = Path.of(excel);
-                    try {
-                        byte[] excelBytes = Files.readAllBytes(excelPath);
-                        String excelFileName = excelPath.getFileName().toString();
-                        Path destinationPath = Path.of(projectPath, excelFileName);
-                        Files.write(destinationPath, excelBytes);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+    }
+            @Override
+            public void schedulingExecution (List < Long > testCaseIds, Long projectId, Long groupingId) throws
+            IOException {
+                for (Long testCaseId : testCaseIds
+                ) {
+                    TestCases testCases = testCasesRepository.findById(testCaseId).get();
+                    ExecutedTestCase executedTestCase = new ExecutedTestCase();
+                    executedTestCase.setTestCases(testCases);
+                    executedTestCaseRepository.save(executedTestCase);
+                }
+                List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
+                Optional<Project> projectOptional = projectRepository.findById(projectId);
+                if (projectOptional.isPresent()) {
+                    String projectPath = projectOptional.get().getProjectPath();
+                    if (excelFiles != null) {
+                        for (String excel : excelFiles) {
+                            Path excelPath = Path.of(excel);
+                            try {
+                                byte[] excelBytes = Files.readAllBytes(excelPath);
+                                String excelFileName = excelPath.getFileName().toString();
+                                Path destinationPath = Path.of(projectPath, excelFileName);
+                                Files.write(destinationPath, excelBytes);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
+                jarExecution(projectId);
             }
-        }
-        jarExecution(projectId);
-    }
 
-    private void jarExecution(Long projectId) {
-        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
-        File jarFile = new File(savedFilePath);
-        String jarFileName = jarFile.getName();
-        String jarDirectory = jarFile.getParent();
-        try {
-            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
-            runProcessBuilder.directory(new File(jarDirectory));
-            runProcessBuilder.redirectErrorStream(true);
-            Process runProcess = runProcessBuilder.start();
-            runProcess.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public boolean existById(Long id) {
-        return schedulingRepository.existsById(id);
-    }
-
-    @Override
-    public void deleteScheduling(Long schedulingId) {
-        schedulingRepository.deleteById(schedulingId);
-    }
-
-    @Override
-    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable
-            pageable, PaginatedContentResponse.Pagination pagination) {
-        List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
-        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
-        pagination.setTotalRecords(schedulingList.getTotalElements());
-        pagination.setTotalPages(schedulingList.getTotalPages());
-        for (Scheduling scheduling : schedulingList) {
-            SchedulingResponse schedulingResponse = new SchedulingResponse();
-            BeanUtils.copyProperties(scheduling, schedulingResponse);
-            schedulingResponseList.add(schedulingResponse);
-        }
-        return schedulingResponseList;
-    }
+            private void jarExecution (Long projectId){
+                String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+                File jarFile = new File(savedFilePath);
+                String jarFileName = jarFile.getName();
+                String jarDirectory = jarFile.getParent();
+                try {
+                    ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+                    runProcessBuilder.directory(new File(jarDirectory));
+                    runProcessBuilder.redirectErrorStream(true);
+                    Process runProcess = runProcessBuilder.start();
+                    runProcess.waitFor();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
 
-    @Override
-    public void updateScheduling(SchedulingRequest schedulingRequest) {
-        Scheduling scheduling = new Scheduling();
-        BeanUtils.copyProperties(schedulingRequest, scheduling);
-        TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getId()).get();
-        List<TestScenarios> testScenariosList = new ArrayList<>();
-        List<Long> testCasesId = new ArrayList<>();
-        List<TestCases> testCasesList = new ArrayList<>();
-        int mapSize = schedulingRequest.getTestScenario().size() + schedulingRequest.getTestCase().size();
-        for (int i = 0; i <= mapSize; i++) {
-            for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
-                if (entry.getKey() == i) {
-                    TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
-                    testScenariosList.add(testScenarios);
-                    List<TestCases> testCasesList1 = testScenarios.getTestCases();
-                    for (TestCases testCases : testCasesList1) {
-                        testCasesId.add(testCases.getId());
+            @Override
+            public boolean existById (Long id){
+                return schedulingRepository.existsById(id);
+            }
+
+            @Override
+            public void deleteScheduling (Long schedulingId){
+                schedulingRepository.deleteById(schedulingId);
+            }
+
+            @Override
+            public List<SchedulingResponse> viewByProjectId (Long projectId, Pageable
+            pageable, PaginatedContentResponse.Pagination pagination){
+                List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
+                Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
+                pagination.setTotalRecords(schedulingList.getTotalElements());
+                pagination.setTotalPages(schedulingList.getTotalPages());
+
+                for (Scheduling scheduling : schedulingList) {
+                    SchedulingResponse schedulingResponse = new SchedulingResponse();
+                    BeanUtils.copyProperties(scheduling, schedulingResponse);
+                    schedulingResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
+                    schedulingResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
+                    List<String> testCaseNames = new ArrayList<>();
+                    List<Long> testScenariosId = new ArrayList<>();
+                    List<String> testScenariosNames = new ArrayList<>();
+                    for (Long testCaseId : scheduling.getTestCasesIds()) {
+                        testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName());
+                    }
+                    for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
+                        testScenariosId.add(testScenarios.getId());
+                        testScenariosNames.add(testScenarios.getName());
+                    }
+                    testScenariosId = testScenariosId.stream().distinct().collect(Collectors.toList());
+                    testScenariosNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
+                    schedulingResponse.setTestScenarioIds(testScenariosId);
+                    schedulingResponse.setTestScenarioNames(testScenariosNames);
+                    schedulingResponse.setTestCasesNames(testCaseNames);
+                    schedulingResponseList.add(schedulingResponse);
+                }
+                return schedulingResponseList;
+            }
+
+
+            @Override
+            public void updateScheduling (SchedulingRequest schedulingRequest){
+                Scheduling scheduling = new Scheduling();
+                BeanUtils.copyProperties(schedulingRequest, scheduling);
+                TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getId()).get();
+                List<TestScenarios> testScenariosList = new ArrayList<>();
+                List<Long> testCasesId = new ArrayList<>();
+                List<TestCases> testCasesList = new ArrayList<>();
+                int mapSize = schedulingRequest.getTestScenario().size() + schedulingRequest.getTestCase().size();
+                for (int i = 0; i <= mapSize; i++) {
+                    for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
+                        if (entry.getKey() == i) {
+                            TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
+                            testScenariosList.add(testScenarios);
+                            List<TestCases> testCasesList1 = testScenarios.getTestCases();
+                            for (TestCases testCases : testCasesList1) {
+                                testCasesId.add(testCases.getId());
+                            }
+                        }
+                    }
+                    for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestCase().entrySet()) {
+                        if (entry.getKey() == i) {
+                            TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
+                            testCasesList.add(testCases);
+                            testCasesId.add(testCases.getId());
+                            break;
+                        }
                     }
                 }
+                scheduling.setTestGrouping(testGrouping);
+                scheduling.setTestCasesIds(testCasesId);
+                scheduling.setTestCases(testCasesList);
+                scheduling.setTestScenarios(testScenariosList);
+                schedulingRepository.save(scheduling);
             }
-            for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestCase().entrySet()) {
-                if (entry.getKey() == i) {
-                    TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
-                    testCasesList.add(testCases);
-                    testCasesId.add(testCases.getId());
-                    break;
-                }
+
+            @Override
+            public boolean isUpdateNameExists (String Name, Long schedulingId){
+                return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
             }
         }
-        scheduling.setTestGrouping(testGrouping);
-        scheduling.setTestCasesIds(testCasesId);
-        scheduling.setTestCases(testCasesList);
-        scheduling.setTestScenarios(testScenariosList);
-        schedulingRepository.save(scheduling);
-    }
-
-    @Override
-    public boolean isUpdateNameExists(String Name, Long schedulingId) {
-        return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
-    }
-}
 
