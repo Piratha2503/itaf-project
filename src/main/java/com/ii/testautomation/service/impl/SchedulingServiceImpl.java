@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -209,4 +211,45 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
         return schedulingResponseList;
     }
+    @Override
+    public void updateScheduling(SchedulingRequest schedulingRequest) {
+        Scheduling scheduling = new Scheduling();
+        BeanUtils.copyProperties(schedulingRequest, scheduling);
+        TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getId()).get();
+        List<TestScenarios> testScenariosList = new ArrayList<>();
+        List<Long> testCasesId = new ArrayList<>();
+        List<TestCases> testCasesList = new ArrayList<>();
+        int mapSize = schedulingRequest.getTestScenario().size() + schedulingRequest.getTestCase().size();
+        for (int i = 0; i <= mapSize; i++) {
+            for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestScenario().entrySet()) {
+                if (entry.getKey() == i) {
+                    TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
+                    testScenariosList.add(testScenarios);
+                    List<TestCases> testCasesList1 = testScenarios.getTestCases();
+                    for (TestCases testCases : testCasesList1) {
+                        testCasesId.add(testCases.getId());
+                    }
+                }
+            }
+            for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestCase().entrySet()) {
+                if (entry.getKey() == i) {
+                    TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
+                    testCasesList.add(testCases);
+                    testCasesId.add(testCases.getId());
+                    break;
+                }
+            }
+        }
+        scheduling.setTestGrouping(testGrouping);
+        scheduling.setTestCasesIds(testCasesId);
+        scheduling.setTestCases(testCasesList);
+        scheduling.setTestScenarios(testScenariosList);
+        schedulingRepository.save(scheduling);
+    }
+
+    @Override
+    public boolean isUpdateNameExists(String Name, Long schedulingId) {
+        return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
+    }
+
 }
