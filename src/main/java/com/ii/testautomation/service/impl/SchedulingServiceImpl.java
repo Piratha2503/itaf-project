@@ -42,7 +42,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
 
-
     @Override
     public void saveTestScheduling(SchedulingRequest schedulingRequest) {
         Scheduling scheduling = new Scheduling();
@@ -115,71 +114,69 @@ public class SchedulingServiceImpl implements SchedulingService {
             }
         }
     }
-            @Override
-            public void schedulingExecution (List < Long > testCaseIds, Long projectId, Long groupingId) throws
-            IOException {
-                for (Long testCaseId : testCaseIds
-                ) {
-                    TestCases testCases = testCasesRepository.findById(testCaseId).get();
-                    ExecutedTestCase executedTestCase = new ExecutedTestCase();
-                    executedTestCase.setTestCases(testCases);
-                    executedTestCaseRepository.save(executedTestCase);
-                }
-                List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
-                Optional<Project> projectOptional = projectRepository.findById(projectId);
-                if (projectOptional.isPresent()) {
-                    String projectPath = projectOptional.get().getProjectPath();
-                    if (excelFiles != null) {
-                        for (String excel : excelFiles) {
-                            Path excelPath = Path.of(excel);
-                            try {
-                                byte[] excelBytes = Files.readAllBytes(excelPath);
-                                String excelFileName = excelPath.getFileName().toString();
-                                Path destinationPath = Path.of(projectPath, excelFileName);
-                                Files.write(destinationPath, excelBytes);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+
+    @Override
+    public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
+        for (Long testCaseId : testCaseIds
+        ) {
+            TestCases testCases = testCasesRepository.findById(testCaseId).get();
+            ExecutedTestCase executedTestCase = new ExecutedTestCase();
+            executedTestCase.setTestCases(testCases);
+            executedTestCaseRepository.save(executedTestCase);
+        }
+        List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+        if (projectOptional.isPresent()) {
+            String projectPath = projectOptional.get().getProjectPath();
+            if (excelFiles != null) {
+                for (String excel : excelFiles) {
+                    Path excelPath = Path.of(excel);
+                    try {
+                        byte[] excelBytes = Files.readAllBytes(excelPath);
+                        String excelFileName = excelPath.getFileName().toString();
+                        Path destinationPath = Path.of(projectPath, excelFileName);
+                        Files.write(destinationPath, excelBytes);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
-                jarExecution(projectId);
             }
+        }
+        jarExecution(projectId);
+    }
 
-            private void jarExecution (Long projectId){
-                String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
-                File jarFile = new File(savedFilePath);
-                String jarFileName = jarFile.getName();
-                String jarDirectory = jarFile.getParent();
-                try {
-                    ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
-                    runProcessBuilder.directory(new File(jarDirectory));
-                    runProcessBuilder.redirectErrorStream(true);
-                    Process runProcess = runProcessBuilder.start();
-                    runProcess.waitFor();
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+    private void jarExecution(Long projectId) {
+        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+        File jarFile = new File(savedFilePath);
+        String jarFileName = jarFile.getName();
+        String jarDirectory = jarFile.getParent();
+        try {
+            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+            runProcessBuilder.directory(new File(jarDirectory));
+            runProcessBuilder.redirectErrorStream(true);
+            Process runProcess = runProcessBuilder.start();
+            runProcess.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public boolean existById(Long id) {
+        return schedulingRepository.existsById(id);
+    }
 
-            @Override
-            public boolean existById (Long id){
-                return schedulingRepository.existsById(id);
-            }
+    @Override
+    public void deleteScheduling(Long schedulingId) {
+        schedulingRepository.deleteById(schedulingId);
+    }
 
-            @Override
-            public void deleteScheduling (Long schedulingId){
-                schedulingRepository.deleteById(schedulingId);
-            }
-
-            @Override
-            public List<SchedulingResponse> viewByProjectId (Long projectId, Pageable
-            pageable, PaginatedContentResponse.Pagination pagination){
-                List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
-                Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
-                pagination.setTotalRecords(schedulingList.getTotalElements());
-                pagination.setTotalPages(schedulingList.getTotalPages());
+    @Override
+    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+        List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
+        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
+        pagination.setTotalRecords(schedulingList.getTotalElements());
+        pagination.setTotalPages(schedulingList.getTotalPages());
 
         for (Scheduling scheduling : schedulingList) {
             SchedulingResponse schedulingResponse = new SchedulingResponse();
@@ -190,27 +187,26 @@ public class SchedulingServiceImpl implements SchedulingService {
             List<String> testScenariosNames = new ArrayList<>();
             List<Long> testCaseIds = scheduling.getTestCasesIds();
             testCaseIds = testCaseIds.stream().distinct().collect(Collectors.toList());
-            for (Long testCaseId : testCaseIds)
-            {
+            for (Long testCaseId : testCaseIds) {
                 testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName());
             }
-            for (TestScenarios testScenarios : scheduling.getTestScenarios())
-            {
+            for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
                 testScenariosId.add(testScenarios.getId());
                 testScenariosNames.add(testScenarios.getName());
             }
-           testScenariosId = testScenariosId.stream().distinct().collect(Collectors.toList());
-           testScenariosNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
-           schedulingResponse.setTestCasesIds(testCaseIds);
-           schedulingResponse.setTestCasesNames(testCaseNames);
-           schedulingResponse.setTestScenarioIds(testScenariosId);
-           schedulingResponse.setTestScenarioNames(testScenariosNames);
-           schedulingResponse.setId(scheduling.getId());
-           schedulingResponse.setName(scheduling.getName());
-           schedulingResponseList.add(schedulingResponse);
+            testScenariosId = testScenariosId.stream().distinct().collect(Collectors.toList());
+            testScenariosNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
+            schedulingResponse.setTestCasesIds(testCaseIds);
+            schedulingResponse.setTestCasesNames(testCaseNames);
+            schedulingResponse.setTestScenarioIds(testScenariosId);
+            schedulingResponse.setTestScenarioNames(testScenariosNames);
+            schedulingResponse.setId(scheduling.getId());
+            schedulingResponse.setName(scheduling.getName());
+            schedulingResponseList.add(schedulingResponse);
         }
         return schedulingResponseList;
     }
+
     @Override
     public void updateScheduling(SchedulingRequest schedulingRequest) {
         Scheduling scheduling = new Scheduling();
