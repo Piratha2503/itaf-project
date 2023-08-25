@@ -16,5 +16,4 @@ public interface SchedulingRepository extends JpaRepository<Scheduling,Long>, Qu
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
     boolean existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(String name, Long projectId);
 
-
 }
