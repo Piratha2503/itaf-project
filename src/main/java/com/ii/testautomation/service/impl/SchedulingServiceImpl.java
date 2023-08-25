@@ -19,10 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -161,37 +158,37 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-            public List<SchedulingResponse> viewByProjectId (Long projectId, Pageable
-            pageable, PaginatedContentResponse.Pagination pagination){
-                List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
-                Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
-                pagination.setTotalRecords(schedulingList.getTotalElements());
-                pagination.setTotalPages(schedulingList.getTotalPages());
+    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable
+            pageable, PaginatedContentResponse.Pagination pagination) {
+        List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
+        Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
+        pagination.setTotalRecords(schedulingList.getTotalElements());
+        pagination.setTotalPages(schedulingList.getTotalPages());
 
-                for (Scheduling scheduling : schedulingList) {
-                    SchedulingResponse schedulingResponse = new SchedulingResponse();
-                    BeanUtils.copyProperties(scheduling, schedulingResponse);
-                    schedulingResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
-                    schedulingResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
-                    List<String> testCaseNames = new ArrayList<>();
-                    List<Long> testScenariosId = new ArrayList<>();
-                    List<String> testScenariosNames = new ArrayList<>();
-                    for (Long testCaseId : scheduling.getTestCasesIds()) {
-                        testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName());
-                    }
-                    for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
-                        testScenariosId.add(testScenarios.getId());
-                        testScenariosNames.add(testScenarios.getName());
-                    }
-                    testScenariosId = testScenariosId.stream().distinct().collect(Collectors.toList());
-                    testScenariosNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
-                    schedulingResponse.setTestScenarioIds(testScenariosId);
-                    schedulingResponse.setTestScenarioNames(testScenariosNames);
-                    schedulingResponse.setTestCasesNames(testCaseNames);
-                    schedulingResponseList.add(schedulingResponse);
-                }
-                return schedulingResponseList;
+        for (Scheduling scheduling : schedulingList) {
+            SchedulingResponse schedulingResponse = new SchedulingResponse();
+            BeanUtils.copyProperties(scheduling, schedulingResponse);
+            schedulingResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
+            schedulingResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
+            List<String> testCaseNames = new ArrayList<>();
+            List<Long> testScenariosId = new ArrayList<>();
+            List<String> testScenariosNames = new ArrayList<>();
+            for (Long testCaseId : scheduling.getTestCasesIds()) {
+                testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName());
             }
+            for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
+                testScenariosId.add(testScenarios.getId());
+                testScenariosNames.add(testScenarios.getName());
+            }
+            testScenariosId = testScenariosId.stream().distinct().collect(Collectors.toList());
+            testScenariosNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
+            schedulingResponse.setTestScenarioIds(testScenariosId);
+            schedulingResponse.setTestScenarioNames(testScenariosNames);
+            schedulingResponse.setTestCasesNames(testCaseNames);
+            schedulingResponseList.add(schedulingResponse);
+        }
+        return schedulingResponseList;
+    }
 
 
     @Override
