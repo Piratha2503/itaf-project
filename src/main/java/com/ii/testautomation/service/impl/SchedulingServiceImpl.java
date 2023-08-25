@@ -219,7 +219,7 @@ public class SchedulingServiceImpl implements SchedulingService {
             List<Long> testCaseIds = scheduling.getTestCasesIds();
             testCaseIds = testCaseIds.stream().distinct().collect(Collectors.toList());
             for (Long testCaseId : testCaseIds) {
-                testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName());
+                testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName().substring(testCasesRepository.findById(testCaseId).get().getName().lastIndexOf(".") + 1));
             }
             for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
                 testScenariosId.add(testScenarios.getId());
