@@ -204,8 +204,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable
-            pageable, PaginatedContentResponse.Pagination pagination) {
+    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
         List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
         Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
         pagination.setTotalRecords(schedulingList.getTotalElements());
@@ -242,10 +241,11 @@ public class SchedulingServiceImpl implements SchedulingService {
         Scheduling scheduling = schedulingRepository.findById(schedulingRequest.getId()).get();
         BeanUtils.copyProperties(schedulingRequest, scheduling);
         List<Sequence> sequences = sequenceRepository.findBySchedulingCode(scheduling.getSchedulingCode());
-        for (Sequence sequence : sequences
-        ) {
-            schedulingRepository.deleteById(sequence.getId());
+        for (Sequence sequence : sequences) {
+            sequenceRepository.deleteById(sequence.getId());
         }
+        String random = UUID.randomUUID().toString().replace("-", "");
+        scheduling.setSchedulingCode(random);
         TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getGroupId()).get();
         List<TestScenarios> testScenariosList = new ArrayList<>();
         List<Long> testCasesId = new ArrayList<>();
