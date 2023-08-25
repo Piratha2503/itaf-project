@@ -198,7 +198,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     public void updateScheduling(SchedulingRequest schedulingRequest) {
         Scheduling scheduling = new Scheduling();
         BeanUtils.copyProperties(schedulingRequest, scheduling);
-        TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getId()).get();
+        TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getGroupId()).get();
         List<TestScenarios> testScenariosList = new ArrayList<>();
         List<Long> testCasesId = new ArrayList<>();
         List<TestCases> testCasesList = new ArrayList<>();
@@ -234,5 +234,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     public boolean isUpdateNameExists(String Name, Long schedulingId) {
         return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
     }
+
 }
 
