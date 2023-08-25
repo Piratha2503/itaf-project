@@ -70,8 +70,8 @@ public class SchedulingController {
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        if ( schedulingRequest.getTestCase().isEmpty() &&
-                schedulingRequest.getTestScenario().isEmpty()) {
+        if ( (schedulingRequest.getTestCase().isEmpty()||schedulingRequest.getTestCase()==null)&&
+                (schedulingRequest.getTestScenario().isEmpty()||schedulingRequest.getTestScenario().isEmpty())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSchedulingTestCasesAndScenarioEmpty()));
         }
