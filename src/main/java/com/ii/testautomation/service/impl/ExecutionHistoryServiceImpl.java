@@ -108,7 +108,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return executionHistoryResponseList;
     }
 
-
     @Override
     public boolean existByTestGropingId(Long id) {
         return executionHistoryRepository.existsByTestGroupingId(id);
