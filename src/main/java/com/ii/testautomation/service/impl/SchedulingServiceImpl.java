@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
+import com.ii.testautomation.dto.response.ScheduleResponse;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -38,6 +39,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ProjectRepository projectRepository;
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
+
     @Autowired
     private SequenceRepository sequenceRepository;
 
@@ -97,6 +99,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Transactional
     @Scheduled(cron = "${schedule.time.cron}")
     public void autoScheduling() throws IOException {
+
         List<Scheduling> schedulingList = schedulingRepository.findAll();
         Long projectId = null;
         Long groupId = null;
@@ -115,6 +118,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                 schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
             }
         }
+
     }
 
     @Override
@@ -163,6 +167,30 @@ public class SchedulingServiceImpl implements SchedulingService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public ScheduleResponse getSchedulingById(Long id) {
+        ScheduleResponse scheduleResponse = new ScheduleResponse();
+        Scheduling scheduling = schedulingRepository.findById(id).get();
+        scheduleResponse.setId(scheduling.getId());
+        scheduleResponse.setName(scheduling.getName());
+        scheduleResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
+        scheduleResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
+        Map<Integer, Long> testScenarios = new HashMap<>();
+        Map<Integer, Long> testCase = new HashMap<>();
+        String schedulingCode = scheduling.getSchedulingCode();
+        List<Sequence> sequences = sequenceRepository.findBySchedulingCode(schedulingCode);
+        for (Sequence sequence : sequences) {
+            Integer count = sequence.getCount();
+            if (sequence.getTestCaseId() != null) {
+                testCase.put(count, sequence.getTestCaseId());
+            } else if (sequence.getTestScenarioId() != null) {
+                testScenarios.put(count, sequence.getTestScenarioId());
+            }
+        }
+        scheduleResponse.setTestScenario(testScenarios);
+        scheduleResponse.setTestCase(testCase);
+        return scheduleResponse;
     }
 
     @Override

@@ -1,19 +1,17 @@
-package com.ii.testautomation.dto.request;
+package com.ii.testautomation.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
-@Setter
+
 @Getter
-public class SchedulingRequest {
+@Setter
+public class ScheduleResponse {
     private Long id;
     private String name;
-    private boolean status;
+    private Long testGroupingId;
+    private String testGroupingName;
     private Map<Integer, Long> testScenario;
     private Map<Integer, Long> testCase;
-    private Long groupId;
-    private Long projectId;
-
-
 }
