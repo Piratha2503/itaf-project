@@ -19,7 +19,7 @@ public class Scheduling extends DateAudit {
     @JoinColumn(name = "testCases_id", nullable = true)
     private List<TestCases> testCases;
     @ManyToMany
-    @JoinColumn(name = "testCases_id", nullable = true)
+    @JoinColumn(name = "testScenarios_id", nullable = true)
     private List<TestScenarios> testScenarios;
     @ManyToOne
     @JoinColumn(name = "testGrouping_id", nullable = false)
@@ -27,6 +27,8 @@ public class Scheduling extends DateAudit {
     @ElementCollection
     private List<Long> testCasesIds;
     private boolean status = true;
+    @Column(unique = true)
+    private String schedulingCode;
 }
 
 
