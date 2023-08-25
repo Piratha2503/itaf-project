@@ -244,8 +244,10 @@ public class SchedulingServiceImpl implements SchedulingService {
         List<Sequence> sequences = sequenceRepository.findBySchedulingCode(scheduling.getSchedulingCode());
         for (Sequence sequence : sequences
         ) {
-            schedulingRepository.deleteById(sequence.getId());
+            sequenceRepository.deleteById(sequence.getId());
         }
+        String random = UUID.randomUUID().toString().replace("-", "");
+        scheduling.setSchedulingCode(random);
         TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getGroupId()).get();
         List<TestScenarios> testScenariosList = new ArrayList<>();
         List<Long> testCasesId = new ArrayList<>();
