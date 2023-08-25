@@ -76,11 +76,7 @@ public class ExecutionHistoryController {
                     statusCodeBundle.getTestGroupingNotExistCode(),
                     statusCodeBundle.getTestGroupingNotExistsMessage()));
         }
-        if (!executionHistoryService.existByTestGropingId(id)) {
-            return ResponseEntity.ok(
-                    new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
-                            statusCodeBundle.getTestGroupingNotMappedMessage()));
-        }
+
         if (!testGroupingService.existsByTestGroupingId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
         if (!executionHistoryService.existByTestGropingId(id))
