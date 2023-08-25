@@ -58,8 +58,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                     TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
                     testScenariosList.add(testScenarios);
                     List<TestCases> testCasesList = testScenarios.getTestCases();
-                    for (TestCases testCases : testCasesList
-                    ) {
+                    for (TestCases testCases : testCasesList) {
                         testCasesId.add(testCases.getId());
                     }
                 }
@@ -82,13 +81,11 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Transactional
     @Scheduled(cron = "${schedule.time.cron}")
     public void autoScheduling() throws IOException {
-
         List<Scheduling> schedulingList = schedulingRepository.findAll();
         Long projectId = null;
         Long groupId = null;
         if (schedulingList != null && !schedulingList.isEmpty()) {
-            for (Scheduling scheduling : schedulingList
-            ) {
+            for (Scheduling scheduling : schedulingList) {
                 if (scheduling.isStatus()) {
                     groupId = scheduling.getTestGrouping().getId();
                     if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
