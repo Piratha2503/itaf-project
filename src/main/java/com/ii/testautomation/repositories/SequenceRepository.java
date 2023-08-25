@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SequenceRepository extends JpaRepository<Sequence, Long> {
     List<Sequence> findBySchedulingCode(String scheduleCode);
+
 }
