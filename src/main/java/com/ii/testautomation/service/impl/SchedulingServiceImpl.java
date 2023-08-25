@@ -239,9 +239,14 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     @Override
     public void updateScheduling(SchedulingRequest schedulingRequest) {
-        Scheduling scheduling = new Scheduling();
+        Scheduling scheduling = schedulingRepository.findById(schedulingRequest.getId()).get();
         BeanUtils.copyProperties(schedulingRequest, scheduling);
-        TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getId()).get();
+        List<Sequence> sequences = sequenceRepository.findBySchedulingCode(scheduling.getSchedulingCode());
+        for (Sequence sequence : sequences
+        ) {
+            schedulingRepository.deleteById(sequence.getId());
+        }
+        TestGrouping testGrouping = testGroupingRepository.findById(schedulingRequest.getGroupId()).get();
         List<TestScenarios> testScenariosList = new ArrayList<>();
         List<Long> testCasesId = new ArrayList<>();
         List<TestCases> testCasesList = new ArrayList<>();
@@ -252,6 +257,13 @@ public class SchedulingServiceImpl implements SchedulingService {
                     TestScenarios testScenarios = testScenariosRepository.findById(entry.getValue()).get();
                     testScenariosList.add(testScenarios);
                     List<TestCases> testCasesList1 = testScenarios.getTestCases();
+                    Sequence sequence = new Sequence();
+                    sequence.setCount(i);
+                    sequence.setTestCaseId(null);
+                    sequence.setTestScenarioId(testScenarios.getId());
+                    sequence.setGroupId(testGrouping.getId());
+                    sequence.setSchedulingCode(scheduling.getSchedulingCode());
+                    sequenceRepository.save(sequence);
                     for (TestCases testCases : testCasesList1) {
                         testCasesId.add(testCases.getId());
                     }
@@ -262,6 +274,13 @@ public class SchedulingServiceImpl implements SchedulingService {
                     TestCases testCases = testCasesRepository.findById(entry.getValue()).get();
                     testCasesList.add(testCases);
                     testCasesId.add(testCases.getId());
+                    Sequence sequence = new Sequence();
+                    sequence.setCount(i);
+                    sequence.setTestCaseId(testCases.getId());
+                    sequence.setTestScenarioId(null);
+                    sequence.setGroupId(testGrouping.getId());
+                    sequence.setSchedulingCode(scheduling.getSchedulingCode());
+                    sequenceRepository.save(sequence);
                     break;
                 }
             }
@@ -277,5 +296,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     public boolean isUpdateNameExists(String Name, Long schedulingId) {
         return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
     }
+
 }
 

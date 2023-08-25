@@ -1,6 +1,7 @@
 package com.ii.testautomation.repositories;
 
 import com.ii.testautomation.entities.Scheduling;
+import com.ii.testautomation.entities.Sequence;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.ii.testautomation.entities.TestCases;
@@ -14,4 +15,5 @@ public interface SchedulingRepository extends JpaRepository<Scheduling,Long>, Qu
     Page<Scheduling> findByTestGrouping_ProjectId(Pageable pageable, Long projectId);
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
     boolean existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(String name, Long projectId);
+
 }
