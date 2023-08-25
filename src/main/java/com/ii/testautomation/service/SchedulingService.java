@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.request.SchedulingRequest;
 
 import java.io.IOException;
 
+import com.ii.testautomation.dto.response.ScheduleResponse;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
@@ -15,8 +16,7 @@ import com.ii.testautomation.dto.request.SchedulingRequest;
 public interface SchedulingService {
     void deleteScheduling(Long schedulingId);
 
-    SchedulingResponse getSchedulingById(Long id) throws NullPointerException;
-
+    public ScheduleResponse getSchedulingById(Long id);
     public boolean existById(Long id);
 
     List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);

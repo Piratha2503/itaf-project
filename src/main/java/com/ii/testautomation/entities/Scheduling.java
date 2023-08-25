@@ -27,6 +27,8 @@ public class Scheduling extends DateAudit {
     @ElementCollection
     private List<Long> testCasesIds;
     private boolean status = true;
+    @Column(unique = true)
+    private String schedulingCode;
 }
 
 
