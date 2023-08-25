@@ -452,16 +452,12 @@ public class StatusCodeBundle {
     private String schedulingUpdateSuccessMessage;
 
 
-
     //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingIdNotExistMessage;
 
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
-
-
-
 
 
 }
