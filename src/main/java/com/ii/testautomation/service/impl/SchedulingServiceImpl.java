@@ -39,7 +39,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ProjectRepository projectRepository;
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
-
     @Autowired
     private SequenceRepository sequenceRepository;
 
@@ -99,19 +98,18 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Transactional
     @Scheduled(cron = "${schedule.time.cron}")
     public void autoScheduling() throws IOException {
-        List<Scheduling> schedulingList = schedulingRepository.findAll();
-        Long projectId = null;
-        Long groupId = null;
-        if (schedulingList != null && !schedulingList.isEmpty()) {
-            for (Scheduling scheduling : schedulingList) {
-                if (scheduling.isStatus()) {
+    List<Scheduling> schedulingList = schedulingRepository.findAll();
+    Long projectId = null;
+    Long groupId = null;
+    if (schedulingList != null && !schedulingList.isEmpty()) {
+        for (Scheduling scheduling : schedulingList) {
+            if (scheduling.isStatus()) {
                     groupId = scheduling.getTestGrouping().getId();
                     if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
                         for (Long testCaseId : scheduling.getTestCasesIds()) {
                             projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
                             break;
                         }
-
                     }
                 }
                 schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
@@ -218,13 +216,14 @@ public class SchedulingServiceImpl implements SchedulingService {
             List<String> testScenariosNames = new ArrayList<>();
             List<Long> testCaseIds = scheduling.getTestCasesIds();
             testCaseIds = testCaseIds.stream().distinct().collect(Collectors.toList());
-            for (Long testCaseId : testCaseIds) {
-                testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName().substring(testCasesRepository.findById(testCaseId).get().getName().lastIndexOf(".") + 1));
+            for (TestCases testCases : scheduling.getTestCases()) {
+                testCaseNames.add(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
             }
             for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
                 testScenariosId.add(testScenarios.getId());
                 testScenariosNames.add(testScenarios.getName());
             }
+            testCaseNames = testCaseNames.stream().distinct().collect(Collectors.toList());
             testScenariosId = testScenariosId.stream().distinct().collect(Collectors.toList());
             testScenariosNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
             schedulingResponse.setTestCasesIds(testCaseIds);
