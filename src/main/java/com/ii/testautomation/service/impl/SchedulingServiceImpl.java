@@ -99,7 +99,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Transactional
     @Scheduled(cron = "${schedule.time.cron}")
     public void autoScheduling() throws IOException {
-
+        System.out.println("================================================wwwwwwwwww");
         List<Scheduling> schedulingList = schedulingRepository.findAll();
         Long projectId = null;
         Long groupId = null;
@@ -129,10 +129,14 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     @Override
     public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
+        TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
+        testGrouping.setExecutionStatus(true);
+        testGroupingRepository.save(testGrouping);
         for (Long testCaseId : testCaseIds) {
             TestCases testCases = testCasesRepository.findById(testCaseId).get();
             ExecutedTestCase executedTestCase = new ExecutedTestCase();
             executedTestCase.setTestCases(testCases);
+            executedTestCase.setTestGrouping(testGrouping);
             executedTestCaseRepository.save(executedTestCase);
         }
         List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
