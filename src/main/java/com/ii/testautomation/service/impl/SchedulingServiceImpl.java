@@ -39,7 +39,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ProjectRepository projectRepository;
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
-
     @Autowired
     private SequenceRepository sequenceRepository;
 
@@ -99,6 +98,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Transactional
     @Scheduled(cron = "${schedule.time.cron}")
     public void autoScheduling() throws IOException {
+        System.out.println("================================================wwwwwwwwww");
         List<Scheduling> schedulingList = schedulingRepository.findAll();
         Long projectId = null;
         Long groupId = null;
@@ -111,7 +111,6 @@ public class SchedulingServiceImpl implements SchedulingService {
                             projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
                             break;
                         }
-
                     }
                 }
                 schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
@@ -127,10 +126,14 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     @Override
     public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
+        TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
+        testGrouping.setExecutionStatus(true);
+        testGroupingRepository.save(testGrouping);
         for (Long testCaseId : testCaseIds) {
             TestCases testCases = testCasesRepository.findById(testCaseId).get();
             ExecutedTestCase executedTestCase = new ExecutedTestCase();
             executedTestCase.setTestCases(testCases);
+            executedTestCase.setTestGrouping(testGrouping);
             executedTestCaseRepository.save(executedTestCase);
         }
         List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
@@ -217,9 +220,8 @@ public class SchedulingServiceImpl implements SchedulingService {
             List<Long> testScenariosId = new ArrayList<>();
             List<String> testScenariosNames = new ArrayList<>();
             List<Long> testCaseIds = scheduling.getTestCasesIds();
-            testCaseIds = testCaseIds.stream().distinct().collect(Collectors.toList());
-            for (Long testCaseId : testCaseIds) {
-                testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName().substring(testCasesRepository.findById(testCaseId).get().getName().lastIndexOf(".") + 1));
+            for (TestCases testCases : scheduling.getTestCases()) {
+                testCaseNames.add(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
             }
             for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
                 testScenariosId.add(testScenarios.getId());
