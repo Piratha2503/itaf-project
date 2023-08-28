@@ -1,4 +1,5 @@
 package com.ii.testautomation.controllers;
+import com.ii.testautomation.dto.request.EmailRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -11,6 +12,8 @@ import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -111,4 +114,14 @@ public class ExecutionHistoryController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
 
+    @PostMapping(value = EndpointURI.EXECUTION_HISTORY_EMAIL)
+    public ResponseEntity<Object> emailHistoryReports(@RequestBody EmailRequest emailRequest) throws IOException, MessagingException {
+        if (emailRequest.getHistoryReportIds() == null || emailRequest.getLastHistoryId() == null || emailRequest.getToEmails() == null || emailRequest.getSubject() == null)
+        return ResponseEntity.ok("Following Requests Cannot be Null or Empty -- > "+"HistoryReportIds,LastHistoryId,ToEmails,Subject");
+        if (emailRequest.getHistoryReportIds().isEmpty() || emailRequest.getToEmails().isEmpty())
+            return ResponseEntity.ok("Following Requests Cannot be Null or Empty -- > "+"HistoryReportIds,LastHistoryId,ToEmails,Subject");
+        executionHistoryService.emailHistoryReports(emailRequest);
+        return ResponseEntity.ok("ok");
+
+    }
 }

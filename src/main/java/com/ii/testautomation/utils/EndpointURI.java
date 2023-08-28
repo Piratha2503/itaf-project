@@ -5,6 +5,7 @@ package com.ii.testautomation.utils;
  */
 public final class EndpointURI {
 
+
     private static final String BASE_API_PATH = "/api/v1/";
     private static final String SLASH = "/";
     private static final String SEARCH = "search";
@@ -86,6 +87,7 @@ public final class EndpointURI {
     public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
     public static final String EXECUTION_HISTORY_PROJECT_ID = EXECUTION_HISTORY+ID+"/project"+PROJECT_ID;
     public static final String EXECUTION_HISTORY_DATE_FILTER = EXECUTION_HISTORY+"/DateFilter"+ID;
+    public static final String EXECUTION_HISTORY_EMAIL = EXECUTION_HISTORY+"/email";
 
     // URLs for Scheduling History
     public static final String SCHEDULING_BY_ID = BASE_API_PATH + "Scheduling"+ID;

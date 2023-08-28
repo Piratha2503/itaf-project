@@ -1,7 +1,9 @@
 package com.ii.testautomation.service;
 
+import com.ii.testautomation.dto.request.EmailRequest;
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -20,5 +22,8 @@ public interface ExecutionHistoryService {
     boolean existByExecutionHistoryId(Long id);
 
     boolean deleteExecutionHistory(Long id, Long projectId);
+
     List<ExecutionHistoryResponse> executionHistoryDateFilter(Long id, Timestamp startDate, Timestamp endDate);
+
+    void emailHistoryReports(EmailRequest emailRequest) throws IOException, MessagingException;
 }
