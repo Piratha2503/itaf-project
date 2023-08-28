@@ -14,8 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,7 +39,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ProjectRepository projectRepository;
     @Autowired
     private ExecutedTestCaseRepository executedTestCaseRepository;
-
     @Autowired
     private SequenceRepository sequenceRepository;
 
@@ -112,7 +111,6 @@ public class SchedulingServiceImpl implements SchedulingService {
                             projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
                             break;
                         }
-
                     }
                 }
                 schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
@@ -125,7 +123,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     public boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId) {
         return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
-
 
     @Override
     public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
@@ -173,6 +170,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
     }
 
+    @Override
     public ScheduleResponse getSchedulingById(Long id) {
         ScheduleResponse scheduleResponse = new ScheduleResponse();
         Scheduling scheduling = schedulingRepository.findById(id).get();
@@ -208,7 +206,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+    public List<SchedulingResponse> viewByProjectId(Long projectId,Pageable pageable, PaginatedContentResponse.Pagination pagination) {
         List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
         Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
         pagination.setTotalRecords(schedulingList.getTotalElements());
@@ -216,14 +214,14 @@ public class SchedulingServiceImpl implements SchedulingService {
 
         for (Scheduling scheduling : schedulingList) {
             SchedulingResponse schedulingResponse = new SchedulingResponse();
-            BeanUtils.copyProperties(scheduling, schedulingResponse);
             schedulingResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
             schedulingResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
             List<String> testCaseNames = new ArrayList<>();
             List<Long> testScenariosId = new ArrayList<>();
             List<String> testScenariosNames = new ArrayList<>();
-            for (Long testCaseId : scheduling.getTestCasesIds()) {
-                testCaseNames.add(testCasesRepository.findById(testCaseId).get().getName());
+            List<Long> testCaseIds = scheduling.getTestCasesIds();
+            for (TestCases testCases : scheduling.getTestCases()) {
+                testCaseNames.add(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
             }
             for (TestScenarios testScenarios : scheduling.getTestScenarios()) {
                 testScenariosId.add(testScenarios.getId());
@@ -231,14 +229,16 @@ public class SchedulingServiceImpl implements SchedulingService {
             }
             testScenariosId = testScenariosId.stream().distinct().collect(Collectors.toList());
             testScenariosNames = testScenariosNames.stream().distinct().collect(Collectors.toList());
+            schedulingResponse.setTestCasesIds(testCaseIds);
+            schedulingResponse.setTestCasesNames(testCaseNames);
             schedulingResponse.setTestScenarioIds(testScenariosId);
             schedulingResponse.setTestScenarioNames(testScenariosNames);
-            schedulingResponse.setTestCasesNames(testCaseNames);
+            schedulingResponse.setId(scheduling.getId());
+            schedulingResponse.setName(scheduling.getName());
             schedulingResponseList.add(schedulingResponse);
         }
         return schedulingResponseList;
     }
-
 
     @Override
     public void updateScheduling(SchedulingRequest schedulingRequest) {
@@ -302,4 +302,3 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
 }
-
