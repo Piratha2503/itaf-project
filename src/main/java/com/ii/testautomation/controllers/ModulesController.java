@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.request.ModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.response.ProjectModuleResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
+import com.ii.testautomation.dto.search.TestCaseSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -125,11 +126,11 @@ public class ModulesController {
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByProjectIdSuccessMessage(), pagination));
     }
     @GetMapping(value = EndpointURI.MODULE_BY_PROJECT_ID)
-    public ResponseEntity<BaseResponse> getAllModulesByProjectId(@PathVariable Long id) {
+    public ResponseEntity<BaseResponse> getAllModulesByProjectIdAndSearch(@PathVariable Long id, @RequestParam TestCaseSearch testCaseSearch) {
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
-        ProjectModuleResponse projectModuleResponse = modulesService.getAllByProjectId(id);
+        ProjectModuleResponse projectModuleResponse = modulesService.getAllByProjectIdAndSearch(id,testCaseSearch);
         return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES,projectModuleResponse,
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllModulesByProjectId()));
     }
