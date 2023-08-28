@@ -33,7 +33,7 @@ public interface TestGroupingService {
     List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId);
 
     TestGroupingResponse getTestGroupingById(Long id);
-
+     int progressBar();
     boolean existByProjectId(Long projectId);
 
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId);

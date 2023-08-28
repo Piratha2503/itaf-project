@@ -14,14 +14,12 @@ import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +53,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private ExecutedTestCaseRepository executedTestCaseRepository;
     @Autowired
     private SchedulingRepository schedulingRepository;
+    @Autowired
+    private ProgressBarRepository progressBarRepository;
 
     @Value("${jar.import.file.windows.path}")
     private String fileFolder;
@@ -491,6 +491,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
       jarExecution(executionRequest.getProjectId());
     }
+
     private void jarExecution(Long projectId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
@@ -505,6 +506,18 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+    @Override
+    public int progressBar() {
+       ProgressBar progressBar = progressBarRepository.findFirstByOrderById();
+        Long executedTestCaseCount = progressBar.getExecutedTestCaseCount();
+        Long totalNoOfTestCases = progressBar.getTotalNoOfTestCases();
+        if (executedTestCaseCount <= totalNoOfTestCases) {
+            double progress = ((double) executedTestCaseCount / totalNoOfTestCases) * 100.0;
+            return (int) progress;
+        }
+     return 0;
+
     }
 
     @Override
