@@ -158,7 +158,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         Path reportPath = Path.of(path + File.separator + reportName.toString()+".html");
         File file = reportPath.toFile();
         return file;
-        //return new FreshInputStreamResource(reportPath);
     }
 
 
