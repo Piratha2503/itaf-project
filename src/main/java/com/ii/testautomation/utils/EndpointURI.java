@@ -5,7 +5,6 @@ package com.ii.testautomation.utils;
  */
 public final class EndpointURI {
 
-
     private static final String BASE_API_PATH = "/api/v1/";
     private static final String SLASH = "/";
     private static final String SEARCH = "search";
@@ -44,7 +43,6 @@ public final class EndpointURI {
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectIdWithPagination" + ID;
 
     // URLs for Test Types
-
     public static final String TEST_TYPE = BASE_API_PATH + "testType";
     public static final String TEST_TYPE_IMPORT = BASE_API_PATH + TEST_TYPE + "import";
     public static final String TEST_TYPES_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testTypes";
@@ -59,9 +57,9 @@ public final class EndpointURI {
     public static final String TESTCASE_IMPORT= TESTCASE+"/import"+ID;
     public static final String TESTCASE_BY_PROJECT_ID = BASE_API_PATH+"TestCaseByProjectIdWithPagination"+ID;
     public static final String TESTCASE_BY_MODULE_ID = BASE_API_PATH+"TestCaseByModuleId"+ID;
-
     public static final String TESTCASE_BY_MAIN_MODULE_ID = BASE_API_PATH+"TestCaseByMainModuleId"+ID;
     public static final String MODULE_IMPORT=MODULE +"/import";
+
     // URLs for TestGrouping
     public static final String TEST_GROUPING = BASE_API_PATH + "testGrouping";
     public static final String TEST_GROUPING_IMPORT = TEST_GROUPING + "/import";
