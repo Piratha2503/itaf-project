@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -112,7 +113,12 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
             mimeMessageHelper.addTo(toEmail);
             mimeMessageHelper.setSubject(Constants.EXECUTION_HISTORY_REPORTS);
             mimeMessageHelper.setText(emailText);
+
         }
+
+
+
+
         javaMailSender.send(mimeMessage);
     }
 
