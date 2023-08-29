@@ -431,6 +431,10 @@ public class StatusCodeBundle {
     private String viewExecutionHistoryMessage;
     @Value("${message.success.delete.executionHistory}")
     private String executionHistoryDeleteSuccessMessage;
+    @Value("${message.success.executionHistory.mail}")
+    private String executionHistoryMailSuccessMessage;
+    @Value("${message.failure.executionHistory.null.empty}")
+    private String executionHistoryMailFailureMessage;
 
     //Scheduling Code
     @Value("${code.failure.Id.notExist.scheduling}")

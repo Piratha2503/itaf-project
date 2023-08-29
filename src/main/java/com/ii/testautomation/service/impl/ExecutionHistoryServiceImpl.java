@@ -33,7 +33,7 @@ import java.util.List;
 
 @Service
 @Component
-@PropertySource("classpath:EmailSettings.properties")
+@PropertySource("classpath:emailConfig.properties")
 public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Autowired
     private ExecutionHistoryRepository executionHistoryRepository;
@@ -113,12 +113,7 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
             mimeMessageHelper.addTo(toEmail);
             mimeMessageHelper.setSubject(Constants.EXECUTION_HISTORY_REPORTS);
             mimeMessageHelper.setText(emailText);
-
         }
-
-
-
-
         javaMailSender.send(mimeMessage);
     }
 

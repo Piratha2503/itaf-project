@@ -117,11 +117,11 @@ public class ExecutionHistoryController {
     @PostMapping(value = EndpointURI.EXECUTION_HISTORY_EMAIL)
     public ResponseEntity<Object> emailHistoryReports(@RequestBody EmailRequest emailRequest) throws IOException, MessagingException {
         if (emailRequest.getHistoryReportIds() == null || emailRequest.getLastHistoryId() == null || emailRequest.getToEmails() == null)
-        return ResponseEntity.ok("Following Requests Cannot be Null or Empty -- > "+"HistoryReportIds,LastHistoryId,ToEmails,Subject");
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExecutionHistoryMailFailureMessage()));
         if (emailRequest.getHistoryReportIds().isEmpty() || emailRequest.getToEmails().isEmpty())
-            return ResponseEntity.ok("Following Requests Cannot be Null or Empty -- > "+"HistoryReportIds,LastHistoryId,ToEmails,Subject");
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExecutionHistoryMailFailureMessage()));
         executionHistoryService.emailHistoryReports(emailRequest);
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryMailSuccessMessage()));
 
     }
 }
