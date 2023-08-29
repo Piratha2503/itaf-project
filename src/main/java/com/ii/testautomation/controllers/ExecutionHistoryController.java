@@ -116,7 +116,7 @@ public class ExecutionHistoryController {
 
     @PostMapping(value = EndpointURI.EXECUTION_HISTORY_EMAIL)
     public ResponseEntity<Object> emailHistoryReports(@RequestBody EmailRequest emailRequest) throws IOException, MessagingException {
-        if (emailRequest.getHistoryReportIds() == null || emailRequest.getLastHistoryId() == null || emailRequest.getToEmails() == null || emailRequest.getSubject() == null)
+        if (emailRequest.getHistoryReportIds() == null || emailRequest.getLastHistoryId() == null || emailRequest.getToEmails() == null)
         return ResponseEntity.ok("Following Requests Cannot be Null or Empty -- > "+"HistoryReportIds,LastHistoryId,ToEmails,Subject");
         if (emailRequest.getHistoryReportIds().isEmpty() || emailRequest.getToEmails().isEmpty())
             return ResponseEntity.ok("Following Requests Cannot be Null or Empty -- > "+"HistoryReportIds,LastHistoryId,ToEmails,Subject");
