@@ -22,7 +22,6 @@ public class EmailConfiguration {
     @Value("${spring.mail.port}")
     private int port;
 
-
     @Bean
     public JavaMailSenderImpl javaMailSender()
     {
