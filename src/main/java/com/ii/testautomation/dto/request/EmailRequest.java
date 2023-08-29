@@ -12,4 +12,5 @@ public class EmailRequest {
     private Long lastHistoryId;
     private List<String> toEmails;
     private String subject;
+    private String text;
 }

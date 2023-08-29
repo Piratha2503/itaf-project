@@ -111,8 +111,8 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         for (String toEmail : emailRequest.getToEmails())
         {
             mimeMessageHelper.addTo(toEmail);
-            mimeMessageHelper.setSubject(Constants.EXECUTION_HISTORY_REPORTS);
-            mimeMessageHelper.setText(emailText);
+            mimeMessageHelper.setSubject(emailRequest.getSubject());
+            mimeMessageHelper.setText(emailRequest.getText());
         }
         javaMailSender.send(mimeMessage);
     }
@@ -160,7 +160,5 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         File file = reportPath.toFile();
         return file;
     }
-
-
 
 }
