@@ -35,8 +35,7 @@ import java.util.*;
 
 @SuppressWarnings("deprecation")
 @Service
-public class
-ModulesServiceImpl implements ModulesService {
+public class ModulesServiceImpl implements ModulesService {
 
     @Autowired
     private ModulesRepository modulesRepository;
@@ -139,83 +138,117 @@ ModulesServiceImpl implements ModulesService {
     }
 
     @Override
-    public ProjectModuleResponse getAllByProjectIdAndSearch(Long projectId, TestCaseSearch testCaseSearch) {
-        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        QTestCases qTestCases = QTestCases.testCases;
-        ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
-        List<ModulesResponse> modulesResponseList = new ArrayList<>();
-
-        for (Modules module : modulesList) {
-            if (Utils.isNotNullAndEmpty(testCaseSearch.getModuleName())) {
-                if (qTestCases.subModule != null &&
-                        qTestCases.subModule.mainModule != null &&
-                        qTestCases.subModule.mainModule.modules != null &&
-                        qTestCases.subModule.mainModule.modules.name != null) {
-
-                    booleanBuilder.and(
-                            qTestCases.subModule.mainModule.modules.name.containsIgnoreCase(testCaseSearch.getModuleName())
-                    );
-                }
-            }
+    public ProjectModuleResponse getAllByProjectIdAndSearch(Long projectId, String testCaseName) {
+        if (testCaseName == null && testCaseName.isEmpty()) {
+            List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
+            ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
+            List<ModulesResponse> modulesResponseList = new ArrayList<>();
+            for (Modules module : modulesList) {
                 ModulesResponse modulesResponse = new ModulesResponse();
                 modulesResponse.setName(module.getName());
                 modulesResponse.setId(module.getId());
                 List<MainModules> mainModulesList = mainModulesRepository.findAllByModulesId(module.getId());
                 List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
-
                 for (MainModules mainModules : mainModulesList) {
-                    if (Utils.isNotNullAndEmpty(testCaseSearch.getMainModuleName())) {
-                        booleanBuilder.and(qTestCases.subModule.mainModule.name.containsIgnoreCase(testCaseSearch.getMainModuleName()));
-                    }
                     MainModulesResponse mainModulesResponse = new MainModulesResponse();
                     mainModulesResponse.setId(mainModules.getId());
                     mainModulesResponse.setName(mainModules.getName());
                     List<SubModules> subModulesList = subModulesRepository.findAllSubModulesByMainModuleId(mainModules.getId());
                     List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
-
                     for (SubModules subModules : subModulesList) {
-                        if (Utils.isNotNullAndEmpty(testCaseSearch.getSubModuleName())) {
-                            booleanBuilder.and(qTestCases.subModule.name.containsIgnoreCase(testCaseSearch.getSubModuleName()));
-                        }
                         SubModulesResponse subModulesResponse = new SubModulesResponse();
                         subModulesResponse.setId(subModules.getId());
                         subModulesResponse.setName(subModules.getName());
                         List<TestCases> testCasesList = testCasesRepository.findAllTestCasesBySubModuleId(subModules.getId());
                         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
-
                         for (TestCases testCases : testCasesList) {
-                            if (Utils.isNotNullAndEmpty(testCaseSearch.getName())) {
-                                booleanBuilder.and(qTestCases.name.containsIgnoreCase(testCaseSearch.getName()));
-                                TestCaseResponse testCaseResponse = new TestCaseResponse();
-                                testCaseResponse.setId(testCases.getId());
-                                testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
-                                testCaseResponseList.add(testCaseResponse);
-                            }
-                            if (testCaseResponseList != null && !testCaseResponseList.isEmpty()) {
-                                subModulesResponse.setTestCaseResponses(testCaseResponseList);
-                            }
-                            if (subModulesResponse.getTestCaseResponses() != null && !subModulesResponse.getTestCaseResponses().isEmpty())
-                                subModulesResponseList.add(subModulesResponse);
+                            TestCaseResponse testCaseResponse = new TestCaseResponse();
+                            testCaseResponse.setId(testCases.getId());
+                            testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+                            testCaseResponseList.add(testCaseResponse);
                         }
-                        if (subModulesResponseList != null && !subModulesResponseList.isEmpty()) {
-                            mainModulesResponse.setSubModulesResponses(subModulesResponseList);
+                        if (testCaseResponseList != null && !testCaseResponseList.isEmpty()) {
+                            subModulesResponse.setTestCaseResponses(testCaseResponseList);
                         }
-                        if (mainModulesResponse.getSubModulesResponses() != null && !mainModulesResponse.getSubModulesResponses().isEmpty()) {
-                            mainModulesResponseList.add(mainModulesResponse);
-                        }
+                        if (subModulesResponse.getTestCaseResponses() != null && !subModulesResponse.getTestCaseResponses().isEmpty())
+                            subModulesResponseList.add(subModulesResponse);
                     }
-                    if (mainModulesResponseList != null && !mainModulesResponseList.isEmpty()) {
-                        modulesResponse.setMainModulesResponse(mainModulesResponseList);
+                    if (subModulesResponseList != null && !subModulesResponseList.isEmpty()) {
+                        mainModulesResponse.setSubModulesResponses(subModulesResponseList);
                     }
-                    if (modulesResponse.getMainModulesResponse() != null && !modulesResponse.getMainModulesResponse().isEmpty()) {
-                        modulesResponseList.add(modulesResponse);
+                    if (mainModulesResponse.getSubModulesResponses() != null && !mainModulesResponse.getSubModulesResponses().isEmpty()) {
+                        mainModulesResponseList.add(mainModulesResponse);
                     }
                 }
+                if (mainModulesResponseList != null && !mainModulesResponseList.isEmpty()) {
+                    modulesResponse.setMainModulesResponse(mainModulesResponseList);
+                }
+                if (modulesResponse.getMainModulesResponse() != null && !modulesResponse.getMainModulesResponse().isEmpty()) {
+                    modulesResponseList.add(modulesResponse);
+                }
             }
-        projectModuleResponse.setModulesResponseList(modulesResponseList);
-        return projectModuleResponse;
-    }
+            projectModuleResponse.setModulesResponseList(modulesResponseList);
+            return projectModuleResponse;
+        }
+            else{
+                BooleanBuilder booleanBuilder = new BooleanBuilder();
+                if (QTestCases.testCases.subModule != null && QTestCases.testCases.subModule.mainModule != null && QTestCases.testCases.subModule.mainModule.modules != null && QTestCases.testCases.subModule.mainModule.modules.project != null) {
+                    booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.project.id.eq(projectId));
+                }
+                if (Utils.isNotNullAndEmpty(testCaseName)) {
+                    booleanBuilder.and(QTestCases.testCases.name.containsIgnoreCase(testCaseName));
+                }
+                Iterable<TestCases> testCases = testCasesRepository.findAll(booleanBuilder);
+                ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
+                List<ModulesResponse> modulesResponseList = new ArrayList<>();
+                for (TestCases testCase : testCases) {
+                    SubModules subModule = testCase.getSubModule();
+                    MainModules mainModule = subModule.getMainModule();
+                    Modules module = mainModule.getModules();
+
+                    ModulesResponse modulesResponse = new ModulesResponse();
+                    modulesResponse.setId(module.getId());
+                    modulesResponse.setName(module.getName());
+                    modulesResponse.setProjectId(module.getProject().getId());
+                    modulesResponse.setProjectName(module.getProject().getName());
+
+                    MainModulesResponse mainModulesResponse = new MainModulesResponse();
+                    mainModulesResponse.setId(mainModule.getId());
+                    mainModulesResponse.setName(mainModule.getName());
+                    mainModulesResponse.setModulesName(module.getName());
+                    mainModulesResponse.setModuleId(module.getId());
+
+                    SubModulesResponse subModulesResponse = new SubModulesResponse();
+                    subModulesResponse.setId(subModule.getId());
+                    subModulesResponse.setName(subModule.getName());
+                    subModulesResponse.setMainModuleName(mainModule.getName());
+                    subModulesResponse.setMainModuleId(mainModule.getId());
+                    subModulesResponse.setModuleName(module.getName());
+                    subModulesResponse.setModuleId(module.getId());
+
+                    TestCaseResponse testCaseResponse = new TestCaseResponse();
+                    testCaseResponse.setId(testCase.getId());
+                    testCaseResponse.setName(testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1));
+                    testCaseResponse.setModuleId(module.getId());
+                    testCaseResponse.setModuleName(module.getName());
+                    testCaseResponse.setSubModuleId(subModule.getId());
+                    testCaseResponse.setSubModuleName(subModule.getName());
+                    testCaseResponse.setMainModuleId(mainModule.getId());
+                    testCaseResponse.setMainModuleName(mainModule.getName());
+                    testCaseResponse.setProjectId(module.getProject().getId());
+                    testCaseResponse.setProjectName(module.getProject().getName());
+
+                    subModulesResponse.setTestCaseResponses(Collections.singletonList(testCaseResponse));
+                    mainModulesResponse.setSubModulesResponses(Collections.singletonList(subModulesResponse));
+                    modulesResponse.setMainModulesResponse(Collections.singletonList(mainModulesResponse));
+                    modulesResponseList.add(modulesResponse);
+                }
+                projectModuleResponse.setModulesResponseList(modulesResponseList);
+                return projectModuleResponse;
+            }
+        }
+
+
 
     @Override
     public void deleteModuleById(Long id) {

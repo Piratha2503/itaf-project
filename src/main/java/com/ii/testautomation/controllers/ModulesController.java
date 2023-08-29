@@ -125,15 +125,16 @@ public class ModulesController {
         return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.MODULES, modulesResponseList,
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetModuleByProjectIdSuccessMessage(), pagination));
     }
+
     @GetMapping(value = EndpointURI.MODULE_BY_PROJECT_ID)
-    public ResponseEntity<BaseResponse> getAllModulesByProjectIdAndSearch(@PathVariable Long id, @RequestParam TestCaseSearch testCaseSearch) {
+    public ResponseEntity<BaseResponse> getAllModulesByProjectIdAndSearch(@PathVariable Long id, @RequestParam String testCaseName) {
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
-        ProjectModuleResponse projectModuleResponse = modulesService.getAllByProjectIdAndSearch(id,testCaseSearch);
-        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES,projectModuleResponse,
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllModulesByProjectId()));
+        ProjectModuleResponse projectModuleResponse = modulesService.getAllByProjectIdAndSearch(id, testCaseName);
+        return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES, projectModuleResponse, RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllModulesByProjectId()));
     }
+
     @PostMapping(value = EndpointURI.MODULE_IMPORT)
     public ResponseEntity<Object> importModuleFile(@RequestParam MultipartFile multipartFile) {
         Map<String, List<Integer>> errorMessages = new HashMap<>();

@@ -48,7 +48,7 @@ public interface ModulesService {
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
-    ProjectModuleResponse getAllByProjectIdAndSearch(Long projectId, TestCaseSearch testCaseSearch);
+    ProjectModuleResponse getAllByProjectIdAndSearch(Long projectId, String testCaseName);
 
 
 }
