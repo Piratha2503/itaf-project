@@ -1,4 +1,5 @@
 package com.ii.testautomation.controllers;
+import com.ii.testautomation.dto.request.EmailRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -11,11 +12,15 @@ import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -85,12 +90,29 @@ public class ExecutionHistoryController {
         Timestamp startingDate;
         Timestamp endingDate;
 
-        if (startDate.isEmpty() || startDate.isBlank()) {
-            startingDate = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1));
+        if (startDate.isEmpty() || startDate.isBlank()) startingDate = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1));
+
+        else startingDate = new Timestamp(Date.valueOf(startDate).getTime());
+
+        if (endDate.isEmpty() || endDate.isBlank())
+        {
             endingDate = Timestamp.valueOf(LocalDateTime.now());
-        } else {
-            startingDate = new Timestamp(Date.valueOf(startDate).getTime());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(endingDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            endingDate = new Timestamp(calendar.getTimeInMillis());
+        }
+        else {
+
             endingDate = new Timestamp(Date.valueOf(endDate).getTime());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(endingDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            endingDate = new Timestamp(calendar.getTimeInMillis());
         }
 
         return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.executionHistoryDateFilter(id, startingDate, endingDate), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getViewExecutionHistoryMessage()));
@@ -111,4 +133,20 @@ public class ExecutionHistoryController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionHistoryDeleteSuccessMessage()));
     }
 
+    @PostMapping(value = EndpointURI.EXECUTION_HISTORY_EMAIL)
+    public ResponseEntity<Object> emailHistoryReports(@RequestBody EmailRequest emailRequest) throws IOException, MessagingException {
+
+        if (emailRequest.getHistoryReportIds() == null || emailRequest.getHistoryReportIds().isEmpty())
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryMailFailureCode(), statusCodeBundle.getExecutionHistoryIdNull()));
+        if (emailRequest.getToEmails() == null || emailRequest.getToEmails().isEmpty())
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryMailFailureCode(), statusCodeBundle.getExecutionHistoryMailFailureMessage()));
+        for (Long id: emailRequest.getHistoryReportIds())
+        {
+            if (!executionHistoryService.existByExecutionHistoryId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryNotExistsCode(),statusCodeBundle.getExecutionHistoryNotFound()));
+        }
+        executionHistoryService.emailHistoryReports(emailRequest);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryMailSuccessMessage()));
+
+    }
 }
