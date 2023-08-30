@@ -491,6 +491,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
       jarExecution(executionRequest.getProjectId());
     }
+
     private void jarExecution(Long projectId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);

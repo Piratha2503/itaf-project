@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 
 @RestController
@@ -89,12 +90,24 @@ public class ExecutionHistoryController {
         Timestamp startingDate;
         Timestamp endingDate;
 
-        if (startDate.isEmpty() || startDate.isBlank()) {
+        if (startDate.isEmpty() || startDate.isBlank()|| endDate.isEmpty() || endDate.isBlank()) {
             startingDate = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1));
             endingDate = Timestamp.valueOf(LocalDateTime.now());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(endingDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            endingDate = new Timestamp(calendar.getTimeInMillis());
         } else {
             startingDate = new Timestamp(Date.valueOf(startDate).getTime());
             endingDate = new Timestamp(Date.valueOf(endDate).getTime());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(endingDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            endingDate = new Timestamp(calendar.getTimeInMillis());
         }
 
         return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.executionHistoryDateFilter(id, startingDate, endingDate), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getViewExecutionHistoryMessage()));
