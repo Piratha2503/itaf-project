@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -116,10 +117,15 @@ public class ExecutionHistoryController {
 
     @PostMapping(value = EndpointURI.EXECUTION_HISTORY_EMAIL)
     public ResponseEntity<Object> emailHistoryReports(@RequestBody EmailRequest emailRequest) throws IOException, MessagingException {
-        if (emailRequest.getHistoryReportIds() == null || emailRequest.getToEmails() == null)
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExecutionHistoryMailFailureMessage()));
-        if (emailRequest.getHistoryReportIds().isEmpty() || emailRequest.getToEmails().isEmpty())
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getExecutionHistoryMailFailureMessage()));
+        if (emailRequest.getHistoryReportIds() == null || emailRequest.getHistoryReportIds().isEmpty())
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryMailFailureCode(), statusCodeBundle.getExecutionHistoryIdNull()));
+        if (emailRequest.getToEmails() == null || emailRequest.getToEmails().isEmpty())
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryMailFailureCode(), statusCodeBundle.getExecutionHistoryMailFailureMessage()));
+        for (Long id: emailRequest.getHistoryReportIds())
+        {
+            if (executionHistoryService.existByExecutionHistoryId(id))
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryNotExistsCode(),statusCodeBundle.getExecutionHistoryNotFound()));
+        }
         executionHistoryService.emailHistoryReports(emailRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryMailSuccessMessage()));
 
