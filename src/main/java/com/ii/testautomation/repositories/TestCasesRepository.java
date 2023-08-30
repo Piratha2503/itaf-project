@@ -33,11 +33,10 @@ public interface TestCasesRepository extends JpaRepository<TestCases, Long>, Que
 
     TestCases findByIdAndSubModule_MainModule_Modules_Project_Id(Long testCaseId, Long projectId);
 
-    List<TestCases> findAllTestCasesBySubModuleIdAndSubModule_MainModule_Modules_Project_Id(Long subModuleId, Long projectId);
-
     List<TestCases> findBySubModule_MainModule_IdAndSubModule_MainModule_Modules_Project_Id(Long mainModuleId, Long projectId);
 
     List<TestCases> findBySubModule_MainModule_Modules_IdAndSubModule_MainModule_Modules_Project_Id(Long moduleId, Long projectId);
 
     List<TestCases> findBySubModuleIdAndSubModule_MainModule_Modules_Project_Id(Long subModuleId, Long projectId);
+    List<TestCases> findBySubModule_MainModule_Modules_Project_Id(Long projectId);
 }
