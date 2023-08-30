@@ -1,8 +1,10 @@
 package com.ii.testautomation.config;
 
-import org.springframework.web.socket.*;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,14 +36,4 @@ public class ProgressWebSocketHandler implements WebSocketHandler {
         return false;
     }
 
-    public void broadcastProgress(int progress) {
-        TextMessage message = new TextMessage(String.valueOf(progress));
-        for (WebSocketSession session : sessions) {
-            try {
-                session.sendMessage(message);
-            } catch (IOException e) {
-
-            }
-        }
-    }
 }
