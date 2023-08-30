@@ -8,9 +8,13 @@ import com.ii.testautomation.repositories.ExecutionHistoryRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.service.ExecutionHistoryService;
+import com.ii.testautomation.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -26,7 +30,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
+@Component
+@PropertySource("classpath:emailConfig.properties")
 public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Autowired
     private ExecutionHistoryRepository executionHistoryRepository;
@@ -36,6 +43,11 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     private ProjectRepository projectRepository;
     @Autowired
     private JavaMailSender javaMailSender;
+    @Value("${email.set.message}")
+    private String emailMessage;
+    @Value("${email.set.subject}")
+    private String emailSubject;
+
 
     @Override
     public List<ExecutionHistoryResponse> viewByTestGroupingId(Long id) {
@@ -102,8 +114,10 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         for (String toEmail : emailRequest.getToEmails())
         {
             mimeMessageHelper.addTo(toEmail);
-            mimeMessageHelper.setSubject(emailRequest.getSubject());
-            mimeMessageHelper.setText(emailRequest.getMessage());
+            if (emailRequest.getSubject() == null || emailRequest.getSubject().isEmpty()) mimeMessageHelper.setSubject(emailSubject);
+            else mimeMessageHelper.setSubject(emailRequest.getSubject());
+            if (emailRequest.getMessage() == null ||emailRequest.getMessage().isEmpty()) mimeMessageHelper.setSubject(emailMessage);
+            else mimeMessageHelper.setText(emailRequest.getMessage());
         }
         javaMailSender.send(mimeMessage);
     }
