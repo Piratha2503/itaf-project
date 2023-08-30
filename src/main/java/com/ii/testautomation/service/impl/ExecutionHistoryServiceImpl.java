@@ -114,9 +114,9 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         for (String toEmail : emailRequest.getToEmails())
         {
             mimeMessageHelper.addTo(toEmail);
-            if (emailRequest.getSubject() == null || emailRequest.getSubject().isEmpty()) mimeMessageHelper.setSubject(emailSubject);
+            if (emailRequest.getSubject().isEmpty()) mimeMessageHelper.setSubject(emailSubject);
             else mimeMessageHelper.setSubject(emailRequest.getSubject());
-            if (emailRequest.getMessage() == null ||emailRequest.getMessage().isEmpty()) mimeMessageHelper.setSubject(emailMessage);
+            if (emailRequest.getMessage().isEmpty()) mimeMessageHelper.setText(emailMessage);
             else mimeMessageHelper.setText(emailRequest.getMessage());
         }
         javaMailSender.send(mimeMessage);
