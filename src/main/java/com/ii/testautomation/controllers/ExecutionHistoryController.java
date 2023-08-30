@@ -90,8 +90,11 @@ public class ExecutionHistoryController {
         Timestamp startingDate;
         Timestamp endingDate;
 
-        if (startDate.isEmpty() || startDate.isBlank()|| endDate.isEmpty() || endDate.isBlank()) {
+        if (startDate.isEmpty() || startDate.isBlank()) {
             startingDate = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1));
+        }
+        if (endDate.isEmpty() || endDate.isBlank())
+        {
             endingDate = Timestamp.valueOf(LocalDateTime.now());
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(endingDate);
@@ -99,7 +102,8 @@ public class ExecutionHistoryController {
             calendar.set(Calendar.MINUTE, 59);
             calendar.set(Calendar.SECOND, 59);
             endingDate = new Timestamp(calendar.getTimeInMillis());
-        } else {
+        }
+        else {
             startingDate = new Timestamp(Date.valueOf(startDate).getTime());
             endingDate = new Timestamp(Date.valueOf(endDate).getTime());
             Calendar calendar = Calendar.getInstance();
