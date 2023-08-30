@@ -123,8 +123,8 @@ public class ExecutionHistoryController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryMailFailureCode(), statusCodeBundle.getExecutionHistoryMailFailureMessage()));
         for (Long id: emailRequest.getHistoryReportIds())
         {
-            if (executionHistoryService.existByExecutionHistoryId(id))
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryNotExistsCode(),statusCodeBundle.getExecutionHistoryNotFound()));
+            if (!executionHistoryService.existByExecutionHistoryId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getExecutionHistoryNotExistsCode(),statusCodeBundle.getExecutionHistoryNotFound()));
         }
         executionHistoryService.emailHistoryReports(emailRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getExecutionHistoryMailSuccessMessage()));

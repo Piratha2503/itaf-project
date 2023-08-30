@@ -9,8 +9,7 @@ import java.util.List;
 @Setter
 public class EmailRequest {
     private List<Long> historyReportIds;
-    private Long lastHistoryId;
     private List<String> toEmails;
     private String subject;
-    private String text;
+    private String message;
 }
