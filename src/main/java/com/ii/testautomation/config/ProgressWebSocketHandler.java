@@ -1,13 +1,12 @@
 package com.ii.testautomation.config;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ProgressWebSocketHandler  implements WebSocketHandler {
+public class ProgressWebSocketHandler implements WebSocketHandler {
     private final Set<WebSocketSession> sessions = new HashSet<>();
 
     @Override

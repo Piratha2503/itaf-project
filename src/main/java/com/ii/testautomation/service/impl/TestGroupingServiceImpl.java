@@ -524,42 +524,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
-//    public void scheduleGetExecutedTestCase() {
-//        taskScheduler.schedule(this::getExecutedTestCase, new PeriodicTrigger(1000)); // 1000ms interval
-//    }
-
-    //    @Transactional
-//    @Scheduled(cron = "3 * * * * *")
-//    public Long getExecutedTestCase() {
-//        List<ProgressBar> progressBarList = progressBarRepository.findAll();
-//        for (ProgressBar progressBar : progressBarList
-//        ) {
-//            Long totalNoOfTestCases = progressBar.getTotalNoOfTestCases();
-//            Long executedTestcase = progressBar.getExecutedTestCaseCount();
-//            calculatePercentage(executedTestcase, totalNoOfTestCases);
-//            return executedTestcase;
-//        }
-//        return 0l;
-//    }
-//
-//    public void calculatePercentage(Long executedTestCase, Long totalNoOfTestCase) {
-//        System.out.println("HI !! this is percentage================================================");
-//        int percentageInt = 0;
-//        if (totalNoOfTestCase <= executedTestCase) {
-//            double percentage = ((double) executedTestCase / totalNoOfTestCase) * 100.0;
-//            percentageInt = (int) percentage;
-//            System.out.println("HI !!! this is the percentage================================================" + percentageInt);
-////            progressWebSocketHandler.broadcastProgress(percentageInt);
-//        }
-//    }
-//private final ProgressBarRepository progressBarRepository;
-//
-//    public ProgressBarService(ProgressBarRepository progressBarRepository) {
-//        this.progressBarRepository = progressBarRepository;
-//    }
     @Transactional
     @Scheduled(fixedRate = 1000)
     public void calculateAndPrintPercentage() {
@@ -571,7 +537,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 double percentage = ((double) executedTestCase / totalNoOfTestCases) * 100.0;
                 int percentageInt = (int) percentage;
                 simpMessagingTemplate.convertAndSend("/queue/percentage", percentageInt);
-                // progressWebSocketHandler.broadcastProgress(percentageInt);
+                if (percentageInt == 100) {
+                    progressBarRepository.deleteById(progressBar.getId());
+                }
                 System.out.println("Percentage: " + percentageInt + "%");
             } else {
                 System.out.println("Total number of test cases is zero.");
