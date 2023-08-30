@@ -189,7 +189,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     }
 
-
     @Override
     public boolean existByProjectName(String projectName) {
         return projectRepository.existsByNameIgnoreCase(projectName);
