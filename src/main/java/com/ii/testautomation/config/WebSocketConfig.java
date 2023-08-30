@@ -31,11 +31,12 @@ import org.springframework.web.socket.config.annotation.*;
 //}
 
 @Configuration
+
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/ws-broadcast");
+        registry.enableSimpleBroker("/queue/","/calculateProgressPercentage","/percentage");
         registry.setApplicationDestinationPrefixes("/app");
     }
     @Bean
@@ -44,6 +45,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/calculateProgressPercentage").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
+      //  registry.addEndpoint("/calculateProgressPercentage").setAllowedOrigins("*").withSockJS();
     }
+//    @Override
+//    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+//        registry.addHandler(new ProgressWebSocketHandler(), "/progress")
+//                .setAllowedOrigins("*")
+//                .withSockJS();
+    //}
 }

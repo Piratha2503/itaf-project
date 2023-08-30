@@ -19,4 +19,5 @@ public class ProgressController {
         int percentage = testGroupingService.calculatePercentage();
         return ResponseEntity.ok(percentage);
     }
+
 }

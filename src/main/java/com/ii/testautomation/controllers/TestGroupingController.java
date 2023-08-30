@@ -2,6 +2,7 @@ package com.ii.testautomation.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ii.testautomation.config.ProgressWebSocketHandler;
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
@@ -11,6 +12,7 @@ import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.*;
+import com.ii.testautomation.service.impl.WebSocketService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
@@ -49,7 +51,10 @@ public class TestGroupingController {
     private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-
+    @Autowired
+    WebSocketService webSocketService;
+@Autowired
+private ProgressWebSocketHandler progressWebSocketHandler;
     @Autowired
     private ExecutionHistoryService executionHistoryService;
 
@@ -261,9 +266,10 @@ public class TestGroupingController {
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(pageable, pagination, id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
-//    @GetMapping("/calculateProgressPercentage")
-//    public ResponseEntity<Integer> getProgressBarPercentage() {
-//        int percentage = testGroupingService.calculatePercentage();
-//        return ResponseEntity.ok(percentage);
-//    }
+    @GetMapping("/calculateProgressPercentage")
+    public void updateProgressBarPercentage() {
+        webSocketService.sendMessage(70);
+        //progressWebSocketHandler.broadcastProgress(70);
+    }
+
 }

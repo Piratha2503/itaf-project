@@ -21,9 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -67,6 +67,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private String fileFolder;
     @Autowired
     private TaskScheduler taskScheduler;
+
+    @Autowired
+    SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
@@ -528,7 +531,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 //        taskScheduler.schedule(this::getExecutedTestCase, new PeriodicTrigger(1000)); // 1000ms interval
 //    }
 
-//    @Transactional
+    //    @Transactional
 //    @Scheduled(cron = "3 * * * * *")
 //    public Long getExecutedTestCase() {
 //        List<ProgressBar> progressBarList = progressBarRepository.findAll();
@@ -558,16 +561,17 @@ public class TestGroupingServiceImpl implements TestGroupingService {
 //        this.progressBarRepository = progressBarRepository;
 //    }
     @Transactional
-    @Scheduled(cron = "1 * * * * *")
+    @Scheduled(fixedRate = 1000)
     public void calculateAndPrintPercentage() {
         List<ProgressBar> progressBarList = progressBarRepository.findAll();
         for (ProgressBar progressBar : progressBarList) {
             Long totalNoOfTestCases = progressBar.getTotalNoOfTestCases();
             Long executedTestCase = progressBar.getExecutedTestCaseCount();
-            if (totalNoOfTestCases>=executedTestCase) {
+            if (totalNoOfTestCases >= executedTestCase) {
                 double percentage = ((double) executedTestCase / totalNoOfTestCases) * 100.0;
                 int percentageInt = (int) percentage;
-                progressWebSocketHandler.broadcastProgress(percentageInt);
+                simpMessagingTemplate.convertAndSend("/queue/percentage", percentageInt);
+                // progressWebSocketHandler.broadcastProgress(percentageInt);
                 System.out.println("Percentage: " + percentageInt + "%");
             } else {
                 System.out.println("Total number of test cases is zero.");
