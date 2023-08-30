@@ -93,6 +93,8 @@ public final class EndpointURI {
     public static final String TEST_SCHEDULING = BASE_API_PATH + "scheduling";
     public static final String SCHEDULES = BASE_API_PATH+"Scheduling";
 
+    public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
+
     private EndpointURI() {
     }
 }

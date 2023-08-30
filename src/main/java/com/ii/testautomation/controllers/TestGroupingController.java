@@ -261,11 +261,9 @@ public class TestGroupingController {
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(pageable, pagination, id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
-
-
-    @GetMapping(value=EndpointURI.TEST_GROUPING)
-    public ResponseEntity<Integer> getProgressBarPercentage() {
-        int percentage = testGroupingService.progressBar();
-        return ResponseEntity.ok(percentage);
-    }
+//    @GetMapping("/calculateProgressPercentage")
+//    public ResponseEntity<Integer> getProgressBarPercentage() {
+//        int percentage = testGroupingService.calculatePercentage();
+//        return ResponseEntity.ok(percentage);
+//    }
 }
