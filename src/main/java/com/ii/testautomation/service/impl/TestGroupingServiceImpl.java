@@ -538,6 +538,13 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 int percentageInt = (int) percentage;
                 simpMessagingTemplate.convertAndSend("/queue/percentage", percentageInt);
                 if (percentageInt == 100) {
+                    TestGrouping testGrouping=progressBar.getTestGrouping();
+                    List<ExecutedTestCase> executedTestCases=executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
+                    for (ExecutedTestCase executedTestCase1 : executedTestCases
+                    ){
+                        executedTestCaseRepository.findById(executedTestCase1.getId());
+                    }
+                    testGrouping.setExecutionStatus(false);
                     progressBarRepository.deleteById(progressBar.getId());
                 }
                 System.out.println("Percentage: " + percentageInt + "%");
