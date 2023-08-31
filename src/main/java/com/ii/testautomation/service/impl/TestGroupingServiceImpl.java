@@ -552,6 +552,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     progressBarRepository.deleteById(progressBar.getId());
                 }
                 System.out.println("Percentage: " + progressResponse + "%");
+
             } else {
                 System.out.println("Total number of test cases is zero.");
             }
