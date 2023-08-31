@@ -199,7 +199,7 @@ public class ModulesServiceImpl implements ModulesService {
             if (Utils.isNotNullAndEmpty(testCaseName)) {
                 booleanBuilder.and(QTestCases.testCases.name.containsIgnoreCase(testCaseName));
             }
-            List<TestCases> testCases = testCasesRepository.findBySubModule_MainModule_Modules_Project_Id(projectId);
+            Iterable<TestCases> testCases = testCasesRepository.findAll(booleanBuilder);
             ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
             List<ModulesResponse> modulesResponseList = new ArrayList<>();
             for (TestCases testCase : testCases) {
