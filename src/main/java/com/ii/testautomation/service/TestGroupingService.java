@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
+import com.ii.testautomation.entities.ProgressBar;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +34,7 @@ public interface TestGroupingService {
     List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId);
 
     TestGroupingResponse getTestGroupingById(Long id);
+    int calculatePercentage();
 
     boolean existByProjectId(Long projectId);
 

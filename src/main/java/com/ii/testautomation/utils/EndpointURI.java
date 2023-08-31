@@ -43,7 +43,6 @@ public final class EndpointURI {
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectIdWithPagination" + ID;
 
     // URLs for Test Types
-
     public static final String TEST_TYPE = BASE_API_PATH + "testType";
     public static final String TEST_TYPE_IMPORT = BASE_API_PATH + TEST_TYPE + "import";
     public static final String TEST_TYPES_SEARCH = BASE_API_PATH + SEARCH + SLASH + "testTypes";
@@ -58,9 +57,9 @@ public final class EndpointURI {
     public static final String TESTCASE_IMPORT= TESTCASE+"/import"+ID;
     public static final String TESTCASE_BY_PROJECT_ID = BASE_API_PATH+"TestCaseByProjectIdWithPagination"+ID;
     public static final String TESTCASE_BY_MODULE_ID = BASE_API_PATH+"TestCaseByModuleId"+ID;
-
     public static final String TESTCASE_BY_MAIN_MODULE_ID = BASE_API_PATH+"TestCaseByMainModuleId"+ID;
     public static final String MODULE_IMPORT=MODULE +"/import";
+
     // URLs for TestGrouping
     public static final String TEST_GROUPING = BASE_API_PATH + "testGrouping";
     public static final String TEST_GROUPING_IMPORT = TEST_GROUPING + "/import";
@@ -86,12 +85,15 @@ public final class EndpointURI {
     public static final String EXECUTION_HISTORY_ID = EXECUTION_HISTORY+ID;
     public static final String EXECUTION_HISTORY_PROJECT_ID = EXECUTION_HISTORY+ID+"/project"+PROJECT_ID;
     public static final String EXECUTION_HISTORY_DATE_FILTER = EXECUTION_HISTORY+"/DateFilter"+ID;
+    public static final String EXECUTION_HISTORY_EMAIL = EXECUTION_HISTORY+"/email";
 
     // URLs for Scheduling History
     public static final String SCHEDULING_BY_ID = BASE_API_PATH + "Scheduling"+ID;
     public static final String SHEDULING_PROJECTID = BASE_API_PATH+"Scheduling"+"/Project"+ID;
     public static final String TEST_SCHEDULING = BASE_API_PATH + "scheduling";
     public static final String SCHEDULES = BASE_API_PATH+"Scheduling";
+
+    public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
 
     private EndpointURI() {
     }

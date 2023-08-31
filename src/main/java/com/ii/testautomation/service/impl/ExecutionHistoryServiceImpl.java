@@ -1,5 +1,6 @@
 package com.ii.testautomation.service.impl;
 
+import com.ii.testautomation.dto.request.EmailRequest;
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
 import com.ii.testautomation.entities.ExecutionHistory;
 import com.ii.testautomation.entities.Project;
@@ -10,8 +11,14 @@ import com.ii.testautomation.service.ExecutionHistoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,8 +27,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Service
+@Component
+@PropertySource("classpath:emailConfig.properties")
 public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Autowired
     private ExecutionHistoryRepository executionHistoryRepository;
@@ -29,9 +37,13 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     private TestGroupingRepository testGroupingRepository;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private JavaMailSender javaMailSender;
+    @Value("${email.set.message}")
+    private String emailMessage;
+    @Value("${email.set.subject}")
+    private String emailSubject;
 
-    @Value("${reports.file.save.path}")
-    private String fileFolder;
 
     @Override
     public List<ExecutionHistoryResponse> viewByTestGroupingId(Long id) {
@@ -72,6 +84,51 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     }
 
     @Override
+    public List<ExecutionHistoryResponse> executionHistoryDateFilter(Long id, Timestamp startDate, Timestamp endDate) {
+        List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
+        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findByTestGroupingIdAndCreatedAtBetween(id, startDate, endDate);
+        for (ExecutionHistory executionHistory : executionHistoryList) {
+            ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
+            BeanUtils.copyProperties(executionHistory, executionHistoryResponse);
+            executionHistoryResponse.setTestGroupingId(id);
+            executionHistoryResponseList.add(executionHistoryResponse);
+        }
+
+        return executionHistoryResponseList;
+    }
+
+    @Override
+    public void emailHistoryReports(EmailRequest emailRequest) throws IOException, MessagingException {
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
+        for (Long id : emailRequest.getHistoryReportIds())
+        {
+            String name = executionHistoryRepository.findById(id).get().getReportName()+".html";
+            mimeMessageHelper.addAttachment(name,addAttachment(id));
+        }
+        for (String toEmail : emailRequest.getToEmails())
+        {
+            mimeMessageHelper.addTo(toEmail);
+            if (emailRequest.getSubject().isEmpty()) mimeMessageHelper.setSubject(emailSubject);
+            else mimeMessageHelper.setSubject(emailRequest.getSubject());
+            if (emailRequest.getMessage().isEmpty()) mimeMessageHelper.setText(emailMessage);
+            else mimeMessageHelper.setText(emailRequest.getMessage());
+        }
+        javaMailSender.send(mimeMessage);
+    }
+
+    @Override
+    public boolean existByTestGropingId(Long id) {
+        return executionHistoryRepository.existsByTestGroupingId(id);
+    }
+
+    @Override
+    public boolean existByExecutionHistoryId(Long id) {
+        return executionHistoryRepository.existsById(id);
+    }
+
+    @Override
     public boolean deleteExecutionHistory(Long id, Long projectId) {
         Project projectOptional = projectRepository.findById(projectId).get();
         if (projectOptional != null) {
@@ -94,28 +151,15 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         return false;
     }
 
-    @Override
-    public List<ExecutionHistoryResponse> executionHistoryDateFilter(Long id, Timestamp startDate, Timestamp endDate) {
-        List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
-        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findByTestGroupingIdAndCreatedAtBetween(id, startDate, endDate);
-        for (ExecutionHistory executionHistory : executionHistoryList) {
-            ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
-            BeanUtils.copyProperties(executionHistory, executionHistoryResponse);
-            executionHistoryResponse.setTestGroupingId(id);
-            executionHistoryResponseList.add(executionHistoryResponse);
-        }
-
-        return executionHistoryResponseList;
-    }
-
-    @Override
-    public boolean existByTestGropingId(Long id) {
-        return executionHistoryRepository.existsByTestGroupingId(id);
-    }
-
-    @Override
-    public boolean existByExecutionHistoryId(Long id) {
-        return executionHistoryRepository.existsById(id);
+    private File addAttachment(Long id) throws IOException {
+        ExecutionHistory executionHistory = executionHistoryRepository.findById(id).get();
+        String reportName = executionHistory.getReportName();
+        Long testGroupingId = executionHistory.getTestGrouping().getId();
+        Long projectId = testGroupingRepository.findById(testGroupingId).get().getProject().getId();
+        String path = projectRepository.findById(projectId).get().getProjectPath();
+        Path reportPath = Path.of(path + File.separator + reportName.toString()+".html");
+        File file = reportPath.toFile();
+        return file;
     }
 
 }

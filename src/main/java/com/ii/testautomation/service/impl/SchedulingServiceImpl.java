@@ -116,7 +116,6 @@ public class SchedulingServiceImpl implements SchedulingService {
                 schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
             }
         }
-
     }
 
     @Override
