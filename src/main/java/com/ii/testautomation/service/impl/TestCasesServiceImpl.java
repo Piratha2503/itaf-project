@@ -35,7 +35,6 @@ import java.util.*;
 @SuppressWarnings("ALL")
 @Service
 public class TestCasesServiceImpl implements TestCasesService {
-
     @Autowired
     private TestCasesRepository testCasesRepository;
     @Autowired

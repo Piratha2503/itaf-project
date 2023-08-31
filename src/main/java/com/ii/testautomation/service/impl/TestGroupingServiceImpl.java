@@ -468,8 +468,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     TestScenarios testScenarios = testScenarioRepository.findById(entry.getValue()).get();
                     testScenarios.setExecutionStatus(true);
                     List<TestCases> testCasesList = testScenarios.getTestCases();
-                    for (TestCases testCases : testCasesList
-                    ) {
+                    for (TestCases testCases : testCasesList) {
                         ExecutedTestCase executedTestCase = new ExecutedTestCase();
                         executedTestCase.setTestCases(testCases);
                         executedTestCase.setTestGrouping(testGrouping);
