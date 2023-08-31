@@ -1,5 +1,6 @@
 package com.ii.testautomation.service.impl;
 
+import com.ii.testautomation.config.ProgressWebSocketHandler;
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
@@ -20,9 +21,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Service
 public class TestGroupingServiceImpl implements TestGroupingService {
@@ -53,9 +59,17 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private ExecutedTestCaseRepository executedTestCaseRepository;
     @Autowired
     private SchedulingRepository schedulingRepository;
-
+    @Autowired
+    private ProgressBarRepository progressBarRepository;
+    @Autowired
+    private ProgressWebSocketHandler progressWebSocketHandler;
     @Value("${jar.import.file.windows.path}")
     private String fileFolder;
+    @Autowired
+    private TaskScheduler taskScheduler;
+
+    @Autowired
+    SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
@@ -348,6 +362,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
+    public int calculatePercentage() {
+        return 0;
+    }
+
+    @Override
     public boolean existByProjectId(Long projectId) {
         return testGroupingRepository.existsByProjectId(projectId);
     }
@@ -487,7 +506,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 }
             }
         }
-      jarExecution(executionRequest.getProjectId());
+        jarExecution(executionRequest.getProjectId());
     }
 
     private void jarExecution(Long projectId) {
@@ -501,10 +520,33 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             runProcessBuilder.redirectErrorStream(true);
             Process runProcess = runProcessBuilder.start();
             runProcess.waitFor();
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
+
+    @Transactional
+    @Scheduled(fixedRate = 1000)
+    public void calculateAndPrintPercentage() {
+        List<ProgressBar> progressBarList = progressBarRepository.findAll();
+        for (ProgressBar progressBar : progressBarList) {
+            Long totalNoOfTestCases = progressBar.getTotalNoOfTestCases();
+            Long executedTestCase = progressBar.getExecutedTestCaseCount();
+            if (totalNoOfTestCases >= executedTestCase) {
+                double percentage = ((double) executedTestCase / totalNoOfTestCases) * 100.0;
+                int percentageInt = (int) percentage;
+                simpMessagingTemplate.convertAndSend("/queue/percentage", percentageInt);
+                if (percentageInt == 100) {
+                    progressBarRepository.deleteById(progressBar.getId());
+                }
+                System.out.println("Percentage: " + percentageInt + "%");
+            } else {
+                System.out.println("Total number of test cases is zero.");
+            }
+        }
+    }
+
 
     @Override
     public boolean folderExists(Long groupId) {
