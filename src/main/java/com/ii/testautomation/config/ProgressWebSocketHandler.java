@@ -1,15 +1,11 @@
 package com.ii.testautomation.config;
-
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
-
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 public class ProgressWebSocketHandler implements WebSocketHandler {
     private final Set<WebSocketSession> sessions = new HashSet<>();
@@ -37,8 +33,8 @@ public class ProgressWebSocketHandler implements WebSocketHandler {
 
     @Override
     public boolean supportsPartialMessages() {
+
         return false;
     }
-
 
 }
