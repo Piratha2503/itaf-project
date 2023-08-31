@@ -87,7 +87,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         return testCasesRepository.existsByNameIgnoreCaseAndSubModuleIdAndIdNot(name, subModuleId, id);
     }
 
-
     @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
