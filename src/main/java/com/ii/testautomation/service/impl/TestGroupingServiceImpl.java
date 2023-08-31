@@ -546,7 +546,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
     }
 
-
     @Override
     public boolean folderExists(Long groupId) {
         String groupPath = testGroupingRepository.findById(groupId).get().getGroupPath();
