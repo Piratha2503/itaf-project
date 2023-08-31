@@ -3,6 +3,7 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.config.ProgressWebSocketHandler;
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.ProgressResponse;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.response.TestScenariosResponse;
@@ -69,7 +70,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private TaskScheduler taskScheduler;
 
     @Autowired
-    SimpMessagingTemplate simpMessagingTemplate;
+   private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
@@ -536,11 +537,22 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             if (totalNoOfTestCases >= executedTestCase) {
                 double percentage = ((double) executedTestCase / totalNoOfTestCases) * 100.0;
                 int percentageInt = (int) percentage;
-                simpMessagingTemplate.convertAndSend("/queue/percentage", percentageInt);
+                ProgressResponse progressResponse = new ProgressResponse();
+                progressResponse.setPercentage(percentageInt);
+                progressResponse.setGroupName(progressBar.getTestGrouping().getName());
+                progressResponse.setGroupId(progressBar.getTestGrouping().getId());
+                simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getTestGrouping().getId(), progressResponse);
                 if (percentageInt == 100) {
+                    TestGrouping testGrouping = progressBar.getTestGrouping();
+                    List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
+                    for (ExecutedTestCase executedTestCase1 : executedTestCases) {
+                        executedTestCaseRepository.deleteById(executedTestCase1.getId());
+                    }
+                    testGrouping.setExecutionStatus(false);
                     progressBarRepository.deleteById(progressBar.getId());
                 }
-                System.out.println("Percentage: " + percentageInt + "%");
+                System.out.println("Percentage: " + progressResponse + "%");
+
             } else {
                 System.out.println("Total number of test cases is zero.");
             }
