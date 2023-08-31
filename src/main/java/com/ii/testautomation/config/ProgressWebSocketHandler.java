@@ -15,7 +15,7 @@ public class ProgressWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-
+        sessions.add(session);
     }
 
     @Override
