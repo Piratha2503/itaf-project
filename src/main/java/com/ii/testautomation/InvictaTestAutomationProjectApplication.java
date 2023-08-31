@@ -11,8 +11,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan(basePackages = "com.ii.testautomation")
 @EnableScheduling
 public class InvictaTestAutomationProjectApplication {
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		SpringApplication.run(InvictaTestAutomationProjectApplication.class, args);
-	}
+        SpringApplication.run(InvictaTestAutomationProjectApplication.class, args);
+    }
 }

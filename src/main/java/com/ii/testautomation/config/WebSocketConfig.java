@@ -16,17 +16,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 
-
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/queue/","/calculateProgressPercentage","/percentage");
+        registry.enableSimpleBroker("/queue/", "/calculateProgressPercentage", "/percentage");
         registry.setApplicationDestinationPrefixes("/app");
     }
+
     @Bean
     public ProgressWebSocketHandler progressWebSocketHandler() {
         return new ProgressWebSocketHandler();
     }
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
