@@ -86,7 +86,7 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Override
     public List<ExecutionHistoryResponse> executionHistoryDateFilter(Long id, Timestamp startDate, Timestamp endDate) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
-        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findByTestGroupingIdAndCreatedAtBetween(id, startDate, endDate);
+        List<ExecutionHistory> executionHistoryList = executionHistoryRepository.findByTestGroupingIdAndCreatedAtBetweenOrderByCreatedAtDesc(id, startDate, endDate);
         for (ExecutionHistory executionHistory : executionHistoryList) {
             ExecutionHistoryResponse executionHistoryResponse = new ExecutionHistoryResponse();
             BeanUtils.copyProperties(executionHistory, executionHistoryResponse);

@@ -89,13 +89,7 @@ public class ExecutionHistoryController {
 
          if (endDate.isEmpty() || endDate.isBlank()) {
 
-            endingDate = Timestamp.valueOf(LocalDateTime.now());
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(endingDate);
-            calendar.set(Calendar.HOUR_OF_DAY, 23);
-            calendar.set(Calendar.MINUTE, 59);
-            calendar.set(Calendar.SECOND, 59);
-            endingDate = new Timestamp(calendar.getTimeInMillis());
+            endingDate = new Timestamp(new Date(System.currentTimeMillis()).getTime());
         }
         else {
             if (startDate.isEmpty() || startDate.isBlank())
@@ -108,6 +102,7 @@ public class ExecutionHistoryController {
             calendar.set(Calendar.SECOND, 59);
             endingDate = new Timestamp(calendar.getTimeInMillis());
         }
+
         if (endingDate.before(startingDate))
         return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getExecutionHistoryDateErrorCode(),statusCodeBundle.getExecutionHistoryEndDateBeforeStartDateMessage()));
         return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.executionHistoryDateFilter(id, startingDate, endingDate), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getViewExecutionHistoryMessage()));

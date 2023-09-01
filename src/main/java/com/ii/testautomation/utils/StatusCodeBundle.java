@@ -442,7 +442,7 @@ public class StatusCodeBundle {
     private String executionHistoryMailFailureMessage;
     @Value("${message.error.executionHistory.endDate.empty}")
     private String executionHistoryEndDateEmptyMessage;
-    @Value("${message.error.endDate.before.startDate}")
+    @Value("${message.error.endDate}")
     private String executionHistoryEndDateBeforeStartDateMessage;
 
 
