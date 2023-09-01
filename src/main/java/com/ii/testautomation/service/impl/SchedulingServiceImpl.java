@@ -166,7 +166,12 @@ public class SchedulingServiceImpl implements SchedulingService {
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();
         try {
-            simpMessagingTemplate.convertAndSend("/queue/percentage/",schedulingId);
+            ProgressResponse progressResponse=new ProgressResponse();
+            progressResponse.setScheduleId(schedulingId);
+            progressResponse.setScheduleName("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+            System.out.println("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII================================");
+            simpMessagingTemplate.convertAndSend("/queue/percentage",progressResponse);
+            System.out.println("Send================================");
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
@@ -191,6 +196,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                 progressResponse.setGroupName(progressBar.getTestGrouping().getName());
                 progressResponse.setGroupId(progressBar.getTestGrouping().getId());
                 progressResponse.setScheduleName(progressBar.getScheduling().getName());
+                progressResponse.setScheduleId(progressBar.getScheduling().getId());
                 simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getScheduling().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();

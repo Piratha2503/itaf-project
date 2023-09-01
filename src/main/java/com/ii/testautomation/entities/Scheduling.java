@@ -30,7 +30,6 @@ public class Scheduling extends DateAudit {
     private boolean status = true;
     @Column(unique = true)
     private String schedulingCode;
-    private Date timestamp;
 }
 
 
