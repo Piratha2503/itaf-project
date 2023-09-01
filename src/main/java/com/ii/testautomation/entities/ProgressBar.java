@@ -13,10 +13,14 @@ public class ProgressBar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
     @ManyToOne
+    @JoinColumn(name = "testGrouping_id", nullable = true)
     private TestGrouping testGrouping;
+    @ManyToOne
+    @JoinColumn(name = "scheduling_id", nullable = true)
+    private Scheduling scheduling;
     private Long totalNoOfTestCases;
     private Long executedTestCaseCount;
-
 }
