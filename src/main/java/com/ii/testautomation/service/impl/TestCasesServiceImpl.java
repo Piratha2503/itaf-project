@@ -35,7 +35,6 @@ import java.util.*;
 @SuppressWarnings("ALL")
 @Service
 public class TestCasesServiceImpl implements TestCasesService {
-
     @Autowired
     private TestCasesRepository testCasesRepository;
     @Autowired
@@ -86,7 +85,6 @@ public class TestCasesServiceImpl implements TestCasesService {
     public boolean isUpdateTestCaseNameExists(String name, Long id, Long subModuleId) {
         return testCasesRepository.existsByNameIgnoreCaseAndSubModuleIdAndIdNot(name, subModuleId, id);
     }
-
 
     @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {

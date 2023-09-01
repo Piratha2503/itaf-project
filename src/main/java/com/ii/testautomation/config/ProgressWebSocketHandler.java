@@ -12,7 +12,6 @@ import java.util.Set;
 public class ProgressWebSocketHandler implements WebSocketHandler {
     private final Set<WebSocketSession> sessions = new HashSet<>();
 
-
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
