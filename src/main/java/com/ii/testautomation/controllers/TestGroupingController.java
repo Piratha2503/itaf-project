@@ -95,7 +95,7 @@ public class TestGroupingController {
         }
         if (testGroupingRequest.getMainModuleIds() != null) {
             for (Long mainModuleId : testGroupingRequest.getMainModuleIds()) {
-                if (!mainModulesService.existsMainModuleByModuleId(mainModuleId)) {
+                if (!mainModulesService.isExistMainModulesId(mainModuleId)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getMainModulesNotExistCode(), statusCodeBundle.getMainModuleNotExistsMessage()));
                 }
             }
@@ -148,7 +148,7 @@ public class TestGroupingController {
         }
         if (testGroupingRequest.getMainModuleIds() != null) {
             for (Long mainModuleId : testGroupingRequest.getMainModuleIds()) {
-                if (!mainModulesService.existsMainModuleByModuleId(mainModuleId)) {
+                if (!mainModulesService.isExistMainModulesId(mainModuleId)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getMainModulesNotExistCode(), statusCodeBundle.getMainModuleNotExistsMessage()));
                 }
             }
