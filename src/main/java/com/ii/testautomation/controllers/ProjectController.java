@@ -71,8 +71,7 @@ public class ProjectController {
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestParam String project,
                                               @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
-                                              @RequestParam(value = "configFile", required = false) MultipartFile configFile) throws
-            JsonProcessingException {
+                                              @RequestParam(value = "configFile", required = false) MultipartFile configFile) throws JsonProcessingException {
         ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
         if (!projectService.existByProjectId(projectRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),

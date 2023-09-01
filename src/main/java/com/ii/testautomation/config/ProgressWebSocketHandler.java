@@ -8,8 +8,10 @@ import org.springframework.web.socket.WebSocketSession;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class ProgressWebSocketHandler implements WebSocketHandler {
     private final Set<WebSocketSession> sessions = new HashSet<>();
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -33,6 +35,7 @@ public class ProgressWebSocketHandler implements WebSocketHandler {
 
     @Override
     public boolean supportsPartialMessages() {
+
         return false;
     }
 
