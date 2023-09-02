@@ -127,7 +127,7 @@ public class ModulesController {
     }
 
     @GetMapping(value = EndpointURI.MODULE_BY_PROJECT_ID)
-    public ResponseEntity<BaseResponse> getAllModulesByProjectIdAndSearch(@PathVariable Long id, @RequestParam String testCaseName) {
+    public ResponseEntity<Object> getAllModulesByProjectIdAndSearch(@PathVariable Long id, @RequestParam String testCaseName) {
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
