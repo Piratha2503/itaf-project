@@ -150,7 +150,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
-        jarExecution(projectId);
+         jarExecution(projectId);
     }
 
     private void jarExecution(Long projectId) {
@@ -177,6 +177,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduleResponse.setName(scheduling.getName());
         scheduleResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
         scheduleResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
+
         Map<Integer, Long> testScenarios = new HashMap<>();
         Map<Integer, Long> testCase = new HashMap<>();
         String schedulingCode = scheduling.getSchedulingCode();
