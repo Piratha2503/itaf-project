@@ -18,9 +18,6 @@ public class ProgressBar {
     @ManyToOne
     @JoinColumn(name = "testGrouping_id", nullable = true)
     private TestGrouping testGrouping;
-    @ManyToOne
-    @JoinColumn(name = "scheduling_id", nullable = true)
-    private Scheduling scheduling;
     private Long totalNoOfTestCases;
     private Long executedTestCaseCount;
 }

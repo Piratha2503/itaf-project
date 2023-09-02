@@ -119,7 +119,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                         }
                     }
                 }
-                schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId,scheduling.getId());
+                schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
             }
         }
     }
@@ -130,7 +130,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId,Long schedulingId) throws IOException {
+    public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
         TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
         testGrouping.setExecutionStatus(true);
         testGrouping.setSchedulingExecutionStatus(true);
@@ -157,20 +157,20 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
-        jarExecution(projectId,schedulingId);
+        jarExecution(projectId, groupingId);
     }
 
-    private void jarExecution(Long projectId,Long schedulingId) {
+    private void jarExecution(Long projectId, Long groupId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();
         try {
-            ProgressResponse progressResponse=new ProgressResponse();
-            progressResponse.setScheduleId(schedulingId);
-            progressResponse.setScheduleName("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+            ProgressResponse progressResponse = new ProgressResponse();
+            progressResponse.setGroupId(groupId);
+
             System.out.println("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII================================");
-            simpMessagingTemplate.convertAndSend("/queue/percentage",progressResponse);
+            simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
             System.out.println("Send================================");
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
@@ -181,6 +181,7 @@ public class SchedulingServiceImpl implements SchedulingService {
             e.printStackTrace();
         }
     }
+
     @Transactional
     @Scheduled(fixedRate = 1000)
     public void calculateAndPrintPercentage() {
@@ -195,9 +196,8 @@ public class SchedulingServiceImpl implements SchedulingService {
                 progressResponse.setPercentage(percentageInt);
                 progressResponse.setGroupName(progressBar.getTestGrouping().getName());
                 progressResponse.setGroupId(progressBar.getTestGrouping().getId());
-                progressResponse.setScheduleName(progressBar.getScheduling().getName());
-                progressResponse.setScheduleId(progressBar.getScheduling().getId());
-                simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getScheduling().getId(), progressResponse);
+
+                simpMessagingTemplate.convertAndSend("/queue/percentage" + progressBar.getTestGrouping().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();
                     List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
@@ -206,8 +206,9 @@ public class SchedulingServiceImpl implements SchedulingService {
                     }
                     testGrouping.setExecutionStatus(false);
                     progressBarRepository.deleteById(progressBar.getId());
-                    simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getScheduling().getId(),"Done");
+                    simpMessagingTemplate.convertAndSend("/queue/percentage" + progressBar.getTestGrouping().getId(), "Done");
                 }
+                System.out.println("Percentage: " + percentageInt + "%");
                 System.out.println("Percentage: " + progressResponse + "%");
 
             } else {
@@ -215,6 +216,7 @@ public class SchedulingServiceImpl implements SchedulingService {
             }
         }
     }
+
     @Override
     public ScheduleResponse getSchedulingById(Long id) {
         ScheduleResponse scheduleResponse = new ScheduleResponse();
@@ -251,7 +253,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public List<SchedulingResponse> viewByProjectId(Long projectId,Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
         List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
         Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
         pagination.setTotalRecords(schedulingList.getTotalElements());
