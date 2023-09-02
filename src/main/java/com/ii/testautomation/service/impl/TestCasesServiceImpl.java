@@ -35,7 +35,6 @@ import java.util.*;
 @SuppressWarnings("ALL")
 @Service
 public class TestCasesServiceImpl implements TestCasesService {
-
     @Autowired
     private TestCasesRepository testCasesRepository;
     @Autowired
@@ -192,9 +191,6 @@ public class TestCasesServiceImpl implements TestCasesService {
     public boolean existsBySubModuleId(Long subModuleId) {
         return testCasesRepository.existsBySubModuleId(subModuleId);
     }
-
-
-
 
     @Override
     public boolean hasExcelFormat(MultipartFile multipartFile) {
