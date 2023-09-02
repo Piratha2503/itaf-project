@@ -3,6 +3,7 @@ package com.ii.testautomation.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ii.testautomation.config.ProgressWebSocketHandler;
+import com.ii.testautomation.config.WebSocketConfig;
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
@@ -54,6 +55,8 @@ public class TestGroupingController {
     private ProgressWebSocketHandler progressWebSocketHandler;
     @Autowired
     private ExecutionHistoryService executionHistoryService;
+    @Autowired
+    private WebSocketConfig webSocketConfig;
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
@@ -92,7 +95,7 @@ public class TestGroupingController {
         }
         if (testGroupingRequest.getMainModuleIds() != null) {
             for (Long mainModuleId : testGroupingRequest.getMainModuleIds()) {
-                if (!mainModulesService.existsMainModuleByModuleId(mainModuleId)) {
+                if (!mainModulesService.isExistMainModulesId(mainModuleId)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getMainModulesNotExistCode(), statusCodeBundle.getMainModuleNotExistsMessage()));
                 }
             }
@@ -145,7 +148,7 @@ public class TestGroupingController {
         }
         if (testGroupingRequest.getMainModuleIds() != null) {
             for (Long mainModuleId : testGroupingRequest.getMainModuleIds()) {
-                if (!mainModulesService.existsMainModuleByModuleId(mainModuleId)) {
+                if (!mainModulesService.isExistMainModulesId(mainModuleId)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getMainModulesNotExistCode(), statusCodeBundle.getMainModuleNotExistsMessage()));
                 }
             }
