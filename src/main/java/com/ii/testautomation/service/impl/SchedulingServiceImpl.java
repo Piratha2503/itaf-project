@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
+import com.ii.testautomation.dto.response.ProgressResponse;
 import com.ii.testautomation.dto.response.ScheduleResponse;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.entities.*;
@@ -132,6 +133,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
         TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
         testGrouping.setExecutionStatus(true);
+        testGrouping.setSchedulingExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
         for (Long testCaseId : testCaseIds) {
             TestCases testCases = testCasesRepository.findById(testCaseId).get();
@@ -156,7 +158,6 @@ public class SchedulingServiceImpl implements SchedulingService {
             }
         }
         jarExecution(projectId, groupingId);
-
     }
 
     private void jarExecution(Long projectId, Long groupId) {
