@@ -422,6 +422,9 @@ public class StatusCodeBundle {
     private String executionHistoryNotExistsCode;
     @Value("${code.failure.executionHistory.email}")
     private String executionHistoryMailFailureCode;
+    @Value("${code.error.executionHistory.dates}")
+    private String executionHistoryDateErrorCode;
+
     //Execution History
     @Value("${message.success.executionHistory.Null}")
     private String executionHistoryIdNull;
@@ -437,6 +440,12 @@ public class StatusCodeBundle {
     private String executionHistoryMailSuccessMessage;
     @Value("${message.failure.executionHistory.null.empty}")
     private String executionHistoryMailFailureMessage;
+    @Value("${message.error.executionHistory.endDate.empty}")
+    private String executionHistoryEndDateEmptyMessage;
+    @Value("${message.error.endDate}")
+    private String executionHistoryEndDateBeforeStartDateMessage;
+
+
     //Scheduling Code
     @Value("${code.failure.Id.notExist.scheduling}")
     private String schedulingNotExistCode;

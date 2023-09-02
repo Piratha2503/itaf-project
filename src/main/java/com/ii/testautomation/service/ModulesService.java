@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.request.ModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.response.ProjectModuleResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
+import com.ii.testautomation.dto.search.TestCaseSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,5 +48,7 @@ public interface ModulesService {
 
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
-    ProjectModuleResponse getAllByProjectId(Long projectId);
+    ProjectModuleResponse getAllByProjectIdAndSearch(Long projectId, String testCaseName);
+
+
 }
