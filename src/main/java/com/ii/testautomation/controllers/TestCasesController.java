@@ -42,17 +42,20 @@ public class TestCasesController {
     @Autowired
     private MainModulesService mainModulesService;
 
-@PostMapping(value = EndpointURI.TESTCASE)
-public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
-    if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
+    @PostMapping(value = EndpointURI.TESTCASE)
+    public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
+        if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
+        }
+        if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
+        }
+        if (testCasesService.existsTestCaseNameSubString(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
+        }
+        testCasesService.saveTestCase(testCaseRequest);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestCaseSuccessMessage()));
     }
-    if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
-    }
-    testCasesService.saveTestCase(testCaseRequest);
-    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestCaseSuccessMessage()));
-}
 
     @GetMapping(value = EndpointURI.TESTCASE_BY_ID)
     public ResponseEntity<Object> GetTestcaseById(@PathVariable Long id) {
@@ -69,10 +72,13 @@ public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCase
                     statusCodeBundle.getTestCasesNotExistCode(),
                     statusCodeBundle.getTestCasesNotExistsMessage()));
         }
-        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(),testCaseRequest.getId(),testCaseRequest.getSubModuleId())) {
+        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestCasesAlreadyExistsCode(),
                     statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
+        }
+        if (testCasesService.isUpdateTestCaseNameExistsSubString(testCaseRequest.getName(),testCaseRequest.getId(),testCaseRequest.getSubModuleId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -93,7 +99,7 @@ public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCase
     }
 
     @PostMapping(EndpointURI.TESTCASE_IMPORT)
-    public ResponseEntity<Object> testCaseImport(@PathVariable Long id,@RequestParam MultipartFile multipartFile) {
+    public ResponseEntity<Object> testCaseImport(@PathVariable Long id, @RequestParam MultipartFile multipartFile) {
         Long projectId = id;
         Map<String, List<Integer>> errorMessages = new HashMap<>();
         Map<Integer, TestCaseRequest> testCaseRequestList;
@@ -104,9 +110,9 @@ public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCase
                         statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
             }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
-                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(),projectId);
+                testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(), projectId);
             } else if (testCasesService.hasExcelFormat(multipartFile)) {
-                testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile,projectId);
+                testCaseRequestList = testCasesService.excelToTestCaseRequest(multipartFile, projectId);
             } else {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
@@ -121,9 +127,9 @@ public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCase
                 }
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getSubModuleName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestcaseSubModuleIdEmptyMessage(), entry.getKey());
-                } else if (!subModulesService.existsBySubModulesNameForProject(entry.getValue().getSubModuleName(),projectId)) {
+                } else if (!subModulesService.existsBySubModulesNameForProject(entry.getValue().getSubModuleName(), projectId)) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSubModuleNotExistsMessage(), entry.getKey());
-                } else if (testCasesService.existsByTestCasesName(entry.getValue().getName(),subModulesService.getSubModuleIdByNameForProject(entry.getValue().getSubModuleName(),projectId))) {
+                } else if (testCasesService.existsByTestCasesName(entry.getValue().getName(), subModulesService.getSubModuleIdByNameForProject(entry.getValue().getSubModuleName(), projectId))) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameAlreadyExistsMessage(), entry.getKey());
                 }
             }
