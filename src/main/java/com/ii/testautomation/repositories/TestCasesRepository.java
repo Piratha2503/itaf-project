@@ -38,5 +38,8 @@ public interface TestCasesRepository extends JpaRepository<TestCases, Long>, Que
     List<TestCases> findBySubModule_MainModule_Modules_IdAndSubModule_MainModule_Modules_Project_Id(Long moduleId, Long projectId);
 
     List<TestCases> findBySubModuleIdAndSubModule_MainModule_Modules_Project_Id(Long subModuleId, Long projectId);
-    List<TestCases> findBySubModule_MainModule_Modules_Project_Id(Long projectId);
+    List<TestCases> findByNameContainingIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(String name,Long projectId);
+
+
+
 }

@@ -150,7 +150,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
-        jarExecution(projectId);
+         jarExecution(projectId);
     }
 
     private void jarExecution(Long projectId) {

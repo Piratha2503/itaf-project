@@ -142,29 +142,34 @@ public class ModulesServiceImpl implements ModulesService {
             List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
             ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
             List<ModulesResponse> modulesResponseList = new ArrayList<>();
+
             for (Modules module : modulesList) {
                 ModulesResponse modulesResponse = new ModulesResponse();
                 modulesResponse.setName(module.getName());
                 modulesResponse.setId(module.getId());
-                List<MainModules> mainModulesList = mainModulesRepository.findByModulesIdAndModules_ProjectId(module.getId(),projectId);
+                List<MainModules> mainModulesList = mainModulesRepository.findByModulesIdAndModules_ProjectId(module.getId(), projectId);
                 List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
+
                 for (MainModules mainModules : mainModulesList) {
                     MainModulesResponse mainModulesResponse = new MainModulesResponse();
                     mainModulesResponse.setId(mainModules.getId());
                     mainModulesResponse.setName(mainModules.getName());
                     List<SubModules> subModulesList = subModulesRepository.findAllSubModulesByMainModuleId(mainModules.getId());
                     List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
+
                     for (SubModules subModules : subModulesList) {
                         SubModulesResponse subModulesResponse = new SubModulesResponse();
                         subModulesResponse.setId(subModules.getId());
                         subModulesResponse.setName(subModules.getName());
                         List<TestCases> testCasesList = testCasesRepository.findAllTestCasesBySubModuleId(subModules.getId());
                         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
+
                         for (TestCases testCases : testCasesList) {
                             TestCaseResponse testCaseResponse = new TestCaseResponse();
                             testCaseResponse.setId(testCases.getId());
                             testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
                             testCaseResponseList.add(testCaseResponse);
+
                         }
                         if (testCaseResponseList != null && !testCaseResponseList.isEmpty()) {
                             subModulesResponse.setTestCaseResponses(testCaseResponseList);
@@ -185,21 +190,13 @@ public class ModulesServiceImpl implements ModulesService {
                 if (modulesResponse.getMainModulesResponse() != null && !modulesResponse.getMainModulesResponse().isEmpty()) {
                     modulesResponseList.add(modulesResponse);
                 }
+
             }
             projectModuleResponse.setModulesResponseList(modulesResponseList);
             return projectModuleResponse;
-        } else {
-            BooleanBuilder booleanBuilder = new BooleanBuilder();
-            if (QTestCases.testCases.subModule != null &&
-                    QTestCases.testCases.subModule.mainModule != null &&
-                    QTestCases.testCases.subModule.mainModule.modules != null &&
-                    QTestCases.testCases.subModule.mainModule.modules.project != null) {
-                booleanBuilder.and(QTestCases.testCases.subModule.mainModule.modules.project.id.eq(projectId));
+
             }
-            if (Utils.isNotNullAndEmpty(testCaseName)) {
-                booleanBuilder.and(QTestCases.testCases.name.containsIgnoreCase(testCaseName));
-            }
-            Iterable<TestCases> testCases = testCasesRepository.findAll(booleanBuilder);
+            Iterable<TestCases> testCases = testCasesRepository.findByNameContainingIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(testCaseName,projectId);
             ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
             List<ModulesResponse> modulesResponseList = new ArrayList<>();
             for (TestCases testCase : testCases) {
@@ -247,7 +244,7 @@ public class ModulesServiceImpl implements ModulesService {
             projectModuleResponse.setModulesResponseList(modulesResponseList);
             return projectModuleResponse;
         }
-    }
+
 
 
     @Override
