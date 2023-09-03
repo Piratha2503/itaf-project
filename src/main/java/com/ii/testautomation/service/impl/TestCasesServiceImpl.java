@@ -88,7 +88,7 @@ public class TestCasesServiceImpl implements TestCasesService {
 
     @Override
     public boolean isUpdateTestCaseNameExistsSubString(String name, Long id, Long subModuleId) {
-        List<TestCases> testCasesList = testCasesRepository.findBySubModuleIdAndIdNot(subModuleId,id);
+        List<TestCases> testCasesList = testCasesRepository.findBySubModuleIdAndIdNot(subModuleId, id);
         for (TestCases testCases : testCasesList
         ) {
             String listTestCaseName = testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1);
@@ -98,8 +98,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return false;
     }
-
-
 
     @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
