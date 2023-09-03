@@ -20,7 +20,8 @@ public interface TestCasesService {
 
     TestCaseResponse getById(Long id);
 
-    boolean isUpdateTestCaseNameExists(String name,Long id,Long subModuleId);
+    boolean isUpdateTestCaseNameExists(String name, Long id, Long subModuleId);
+    boolean isUpdateTestCaseNameExistsSubString(String name,Long id,Long subModuleId);
 
     List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch);
 
@@ -49,5 +50,10 @@ public interface TestCasesService {
     List<TestCaseResponse> getAllTestCasesByMainModuleId(Long MainModuleId);
 
     boolean existsTestCaseByProjectId(Long projectId);
+
     void updateExecutionStatus(Long testCaseId);
+
+    public boolean existsTestCaseNameSubString(String testCaseName, Long subModuleId);
+
 }
+
