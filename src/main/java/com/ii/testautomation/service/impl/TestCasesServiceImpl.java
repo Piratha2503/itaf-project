@@ -98,7 +98,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return false;
     }
-
     @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
