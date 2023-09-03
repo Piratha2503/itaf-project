@@ -41,7 +41,6 @@ public class TestCasesController {
     private ModulesService modulesService;
     @Autowired
     private MainModulesService mainModulesService;
-
     @PostMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
@@ -64,7 +63,6 @@ public class TestCasesController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASE, testCasesService.getById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseByIdSuccessMessage()));
     }
-
     @PutMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> UpdateTestCase(@RequestBody TestCaseRequest testCaseRequest) {
         if (!testCasesService.existsByTestCasesId(testCaseRequest.getId())) {
@@ -149,7 +147,6 @@ public class TestCasesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestCaseValidationSaveMessage()));
         }
     }
-
     @GetMapping(value = EndpointURI.TESTCASES_BY_ID)
     public ResponseEntity<Object> getAllTestCaseBySubModuleId(@PathVariable Long id) {
         if (!subModulesService.existsBySubModuleId(id)) {
@@ -162,7 +159,6 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseBySubModuleIdSuccessMessage()));
 
     }
-
     @GetMapping(value = EndpointURI.TESTCASE_BY_MAIN_MODULE_ID)
     public ResponseEntity<Object> getAllTestCasesByMainModuleId(@PathVariable Long id) {
         if (!mainModulesService.isExistMainModulesId(id)) {
