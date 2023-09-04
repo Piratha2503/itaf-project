@@ -167,7 +167,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         String jarDirectory = jarFile.getParent();
         try {
             ProgressResponse progressResponse = new ProgressResponse();
-           // progressResponse.setGroupId(groupId);
+            // progressResponse.setGroupId(groupId);
             progressResponse.setProjectId(projectId);
             System.out.println("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII================================");
             simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
@@ -181,7 +181,6 @@ public class SchedulingServiceImpl implements SchedulingService {
             e.printStackTrace();
         }
     }
-
     @Transactional
     @Scheduled(fixedRate = 1000)
     public void calculateAndPrintPercentage() {
@@ -198,7 +197,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                 progressResponse.setGroupId(progressBar.getTestGrouping().getId());
                 progressResponse.setProjectId(progressBar.getProject().getId());
                 System.out.println("HIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
-                simpMessagingTemplate.convertAndSend("/queue/percentage"+progressBar.getProject().getId() + progressBar.getTestGrouping().getId(),progressResponse);
+                simpMessagingTemplate.convertAndSend("/queue/percentage" + progressBar.getProject().getId() + progressBar.getTestGrouping().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();
                     List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
@@ -207,7 +206,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                     }
                     testGrouping.setExecutionStatus(false);
                     progressBarRepository.deleteById(progressBar.getId());
-                    simpMessagingTemplate.convertAndSend("/queue/percentage"+ progressBar.getTestGrouping().getId(), "Done");
+                    simpMessagingTemplate.convertAndSend("/queue/percentage" + progressBar.getTestGrouping().getId(), "Done");
                 }
                 System.out.println("Percentageeeeeeeeeeeeeeeee: " + percentageInt + "%");
                 System.out.println("Percentage: " + progressResponse + "%");
