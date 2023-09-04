@@ -11,5 +11,6 @@ public class ProgressResponse {
     private String groupName;
     private String scheduleName;
     private Long groupId;
+    private Long projectId;
 
 }
