@@ -29,4 +29,5 @@ public interface SchedulingService {
     public void updateScheduling(SchedulingRequest schedulingRequest);
 
     boolean isUpdateNameExists(String Name, Long SchedulingId);
+    public int dynamicScheduling(Long id);
 }

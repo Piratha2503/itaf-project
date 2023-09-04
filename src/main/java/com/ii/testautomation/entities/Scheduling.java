@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -29,6 +30,13 @@ public class Scheduling extends DateAudit {
     private boolean status = true;
     @Column(unique = true)
     private String schedulingCode;
+    private LocalDateTime startDateTime;
+    private Long Year;
+    private Long hour;
+    private Long minutes;
+    private Long duration;
+    private Long noOfTimes;
+    private String month;
 }
 
 

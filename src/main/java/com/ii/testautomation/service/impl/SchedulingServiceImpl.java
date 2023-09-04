@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,8 +97,8 @@ public class SchedulingServiceImpl implements SchedulingService {
         schedulingRepository.save(scheduling);
     }
 
-    @Transactional
-    @Scheduled(cron = "${schedule.time.cron}")
+//    @Transactional
+//    @Scheduled(cron = "${schedule.time.cron}")
     public void autoScheduling() throws IOException {
         System.out.println("================================================wwwwwwwwww");
         List<Scheduling> schedulingList = schedulingRepository.findAll();
@@ -299,6 +301,23 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Override
     public boolean isUpdateNameExists(String Name, Long schedulingId) {
         return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
+    }
+
+    @Override
+    public int dynamicScheduling(Long id) {
+      Scheduling scheduling =schedulingRepository.findById(id).get();
+        String dateTimeString = "2023-09-03T14:30:45.123Z";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
+
+        int year = dateTime.getYear();
+        int month = dateTime.getMonthValue();
+        int day = dateTime.getDayOfMonth();
+        int hour = dateTime.getHour();
+
+        System.out.println("Year: " + year);
+        System.out.println("Month: " + month);
+        return hour;
     }
 
 }

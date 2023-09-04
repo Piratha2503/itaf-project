@@ -147,4 +147,11 @@ public class SchedulingController {
         schedulingService.autoScheduling();
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionSuccessMessage()));
     }
+
+    @GetMapping("/dyanamic/{id}")
+    public ResponseEntity<Object> DynamicScheduling(@PathVariable Long id){
+        int year=schedulingService.dynamicScheduling(id);
+        System.out.println("Year: " + year);
+        return ResponseEntity.ok(year);
+    }
 }
