@@ -166,7 +166,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         String jarDirectory = jarFile.getParent();
         try {
             ProgressResponse progressResponse = new ProgressResponse();
-            // progressResponse.setGroupId(groupId);
             progressResponse.setProjectId(projectId);
             System.out.println("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII================================");
             simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
