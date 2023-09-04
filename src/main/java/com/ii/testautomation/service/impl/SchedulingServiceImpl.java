@@ -159,7 +159,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
         jarExecution(projectId, groupingId);
     }
-
     private void jarExecution(Long projectId, Long groupId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
