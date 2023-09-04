@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @PropertySource("classpath:application.properties")
 @Service
 public class SchedulingServiceImpl implements SchedulingService {
@@ -299,5 +298,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     public boolean isUpdateNameExists(String Name, Long schedulingId) {
         return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
     }
+
 
 }
