@@ -148,13 +148,15 @@ public class ModulesServiceImpl implements ModulesService {
                 modulesResponse.setName(module.getName());
                 modulesResponse.setId(module.getId());
                 List<MainModules> mainModulesList = mainModulesRepository.findByModulesIdAndModules_ProjectId(module.getId(), projectId);
+
                 List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
 
-                for (MainModules mainModules : mainModulesList) {
+               for (MainModules mainModules : mainModulesList) {
                     MainModulesResponse mainModulesResponse = new MainModulesResponse();
                     mainModulesResponse.setId(mainModules.getId());
                     mainModulesResponse.setName(mainModules.getName());
                     List<SubModules> subModulesList = subModulesRepository.findAllSubModulesByMainModuleId(mainModules.getId());
+
                     List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
 
                     for (SubModules subModules : subModulesList) {
@@ -196,51 +198,61 @@ public class ModulesServiceImpl implements ModulesService {
             return projectModuleResponse;
 
         }
-        Iterable<TestCases> testCases = testCasesRepository.findByNameContainingIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(testCaseName, projectId);
+        List<Modules> modulesList = modulesRepository.findAllModulesByProjectId(projectId);
         ProjectModuleResponse projectModuleResponse = new ProjectModuleResponse();
         List<ModulesResponse> modulesResponseList = new ArrayList<>();
-        for (TestCases testCase : testCases) {
-            SubModules subModule = testCase.getSubModule();
-            MainModules mainModule = subModule.getMainModule();
-            Modules module = mainModule.getModules();
 
+        for (Modules module : modulesList) {
             ModulesResponse modulesResponse = new ModulesResponse();
-            modulesResponse.setId(module.getId());
             modulesResponse.setName(module.getName());
-            modulesResponse.setProjectId(module.getProject().getId());
-            modulesResponse.setProjectName(module.getProject().getName());
+            modulesResponse.setId(module.getId());
+            List<MainModules> mainModulesList = mainModulesRepository.findByModulesIdAndModules_ProjectId(module.getId(), projectId);
 
-            MainModulesResponse mainModulesResponse = new MainModulesResponse();
-            mainModulesResponse.setId(mainModule.getId());
-            mainModulesResponse.setName(mainModule.getName());
-            mainModulesResponse.setModulesName(module.getName());
-            mainModulesResponse.setModuleId(module.getId());
+            List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
 
-            SubModulesResponse subModulesResponse = new SubModulesResponse();
-            subModulesResponse.setId(subModule.getId());
-            subModulesResponse.setName(subModule.getName());
-            subModulesResponse.setMainModuleName(mainModule.getName());
-            subModulesResponse.setMainModuleId(mainModule.getId());
-            subModulesResponse.setModuleName(module.getName());
-            subModulesResponse.setModuleId(module.getId());
+            for (MainModules mainModules : mainModulesList) {
+                MainModulesResponse mainModulesResponse = new MainModulesResponse();
+                mainModulesResponse.setId(mainModules.getId());
+                mainModulesResponse.setName(mainModules.getName());
+                List<SubModules> subModulesList = subModulesRepository.findAllSubModulesByMainModuleId(mainModules.getId());
 
-            TestCaseResponse testCaseResponse = new TestCaseResponse();
-            testCaseResponse.setId(testCase.getId());
-            testCaseResponse.setName(testCase.getName().substring(testCase.getName().lastIndexOf(".") + 1));
-            testCaseResponse.setModuleId(module.getId());
-            testCaseResponse.setModuleName(module.getName());
-            testCaseResponse.setSubModuleId(subModule.getId());
-            testCaseResponse.setSubModuleName(subModule.getName());
-            testCaseResponse.setMainModuleId(mainModule.getId());
-            testCaseResponse.setMainModuleName(mainModule.getName());
-            testCaseResponse.setProjectId(module.getProject().getId());
-            testCaseResponse.setProjectName(module.getProject().getName());
+                List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
 
-            subModulesResponse.setTestCaseResponses(Collections.singletonList(testCaseResponse));
-            mainModulesResponse.setSubModulesResponses(Collections.singletonList(subModulesResponse));
-            modulesResponse.setMainModulesResponse(Collections.singletonList(mainModulesResponse));
-            modulesResponseList.add(modulesResponse);
+                for (SubModules subModules : subModulesList) {
+                    SubModulesResponse subModulesResponse = new SubModulesResponse();
+                    subModulesResponse.setId(subModules.getId());
+                    subModulesResponse.setName(subModules.getName());
+                    List<TestCases> testCasesList = testCasesRepository.findAllTestCasesBySubModuleId(subModules.getId());
+                    List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
+
+                    for (TestCases testCases : testCasesList) {
+                        if (testCases.getName().contains(testCaseName)) {
+                            // Filter and add only matching test cases to the response list.
+                            TestCaseResponse testCaseResponse = new TestCaseResponse();
+                            testCaseResponse.setId(testCases.getId());
+                            testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+                            testCaseResponseList.add(testCaseResponse);
+                        }
+                    }
+
+                    if (!testCaseResponseList.isEmpty()) {
+                        subModulesResponse.setTestCaseResponses(testCaseResponseList);
+                        subModulesResponseList.add(subModulesResponse);
+                    }
+                }
+
+                if (!subModulesResponseList.isEmpty()) {
+                    mainModulesResponse.setSubModulesResponses(subModulesResponseList);
+                    mainModulesResponseList.add(mainModulesResponse);
+                }
+            }
+
+            if (!mainModulesResponseList.isEmpty()) {
+                modulesResponse.setMainModulesResponse(mainModulesResponseList);
+                modulesResponseList.add(modulesResponse);
+            }
         }
+
         projectModuleResponse.setModulesResponseList(modulesResponseList);
         return projectModuleResponse;
     }
