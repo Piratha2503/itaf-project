@@ -11,14 +11,14 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-public class User {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
     private String password;
     private String staffName;
-    private String activeStatus;
-    private Long staffId;
+    private String status;
+    private String staffId;
     private String description;
 }

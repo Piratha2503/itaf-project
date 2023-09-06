@@ -1,7 +1,6 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.UserRequest;
-import com.ii.testautomation.entities.User;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
