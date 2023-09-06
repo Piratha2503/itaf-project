@@ -21,6 +21,4 @@ public class User {
     private String activeStatus;
     private Long staffId;
     private String description;
-
-
 }
