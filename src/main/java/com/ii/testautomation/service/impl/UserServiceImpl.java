@@ -13,9 +13,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(UserRequest userRequest) {
-        User user=new User();
-        user.setEmail(userRequest.getEmail());
-        user.setPassword(userRequest.getPassword());
-
+       
     }
 }
