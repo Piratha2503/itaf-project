@@ -470,4 +470,17 @@ public class StatusCodeBundle {
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
+
+    //login Codes
+
+    //login Messages
+    @Value("${message.success.verify.registered}")
+    private String RegistrationSuccessMessage;
+    @Value("${message.success.email.verify}")
+    private String EmailVerificationSuccessMessage;
+    @Value("${message.failure.email.verify}")
+    private String EmailVerificationFailureMessage;
+    @Value("${message.failure.token.expired}")
+    private String TokenExpiredMessage;
+
 }
