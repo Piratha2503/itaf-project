@@ -87,6 +87,18 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
+    public boolean isUpdateTestCaseNameExistsSubString(String name, Long id, Long subModuleId) {
+        List<TestCases> testCasesList = testCasesRepository.findBySubModuleIdAndIdNot(subModuleId, id);
+        for (TestCases testCases : testCasesList
+        ) {
+            String listTestCaseName = testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1);
+            if (listTestCaseName.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         QTestCases qTestCases = QTestCases.testCases;
@@ -388,6 +400,19 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
 
         return columnMap;
+    }
+
+    @Override
+    public boolean existsTestCaseNameSubString(String testCaseName, Long subModuleId) {
+        List<TestCases> testCasesList = testCasesRepository.findBySubModuleId(subModuleId);
+        for (TestCases testCases : testCasesList
+        ) {
+            String listTestCaseName = testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1);
+            if (listTestCaseName.equals(testCaseName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
