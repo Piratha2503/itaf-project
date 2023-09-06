@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
+import com.ii.testautomation.dto.response.ProgressResponse;
 import com.ii.testautomation.dto.response.ScheduleResponse;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.entities.*;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,10 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ExecutedTestCaseRepository executedTestCaseRepository;
     @Autowired
     private SequenceRepository sequenceRepository;
+    @Autowired
+    private ProgressBarRepository progressBarRepository;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
 
     @Override
@@ -127,6 +133,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
         TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
         testGrouping.setExecutionStatus(true);
+        testGrouping.setSchedulingExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
         for (Long testCaseId : testCaseIds) {
             TestCases testCases = testCasesRepository.findById(testCaseId).get();
@@ -150,15 +157,19 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
-         jarExecution(projectId);
+        jarExecution(projectId, groupingId);
     }
-
-    private void jarExecution(Long projectId) {
+    private void jarExecution(Long projectId, Long groupId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();
         try {
+            ProgressResponse progressResponse = new ProgressResponse();
+            progressResponse.setProjectId(projectId);
+            System.out.println("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII================================");
+            simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
+            System.out.println("Send================================");
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
@@ -166,6 +177,41 @@ public class SchedulingServiceImpl implements SchedulingService {
             runProcess.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+    @Transactional
+    @Scheduled(fixedRate = 1000)
+    public void calculateAndPrintPercentage() {
+        List<ProgressBar> progressBarList = progressBarRepository.findAll();
+        for (ProgressBar progressBar : progressBarList) {
+            Long totalNoOfTestCases = progressBar.getTotalNoOfTestCases();
+            Long executedTestCase = progressBar.getExecutedTestCaseCount();
+            if (totalNoOfTestCases >= executedTestCase) {
+                double percentage = ((double) executedTestCase / totalNoOfTestCases) * 100.0;
+                int percentageInt = (int) percentage;
+                ProgressResponse progressResponse = new ProgressResponse();
+                progressResponse.setPercentage(percentageInt);
+                progressResponse.setGroupName(progressBar.getTestGrouping().getName());
+                progressResponse.setGroupId(progressBar.getTestGrouping().getId());
+                progressResponse.setProjectId(progressBar.getProject().getId());
+                System.out.println("HIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+                simpMessagingTemplate.convertAndSend("/queue/percentage" + progressBar.getProject().getId() + progressBar.getTestGrouping().getId(), progressResponse);
+                if (percentageInt == 100) {
+                    TestGrouping testGrouping = progressBar.getTestGrouping();
+                    List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
+                    for (ExecutedTestCase executedTestCase1 : executedTestCases) {
+                        executedTestCaseRepository.deleteById(executedTestCase1.getId());
+                    }
+                    testGrouping.setExecutionStatus(false);
+                    progressBarRepository.deleteById(progressBar.getId());
+                    simpMessagingTemplate.convertAndSend("/queue/percentage" + progressBar.getTestGrouping().getId(), "Done");
+                }
+                System.out.println("Percentageeeeeeeeeeeeeeeee: " + percentageInt + "%");
+                System.out.println("Percentage: " + progressResponse + "%");
+
+            } else {
+                System.out.println("Total number of test cases is zero.");
+            }
         }
     }
 
@@ -177,7 +223,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduleResponse.setName(scheduling.getName());
         scheduleResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
         scheduleResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
-
         Map<Integer, Long> testScenarios = new HashMap<>();
         Map<Integer, Long> testCase = new HashMap<>();
         String schedulingCode = scheduling.getSchedulingCode();
@@ -206,7 +251,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public List<SchedulingResponse> viewByProjectId(Long projectId,Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
         List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
         Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
         pagination.setTotalRecords(schedulingList.getTotalElements());

@@ -35,7 +35,6 @@ import java.util.*;
 @SuppressWarnings("ALL")
 @Service
 public class TestCasesServiceImpl implements TestCasesService {
-
     @Autowired
     private TestCasesRepository testCasesRepository;
     @Autowired
@@ -87,7 +86,18 @@ public class TestCasesServiceImpl implements TestCasesService {
         return testCasesRepository.existsByNameIgnoreCaseAndSubModuleIdAndIdNot(name, subModuleId, id);
     }
 
-
+    @Override
+    public boolean isUpdateTestCaseNameExistsSubString(String name, Long id, Long subModuleId) {
+        List<TestCases> testCasesList = testCasesRepository.findBySubModuleIdAndIdNot(subModuleId, id);
+        for (TestCases testCases : testCasesList
+        ) {
+            String listTestCaseName = testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1);
+            if (listTestCaseName.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
     @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -390,6 +400,19 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
 
         return columnMap;
+    }
+
+    @Override
+    public boolean existsTestCaseNameSubString(String testCaseName, Long subModuleId) {
+        List<TestCases> testCasesList = testCasesRepository.findBySubModuleId(subModuleId);
+        for (TestCases testCases : testCasesList
+        ) {
+            String listTestCaseName = testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1);
+            if (listTestCaseName.equals(testCaseName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

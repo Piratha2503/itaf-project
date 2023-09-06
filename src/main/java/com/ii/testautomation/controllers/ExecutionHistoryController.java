@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 
@@ -76,14 +77,6 @@ public class ExecutionHistoryController {
     @GetMapping(EndpointURI.EXECUTION_HISTORY_DATE_FILTER)
     public ResponseEntity<Object> executionHistoryDateFilter(@PathVariable Long id, @RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
 
-        if (!testGroupingService.existsByTestGroupingId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getTestGroupingNotExistCode(),
-                    statusCodeBundle.getTestGroupingNotExistsMessage()));
-        }
-
-        if (!testGroupingService.existsByTestGroupingId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
         if (!executionHistoryService.existByTestGropingId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingNotMappedMessage()));
 
@@ -91,20 +84,16 @@ public class ExecutionHistoryController {
         Timestamp endingDate;
 
         if (startDate.isEmpty() || startDate.isBlank())
-            startingDate = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1));
+            startingDate = new Timestamp(Date.valueOf(LocalDate.now().withDayOfMonth(1)).getTime());
+         else startingDate = new Timestamp(Date.valueOf(startDate).getTime());
 
-        else startingDate = new Timestamp(Date.valueOf(startDate).getTime());
+         if (endDate.isEmpty() || endDate.isBlank()) {
 
-        if (endDate.isEmpty() || endDate.isBlank()) {
-            endingDate = Timestamp.valueOf(LocalDateTime.now());
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(endingDate);
-            calendar.set(Calendar.HOUR_OF_DAY, 23);
-            calendar.set(Calendar.MINUTE, 59);
-            calendar.set(Calendar.SECOND, 59);
-            endingDate = new Timestamp(calendar.getTimeInMillis());
-        } else {
-
+            endingDate = new Timestamp(new Date(System.currentTimeMillis()).getTime());
+        }
+        else {
+            if (startDate.isEmpty() || startDate.isBlank())
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getExecutionHistoryDateErrorCode(),statusCodeBundle.getExecutionHistoryEndDateEmptyMessage()));
             endingDate = new Timestamp(Date.valueOf(endDate).getTime());
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(endingDate);
@@ -114,8 +103,9 @@ public class ExecutionHistoryController {
             endingDate = new Timestamp(calendar.getTimeInMillis());
         }
 
+        if (endingDate.before(startingDate))
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getExecutionHistoryDateErrorCode(),statusCodeBundle.getExecutionHistoryEndDateBeforeStartDateMessage()));
         return ResponseEntity.ok(new ContentResponse<>(Constants.EXECUTION_HISTORY, executionHistoryService.executionHistoryDateFilter(id, startingDate, endingDate), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getViewExecutionHistoryMessage()));
-
     }
 
     @DeleteMapping(value = EndpointURI.EXECUTION_HISTORY_PROJECT_ID)
