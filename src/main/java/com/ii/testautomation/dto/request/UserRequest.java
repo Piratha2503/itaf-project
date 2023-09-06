@@ -9,5 +9,8 @@ public class UserRequest {
     private Long id;
     private String email;
     private String password;
-
+    private String staffName;
+    private String activeStatus;
+    private Long staffId;
+    private String description;
 }
