@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
         user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
-
+        generateToken(user);
     }
 
     @Override
@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
         user.setStatus(LoginStatus.VERIFIED.getStatus());
         userRepository.save(user);
     }
-
 
     @Override
     public boolean verifyToken(String token) {
