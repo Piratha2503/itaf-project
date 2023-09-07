@@ -7,5 +7,5 @@ public interface UserService {
 
     boolean existsByEmail(String email);
     public boolean existsByStaffIdIgnoreCase(String staffId);
-  //  boolean isUserExistsByName(String email,Long name);
+
 }
