@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
-        // user.setStatus(new);
+        user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
 
