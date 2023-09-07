@@ -11,10 +11,7 @@ import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.SubModulesService;
-import com.ii.testautomation.utils.Constants;
-import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.StatusCodeBundle;
-import com.ii.testautomation.utils.Utils;
+import com.ii.testautomation.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,9 +37,13 @@ public class MainModulesController {
     private ModulesService modulesService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private RagexMaintainance ragexMaintainance;
 
     @PostMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(mainModulesRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
         if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(), mainModulesRequest.getModuleId()))
