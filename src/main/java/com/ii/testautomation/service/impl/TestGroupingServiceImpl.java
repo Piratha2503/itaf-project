@@ -341,19 +341,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
         }
-        List<String> excelFileNames = testGrouping.getExcelFilePath();
-        List<String> newExcelFileNames = new ArrayList<>();
-        if (excelFileNames != null && !excelFileNames.isEmpty()) {
-            for (String excelPath : excelFileNames
-            ) {
-                Path excel = Paths.get(excelPath);
-                String excelFileName = excel.getFileName().toString();
-                newExcelFileNames.add(excelFileName);
-            }
-        }
         testGroupingResponse.setTestCaseResponseList(testCaseResponseList);
         testGroupingResponse.setTestScenariosResponseList(testScenariosResponseList);
-        testGroupingResponse.setExcelFile(newExcelFileNames);
         testGroupingResponse.setTestCaseIds(testCaseIds);
         testGroupingResponse.setTestCaseName(testCaseNames);
         testGroupingResponse.setTestScenarioIds(testScenarioIds);
@@ -540,6 +529,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 progressResponse.setPercentage(percentageInt);
                 progressResponse.setGroupName(progressBar.getTestGrouping().getName());
                 progressResponse.setGroupId(progressBar.getTestGrouping().getId());
+
                 simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getTestGrouping().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();

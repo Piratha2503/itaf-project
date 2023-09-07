@@ -470,4 +470,22 @@ public class StatusCodeBundle {
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
+
+    //USer Code
+
+    @Value("${code.validation.user.alreadyExists}")
+    private String userAlreadyExistCode;
+    @Value("${code.validation.user.notExists}")
+    private String userNotExistCode;
+
+    //user message
+    @Value("${message.validation.user.email.alreadyExists}")
+    private String userEmailAlReadyExistMessage;
+    @Value("${message.success.save.user}")
+    private String saveUserSuccessMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String userIdExistMessage;
+
+
+
 }
