@@ -380,6 +380,9 @@ public class StatusCodeBundle {
     private String TestGroupingDeleteDependentMessage;
     @Value("${message.success.execution}")
     private String executionSuccessMessage;
+    @Value("${message.validation.testGrouping.scheduledTestCases}")
+    private String ScheduledTestCasesRemoveMessage;
+
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;
@@ -470,4 +473,26 @@ public class StatusCodeBundle {
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
+
+    //login Codes
+    @Value("${code.validation.user.alreadyExists}")
+    private String userAlreadyExistCode;
+    @Value("${code.validation.user.notExists}")
+    private String userNotExistCode;
+
+    //login Messages
+    @Value("${message.success.verify.registered}")
+    private String RegistrationSuccessMessage;
+    @Value("${message.success.email.verify}")
+    private String EmailVerificationSuccessMessage;
+    @Value("${message.failure.email.verify}")
+    private String EmailVerificationFailureMessage;
+    @Value("${message.failure.token.expired}")
+    private String TokenExpiredMessage;
+    @Value("${message.validation.user.email.alreadyExists}")
+    private String userEmailAlReadyExistMessage;
+    @Value("${message.success.save.user}")
+    private String saveUserSuccessMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String userIdExistMessage;
 }

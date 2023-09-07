@@ -75,7 +75,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
         testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
         testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-        testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+        testCaseResponse.setName(testCases.getName());
         testCaseResponse.setId(testCases.getId());
         testCaseResponse.setDescription(testCases.getDescription());
         return testCaseResponse;
@@ -84,6 +84,19 @@ public class TestCasesServiceImpl implements TestCasesService {
     @Override
     public boolean isUpdateTestCaseNameExists(String name, Long id, Long subModuleId) {
         return testCasesRepository.existsByNameIgnoreCaseAndSubModuleIdAndIdNot(name, subModuleId, id);
+    }
+
+    @Override
+    public boolean isUpdateTestCaseNameExistsSubString(String name, Long id, Long subModuleId) {
+        List<TestCases> testCasesList = testCasesRepository.findBySubModuleIdAndIdNot(subModuleId, id);
+        for (TestCases testCases : testCasesList
+        ) {
+            String listTestCaseName = testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1);
+            if (listTestCaseName.equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -388,6 +401,19 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
 
         return columnMap;
+    }
+
+    @Override
+    public boolean existsTestCaseNameSubString(String testCaseName, Long subModuleId) {
+        List<TestCases> testCasesList = testCasesRepository.findBySubModuleId(subModuleId);
+        for (TestCases testCases : testCasesList
+        ) {
+            String listTestCaseName = testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1);
+            if (listTestCaseName.equals(testCaseName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

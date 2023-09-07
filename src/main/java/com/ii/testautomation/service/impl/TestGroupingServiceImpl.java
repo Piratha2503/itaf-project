@@ -68,7 +68,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private String fileFolder;
     @Autowired
     private TaskScheduler taskScheduler;
-
     @Autowired
    private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -78,8 +77,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             for (MultipartFile multipartFile : multipartFiles
             ) {
                 try {
-                    Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
-                    workbook.close();
+                    if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) return true;
+                    else {
+                        Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+                        workbook.close();
+                    }
                 } catch (Exception e) {
                     return false;
                 }
