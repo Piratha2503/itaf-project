@@ -380,6 +380,9 @@ public class StatusCodeBundle {
     private String TestGroupingDeleteDependentMessage;
     @Value("${message.success.execution}")
     private String executionSuccessMessage;
+    @Value("${message.validation.testGrouping.scheduledTestCases}")
+    private String ScheduledTestCasesRemoveMessage;
+
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;

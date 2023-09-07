@@ -57,6 +57,8 @@ public class TestGroupingController {
     private ExecutionHistoryService executionHistoryService;
     @Autowired
     private WebSocketConfig webSocketConfig;
+    @Autowired
+    private SchedulingService schedulingService;
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
@@ -113,6 +115,7 @@ public class TestGroupingController {
         testGroupingService.saveTestGrouping(testGroupingRequest, excelFiles);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveTestGroupingSuccessMessage()));
     }
+
     @PutMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> editTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
         TestGroupingRequest testGroupingRequest = objectMapper.readValue(testGrouping, TestGroupingRequest.class);
@@ -135,6 +138,9 @@ public class TestGroupingController {
             for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
                 if (!testCasesService.existsByTestCasesId(testCaseId)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+                }
+                else if (schedulingService.existsByTestCaseId(testCaseId)) {
+                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesDependentCode(), statusCodeBundle.getScheduledTestCasesRemoveMessage()));
                 }
             }
         }

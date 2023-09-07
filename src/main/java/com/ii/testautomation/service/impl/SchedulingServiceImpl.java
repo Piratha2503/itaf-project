@@ -158,6 +158,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
         jarExecution(projectId, groupingId);
     }
+
     private void jarExecution(Long projectId, Long groupId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
@@ -178,6 +179,7 @@ public class SchedulingServiceImpl implements SchedulingService {
             e.printStackTrace();
         }
     }
+
     @Transactional
     @Scheduled(fixedRate = 1000)
     public void calculateAndPrintPercentage() {
@@ -345,5 +347,8 @@ public class SchedulingServiceImpl implements SchedulingService {
         return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
     }
 
-
+    @Override
+    public boolean existsByTestCaseId(Long testCaseId) {
+        return schedulingRepository.existsByTestGrouping_TestCases_Id(testCaseId);
+    }
 }
