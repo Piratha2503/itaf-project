@@ -70,7 +70,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private TaskScheduler taskScheduler;
 
     @Autowired
-   private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
@@ -341,10 +341,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
         }
-        List<String> excelFileNames = testGrouping.getExcelFilePath();
+        List<String> listExcelFileNames = testGrouping.getExcelFilePath();
         List<String> newExcelFileNames = new ArrayList<>();
-        if (excelFileNames != null && !excelFileNames.isEmpty()) {
-            for (String excelPath : excelFileNames
+        if (listExcelFileNames != null && !listExcelFileNames.isEmpty()) {
+            for (String excelPath : listExcelFileNames
             ) {
                 Path excel = Paths.get(excelPath);
                 String excelFileName = excel.getFileName().toString();
@@ -540,6 +540,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 progressResponse.setPercentage(percentageInt);
                 progressResponse.setGroupName(progressBar.getTestGrouping().getName());
                 progressResponse.setGroupId(progressBar.getTestGrouping().getId());
+
                 simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getTestGrouping().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();
