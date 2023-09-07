@@ -26,4 +26,5 @@ public interface MainModulesRepository extends JpaRepository<MainModules, Long>,
     List<MainModules> findAllByModulesId(Long id);
 
     List<MainModules> findByModulesIdAndModules_ProjectId(Long id, Long projectId);
-}
+
+    }
