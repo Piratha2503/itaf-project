@@ -105,10 +105,6 @@ public class TestCasesController {
         Map<Integer, TestCaseRequest> testCaseRequestList;
         Set<String> testCasesNames = new HashSet<>();
         try {
-            if (!testCasesService.isCSVHeaderMatch(multipartFile) && (!testCasesService.isExcelHeaderMatch(multipartFile))) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-            }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                 testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(), projectId);
             } else if (testCasesService.hasExcelFormat(multipartFile)) {
@@ -117,6 +113,11 @@ public class TestCasesController {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
+            if (!testCasesService.isCSVHeaderMatch(multipartFile) && (!testCasesService.isExcelHeaderMatch(multipartFile))) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
+
             for (Map.Entry<Integer, TestCaseRequest> entry : testCaseRequestList.entrySet()) {
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), entry.getKey());
