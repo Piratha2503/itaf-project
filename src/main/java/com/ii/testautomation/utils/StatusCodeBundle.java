@@ -485,7 +485,5 @@ public class StatusCodeBundle {
     private String saveUserSuccessMessage;
     @Value("${message.validation.user.name.alreadyExists}")
     private String userIdExistMessage;
-
-
-
+    
 }
