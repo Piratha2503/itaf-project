@@ -10,10 +10,7 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.service.TestTypesService;
-import com.ii.testautomation.utils.Constants;
-import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.StatusCodeBundle;
-import com.ii.testautomation.utils.Utils;
+import com.ii.testautomation.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,20 +33,18 @@ public class TestTypesController {
     private TestGroupingService testGroupingService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private RagexMaintainance ragexMaintainance;
 
     @PostMapping(EndpointURI.TEST_TYPE)
     public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testTypesRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName()))
-            return ResponseEntity.ok(new BaseResponse(
-                    RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getAlreadyExistCode(),
-                    statusCodeBundle.getTestTypeNameAlReadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getTestTypeNameAlReadyExistMessage()));
 
         testTypesService.saveTestTypes(testTypesRequest);
-        return ResponseEntity.ok(new BaseResponse(
-                RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getInsertTestTypesSuccessMessage()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getInsertTestTypesSuccessMessage()));
     }
 
     @PutMapping(EndpointURI.TEST_TYPE)
@@ -59,6 +54,9 @@ public class TestTypesController {
                     RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
                     statusCodeBundle.getTestTypeIdNotFoundMessage()));
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testTypesRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+
         if (testTypesService.isExistsTestTypesByNameIgnoreCaseAndIdNot(
                 testTypesRequest.getName(), testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(
@@ -104,8 +102,7 @@ public class TestTypesController {
     }
 
     @GetMapping(EndpointURI.TEST_TYPE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
         else if (testTypesService.getTestTypesByProjectId(id).isEmpty()) return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getTestTypeNotMappedMessage()));
         else return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesService.getTestTypesByProjectId(id),statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getViewTestTypeByProjectIdSuccessMessage()));

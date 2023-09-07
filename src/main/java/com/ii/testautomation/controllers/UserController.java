@@ -18,8 +18,7 @@ public class UserController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-    public ResponseEntity<Object> verifyUser(@PathVariable String token)
-    {
+    public ResponseEntity<Object> verifyUser(@PathVariable String token) {
         if (userService.checkExpiry(token))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getTokenExpiredMessage()));
         if (userService.verifyToken(token))

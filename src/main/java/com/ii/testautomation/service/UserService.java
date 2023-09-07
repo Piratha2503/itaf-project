@@ -1,7 +1,6 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.UserRequest;
-import com.ii.testautomation.entities.Users;
 
 public interface UserService {
     void saveUser(UserRequest userRequest);
@@ -13,6 +12,7 @@ public interface UserService {
     boolean checkExpiry(String token);
 
     boolean existsByEmail(String email);
-    public boolean existsByStaffIdIgnoreCase(String staffId);
+
+    boolean existsByStaffIdIgnoreCase(String staffId);
 
 }

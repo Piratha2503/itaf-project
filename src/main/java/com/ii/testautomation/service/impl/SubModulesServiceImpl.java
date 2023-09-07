@@ -147,7 +147,6 @@ public class SubModulesServiceImpl implements SubModulesService {
         return subModulesResponseList;
     }
 
-
     @Override
     public List<SubModulesResponse> getSubModulesByProjectIdWithPagination(Long id, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
