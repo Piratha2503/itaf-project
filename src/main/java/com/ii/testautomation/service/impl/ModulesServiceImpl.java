@@ -230,6 +230,7 @@ public class ModulesServiceImpl implements ModulesService {
                             // Filter and add only matching test cases to the response list.
                             TestCaseResponse testCaseResponse = new TestCaseResponse();
                             testCaseResponse.setId(testCases.getId());
+                            testCaseResponse.setProjectId(testCases.getSubModule().getMainModule().getModules().getProject().getId());
                             testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
                             testCaseResponseList.add(testCaseResponse);
                         }
