@@ -90,6 +90,11 @@ public class ProjectController {
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(projectRequest.getName())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getSpacesNotAllowedMessage()));
+        }
         if (projectService.isUpdateProjectNameExist(projectRequest.getName(), projectRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectAlReadyExistCode(),

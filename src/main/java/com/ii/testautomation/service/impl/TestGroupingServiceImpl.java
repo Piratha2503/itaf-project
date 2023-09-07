@@ -77,11 +77,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             for (MultipartFile multipartFile : multipartFiles
             ) {
                 try {
-                    if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) return true;
-                    else {
                         Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
                         workbook.close();
-                    }
                 } catch (Exception e) {
                     return false;
                 }
