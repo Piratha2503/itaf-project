@@ -10,7 +10,7 @@ public class UserRequest {
     private String email;
     private String password;
     private String staffName;
-    private String activeStatus;
-    private Long staffId;
+    private String status;
+    private String staffId;
     private String description;
 }

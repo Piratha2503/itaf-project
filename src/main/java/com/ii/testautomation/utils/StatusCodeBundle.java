@@ -475,6 +475,10 @@ public class StatusCodeBundle {
     private String getSchedulingSuccessMessage;
 
     //login Codes
+    @Value("${code.validation.user.alreadyExists}")
+    private String userAlreadyExistCode;
+    @Value("${code.validation.user.notExists}")
+    private String userNotExistCode;
 
     //login Messages
     @Value("${message.success.verify.registered}")
@@ -485,5 +489,10 @@ public class StatusCodeBundle {
     private String EmailVerificationFailureMessage;
     @Value("${message.failure.token.expired}")
     private String TokenExpiredMessage;
-
+    @Value("${message.validation.user.email.alreadyExists}")
+    private String userEmailAlReadyExistMessage;
+    @Value("${message.success.save.user}")
+    private String saveUserSuccessMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String userIdExistMessage;
 }
