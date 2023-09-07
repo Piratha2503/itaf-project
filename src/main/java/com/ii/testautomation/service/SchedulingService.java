@@ -12,21 +12,23 @@ import java.util.List;
 public interface SchedulingService {
     void deleteScheduling(Long schedulingId);
 
-    public ScheduleResponse getSchedulingById(Long id);
+    ScheduleResponse getSchedulingById(Long id);
 
-    public boolean existById(Long id);
+    boolean existById(Long id);
 
     List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
-    public void saveTestScheduling(SchedulingRequest SchedulingRequest);
+    void saveTestScheduling(SchedulingRequest SchedulingRequest);
 
-    public void autoScheduling() throws IOException;
+    void autoScheduling() throws IOException;
 
     boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId);
 
     void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException;
 
-    public void updateScheduling(SchedulingRequest schedulingRequest);
+    void updateScheduling(SchedulingRequest schedulingRequest);
 
     boolean isUpdateNameExists(String Name, Long SchedulingId);
+
+    boolean existsByTestCaseId(Long testCaseId);
 }

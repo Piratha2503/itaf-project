@@ -75,7 +75,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         testCaseResponse.setModuleName(testCases.getSubModule().getMainModule().getModules().getName());
         testCaseResponse.setMainModuleName(testCases.getSubModule().getMainModule().getName());
         testCaseResponse.setSubModuleName(testCases.getSubModule().getName());
-        testCaseResponse.setName(testCases.getName().substring(testCases.getName().lastIndexOf(".") + 1));
+        testCaseResponse.setName(testCases.getName());
         testCaseResponse.setId(testCases.getId());
         testCaseResponse.setDescription(testCases.getDescription());
         return testCaseResponse;
@@ -98,6 +98,7 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return false;
     }
+
     @Override
     public List<TestCaseResponse> multiSearchTestCase(Pageable pageable, PaginatedContentResponse.Pagination pagination, TestCaseSearch testCaseSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();

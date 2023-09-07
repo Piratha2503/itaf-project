@@ -99,6 +99,8 @@ public final class EndpointURI {
     //URL for User
 
 
+    // Email Link
+    public static final String EMAIL_lINK = "http://localhost:";
     private EndpointURI() {
     }
 }
