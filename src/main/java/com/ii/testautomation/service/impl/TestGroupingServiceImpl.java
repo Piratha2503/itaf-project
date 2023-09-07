@@ -69,7 +69,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private TaskScheduler taskScheduler;
     @Autowired
-   private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
