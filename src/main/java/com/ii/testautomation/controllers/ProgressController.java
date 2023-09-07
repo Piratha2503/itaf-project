@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProgressController {
     @Autowired
     private TestGroupingService testGroupingService;
+
     @RequestMapping(value="/calculateProgressPercentage")
     public ResponseEntity<Integer> getProgressBarPercentage() {
         int percentage = testGroupingService.calculatePercentage();

@@ -104,8 +104,7 @@ public class TestTypesController {
     }
 
     @GetMapping(EndpointURI.TEST_TYPE_BY_PROJECT_ID)
-    public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
         else if (testTypesService.getTestTypesByProjectId(id).isEmpty()) return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getTestTypeNotMappedMessage()));
         else return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesService.getTestTypesByProjectId(id),statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getViewTestTypeByProjectIdSuccessMessage()));
