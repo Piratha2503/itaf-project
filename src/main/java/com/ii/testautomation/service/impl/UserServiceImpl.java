@@ -16,18 +16,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
-       // user.setStatus(new);
+        // user.setStatus(new);
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
 
     }
+
     @Override
-    public boolean existsByEmail(String email){
+    public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
     @Override
     public boolean existsByStaffIdIgnoreCase(String staffId) {
-        return userRepository.existsByEmailIgnoreCase(staffId);
+        return userRepository.existsByStaffIdIgnoreCase(staffId);
     }
 
 }
