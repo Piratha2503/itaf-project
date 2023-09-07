@@ -341,8 +341,19 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
         }
+        List<String> listExcelFileNames = testGrouping.getExcelFilePath();
+        List<String> newExcelFileNames = new ArrayList<>();
+        if (listExcelFileNames != null && !listExcelFileNames.isEmpty()) {
+            for (String excelPath : listExcelFileNames
+            ) {
+                Path excel = Paths.get(excelPath);
+                String excelFileName = excel.getFileName().toString();
+                newExcelFileNames.add(excelFileName);
+            }
+        }
         testGroupingResponse.setTestCaseResponseList(testCaseResponseList);
         testGroupingResponse.setTestScenariosResponseList(testScenariosResponseList);
+        testGroupingResponse.setExcelFile(newExcelFileNames);
         testGroupingResponse.setTestCaseIds(testCaseIds);
         testGroupingResponse.setTestCaseName(testCaseNames);
         testGroupingResponse.setTestScenarioIds(testScenarioIds);
