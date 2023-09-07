@@ -347,7 +347,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             for (String excelPath : listExcelFileNames
             ) {
                 Path excel = Paths.get(excelPath);
-                String excelFileName = excel.getFileSystem().toString();
+                String excelFileName = excel.getFileName().toString();
                 newExcelFileNames.add(excelFileName);
             }
         }
