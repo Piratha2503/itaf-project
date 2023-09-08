@@ -500,4 +500,20 @@ public class StatusCodeBundle {
     @Value("${message.failure.space}")
     private String SpacesNotAllowedMessage;
 
+    // License Codes
+    @Value("${code.validation.License.alreadyExists}")
+    private String LicenseAlreadyExistCode;
+    @Value("${code.validation.License.notExists}")
+    private String LicenseNotExistCode;
+    // License Messages
+    @Value("${message.success.insert.License}")
+    private String LicenseInsertSuccessMessage;
+    @Value("${message.failure.name.AlreadyExist.License}")
+    private String LicenseNameAlreadyExistMessage;
+    @Value("${message.failure.package.AlreadyExist.License}")
+    private String LicensePackageAlreadyExistMessage;
+
+
+
+
 }
