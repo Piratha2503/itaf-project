@@ -101,6 +101,9 @@ public final class EndpointURI {
 
     // Email Link
     public static final String EMAIL_lINK = "http://localhost:";
+
+    // License
+    public static final String LICENSE = BASE_API_PATH + "License";
     private EndpointURI() {
     }
 }

@@ -6,7 +6,15 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 
+import com.ii.testautomation.dto.request.LicenseRequest;
+
 public interface LicenseService {
  List< LicenseResponse> multiSearchLicensesWithPagination(Pageable pageable , PaginatedContentResponse.Pagination pagination, LicensesSearch licensesSearch);
+
+    void createLicense(LicenseRequest licenseRequest);
+
+    boolean existsByName(String name);
+    boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects , Long no_of_users);
+
 
 }
