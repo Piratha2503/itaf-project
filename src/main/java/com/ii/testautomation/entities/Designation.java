@@ -1,22 +1,22 @@
 package com.ii.testautomation.entities;
 
-import com.ii.testautomation.service.CompanyUser;
+import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.utils.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 public class Designation extends DateAudit {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany
-    @JoinColumn(name = " companyUser_id",nullable = false)
-    private CompanyUser companyUser;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = " company_user_id",nullable = false)
+    private List<CompanyUser> companyUsers;
 }
