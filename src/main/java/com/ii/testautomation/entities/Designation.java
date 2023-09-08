@@ -16,7 +16,4 @@ public class Designation extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = " company_user_id",nullable = false)
-    private List<CompanyUser> companyUsers;
 }
