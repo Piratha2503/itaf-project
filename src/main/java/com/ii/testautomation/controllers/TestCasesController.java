@@ -9,10 +9,7 @@ import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.*;
-import com.ii.testautomation.utils.Constants;
-import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.StatusCodeBundle;
-import com.ii.testautomation.utils.Utils;
+import com.ii.testautomation.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,12 +38,16 @@ public class TestCasesController {
     private ModulesService modulesService;
     @Autowired
     private MainModulesService mainModulesService;
+    @Autowired
+    private RagexMaintainance ragexMaintainance;
 
     @PostMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testCaseRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
@@ -72,6 +73,8 @@ public class TestCasesController {
                     statusCodeBundle.getTestCasesNotExistCode(),
                     statusCodeBundle.getTestCasesNotExistsMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testCaseRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestCasesAlreadyExistsCode(),
@@ -190,7 +193,6 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCasesByModuleId(id),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCasesByModuleIdSuccessMessage()));
     }
-
 
     @GetMapping(value = EndpointURI.TESTCASE_BY_PROJECT_ID)
     public ResponseEntity<Object> getAllTestCasesByProjectIdWithPagination(@PathVariable Long id,

@@ -13,10 +13,7 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
-import com.ii.testautomation.utils.Constants;
-import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.StatusCodeBundle;
-import com.ii.testautomation.utils.Utils;
+import com.ii.testautomation.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,12 +35,15 @@ public class ModulesController {
     private ProjectService projectService;
     @Autowired
     private MainModulesService mainModulesService;
-
+    @Autowired
+    private RagexMaintainance ragexMaintainance;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
     @PostMapping(value = EndpointURI.MODULE)
     public ResponseEntity<Object> saveModule(@RequestBody ModulesRequest modulesRequest) {
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(modulesRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (modulesService.isModuleExistsByName(modulesRequest.getName(), modulesRequest.getProject_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModuleNameAlReadyExistsMessage()));
         }
@@ -62,6 +62,8 @@ public class ModulesController {
         if (!modulesService.existsByModulesId(modulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleNotExistsCode(), statusCodeBundle.getModuleNotExistsMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(modulesRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (modulesService.isUpdateModuleNameExists(modulesRequest.getName(), modulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getModuleAlReadyExistsCode(),

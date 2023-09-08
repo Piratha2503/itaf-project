@@ -69,7 +69,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
     private TaskScheduler taskScheduler;
     @Autowired
-   private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
@@ -78,10 +78,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             ) {
                 try {
                     if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) return true;
-                    else {
                         Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
                         workbook.close();
-                    }
                 } catch (Exception e) {
                     return false;
                 }
@@ -169,6 +167,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestScenariosId(id);
     }
 
+    @Override
     public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
         TestGrouping testGrouping = testGroupingRepository.findById(testGroupingRequest.getId()).get();
         TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
