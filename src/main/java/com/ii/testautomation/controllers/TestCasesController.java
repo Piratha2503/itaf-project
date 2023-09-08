@@ -73,9 +73,7 @@ public class TestCasesController {
                     statusCodeBundle.getTestCasesNotExistCode(),
                     statusCodeBundle.getTestCasesNotExistsMessage()));
         }
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testCaseRequest.getName()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
-        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
+          if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestCasesAlreadyExistsCode(),
                     statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));

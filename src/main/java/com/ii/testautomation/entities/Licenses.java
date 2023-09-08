@@ -20,4 +20,5 @@ public class Licenses extends DateAudit {
     private Long duration;
     private Long noOfProjects;
     private Long noOfUsers;
+    private Double price;
 }
