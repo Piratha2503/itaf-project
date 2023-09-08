@@ -31,4 +31,6 @@ public interface SchedulingService {
     boolean isUpdateNameExists(String Name, Long SchedulingId);
 
     boolean existsByTestCaseId(Long testCaseId);
+
+    boolean existsByTestGroupingId(Long id);
 }

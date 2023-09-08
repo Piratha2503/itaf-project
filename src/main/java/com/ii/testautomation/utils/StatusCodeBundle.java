@@ -512,6 +512,11 @@ public class StatusCodeBundle {
     private String LicenseNameAlreadyExistMessage;
     @Value("${message.failure.package.AlreadyExist.License}")
     private String LicensePackageAlreadyExistMessage;
+    @Value("${message.success.view.License}")
+    private String LicenseViewSuccessMessage;
+    @Value("${message.failure.id.notExist.License}")
+    private String LicenseIdNotExistMessage;
+
 
 
 

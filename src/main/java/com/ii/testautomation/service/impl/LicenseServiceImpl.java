@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.LicenseRequest;
+import com.ii.testautomation.dto.response.LicenseResponse;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.repositories.LicenseRepository;
 import com.ii.testautomation.service.LicenseService;
@@ -21,6 +22,14 @@ public class LicenseServiceImpl implements LicenseService {
     }
 
     @Override
+    public LicenseResponse getLicenseById(Long id) {
+        LicenseResponse licenseResponse = new LicenseResponse();
+        Licenses license = licenseRepository.findById(id).get();
+        BeanUtils.copyProperties(license,licenseResponse);
+        return licenseResponse;
+    }
+
+    @Override
     public boolean existsByName(String name) {
         return licenseRepository.existsByNameIgnoreCase(name);
     }
@@ -28,5 +37,11 @@ public class LicenseServiceImpl implements LicenseService {
     @Override
     public boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users) {
         return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration,no_of_projects,no_of_users);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+
+        return licenseRepository.existsById(id);
     }
 }

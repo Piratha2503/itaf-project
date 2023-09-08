@@ -19,4 +19,5 @@ public class Constants {
   public static final String EXECUTION_HISTORY = "ExecutionHistories";
   public static final String EXECUTION_HISTORY_REPORTS = "Execution History Reports";
   public static final String SCHEDULES = "Schedules";
+  public static final String LICENSE = "License";
 }
