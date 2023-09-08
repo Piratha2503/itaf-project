@@ -54,4 +54,7 @@ public interface TestGroupingService {
     void execution(ExecutionRequest executionRequest) throws IOException;
 
     boolean folderExists(Long groupId);
+   // public boolean existsByTestCases(Long testGroupingId);
+
+
 }

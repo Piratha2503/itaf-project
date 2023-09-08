@@ -500,4 +500,8 @@ public class StatusCodeBundle {
     @Value("${message.failure.space}")
     private String SpacesNotAllowedMessage;
 
+
+    @Value("${message.success.get.licenses}")
+    private String getLicenseSuccessMessage;
+
 }
