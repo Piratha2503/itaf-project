@@ -11,4 +11,5 @@ public class LicenseRequest {
     private Long duration;
     private Long no_of_projects;
     private Long no_of_users;
+    private Double price;
 }
