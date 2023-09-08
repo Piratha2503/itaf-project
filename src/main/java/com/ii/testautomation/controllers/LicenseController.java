@@ -24,22 +24,21 @@ public class LicenseController {
     private RagexMaintainance ragexMaintainance;
 
     @PostMapping(EndpointURI.LICENSE)
-    public ResponseEntity<Object> createLicense(@RequestBody LicenseRequest licenseRequest)
-    {
+    public ResponseEntity<Object> createLicense(@RequestBody LicenseRequest licenseRequest) {
         if (!ragexMaintainance.checkSpaceBeforeAfterWords(licenseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (licenseService.existsByName(licenseRequest.getName()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getLicenseAlreadyExistCode(),statusCodeBundle.getLicenseNameAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicenseNameAlreadyExistMessage()));
         if (licenseService.existsByDurationAndNoOfProjectsAndNoOfUsers(licenseRequest.getDuration(), licenseRequest.getNoOfProjects(), licenseRequest.getNoOfUsers()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getLicenseAlreadyExistCode(),statusCodeBundle.getLicensePackageAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicensePackageAlreadyExistMessage()));
         licenseService.createLicense(licenseRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getLicenseInsertSuccessMessage()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseInsertSuccessMessage()));
     }
+
     @GetMapping(EndpointURI.LICENSE_BY_ID)
-    public ResponseEntity<Object> getLicenseById(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getLicenseById(@PathVariable Long id) {
         if (!licenseService.existsById(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getLicenseNotExistCode(),statusCodeBundle.getLicenseIdNotExistMessage()));
-        return ResponseEntity.ok(new ContentResponse<>(Constants.LICENSE,licenseService.getLicenseById(id),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getLicenseViewSuccessMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotExistMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.LICENSE, licenseService.getLicenseById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseViewSuccessMessage()));
     }
 }

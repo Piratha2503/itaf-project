@@ -517,8 +517,13 @@ public class StatusCodeBundle {
     @Value("${message.failure.id.notExist.License}")
     private String LicenseIdNotExistMessage;
 
-
-
-
+    // CompanyUser Codes
+    @Value("${code.validation.CompanyUser.notExists}")
+    private String CompanyUserNotExistCode;
+    // Company User Messages
+    @Value("${message.failure.id.notExist.CompanyUser}")
+    private String CompanyUserIdNotExistMessage;
+    @Value("${message.success.delete.CompanyUser}")
+    private String CompanyUserDeleteSuccessMessage;
 
 }
