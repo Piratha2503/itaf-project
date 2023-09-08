@@ -1,15 +1,13 @@
-package com.ii.testautomation.dto.response;
+package com.ii.testautomation.dto.search;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.persistence.Column;
 import java.time.LocalDate;
-
 @Getter
 @Setter
-public class CompanyUserResponse {
-    private Long id;
+public class CompanyUserSearch {
     private String companyName;
     private String firstName;
     private String lastName;
@@ -18,7 +16,6 @@ public class CompanyUserResponse {
     private String status;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Long licenseId;
     private String licenseName;
     private Long licenseDuration;
     private Long noOfProjects;
