@@ -18,6 +18,6 @@ public class Licenses extends DateAudit {
     private Long id;
     private String name;
     private Long duration;
-    private Long no_of_projects;
-    private Long no_of_users;
+    private Long noOfProjects;
+    private Long noOfUsers;
 }
