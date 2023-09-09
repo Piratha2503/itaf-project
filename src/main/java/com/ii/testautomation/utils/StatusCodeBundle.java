@@ -512,6 +512,9 @@ public class StatusCodeBundle {
     @Value("${message.failure.package.AlreadyExist.License}")
     private String LicensePackageAlreadyExistMessage;
 
+    //CompanyUser Message
+    @Value("${message.success.companyUser.getAll}")
+    public String getAllCompanyUserSuccessfully;
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
