@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.sql.Date;
 
 @Getter
@@ -17,13 +18,13 @@ public class CompanyUser extends DateAudit {
     private String companyName;
     private String firstName;
     private String lastName;
+    @Column(unique = true,nullable = false)
     private String email;
     private String contactNumber;
     private String status;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     @ManyToOne
-    @JoinColumn(name = "license_id",nullable = false)
+    @JoinColumn(name = "licenses_id", nullable = false)
     private Licenses licenses;
-
 }

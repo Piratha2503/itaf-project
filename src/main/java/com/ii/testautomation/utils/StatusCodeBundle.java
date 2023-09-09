@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
-
     // Common Success code
     @Value("${code.success.common}")
     private String commonSuccessCode;
@@ -526,4 +525,13 @@ public class StatusCodeBundle {
     @Value("${message.success.delete.CompanyUser}")
     private String CompanyUserDeleteSuccessMessage;
 
+
+    //Designation Code
+    @Value("${code.validation.designation.alreadyExist}")
+    private String DesignationAlreadyExistsCode;
+    //Designation Message
+    @Value("${message.validation.designation.alreadyExist}")
+    private String DesignationAlreadyExistsMessage;
+    @Value("${message.success.designation.save}")
+    private String designationSaveSuccessMessage;
 }

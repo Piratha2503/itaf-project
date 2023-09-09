@@ -96,9 +96,6 @@ public final class EndpointURI {
     public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
     public static final String  USERS=BASE_API_PATH+"user";
 
-    //URL for User
-
-
     // Email Link
     public static final String EMAIL_lINK = "http://localhost:";
 
@@ -106,10 +103,11 @@ public final class EndpointURI {
     public static final String LICENSE = BASE_API_PATH + "License";
     public static final String LICENSE_BY_ID = LICENSE + ID;
 
-    // Company User
-    public static final String COMPANY_USER = BASE_API_PATH + "companyUser";
-    public static final String COMPANY_USER_BY_ID = COMPANY_USER+ID;
+    //CompanyUser
+    public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
 
+    //Designation
+    public static final String DESIGNATION = BASE_API_PATH+"designation";
     private EndpointURI() {
     }
 }
