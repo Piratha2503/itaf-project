@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
+import com.ii.testautomation.dto.response.ProgressResponse;
 import com.ii.testautomation.dto.response.ScheduleResponse;
 import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.entities.*;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +47,10 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private SequenceRepository sequenceRepository;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private ProgressBarRepository progressBarRepository;
 
     @Override
     public void saveTestScheduling(SchedulingRequest schedulingRequest) {
@@ -95,93 +101,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduling.setTestCasesIds(testCasesId);
         scheduling.setTestCases(testCasessList);
         scheduling.setTestScenarios(testScenariosList);
-
-        int year = schedulingRequest.getStartDateTime().getYear();
-        int month = schedulingRequest.getStartDateTime().getMonthValue();
-        int day = schedulingRequest.getStartDateTime().getDayOfMonth();
-        int hour = schedulingRequest.getStartDateTime().getHour();
-        int minute = schedulingRequest.getStartDateTime().getMinute();
-        int second = schedulingRequest.getStartDateTime().getSecond();
-
-        YearMonth yearMonth = YearMonth.of(year, month);
-        int totalDaysInMonth = yearMonth.lengthOfMonth();
-        if (schedulingRequest.getYear() > 0) {
-            year = year + schedulingRequest.getYear();
-        }
-        if (schedulingRequest.getMonth() > 0) {
-            month = month + schedulingRequest.getMonth();
-            if (month > 12) {
-                month = month - 12;
-                year++;
-            }
-        }
-        if (schedulingRequest.getWeek() > 0) {
-            day = day + 7;
-            if (day >= totalDaysInMonth) {
-                day = day - totalDaysInMonth;
-                month++;
-                if (month > 12) {
-                    month = month - 12;
-                    year++;
-                }
-            }
-        }
-        if (schedulingRequest.getHour() > 0) {
-            hour = hour + schedulingRequest.getHour();
-            if (hour >= 24) {
-                hour = hour - 24;
-                day++;
-                if (day >= totalDaysInMonth) {
-                    day = day - totalDaysInMonth;
-                    month++;
-                    if (month > 12) {
-                        month = month - 12;
-                        year++;
-                    }
-                }
-            }
-        }
-        if (schedulingRequest.getMinutes() > 0) {
-            minute = minute + schedulingRequest.getMinutes();
-            if (minute >= 60) {
-                minute = minute - 60;
-                hour++;
-                if (hour >= 24) {
-                    hour = 0;
-                    day++;
-                    if (day >= totalDaysInMonth) {
-                        day = day - totalDaysInMonth;
-                        month++;
-                        if (month > 12) {
-                            month = month - 12;
-                            year++;
-                        }
-                    }
-                }
-            }
-        }
-        if (second >= 60) {
-            second = second - 60;
-            minute++;
-            if (minute >= 60) {
-                minute = minute - 60;
-                hour++;
-                if (hour >= 24) {
-                    hour = 0;
-                    day++;
-                    if (day >= totalDaysInMonth) {
-                        day = day - totalDaysInMonth;
-                        month++;
-                        if (month > 12) {
-                            month = month - 12;
-                            year++;
-                        }
-                    }
-                }
-            }
-        }
-        LocalDateTime nextExecutionTime = LocalDateTime.of(year, Month.of(month), day, hour, minute, second);
-        scheduling.setNextExecutionTime(nextExecutionTime);
+        scheduling.setNextExecutionTime(schedulingRequest.getStartDateTime());
         schedulingRepository.save(scheduling);
     }
 
@@ -315,7 +235,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduling.setTestCasesIds(testCasesId);
         scheduling.setTestCases(testCasesList);
         scheduling.setTestScenarios(testScenariosList);
-        updateNextExecutionTime(schedulingRequest.getId());
+        scheduling.setNextExecutionTime(schedulingRequest.getStartDateTime());
         schedulingRepository.save(scheduling);
     }
 
@@ -329,18 +249,16 @@ public class SchedulingServiceImpl implements SchedulingService {
     public void staticScheduling() throws IOException {
         System.out.println("==========================================DYNAMIC===============");
         List<Scheduling> schedulingList = schedulingRepository.findAll();
+
         if (schedulingList != null && !schedulingList.isEmpty()) {
             for (Scheduling scheduling : schedulingList) {
-                int count = scheduling.getCount();
-                if (scheduling.getNextExecutionTime().equals(LocalDateTime.now())) {
-                    autoExecution(scheduling);
-                    System.out.println("triggered" + count + scheduling.getName());
-                    count++;
-                    if (scheduling.getCount() < scheduling.getNoOfTimes()) {
-                        //System.out.println("triggered" + count + scheduling.getName());
-                        updateNextExecutionTime(scheduling.getId());
-                    } else {
-                        System.out.println("finished" + count);
+                LocalDateTime nextExecutionTime = scheduling.getNextExecutionTime();
+                LocalDateTime currentTime = LocalDateTime.now();
+                long secondsDifference = Duration.between(nextExecutionTime, currentTime).getSeconds();
+                if (scheduling.getCount() < scheduling.getNoOfTimes()) {
+                    if (currentTime.isAfter(nextExecutionTime) && secondsDifference < 60) {
+                        autoExecution(scheduling);
+                        System.out.println("triggered " + scheduling.getCount() + scheduling.getName());
                     }
                 }
             }
@@ -360,11 +278,11 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
-        schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
+        schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId, scheduling.getId());
     }
 
-    @Override
-    public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
+
+    private void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId, Long schedulingId) throws IOException {
         TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
         testGrouping.setExecutionStatus(true);
         testGroupingRepository.save(testGrouping);
@@ -390,21 +308,32 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
-        jarExecution(projectId);
+        jarExecution(projectId, schedulingId);
     }
 
-    private void jarExecution(Long projectId) {
+    private void jarExecution(Long projectId, Long schedulingId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();
+        Scheduling scheduling = schedulingRepository.findById(schedulingId).get();
+        int executionCount = scheduling.getCount();
         try {
+            ProgressResponse progressResponse = new ProgressResponse();
+            progressResponse.setProjectId(projectId);
+            simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
+            System.out.println("Hi Send");
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
             Process runProcess = runProcessBuilder.start();
             runProcess.waitFor();
             System.out.println("executed");
+            executionCount++;
+            scheduling.setCount(executionCount);
+            schedulingRepository.save(scheduling);
+            updateNextExecutionTime(scheduling.getId());
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -421,6 +350,7 @@ public class SchedulingServiceImpl implements SchedulingService {
 
         YearMonth yearMonth = YearMonth.of(year, month);
         int totalDaysInMonth = yearMonth.lengthOfMonth();
+
         if (scheduling.getYear() > 0) {
             year = year + scheduling.getYear();
         }
@@ -476,6 +406,25 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
+        if (scheduling.getMinutes() > 0) {
+            minute = minute + scheduling.getMinutes();
+            if (minute >= 60) {
+                minute = minute - 60;
+                hour++;
+                if (hour >= 24) {
+                    hour = 0;
+                    day++;
+                    if (day >= totalDaysInMonth) {
+                        day = day - totalDaysInMonth;
+                        month++;
+                        if (month > 12) {
+                            month = month - 12;
+                            year++;
+                        }
+                    }
+                }
+            }
+        }
         if (second >= 60) {
             second = second - 60;
             minute++;
@@ -496,8 +445,39 @@ public class SchedulingServiceImpl implements SchedulingService {
                 }
             }
         }
-        LocalDateTime nextExecutionTime = LocalDateTime.of(year, Month.of(month), day, hour, minute, second);
+        LocalDateTime nextExecutionTime = LocalDateTime.of(year, month, day, hour, minute, second);
         scheduling.setNextExecutionTime(nextExecutionTime);
         schedulingRepository.save(scheduling);
+    }
+
+    @Transactional
+    @Scheduled(fixedRate = 1000)
+    public void calculateAndPrintPercentage() {
+        List<ProgressBar> progressBarList = progressBarRepository.findAll();
+        for (ProgressBar progressBar : progressBarList) {
+            Long totalNoOfTestCases = progressBar.getTotalNoOfTestCases();
+            Long executedTestCase = progressBar.getExecutedTestCaseCount();
+            if (totalNoOfTestCases >= executedTestCase) {
+                double percentage = ((double) executedTestCase / totalNoOfTestCases) * 100.0;
+                int percentageInt = (int) percentage;
+                ProgressResponse progressResponse = new ProgressResponse();
+                progressResponse.setPercentage(percentageInt);
+                progressResponse.setGroupName(progressBar.getTestGrouping().getName());
+                progressResponse.setGroupId(progressBar.getTestGrouping().getId());
+                simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getTestGrouping().getId(), progressResponse);
+                if (percentageInt == 100) {
+                    TestGrouping testGrouping = progressBar.getTestGrouping();
+                    List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
+                    for (ExecutedTestCase executedTestCase1 : executedTestCases) {
+                        executedTestCaseRepository.deleteById(executedTestCase1.getId());
+                    }
+                    testGrouping.setExecutionStatus(false);
+                    progressBarRepository.deleteById(progressBar.getId());
+                }
+                System.out.println("Percentage: " + progressResponse + "%");
+            } else {
+                System.out.println("Total number of test cases is zero.");
+            }
+        }
     }
 }

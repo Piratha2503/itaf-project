@@ -22,8 +22,6 @@ public interface SchedulingService {
 
     boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId);
 
-    void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException;
-
     public void updateScheduling(SchedulingRequest schedulingRequest);
 
     boolean isUpdateNameExists(String Name, Long SchedulingId);

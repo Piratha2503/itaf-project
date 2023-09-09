@@ -9,5 +9,7 @@ import org.springframework.stereotype.Service;
 public class ProgressResponse {
     private int percentage;
     private String groupName;
+    private String scheduleName;
     private Long groupId;
+    private Long projectId;
 }
