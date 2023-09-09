@@ -13,6 +13,4 @@ public class CompanyUserController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private CompanyUserService companyUserService;
-
-
 }
