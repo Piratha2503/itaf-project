@@ -14,14 +14,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Month;
+import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -94,30 +95,94 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduling.setTestCasesIds(testCasesId);
         scheduling.setTestCases(testCasessList);
         scheduling.setTestScenarios(testScenariosList);
-        schedulingRepository.save(scheduling);
-    }
 
-//    @Transactional
-//    @Scheduled(cron = "${schedule.time.cron}")
-    public void autoScheduling() throws IOException {
-        System.out.println("================================================wwwwwwwwww");
-        List<Scheduling> schedulingList = schedulingRepository.findAll();
-        Long projectId = null;
-        Long groupId = null;
-        if (schedulingList != null && !schedulingList.isEmpty()) {
-            for (Scheduling scheduling : schedulingList) {
-                if (scheduling.isStatus()) {
-                    groupId = scheduling.getTestGrouping().getId();
-                    if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
-                        for (Long testCaseId : scheduling.getTestCasesIds()) {
-                            projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
-                            break;
+        int year = schedulingRequest.getStartDateTime().getYear();
+        int month = schedulingRequest.getStartDateTime().getMonthValue();
+        int day = schedulingRequest.getStartDateTime().getDayOfMonth();
+        int hour = schedulingRequest.getStartDateTime().getHour();
+        int minute = schedulingRequest.getStartDateTime().getMinute();
+        int second = schedulingRequest.getStartDateTime().getSecond();
+
+        YearMonth yearMonth = YearMonth.of(year, month);
+        int totalDaysInMonth = yearMonth.lengthOfMonth();
+        if (schedulingRequest.getYear() > 0) {
+            year = year + schedulingRequest.getYear();
+        }
+        if (schedulingRequest.getMonth() > 0) {
+            month = month + schedulingRequest.getMonth();
+            if (month > 12) {
+                month = month - 12;
+                year++;
+            }
+        }
+        if (schedulingRequest.getWeek() > 0) {
+            day = day + 7;
+            if (day >= totalDaysInMonth) {
+                day = day - totalDaysInMonth;
+                month++;
+                if (month > 12) {
+                    month = month - 12;
+                    year++;
+                }
+            }
+        }
+        if (schedulingRequest.getHour() > 0) {
+            hour = hour + schedulingRequest.getHour();
+            if (hour >= 24) {
+                hour = hour - 24;
+                day++;
+                if (day >= totalDaysInMonth) {
+                    day = day - totalDaysInMonth;
+                    month++;
+                    if (month > 12) {
+                        month = month - 12;
+                        year++;
+                    }
+                }
+            }
+        }
+        if (schedulingRequest.getMinutes() > 0) {
+            minute = minute + schedulingRequest.getMinutes();
+            if (minute >= 60) {
+                minute = minute - 60;
+                hour++;
+                if (hour >= 24) {
+                    hour = 0;
+                    day++;
+                    if (day >= totalDaysInMonth) {
+                        day = day - totalDaysInMonth;
+                        month++;
+                        if (month > 12) {
+                            month = month - 12;
+                            year++;
                         }
                     }
                 }
-                schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
             }
         }
+        if (second >= 60) {
+            second = second - 60;
+            minute++;
+            if (minute >= 60) {
+                minute = minute - 60;
+                hour++;
+                if (hour >= 24) {
+                    hour = 0;
+                    day++;
+                    if (day >= totalDaysInMonth) {
+                        day = day - totalDaysInMonth;
+                        month++;
+                        if (month > 12) {
+                            month = month - 12;
+                            year++;
+                        }
+                    }
+                }
+            }
+        }
+        LocalDateTime nextExecutionTime = LocalDateTime.of(year, Month.of(month), day, hour, minute, second);
+        scheduling.setNextExecutionTime(nextExecutionTime);
+        schedulingRepository.save(scheduling);
     }
 
     @Override
@@ -125,51 +190,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
 
-    @Override
-    public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
-        TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
-        testGrouping.setExecutionStatus(true);
-        testGroupingRepository.save(testGrouping);
-        for (Long testCaseId : testCaseIds) {
-            TestCases testCases = testCasesRepository.findById(testCaseId).get();
-            ExecutedTestCase executedTestCase = new ExecutedTestCase();
-            executedTestCase.setTestCases(testCases);
-            executedTestCase.setTestGrouping(testGrouping);
-            executedTestCaseRepository.save(executedTestCase);
-        }
-        List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
-        String projectPath = projectRepository.findById(projectId).get().getProjectPath();
-        if (excelFiles != null) {
-            for (String excel : excelFiles) {
-                Path excelPath = Path.of(excel);
-                try {
-                    byte[] excelBytes = Files.readAllBytes(excelPath);
-                    String excelFileName = excelPath.getFileName().toString();
-                    Path destinationPath = Path.of(projectPath, excelFileName);
-                    Files.write(destinationPath, excelBytes);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-         jarExecution(projectId);
-    }
-
-    private void jarExecution(Long projectId) {
-        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
-        File jarFile = new File(savedFilePath);
-        String jarFileName = jarFile.getName();
-        String jarDirectory = jarFile.getParent();
-        try {
-            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
-            runProcessBuilder.directory(new File(jarDirectory));
-            runProcessBuilder.redirectErrorStream(true);
-            Process runProcess = runProcessBuilder.start();
-            runProcess.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public ScheduleResponse getSchedulingById(Long id) {
@@ -208,7 +228,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public List<SchedulingResponse> viewByProjectId(Long projectId,Pageable pageable, PaginatedContentResponse.Pagination pagination) {
+    public List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination) {
         List<SchedulingResponse> schedulingResponseList = new ArrayList<>();
         Page<Scheduling> schedulingList = schedulingRepository.findByTestGrouping_ProjectId(pageable, projectId);
         pagination.setTotalRecords(schedulingList.getTotalElements());
@@ -295,6 +315,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduling.setTestCasesIds(testCasesId);
         scheduling.setTestCases(testCasesList);
         scheduling.setTestScenarios(testScenariosList);
+        updateNextExecutionTime(schedulingRequest.getId());
         schedulingRepository.save(scheduling);
     }
 
@@ -303,21 +324,180 @@ public class SchedulingServiceImpl implements SchedulingService {
         return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
     }
 
-    @Override
-    public int dynamicScheduling(Long id) {
-      Scheduling scheduling =schedulingRepository.findById(id).get();
-        String dateTimeString = "2023-09-03T14:30:45.123Z";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-        LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
-
-        int year = dateTime.getYear();
-        int month = dateTime.getMonthValue();
-        int day = dateTime.getDayOfMonth();
-        int hour = dateTime.getHour();
-
-        System.out.println("Year: " + year);
-        System.out.println("Month: " + month);
-        return hour;
+    @Transactional
+    @Scheduled(fixedRate = 5000)
+    public void staticScheduling() throws IOException {
+        System.out.println("==========================================DYNAMIC===============");
+        List<Scheduling> schedulingList = schedulingRepository.findAll();
+        if (schedulingList != null && !schedulingList.isEmpty()) {
+            for (Scheduling scheduling : schedulingList) {
+                int count = scheduling.getCount();
+                if (scheduling.getNextExecutionTime().equals(LocalDateTime.now())) {
+                    autoExecution(scheduling);
+                    System.out.println("triggered" + count + scheduling.getName());
+                    count++;
+                    if (scheduling.getCount() < scheduling.getNoOfTimes()) {
+                        //System.out.println("triggered" + count + scheduling.getName());
+                        updateNextExecutionTime(scheduling.getId());
+                    } else {
+                        System.out.println("finished" + count);
+                    }
+                }
+            }
+        }
     }
 
+
+    private void autoExecution(Scheduling scheduling) throws IOException {
+        Long projectId = null;
+        Long groupId = null;
+        if (scheduling.isStatus()) {
+            groupId = scheduling.getTestGrouping().getId();
+            if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
+                for (Long testCaseId : scheduling.getTestCasesIds()) {
+                    projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
+                    break;
+                }
+            }
+        }
+        schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
+    }
+
+    @Override
+    public void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException {
+        TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
+        testGrouping.setExecutionStatus(true);
+        testGroupingRepository.save(testGrouping);
+        for (Long testCaseId : testCaseIds) {
+            TestCases testCases = testCasesRepository.findById(testCaseId).get();
+            ExecutedTestCase executedTestCase = new ExecutedTestCase();
+            executedTestCase.setTestCases(testCases);
+            executedTestCase.setTestGrouping(testGrouping);
+            executedTestCaseRepository.save(executedTestCase);
+        }
+        List<String> excelFiles = testGroupingRepository.findById(groupingId).get().getExcelFilePath();
+        String projectPath = projectRepository.findById(projectId).get().getProjectPath();
+        if (excelFiles != null) {
+            for (String excel : excelFiles) {
+                Path excelPath = Path.of(excel);
+                try {
+                    byte[] excelBytes = Files.readAllBytes(excelPath);
+                    String excelFileName = excelPath.getFileName().toString();
+                    Path destinationPath = Path.of(projectPath, excelFileName);
+                    Files.write(destinationPath, excelBytes);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        jarExecution(projectId);
+    }
+
+    private void jarExecution(Long projectId) {
+        String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
+        File jarFile = new File(savedFilePath);
+        String jarFileName = jarFile.getName();
+        String jarDirectory = jarFile.getParent();
+        try {
+            ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
+            runProcessBuilder.directory(new File(jarDirectory));
+            runProcessBuilder.redirectErrorStream(true);
+            Process runProcess = runProcessBuilder.start();
+            runProcess.waitFor();
+            System.out.println("executed");
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateNextExecutionTime(Long id) {
+        Scheduling scheduling = schedulingRepository.findById(id).get();
+        int year = scheduling.getStartDateTime().getYear();
+        int month = scheduling.getStartDateTime().getMonthValue();
+        int day = scheduling.getStartDateTime().getDayOfMonth();
+        int hour = scheduling.getStartDateTime().getHour();
+        int minute = scheduling.getStartDateTime().getMinute();
+        int second = scheduling.getStartDateTime().getSecond();
+
+        YearMonth yearMonth = YearMonth.of(year, month);
+        int totalDaysInMonth = yearMonth.lengthOfMonth();
+        if (scheduling.getYear() > 0) {
+            year = year + scheduling.getYear();
+        }
+        if (scheduling.getMonth() > 0) {
+            month = month + scheduling.getMonth();
+            if (month > 12) {
+                month = month - 12;
+                year++;
+            }
+        }
+        if (scheduling.getWeek() > 0) {
+            day = day + 7;
+            if (day >= totalDaysInMonth) {
+                day = day - totalDaysInMonth;
+                month++;
+                if (month > 12) {
+                    month = month - 12;
+                    year++;
+                }
+            }
+        }
+        if (scheduling.getHour() > 0) {
+            hour = hour + scheduling.getHour();
+            if (hour >= 24) {
+                hour = hour - 24;
+                day++;
+                if (day >= totalDaysInMonth) {
+                    day = day - totalDaysInMonth;
+                    month++;
+                    if (month > 12) {
+                        month = month - 12;
+                        year++;
+                    }
+                }
+            }
+        }
+        if (scheduling.getMinutes() > 0) {
+            minute = minute + scheduling.getMinutes();
+            if (minute >= 60) {
+                minute = minute - 60;
+                hour++;
+                if (hour >= 24) {
+                    hour = 0;
+                    day++;
+                    if (day >= totalDaysInMonth) {
+                        day = day - totalDaysInMonth;
+                        month++;
+                        if (month > 12) {
+                            month = month - 12;
+                            year++;
+                        }
+                    }
+                }
+            }
+        }
+        if (second >= 60) {
+            second = second - 60;
+            minute++;
+            if (minute >= 60) {
+                minute = minute - 60;
+                hour++;
+                if (hour >= 24) {
+                    hour = 0;
+                    day++;
+                    if (day >= totalDaysInMonth) {
+                        day = day - totalDaysInMonth;
+                        month++;
+                        if (month > 12) {
+                            month = month - 12;
+                            year++;
+                        }
+                    }
+                }
+            }
+        }
+        LocalDateTime nextExecutionTime = LocalDateTime.of(year, Month.of(month), day, hour, minute, second);
+        scheduling.setNextExecutionTime(nextExecutionTime);
+        schedulingRepository.save(scheduling);
+    }
 }

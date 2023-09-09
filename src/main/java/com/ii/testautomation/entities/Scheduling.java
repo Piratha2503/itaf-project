@@ -31,12 +31,15 @@ public class Scheduling extends DateAudit {
     @Column(unique = true)
     private String schedulingCode;
     private LocalDateTime startDateTime;
-    private Long Year;
-    private Long hour;
-    private Long minutes;
-    private Long duration;
-    private Long noOfTimes;
-    private String month;
+    private int year;
+    private int hour;
+    private int noOfTimes;
+    private int month;
+    private int week;
+    private int minutes;
+    private LocalDateTime nextExecutionTime;
+    private int count=0;
+
 }
 
 

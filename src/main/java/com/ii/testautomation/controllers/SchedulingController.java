@@ -1,16 +1,11 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.SchedulingRequest;
-import com.ii.testautomation.dto.request.SchedulingRequest;
-import com.ii.testautomation.dto.request.TestGroupingRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.*;
-import com.ii.testautomation.service.ProjectService;
-import com.ii.testautomation.service.SchedulingService;
-import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
@@ -21,13 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Map;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
@@ -143,15 +132,4 @@ public class SchedulingController {
 
     }
 
-    public ResponseEntity<Object> Execution() throws IOException {
-        schedulingService.autoScheduling();
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionSuccessMessage()));
-    }
-
-    @GetMapping("/dyanamic/{id}")
-    public ResponseEntity<Object> DynamicScheduling(@PathVariable Long id){
-        int year=schedulingService.dynamicScheduling(id);
-        System.out.println("Year: " + year);
-        return ResponseEntity.ok(year);
-    }
 }

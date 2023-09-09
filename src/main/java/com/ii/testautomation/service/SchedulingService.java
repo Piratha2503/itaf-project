@@ -20,8 +20,6 @@ public interface SchedulingService {
 
     public void saveTestScheduling(SchedulingRequest SchedulingRequest);
 
-    public void autoScheduling() throws IOException;
-
     boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId);
 
     void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId) throws IOException;
@@ -29,5 +27,4 @@ public interface SchedulingService {
     public void updateScheduling(SchedulingRequest schedulingRequest);
 
     boolean isUpdateNameExists(String Name, Long SchedulingId);
-    public int dynamicScheduling(Long id);
 }

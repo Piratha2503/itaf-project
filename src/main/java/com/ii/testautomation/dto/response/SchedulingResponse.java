@@ -3,6 +3,7 @@ package com.ii.testautomation.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,5 +17,6 @@ public class SchedulingResponse {
     private List<String> testCasesNames;
     private List<Long> testScenarioIds;
     private List<String> testScenarioNames;
+    private LocalDateTime nextExecutionTime;
 
 }

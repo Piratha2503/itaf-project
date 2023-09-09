@@ -16,11 +16,11 @@ public class SchedulingRequest {
     private Long groupId;
     private Long projectId;
     private LocalDateTime startDateTime;
-    private Long Year;
-    private Long  hour;
-    private Long minutes;
-    private Long duration;
-    private Long noOfTimes;
-    private String month;
+    private int year;
+    private int hour;
+    private int noOfTimes;
+    private int month;
+    private int minutes;
+    private int week;
 
 }
