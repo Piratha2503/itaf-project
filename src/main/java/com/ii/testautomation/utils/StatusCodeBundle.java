@@ -499,10 +499,6 @@ public class StatusCodeBundle {
     @Value("${message.failure.space}")
     private String SpacesNotAllowedMessage;
 
-
-    @Value("${message.success.get.licenses}")
-    private String getLicenseSuccessMessage;
-
     // License Codes
     @Value("${code.validation.License.alreadyExists}")
     private String LicenseAlreadyExistCode;
@@ -515,28 +511,44 @@ public class StatusCodeBundle {
     private String LicenseNameAlreadyExistMessage;
     @Value("${message.failure.package.AlreadyExist.License}")
     private String LicensePackageAlreadyExistMessage;
+    @Value("${message.success.get.licenses}")
+    private String getLicenseSuccessMessage;
 
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
+    @Value("${code.validation.designation.notExists}")
+    private String DesignationNotExistsCode;
 
     //Designation Message
+    @Value("${message.validation.designation.notExists}")
+    private String designationNotExistsMessage;
     @Value("${message.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsMessage;
     @Value("${message.success.designation.save}")
     private String designationSaveSuccessMessage;
+    @Value("${message.success.get.designation}")
+    private String getDesignationSuccessMessage;
 
-    //companyuser
+
+    //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")
     private String companyUserAlReadyExistsCode;
     @Value("${code.validation.companyUser.notExists}")
     private String companyUserNotExistsCode;
 
-
+    //companyUser Message
     @Value("${message.validation.companyUser.notExists}")
     private String companyUserNotExistsMessage;
+    @Value("${message.validation.companyUser.name.alreadyExists}")
+    private String companyUseNameAlReadyExistsMessage;
+    @Value("${message.validation.companyUser.email.alreadyExists}")
+    private String companyUseEmailAlReadyExistsMessage;
+    @Value("${message.validation.companyUser.contactNo.alreadyExists}")
+    private String companyUseContactNoAlReadyExistsMessage;
 
     @Value("${message.success.update.companyUser}")
     private String updateCompanyUserSuccessMessage;
+
 
 }

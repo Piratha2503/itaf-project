@@ -22,11 +22,10 @@ public class DesignationController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private DesignationService designationService;
+
     @PostMapping(EndpointURI.DESIGNATION)
-    public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest)
-    {
-        if(designationService.existsByName(designationRequest.getName()))
-        {
+    public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
+        if (designationService.existsByName(designationRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getDesignationAlreadyExistsCode(),
                     statusCodeBundle.getDesignationAlreadyExistsMessage()));
@@ -36,14 +35,14 @@ public class DesignationController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getDesignationSaveSuccessMessage()));
     }
-//@GetMapping
-//    public ResponseEntity<List<Designation>> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
-//        List<Designation> designations = designationService.getAllDesignationByCompanyId(companyId);
-//    if (designations.isEmpty()) {
-//        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationsNotFoundCode(), statusCodeBundle.getDesignationsNotFoundMessage()));
-//    }
-//
-//    return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designations,
-//            RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationsSuccessMessage()));
-//    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
+        List<Designation> designations = designationService.getAllDesignationByCompanyId(companyId);
+        if (designations.isEmpty()) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designations,
+                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
+    }
 }

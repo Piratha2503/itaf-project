@@ -35,14 +35,14 @@ public class DesignationServiceImpl implements DesignationService {
         return designationRepository.existsByNameIgnoreCase(designationName);
     }
 
-//    @Override
-//    public List<Designation> getAllDesignationByCompanyId(Long CompanyId) {
-//        List<Users> users = userRepository.findByCompanyUserId(CompanyId);
-//        List<Designation> designations = new ArrayList<>();
-//        for (Users user : users) {
-//            List<Designation> userDesignations = user.getDesignation();
-//            designations.addAll(userDesignations);
-//        }
-//        return designations;
-//    }
+    @Override
+    public List<Designation> getAllDesignationByCompanyId(Long CompanyId) {
+        List<Users> users = userRepository.findByCompanyUserId(CompanyId);
+        List<Designation> designations = new ArrayList<>();
+        for (Users user : users) {
+            List<Designation> userDesignations = user.getDesignation();
+            designations.addAll(userDesignations);
+        }
+        return designations;
+    }
 }

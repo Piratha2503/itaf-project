@@ -10,5 +10,5 @@ public interface DesignationService {
 
     boolean existsByName(String designationName);
 
-    //List<Designation> getAllDesignationByCompanyId(Long CompanyId);
+    List<Designation> getAllDesignationByCompanyId(Long CompanyId);
 }
