@@ -32,10 +32,8 @@ public class LicenseController {
         licenseService.createLicense(licenseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseInsertSuccessMessage()));
     }
-
     @PutMapping(EndpointURI.LICENSE)
     public ResponseEntity<Object> UpdateLicense(@RequestBody LicenseRequest licenseRequest) {
-
         if (!licenseService.existsById(licenseRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicensePackageNotExistMessage()));
 
@@ -46,7 +44,6 @@ public class LicenseController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicensePackageAlreadyExistMessage()));
         licenseService.createLicense(licenseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseSuccessfullyUpdatedMessage()));
-
     }
 
     @DeleteMapping(EndpointURI.LICENSE_BY_ID)
@@ -56,10 +53,7 @@ public class LicenseController {
         }
         licenseService.deleteLicenseById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseSuccessfullyDeletedMessage()));
-
     }
-
-
 }
 
 
