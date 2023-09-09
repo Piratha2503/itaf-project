@@ -145,9 +145,6 @@ public class TestGroupingController {
                 if (!testCasesService.existsByTestCasesId(testCaseId)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
                 }
-                else if (schedulingService.existsByTestCaseId(testCaseId)) {
-                    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesDependentCode(), statusCodeBundle.getScheduledTestCasesRemoveMessage()));
-                }
             }
         }
         if (testGroupingRequest.getSubModuleIds() != null) {
