@@ -26,17 +26,4 @@ public class CompanyUserController {
     private CompanyUserService companyUserService;
 
 
-
-//    @GetMapping(EndpointURI.COMPANY_USERS)
-//    public ResponseEntity<Object> getAllCompanyUsers(@RequestParam(name = "page") int page,
-//                                                     @RequestParam(name = "size") int size,
-//                                                     @RequestParam(name = "direction") String direction,
-//                                                     @RequestParam(name = "sortField") String sortField,
-//                                                     CompanyUserSearch companyUserSearch) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-//        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
-//        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.COMPANY_USERS,companyUserService.))
-//
-//    }
-
 }
