@@ -95,7 +95,7 @@ public final class EndpointURI {
     public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
     public static final String  USERS=BASE_API_PATH+"user";
 
-    public static final String LICENSES = BASE_API_PATH+ "license";
+
 
 
     // Email Link
@@ -103,7 +103,7 @@ public final class EndpointURI {
 
     // License
     public static final String LICENSE = BASE_API_PATH + "License";
-
+    public static final String LICENSES = BASE_API_PATH + SEARCH + SLASH + "Licenses";
     //CompanyUser
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
 

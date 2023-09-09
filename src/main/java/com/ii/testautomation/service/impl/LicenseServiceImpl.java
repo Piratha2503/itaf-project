@@ -31,15 +31,6 @@ public class LicenseServiceImpl implements LicenseService {
         if (Utils.isNotNullAndEmpty(licensesSearch.getName())) {
             booleanBuilder.and(QLicenses.licenses.name.containsIgnoreCase(licensesSearch.getName()));
         }
-        if (Utils.isNotNullAndEmpty(String.valueOf(licensesSearch.getDuration()))) {
-            booleanBuilder.and(QLicenses.licenses.duration.eq(licensesSearch.getDuration()));
-        }
-        if (Utils.isNotNullAndEmpty(String.valueOf(licensesSearch.getNoOfProjects()))) {
-            booleanBuilder.and(QLicenses.licenses.noOfProjects.eq(licensesSearch.getNoOfProjects()));
-        }
-        if (Utils.isNotNullAndEmpty(String.valueOf(licensesSearch.getPrice()))) {
-            booleanBuilder.and(QLicenses.licenses.price.eq(licensesSearch.getPrice()));
-        }
         List<LicenseResponse> licenseResponseList = new ArrayList<>();
         Page<Licenses> licensesPage = licenseRepository.findAll(booleanBuilder, pageable);
         pagination.setPageSize(licensesPage.getTotalPages());

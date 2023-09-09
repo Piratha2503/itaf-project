@@ -24,11 +24,10 @@ public class LicenseController {
     private LicenseService licenseService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-
     @Autowired
     private RagexMaintainance ragexMaintainance;
     @GetMapping(value= EndpointURI.LICENSES)
-    public ResponseEntity<Object> getALlPLicense(@RequestParam(name = "page") int page,
+    public ResponseEntity<Object>getAllLicense(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
                                                  @RequestParam(name = "direction") String direction,
                                                  @RequestParam(name = "sortField") String sortField,
