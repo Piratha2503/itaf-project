@@ -104,6 +104,8 @@ public final class EndpointURI {
 
     // License
     public static final String LICENSE = BASE_API_PATH + "License";
+
+    public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
     private EndpointURI() {
     }
 }
