@@ -34,7 +34,7 @@ public class LicenseController {
                                                  LicensesSearch licensesSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
-        return ResponseEntity.ok(new ContentResponse<>(Constants.PROJECTS,licenseService.multiSearchLicensesWithPagination(pageable, pagination, licensesSearch),
+        return ResponseEntity.ok(new ContentResponse<>(Constants.LICENSE,licenseService.multiSearchLicensesWithPagination(pageable, pagination, licensesSearch),
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetLicenseSuccessMessage()));
