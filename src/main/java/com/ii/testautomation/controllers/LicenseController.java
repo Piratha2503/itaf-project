@@ -38,7 +38,6 @@ public class LicenseController {
                 RequestStatus.SUCCESS.getStatus(),
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetLicenseSuccessMessage()));
-
     }
 
     @PostMapping(EndpointURI.LICENSE)
