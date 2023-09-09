@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class CompanyUserRequest {
+    private Long id;
     private Long licenses_id;
     private String companyName;
     private String firstName;

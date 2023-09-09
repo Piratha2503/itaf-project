@@ -1,5 +1,4 @@
 package com.ii.testautomation.service.impl;
-
 import com.ii.testautomation.dto.response.LicenseResponse;
 import com.ii.testautomation.dto.search.LicensesSearch;
 import com.ii.testautomation.entities.Licenses;
@@ -53,6 +52,7 @@ public class LicenseServiceImpl implements LicenseService {
 
     @Override
     public boolean existsByName(String name) {
+
         return licenseRepository.existsByNameIgnoreCase(name);
     }
 

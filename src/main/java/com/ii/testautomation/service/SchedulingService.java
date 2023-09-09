@@ -20,7 +20,7 @@ public interface SchedulingService {
 
     void saveTestScheduling(SchedulingRequest SchedulingRequest);
 
-    void autoScheduling() throws IOException;
+   // void autoScheduling() throws IOException;
 
     boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId);
 

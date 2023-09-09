@@ -1,17 +1,19 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
+import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -34,4 +36,14 @@ public class DesignationController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getDesignationSaveSuccessMessage()));
     }
+//@GetMapping
+//    public ResponseEntity<List<Designation>> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
+//        List<Designation> designations = designationService.getAllDesignationByCompanyId(companyId);
+//    if (designations.isEmpty()) {
+//        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationsNotFoundCode(), statusCodeBundle.getDesignationsNotFoundMessage()));
+//    }
+//
+//    return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designations,
+//            RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationsSuccessMessage()));
+//    }
 }

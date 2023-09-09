@@ -145,8 +145,4 @@ public class SchedulingController {
 
     }
 
-    public ResponseEntity<Object> Execution() throws IOException {
-        schedulingService.autoScheduling();
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getExecutionSuccessMessage()));
-    }
 }

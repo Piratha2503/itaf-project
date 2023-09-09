@@ -8,4 +8,6 @@ public interface CompanyUserRepository extends JpaRepository<CompanyUser,Long> {
     boolean existsByEmailIgnoreCase(String email);
      boolean existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName,String lastName);
      boolean existsByContactNumber(String contactNumber);
+    boolean existsByCompanyNameIgnoreCaseAndLicensesIdAndIdNot(String companyName, Long licensesId, Long id);
+
 }
