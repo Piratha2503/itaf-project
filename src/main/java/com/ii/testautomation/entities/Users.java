@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,4 +22,13 @@ public class Users extends DateAudit {
     private String status;
     private String staffId;
     private String description;
+    private String firstName;
+    private String lastName;
+    private String contactNumber;
+    @ManyToMany
+    @JoinColumn(name = "designation_id", nullable = false)
+    private List<Designation> designation;
+    @ManyToOne
+    @JoinColumn(name = "company_user_id", nullable = false)
+    private CompanyUser companyUser;
 }

@@ -1,0 +1,21 @@
+package com.ii.testautomation.dto.request;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDate;
+
+@Getter
+@Setter
+public class CompanyUserRequest {
+    private Long licenses_id;
+    private String companyName;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String contactNumber;
+    private String status;
+    private LocalDate startDate;
+    private LocalDate endDate;
+
+}
