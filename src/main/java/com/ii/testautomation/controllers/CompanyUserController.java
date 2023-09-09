@@ -20,11 +20,5 @@ public class CompanyUserController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-    @DeleteMapping(EndpointURI.COMPANY_USER_BY_ID)
-    public ResponseEntity<Object> deleteById(@PathVariable Long id) {
-        if (!companyUserService.existsById(id))
-         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
-        companyUserService.deleteById(id);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getCompanyUserDeleteSuccessMessage()));
-    }
+
 }

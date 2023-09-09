@@ -10,12 +10,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     @Autowired
     private CompanyUserRepository companyUserRepository;
 
-
-    @Override
-    public void deleteById(Long id) {
-        companyUserRepository.deleteById(id);
-    }
-
     @Override
     public boolean existsById(Long id) {
         return companyUserRepository.existsById(id);
