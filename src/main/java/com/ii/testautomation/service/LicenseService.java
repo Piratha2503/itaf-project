@@ -15,5 +15,5 @@ public interface LicenseService {
 
     void deleteLicenseById(Long id);
 
-
+    boolean existsById(Long id);
 }

@@ -26,9 +26,9 @@ public class CompanyUserController {
     @DeleteMapping(EndpointURI.COMPANY_USER_BY_ID)
     public ResponseEntity<Object> deleteById(@PathVariable Long id) {
         if (userService.existsByCompanyUserId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCompanyUserDeleteDependentCode(),statusCodeBundle.getCompanyUserDeleteDependentMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserDeleteDependentCode(),statusCodeBundle.getCompanyUserDeleteDependentMessage()));
         if (!companyUserService.existsById(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
         companyUserService.deleteById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getCompanyUserDeleteSuccessMessage()));
     }
