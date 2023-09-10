@@ -32,7 +32,6 @@ public class LicenseServiceImpl implements LicenseService {
     public boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users) {
         return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration,no_of_projects,no_of_users);
     }
-
     @Override
     public boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users,Long id) {
         return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(duration,no_of_projects,no_of_users,id);
@@ -47,7 +46,6 @@ public class LicenseServiceImpl implements LicenseService {
     public boolean isUpdateNameExists(String name, Long id) {
         return licenseRepository.existsByNameIgnoreCaseAndIdNot(name, id);
     }
-
     @Override
     public void deleteLicenseById(Long id) {
         licenseRepository.deleteById(id);
