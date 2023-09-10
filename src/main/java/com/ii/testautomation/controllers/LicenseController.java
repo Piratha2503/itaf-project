@@ -34,11 +34,4 @@ public class LicenseController {
         licenseService.createLicense(licenseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseInsertSuccessMessage()));
     }
-
-    @GetMapping(EndpointURI.LICENSE_BY_ID)
-    public ResponseEntity<Object> getLicenseById(@PathVariable Long id) {
-        if (!licenseService.existsById(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotExistMessage()));
-        return ResponseEntity.ok(new ContentResponse<>(Constants.LICENSE, licenseService.getLicenseById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseViewSuccessMessage()));
-    }
 }

@@ -22,14 +22,6 @@ public class LicenseServiceImpl implements LicenseService {
     }
 
     @Override
-    public LicenseResponse getLicenseById(Long id) {
-        LicenseResponse licenseResponse = new LicenseResponse();
-        Licenses license = licenseRepository.findById(id).get();
-        BeanUtils.copyProperties(license,licenseResponse);
-        return licenseResponse;
-    }
-
-    @Override
     public boolean existsByName(String name) {
         return licenseRepository.existsByNameIgnoreCase(name);
     }
