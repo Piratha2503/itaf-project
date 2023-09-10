@@ -6,9 +6,9 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface LicenseRepository extends JpaRepository<Licenses,Long> {
     boolean existsByNameIgnoreCase(String name);
-
     boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long noOfProjects, Long noOfUsers);
-
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+    boolean existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(Long duration, Long noOfProjects, Long noOfUsers,Long Id );
+
 
 }

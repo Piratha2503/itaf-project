@@ -36,6 +36,7 @@ public class LicenseController {
         licenseService.createLicense(licenseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseInsertSuccessMessage()));
     }
+
     @PutMapping(EndpointURI.LICENSE)
     public ResponseEntity<Object> UpdateLicense(@RequestBody LicenseRequest licenseRequest) {
         if (!licenseService.existsById(licenseRequest.getId()))
@@ -44,7 +45,7 @@ public class LicenseController {
         if (licenseService.isUpdateNameExists(licenseRequest.getName(), licenseRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicenseNameAlreadyExistMessage()));
 
-        if (licenseService.isUpdateByDurationAndNoOfProjectsAndNoOfUsers(licenseRequest.getDuration(), licenseRequest.getNoOfProjects(), licenseRequest.getNoOfUsers()))
+        if (licenseService.isUpdateByDurationAndNoOfProjectsAndNoOfUsers(licenseRequest.getDuration(), licenseRequest.getNoOfProjects(), licenseRequest.getNoOfUsers(), licenseRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicensePackageAlreadyExistMessage()));
         licenseService.createLicense(licenseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseSuccessfullyUpdatedMessage()));
@@ -55,8 +56,8 @@ public class LicenseController {
         if (!licenseService.existsById(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicensePackageNotExistMessage()));
         }
-        if (companyUserService.existsByLicenseId(id)){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getLicenseDeleteDependentCode(),statusCodeBundle.getLicenseDeleteDependentMessage()));
+        if (companyUserService.existsByLicenseId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseDeleteDependentCode(), statusCodeBundle.getLicenseDeleteDependentMessage()));
         }
         licenseService.deleteLicenseById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseSuccessfullyDeletedMessage()));
