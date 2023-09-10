@@ -100,29 +100,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         schedulingRepository.save(scheduling);
     }
 
-//    @Transactional
-//    @Scheduled(cron = "${schedule.time.cron}")
-//    public void autoScheduling() throws IOException {
-//        System.out.println("================================================wwwwwwwwww");
-//        List<Scheduling> schedulingList = schedulingRepository.findAll();
-//        Long projectId = null;
-//        Long groupId = null;
-//        if (schedulingList != null && !schedulingList.isEmpty()) {
-//            for (Scheduling scheduling : schedulingList) {
-//                if (scheduling.isStatus()) {
-//                    groupId = scheduling.getTestGrouping().getId();
-//                    if (scheduling.getTestCasesIds() != null && !scheduling.getTestCasesIds().isEmpty()) {
-//                        for (Long testCaseId : scheduling.getTestCasesIds()) {
-//                            projectId = testCasesRepository.findById(testCaseId).get().getSubModule().getMainModule().getModules().getProject().getId();
-//                            break;
-//                        }
-//                    }
-//                }
-//                schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId);
-//            }
-//        }
-//    }
-//
+
     @Override
     public boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId) {
         return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
