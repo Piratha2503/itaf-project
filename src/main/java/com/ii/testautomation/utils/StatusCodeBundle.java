@@ -504,6 +504,8 @@ public class StatusCodeBundle {
     private String LicenseAlreadyExistCode;
     @Value("${code.validation.License.notExists}")
     private String LicenseNotExistCode;
+    @Value("${message.validation.License.assigned}")
+    private String LicenseDeleteDependentCode;
     // License Messages
     @Value("${message.success.insert.License}")
     private String LicenseInsertSuccessMessage;
@@ -511,7 +513,14 @@ public class StatusCodeBundle {
     private String LicenseNameAlreadyExistMessage;
     @Value("${message.failure.package.AlreadyExist.License}")
     private String LicensePackageAlreadyExistMessage;
-
+    @Value("${message.failure.package.NotExist.License}")
+    private String LicensePackageNotExistMessage;
+    @Value("${message.Success.package.Update.License}")
+    private String LicenseSuccessfullyUpdatedMessage;
+    @Value("${message.Success.package.Delete.License}")
+    private String LicenseSuccessfullyDeletedMessage;
+    @Value("${message.validation.License.assigned}")
+    private String LicenseDeleteDependentMessage;
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;

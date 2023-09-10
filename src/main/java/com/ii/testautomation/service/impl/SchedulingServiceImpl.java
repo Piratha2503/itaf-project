@@ -351,4 +351,9 @@ public class SchedulingServiceImpl implements SchedulingService {
     public boolean existsByTestCaseId(Long testCaseId) {
         return schedulingRepository.existsByTestGrouping_TestCases_Id(testCaseId);
     }
+
+    @Override
+    public boolean existsByTestGroupingId(Long testGroupingId) {
+        return schedulingRepository.existsByTestGroupingId(testGroupingId);
+    }
 }

@@ -151,7 +151,7 @@ public class ModulesServiceImpl implements ModulesService {
 
                 List<MainModulesResponse> mainModulesResponseList = new ArrayList<>();
 
-               for (MainModules mainModules : mainModulesList) {
+                for (MainModules mainModules : mainModulesList) {
                     MainModulesResponse mainModulesResponse = new MainModulesResponse();
                     mainModulesResponse.setId(mainModules.getId());
                     mainModulesResponse.setName(mainModules.getName());
