@@ -333,6 +333,8 @@ public class StatusCodeBundle {
     private String testGroupingNotExistCode;
     @Value("${code.validation.testScenario.notExists}")
     private String testScenarioNotExistCode;
+    @Value("${code.validation.testGrouping.Dependent}")
+    private String testGroupingDependentCode;
 
     //TestGrouping Message
     @Value("${message.validation.testGrouping.Name.alreadyExists}")
