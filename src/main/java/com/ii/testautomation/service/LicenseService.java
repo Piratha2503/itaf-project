@@ -1,7 +1,6 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.LicenseRequest;
-import com.ii.testautomation.dto.response.LicenseResponse;
 
 public interface LicenseService {
 
