@@ -34,6 +34,7 @@ public interface TestGroupingService {
     List<TestGroupingResponse> getAllTestGroupingByTestCaseId(Long testCaseId);
 
     TestGroupingResponse getTestGroupingById(Long id);
+
     int calculatePercentage();
 
     boolean existByProjectId(Long projectId);
@@ -41,6 +42,7 @@ public interface TestGroupingService {
     List<TestGroupingResponse> getAllTestGroupingByProjectId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long projectId);
 
     boolean existsByTestGroupingNameByTestCaseAndProjectId(String name, Long projectId);
+
     boolean existsByTestGroupingNameByTestScenarioAndProjectId(String name, Long projectId);
 
     boolean isUpdateTestGroupingNameByProjectId(String name, Long projectId, Long groupingId);
@@ -54,7 +56,6 @@ public interface TestGroupingService {
     void execution(ExecutionRequest executionRequest) throws IOException;
 
     boolean folderExists(Long groupId);
-   // public boolean existsByTestCases(Long testGroupingId);
 
 
 }

@@ -117,7 +117,7 @@ public class SchedulingController {
 
         for (Map.Entry<Integer, Long> entry : schedulingRequest.getTestCase().entrySet()) {
             if (!testCasesService.existsByTestCasesId(entry.getValue())) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(), "testGroupingNotExists"));
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosNotExistCode(),statusCodeBundle.getTestGroupingNotExistsMessage()));
             }
         }
         if (!projectService.hasJarPath(schedulingRequest.getProjectId())) {
