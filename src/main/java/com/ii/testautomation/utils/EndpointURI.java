@@ -108,6 +108,7 @@ public final class EndpointURI {
 
     //Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
+
     private EndpointURI() {
     }
 }
