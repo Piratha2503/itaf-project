@@ -39,6 +39,7 @@ public class LicenseServiceImpl implements LicenseService {
     public boolean isUpdateNameExists(String name, Long id) {
         return licenseRepository.existsByNameIgnoreCaseAndIdNot(name, id);
     }
+
     @Override
     public void deleteLicenseById(Long id) {
         licenseRepository.deleteById(id);

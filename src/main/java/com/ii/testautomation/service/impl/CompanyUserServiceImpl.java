@@ -10,7 +10,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     @Autowired
     private CompanyUserRepository companyUserRepository;
 
-
     @Override
     public boolean existsByLicenseId(Long id) {
         return companyUserRepository.existsByLicensesId(id);
@@ -25,5 +24,4 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     public void deleteById(Long id) {
         companyUserRepository.deleteById(id);
     }
-
 }
