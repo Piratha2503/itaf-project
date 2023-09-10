@@ -8,4 +8,6 @@ public interface DesignationService {
     boolean existsByName(String designationName);
 
     boolean existById(Long id);
+
+    boolean existsByNameIdNot(Long id,String name);
 }
