@@ -14,6 +14,7 @@ import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +45,8 @@ public class SchedulingController {
     private ProjectService projectService;
     @Autowired
     private TestGroupingService testGroupingService;
+    @Autowired
+    private Utils utils;
 
     @GetMapping(EndpointURI.SHEDULING_PROJECTID)
     public ResponseEntity<Object> viewByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, @PathVariable Long id) {
@@ -57,6 +60,9 @@ public class SchedulingController {
 
     @PutMapping(value = EndpointURI.SCHEDULES)
     public ResponseEntity<Object> updateScheduling(@RequestBody SchedulingRequest schedulingRequest) {
+        if (!utils.checkRagexBeforeAfterWords(schedulingRequest.getName())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+        }
         if (schedulingService.isUpdateNameExists(schedulingRequest.getName(), schedulingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSchedulingNameAlreadyExists()));
         }

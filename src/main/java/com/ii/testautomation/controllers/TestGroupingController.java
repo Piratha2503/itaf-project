@@ -16,6 +16,7 @@ import com.ii.testautomation.service.*;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,7 +61,7 @@ public class TestGroupingController {
     @Autowired
     private SchedulingService schedulingService;
     @Autowired
-    private RagexMaintainance ragexMaintainance;
+    private Utils utils;
 
     @PostMapping(value = EndpointURI.TEST_GROUPING)
     public ResponseEntity<Object> saveTestGrouping(@RequestParam String testGrouping, @RequestParam(value = "excelFiles", required = false) List<MultipartFile> excelFiles) throws JsonProcessingException, JsonProcessingException {
@@ -77,7 +78,7 @@ public class TestGroupingController {
         if (!testTypesService.existsByTestTypesId(testGroupingRequest.getTestTypeId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypesNotExistCode(), statusCodeBundle.getTestTypesNotExistsMessage()));
         }
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testGroupingRequest.getName()))
+        if (!utils.checkRagexBeforeAfterWords(testGroupingRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testGroupingService.existsByTestGroupingNameByTestCaseAndProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));
@@ -134,7 +135,7 @@ public class TestGroupingController {
                 (testGroupingRequest.getTestScenarioIds() == null || testGroupingRequest.getTestScenarioIds().isEmpty())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWantToOneHaveOneTestScenarioOrOneTestCase()));
         }
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testGroupingRequest.getName()))
+        if (!utils.checkRagexBeforeAfterWords(testGroupingRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testGroupingService.isUpdateTestGroupingNameByProjectId(testGroupingRequest.getName(), testGroupingRequest.getProjectId(), testGroupingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingAlReadyExistCode(), statusCodeBundle.getTestGroupingNameAlReadyExistMessage()));

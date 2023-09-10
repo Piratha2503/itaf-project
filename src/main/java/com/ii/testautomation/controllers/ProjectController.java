@@ -13,6 +13,7 @@ import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,14 +36,14 @@ public class ProjectController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
     @Autowired
-    private RagexMaintainance ragexMaintainance;
+    private Utils utils;
 
     @PostMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> saveProject(@RequestParam String project,
                                               @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
                                               @RequestParam(value = "configFile", required = false) MultipartFile configFile) throws JsonProcessingException {
         ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(projectRequest.getName())) {
+        if (!utils.checkRagexBeforeAfterWords(projectRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSpacesNotAllowedMessage()));
@@ -89,7 +90,7 @@ public class ProjectController {
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(projectRequest.getName())) {
+        if (!utils.checkRagexBeforeAfterWords(projectRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSpacesNotAllowedMessage()));
