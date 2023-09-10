@@ -28,7 +28,7 @@ public class CompanyUserController {
         if (userService.existsByCompanyUserId(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCompanyUserDeleteDependentCode(),statusCodeBundle.getCompanyUserDeleteDependentMessage()));
         if (!companyUserService.existsById(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCompanyUserNotExistCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
         companyUserService.deleteById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getCompanyUserDeleteSuccessMessage()));
     }
