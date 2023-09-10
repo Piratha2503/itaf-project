@@ -7,4 +7,5 @@ public interface CompanyUserService {
    boolean isUpdateEmailExists(String email,Long id);
 
 boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long id);
+    boolean existsByLicenseId(Long id);
 }

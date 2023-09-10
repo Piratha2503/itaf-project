@@ -32,4 +32,9 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         return companyUserRepository.existsByContactNumberIgnoreCaseAndLicensesIdAndIdNot(contactNumber,licensesId,id);
 
     }
+
+    @Override
+    public boolean existsByLicenseId(Long id) {
+        return companyUserRepository.existsByLicensesId(id);
+    }
 }

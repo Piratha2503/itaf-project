@@ -504,6 +504,9 @@ public class StatusCodeBundle {
     private String LicenseAlreadyExistCode;
     @Value("${code.validation.License.notExists}")
     private String LicenseNotExistCode;
+    @Value("${message.validation.License.assigned}")
+    private String LicenseDeleteDependentCode;
+
     // License Messages
     @Value("${message.success.insert.License}")
     private String LicenseInsertSuccessMessage;
@@ -511,6 +514,14 @@ public class StatusCodeBundle {
     private String LicenseNameAlreadyExistMessage;
     @Value("${message.failure.package.AlreadyExist.License}")
     private String LicensePackageAlreadyExistMessage;
+    @Value("${message.failure.package.NotExist.License}")
+    private String LicensePackageNotExistMessage;
+    @Value("${message.Success.package.Update.License}")
+    private String LicenseSuccessfullyUpdatedMessage;
+    @Value("${message.Success.package.Delete.License}")
+    private String LicenseSuccessfullyDeletedMessage;
+    @Value("${message.validation.License.assigned}")
+    private String LicenseDeleteDependentMessage;
     @Value("${message.success.get.licenses}")
     private String getLicenseSuccessMessage;
     @Value("${message.validation.License.notExits}")
@@ -532,7 +543,6 @@ public class StatusCodeBundle {
     @Value("${message.success.get.designation}")
     private String getDesignationSuccessMessage;
 
-
     //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")
     private String companyUserAlReadyExistsCode;
@@ -548,7 +558,6 @@ public class StatusCodeBundle {
     private String companyUseEmailAlReadyExistsMessage;
     @Value("${message.validation.companyUser.contactNo.alreadyExists}")
     private String companyUseContactNoAlReadyExistsMessage;
-
     @Value("${message.success.update.companyUser}")
     private String updateCompanyUserSuccessMessage;
 

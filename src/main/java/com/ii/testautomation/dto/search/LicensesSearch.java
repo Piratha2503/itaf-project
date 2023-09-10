@@ -10,6 +10,6 @@ public class LicensesSearch {
     private Long duration;
     private Long noOfProjects;
     private Long noOfUsers;
-    private Double price;
+    private String price;
 
 }
