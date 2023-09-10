@@ -50,23 +50,35 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         ) {
             booleanBuilder.and(QCompanyUser.companyUser.status.containsIgnoreCase(companyUserSearch.getStatus()));
         }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getStartDate().toString())) {
-            booleanBuilder.and(QCompanyUser.companyUser.startDate.eq(companyUserSearch.getStartDate()));
+        if(companyUserSearch.getStartDate()!=null) {
+            if (Utils.isNotNullAndEmpty(companyUserSearch.getStartDate().toString())) {
+                booleanBuilder.and(QCompanyUser.companyUser.startDate.eq(companyUserSearch.getStartDate()));
+            }
         }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getEndDate().toString())) {
-            booleanBuilder.and(QCompanyUser.companyUser.endDate.eq(companyUserSearch.getEndDate()));
+        if(companyUserSearch.getEndDate()!=null) {
+            if (Utils.isNotNullAndEmpty(companyUserSearch.getEndDate().toString())) {
+                booleanBuilder.and(QCompanyUser.companyUser.endDate.eq(companyUserSearch.getEndDate()));
+            }
         }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getLicenseDuration().toString())) {
-            booleanBuilder.and(QCompanyUser.companyUser.licenses.duration.eq(companyUserSearch.getLicenseDuration()));
+        if(companyUserSearch.getLicenseDuration()!=null) {
+            if (Utils.isNotNullAndEmpty(companyUserSearch.getLicenseDuration().toString())) {
+                booleanBuilder.and(QCompanyUser.companyUser.licenses.duration.eq(companyUserSearch.getLicenseDuration()));
+            }
         }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getNoOfUsers().toString())) {
-            booleanBuilder.and(QCompanyUser.companyUser.licenses.noOfUsers.eq(companyUserSearch.getNoOfUsers()));
+        if(companyUserSearch.getNoOfUsers()!=null) {
+            if (Utils.isNotNullAndEmpty(companyUserSearch.getNoOfUsers().toString())) {
+                booleanBuilder.and(QCompanyUser.companyUser.licenses.noOfUsers.eq(companyUserSearch.getNoOfUsers()));
+            }
         }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getNoOfProjects().toString())) {
-            booleanBuilder.and(QCompanyUser.companyUser.licenses.noOfProjects.eq(companyUserSearch.getNoOfProjects()));
+        if(companyUserSearch.getNoOfProjects()!=null) {
+            if (Utils.isNotNullAndEmpty(companyUserSearch.getNoOfProjects().toString())) {
+                booleanBuilder.and(QCompanyUser.companyUser.licenses.noOfProjects.eq(companyUserSearch.getNoOfProjects()));
+            }
         }
-        if ((Utils.isNotNullAndEmpty(companyUserSearch.getPrice().toString()))) {
-            booleanBuilder.and(QCompanyUser.companyUser.licenses.price.eq(companyUserSearch.getPrice()));
+        if(companyUserSearch.getPrice()!=null) {
+            if ((Utils.isNotNullAndEmpty(companyUserSearch.getPrice().toString()))) {
+                booleanBuilder.and(QCompanyUser.companyUser.licenses.price.eq(companyUserSearch.getPrice()));
+            }
         }
         List<CompanyUserResponse> companyUserResponseList = new ArrayList<>();
         Page<CompanyUser> companyUserPage = companyUserRepository.findAll(booleanBuilder, pageable);
