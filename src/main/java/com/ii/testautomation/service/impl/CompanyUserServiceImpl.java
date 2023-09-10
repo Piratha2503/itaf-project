@@ -10,8 +10,9 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     @Autowired
     private CompanyUserRepository companyUserRepository;
 
+
     @Override
-    public boolean existsById(Long id) {
-        return companyUserRepository.existsById(id);
+    public boolean existsByLicenseId(Long id) {
+        return companyUserRepository.existsByLicensesId(id);
     }
 }

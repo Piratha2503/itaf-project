@@ -269,6 +269,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
+    public boolean existsById(Long id) {
+        return testGroupingRepository.existsById(id);
+    }
+
+    @Override
     public void deleteTestGroupingById(Long id, Long projectId) {
         String projectName = projectRepository.findById(projectId).get().getName();
         String testGroupingDirectoryPath = fileFolder + File.separator + projectName + File.separator + testGroupingRepository.findById(id).get().getName();
