@@ -86,4 +86,10 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         }
         return companyUserResponseList;
     }
+
+    @Override
+    public boolean existsByLicenseId(Long id) {
+        return companyUserRepository.existsByLicensesId(id);
+    }
 }
+

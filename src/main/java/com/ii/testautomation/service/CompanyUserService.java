@@ -10,4 +10,6 @@ import java.util.List;
 public interface CompanyUserService {
 
     List<CompanyUserResponse> getAllCompanyUserWithMultiSearch(Pageable pageable, PaginatedContentResponse.Pagination pagination, CompanyUserSearch companyUserSearch);
+
+    boolean existsByLicenseId(Long id);
 }

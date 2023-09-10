@@ -8,4 +8,8 @@ public interface LicenseRepository extends JpaRepository<Licenses, Long>, Queryd
     boolean existsByNameIgnoreCase(String name);
 
     boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long noOfProjects, Long noOfUsers);
+
+    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+
+    boolean existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(Long duration, Long noOfProjects, Long noOfUsers, Long Id);
 }
