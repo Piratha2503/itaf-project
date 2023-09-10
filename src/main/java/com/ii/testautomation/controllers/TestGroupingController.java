@@ -240,6 +240,7 @@ public class TestGroupingController {
         testGroupingService.deleteTestGroupingById(id, projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestGroupingSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.TEST_GROUPINGS_BY_ID)
     public ResponseEntity<Object> getTestGroupingById(@PathVariable Long id) {
         if (!testGroupingService.existsByTestGroupingId(id)) {
@@ -276,5 +277,4 @@ public class TestGroupingController {
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(pageable, pagination, id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
-
 }
