@@ -36,7 +36,7 @@ public class DesignationController {
                 statusCodeBundle.getDesignationSaveSuccessMessage()));
     }
 
-    @GetMapping
+    @GetMapping(value=EndpointURI.DESIGNATION)
     public ResponseEntity<Object> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
         List<Designation> designations = designationService.getAllDesignationByCompanyId(companyId);
         if (designations.isEmpty()) {

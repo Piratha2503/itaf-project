@@ -30,14 +30,15 @@ public class CompanyUserController {
     private RagexMaintainance ragexMaintainance;
 
     @PutMapping(value = EndpointURI.COMPANY_USERS)
-
     public ResponseEntity<Object> UpdateCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
 
         if (!companyUserService.existsByCompanyUserId(companyUserRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserNotExistsMessage()));
         }
         if (!ragexMaintainance.checkSpaceBeforeAfterWords(companyUserRequest.getCompanyName()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
 
         if (companyUserService.isUpdateCompanyUserNameExists(companyUserRequest.getCompanyName(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
@@ -51,7 +52,6 @@ public class CompanyUserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUseContactNoAlReadyExistsMessage()));
         }
-
 //        if(!licenseService.existByLicenseId(companyUserRequest.getLicenses_id())){
 //            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(),
 //                    statusCodeBundle .getLicenseNotExistsMessage()));

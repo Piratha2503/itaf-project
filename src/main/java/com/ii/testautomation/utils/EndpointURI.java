@@ -109,6 +109,9 @@ public final class EndpointURI {
 
     //Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
+    public static final String DESIGNATION_BY_COMPANY_ID= DESIGNATION+"/companyUsers"+ID;
+
+
     private EndpointURI() {
     }
 }
