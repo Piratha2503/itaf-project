@@ -52,13 +52,11 @@ public class CompanyUserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUseContactNoAlReadyExistsMessage()));
         }
-//        if(!licenseService.existByLicenseId(companyUserRequest.getLicenses_id())){
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(),
-//                    statusCodeBundle .getLicenseNotExistsMessage()));
-//        }
-
-        //  companyUserService.saveCompanyUser(companyUserRequest);
+        if(!licenseService.existByLicenseId(companyUserRequest.getLicenses_id())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(),
+                    statusCodeBundle .getLicenseNotExistsMessage()));
+        }
+        companyUserService.saveCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateCompanyUserSuccessMessage()));
-
     }
 }

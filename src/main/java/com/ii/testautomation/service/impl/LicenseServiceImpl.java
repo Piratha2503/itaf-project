@@ -60,4 +60,9 @@ public class LicenseServiceImpl implements LicenseService {
     public boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users) {
         return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration, no_of_projects, no_of_users);
     }
+
+    @Override
+    public boolean existByLicenseId(Long id) {
+        return licenseRepository.existsById(id);
+    }
 }

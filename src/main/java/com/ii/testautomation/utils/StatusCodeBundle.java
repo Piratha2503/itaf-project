@@ -513,6 +513,8 @@ public class StatusCodeBundle {
     private String LicensePackageAlreadyExistMessage;
     @Value("${message.success.get.licenses}")
     private String getLicenseSuccessMessage;
+    @Value("${message.validation.License.notExits}")
+    private String LicenseNotExistsMessage;
 
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
