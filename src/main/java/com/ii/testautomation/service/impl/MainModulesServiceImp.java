@@ -121,8 +121,6 @@ public class MainModulesServiceImp implements MainModulesService {
         return mainModulesResponseList;
     }
 
-
-
     @Override
     public boolean isExistModulesId(Long id) {
         return modulesRepository.existsById(id);

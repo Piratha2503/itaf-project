@@ -31,4 +31,5 @@ public class TestGrouping extends DateAudit {
     @ManyToOne
     @JoinColumn(name = "project_id",nullable = false)
     private Project project;
+    private Boolean schedulingExecutionStatus = false;
 }

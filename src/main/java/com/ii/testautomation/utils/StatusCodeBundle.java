@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
-
     // Common Success code
     @Value("${code.success.common}")
     private String commonSuccessCode;
@@ -380,6 +379,9 @@ public class StatusCodeBundle {
     private String TestGroupingDeleteDependentMessage;
     @Value("${message.success.execution}")
     private String executionSuccessMessage;
+    @Value("${message.validation.testGrouping.scheduledTestCases}")
+    private String ScheduledTestCasesRemoveMessage;
+
     //TestScenario Codes
     @Value("${code.validation.testScenario.alreadyExists}")
     private String testScenariosAlreadyExistCode;
@@ -470,4 +472,61 @@ public class StatusCodeBundle {
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
+
+    //login Codes
+    @Value("${code.validation.user.alreadyExists}")
+    private String userAlreadyExistCode;
+    @Value("${code.validation.user.notExists}")
+    private String userNotExistCode;
+
+    //login Messages
+    @Value("${message.success.verify.registered}")
+    private String RegistrationSuccessMessage;
+    @Value("${message.success.email.verify}")
+    private String EmailVerificationSuccessMessage;
+    @Value("${message.failure.email.verify}")
+    private String EmailVerificationFailureMessage;
+    @Value("${message.failure.token.expired}")
+    private String TokenExpiredMessage;
+    @Value("${message.validation.user.email.alreadyExists}")
+    private String userEmailAlReadyExistMessage;
+    @Value("${message.success.save.user}")
+    private String saveUserSuccessMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String userIdExistMessage;
+
+    // Ragex
+    @Value("${message.failure.space}")
+    private String SpacesNotAllowedMessage;
+
+    // License Codes
+    @Value("${code.validation.License.alreadyExists}")
+    private String LicenseAlreadyExistCode;
+    @Value("${code.validation.License.notExists}")
+    private String LicenseNotExistCode;
+    @Value("${message.validation.License.assigned}")
+    private String LicenseDeleteDependentCode;
+    // License Messages
+    @Value("${message.success.insert.License}")
+    private String LicenseInsertSuccessMessage;
+    @Value("${message.failure.name.AlreadyExist.License}")
+    private String LicenseNameAlreadyExistMessage;
+    @Value("${message.failure.package.AlreadyExist.License}")
+    private String LicensePackageAlreadyExistMessage;
+    @Value("${message.failure.package.NotExist.License}")
+    private String LicensePackageNotExistMessage;
+    @Value("${message.Success.package.Update.License}")
+    private String LicenseSuccessfullyUpdatedMessage;
+    @Value("${message.Success.package.Delete.License}")
+    private String LicenseSuccessfullyDeletedMessage;
+    @Value("${message.validation.License.assigned}")
+    private String LicenseDeleteDependentMessage;
+    //Designation Code
+    @Value("${code.validation.designation.alreadyExist}")
+    private String DesignationAlreadyExistsCode;
+    //Designation Message
+    @Value("${message.validation.designation.alreadyExist}")
+    private String DesignationAlreadyExistsMessage;
+    @Value("${message.success.designation.save}")
+    private String designationSaveSuccessMessage;
 }

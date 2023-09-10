@@ -6,23 +6,26 @@ import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface SchedulingService {
     void deleteScheduling(Long schedulingId);
 
-    public ScheduleResponse getSchedulingById(Long id);
+    ScheduleResponse getSchedulingById(Long id);
 
-    public boolean existById(Long id);
+    boolean existById(Long id);
 
     List<SchedulingResponse> viewByProjectId(Long projectId, Pageable pageable, PaginatedContentResponse.Pagination pagination);
 
-    public void saveTestScheduling(SchedulingRequest SchedulingRequest);
+    void saveTestScheduling(SchedulingRequest SchedulingRequest);
 
     boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId);
 
     public void updateScheduling(SchedulingRequest schedulingRequest);
 
     boolean isUpdateNameExists(String Name, Long SchedulingId);
+
+    boolean existsByTestCaseId(Long testCaseId);
+
+    boolean existsByTestGroupingId(Long testGroupingId);
 }

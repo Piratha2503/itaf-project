@@ -11,10 +11,7 @@ import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.SubModulesService;
 import com.ii.testautomation.service.TestCasesService;
-import com.ii.testautomation.utils.Constants;
-import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.StatusCodeBundle;
-import com.ii.testautomation.utils.Utils;
+import com.ii.testautomation.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +36,8 @@ public class SubModulesController {
     private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-
+    @Autowired
+    private RagexMaintainance ragexMaintainance;
 
     @PostMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest) {
@@ -48,11 +46,16 @@ public class SubModulesController {
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(subModulesRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (subModulesService.existsBySubModulesName(subModulesRequest.getName(), subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(subModulesRequest.getPrefix()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+
         if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix(), subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
@@ -151,11 +154,16 @@ public class SubModulesController {
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(subModulesRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (subModulesService.isUpdateSubModuleNameExits(subModulesRequest.getName(), subModulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(subModulesRequest.getPrefix()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+
         if (subModulesService.isUpdateSubModulePrefixExits(subModulesRequest.getPrefix(), subModulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),

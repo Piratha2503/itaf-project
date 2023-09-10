@@ -13,7 +13,12 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface SchedulingRepository extends JpaRepository<Scheduling,Long>, QuerydslPredicateExecutor<Scheduling> {
     Page<Scheduling> findByTestGrouping_ProjectId(Pageable pageable, Long projectId);
+
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+
+    boolean existsByTestGroupingId(Long testGroupingId);
+
     boolean existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(String name, Long projectId);
 
+    boolean existsByTestGrouping_TestCases_Id(Long id);
 }

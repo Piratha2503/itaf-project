@@ -68,9 +68,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     private String fileFolder;
     @Autowired
     private TaskScheduler taskScheduler;
-
     @Autowired
-   private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public boolean hasExcelFormat(List<MultipartFile> multipartFiles) {
@@ -78,8 +77,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             for (MultipartFile multipartFile : multipartFiles
             ) {
                 try {
-                    Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
-                    workbook.close();
+                    if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) return true;
+                        Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+                        workbook.close();
                 } catch (Exception e) {
                     return false;
                 }
@@ -167,6 +167,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingRepository.existsByTestScenariosId(id);
     }
 
+    @Override
     public void updateTestGrouping(TestGroupingRequest testGroupingRequest, List<MultipartFile> excelFiles) {
         TestGrouping testGrouping = testGroupingRepository.findById(testGroupingRequest.getId()).get();
         TestTypes testTypes = testTypesRepository.findById(testGroupingRequest.getTestTypeId()).get();
@@ -265,6 +266,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     @Override
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return testGroupingRepository.existsById(testGroupingId);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return testGroupingRepository.existsById(id);
     }
 
     @Override

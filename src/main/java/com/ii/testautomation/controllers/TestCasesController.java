@@ -9,10 +9,7 @@ import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.FileResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.*;
-import com.ii.testautomation.utils.Constants;
-import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.StatusCodeBundle;
-import com.ii.testautomation.utils.Utils;
+import com.ii.testautomation.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,11 +38,16 @@ public class TestCasesController {
     private ModulesService modulesService;
     @Autowired
     private MainModulesService mainModulesService;
+    @Autowired
+    private RagexMaintainance ragexMaintainance;
+
     @PostMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> saveTestCase(@RequestBody TestCaseRequest testCaseRequest) {
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
         }
+        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testCaseRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
@@ -63,6 +65,7 @@ public class TestCasesController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASE, testCasesService.getById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseByIdSuccessMessage()));
     }
+
     @PutMapping(value = EndpointURI.TESTCASE)
     public ResponseEntity<Object> UpdateTestCase(@RequestBody TestCaseRequest testCaseRequest) {
         if (!testCasesService.existsByTestCasesId(testCaseRequest.getId())) {
@@ -70,12 +73,12 @@ public class TestCasesController {
                     statusCodeBundle.getTestCasesNotExistCode(),
                     statusCodeBundle.getTestCasesNotExistsMessage()));
         }
-        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
+          if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestCasesAlreadyExistsCode(),
                     statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
-        if (testCasesService.isUpdateTestCaseNameExistsSubString(testCaseRequest.getName(),testCaseRequest.getId(),testCaseRequest.getSubModuleId())) {
+        if (testCasesService.isUpdateTestCaseNameExistsSubString(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
         }
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
@@ -103,10 +106,6 @@ public class TestCasesController {
         Map<Integer, TestCaseRequest> testCaseRequestList;
         Set<String> testCasesNames = new HashSet<>();
         try {
-            if (!testCasesService.isCSVHeaderMatch(multipartFile) && (!testCasesService.isExcelHeaderMatch(multipartFile))) {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
-            }
             if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) {
                 testCaseRequestList = testCasesService.csvToTestCaseRequest(multipartFile.getInputStream(), projectId);
             } else if (testCasesService.hasExcelFormat(multipartFile)) {
@@ -115,6 +114,11 @@ public class TestCasesController {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                         statusCodeBundle.getFileFailureCode(), statusCodeBundle.getFileFailureMessage()));
             }
+            if (!testCasesService.isCSVHeaderMatch(multipartFile) && (!testCasesService.isExcelHeaderMatch(multipartFile))) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                        statusCodeBundle.getFailureCode(), statusCodeBundle.getHeaderNotExistsMessage()));
+            }
+
             for (Map.Entry<Integer, TestCaseRequest> entry : testCaseRequestList.entrySet()) {
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), entry.getKey());
@@ -147,6 +151,7 @@ public class TestCasesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestCaseValidationSaveMessage()));
         }
     }
+
     @GetMapping(value = EndpointURI.TESTCASES_BY_ID)
     public ResponseEntity<Object> getAllTestCaseBySubModuleId(@PathVariable Long id) {
         if (!subModulesService.existsBySubModuleId(id)) {
@@ -159,6 +164,7 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCaseBySubModuleId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCaseBySubModuleIdSuccessMessage()));
 
     }
+
     @GetMapping(value = EndpointURI.TESTCASE_BY_MAIN_MODULE_ID)
     public ResponseEntity<Object> getAllTestCasesByMainModuleId(@PathVariable Long id) {
         if (!mainModulesService.isExistMainModulesId(id)) {
@@ -185,7 +191,6 @@ public class TestCasesController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTCASES, testCasesService.getAllTestCasesByModuleId(id),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestCasesByModuleIdSuccessMessage()));
     }
-
 
     @GetMapping(value = EndpointURI.TESTCASE_BY_PROJECT_ID)
     public ResponseEntity<Object> getAllTestCasesByProjectIdWithPagination(@PathVariable Long id,

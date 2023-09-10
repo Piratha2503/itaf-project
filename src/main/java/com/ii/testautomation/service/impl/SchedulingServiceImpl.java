@@ -28,7 +28,6 @@ import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @PropertySource("classpath:application.properties")
 @Service
 public class SchedulingServiceImpl implements SchedulingService {
@@ -46,11 +45,10 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ExecutedTestCaseRepository executedTestCaseRepository;
     @Autowired
     private SequenceRepository sequenceRepository;
-
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     private ProgressBarRepository progressBarRepository;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public void saveTestScheduling(SchedulingRequest schedulingRequest) {
@@ -119,7 +117,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduleResponse.setName(scheduling.getName());
         scheduleResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
         scheduleResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
-
         Map<Integer, Long> testScenarios = new HashMap<>();
         Map<Integer, Long> testCase = new HashMap<>();
         String schedulingCode = scheduling.getSchedulingCode();
@@ -464,5 +461,14 @@ public class SchedulingServiceImpl implements SchedulingService {
                 System.out.println("Total number of test cases is zero.");
             }
         }
+    }
+    @Override
+    public boolean existsByTestCaseId(Long testCaseId) {
+        return schedulingRepository.existsByTestGrouping_TestCases_Id(testCaseId);
+    }
+
+    @Override
+    public boolean existsByTestGroupingId(Long testGroupingId) {
+        return schedulingRepository.existsByTestGroupingId(testGroupingId);
     }
 }

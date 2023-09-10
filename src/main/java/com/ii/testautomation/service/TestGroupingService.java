@@ -23,7 +23,7 @@ public interface TestGroupingService {
 
     boolean existsByTestGroupingId(Long testGroupingId);
 
-    boolean existsByTestCasesId(Long testCaseId);
+     boolean existsByTestCasesId(Long testCaseId);
 
     boolean existsByTestTypesId(Long testTypeId);
 
@@ -48,6 +48,8 @@ public interface TestGroupingService {
     boolean hasExcelPath(Long testGroupingId);
 
     boolean existsTestGroupingByTestScenarioId(Long id);
+
+    boolean existsById(Long id);
 
     void deleteTestGroupingById(Long id, Long projectId);
 
