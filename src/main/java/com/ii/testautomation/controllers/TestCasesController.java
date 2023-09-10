@@ -127,7 +127,10 @@ public class TestCasesController {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), entry.getKey());
                 } else if (testCasesNames.contains(entry.getValue().getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameDuplicateMessage(), entry.getKey());
-                } else {
+                }
+                else if (!utils.checkRagexBeforeAfterWordsTestCases(entry.getValue().getName()))
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSpacesNotAllowedMessage(), entry.getKey());
+                else {
                     testCasesNames.add(entry.getValue().getName());
                 }
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getSubModuleName())) {
