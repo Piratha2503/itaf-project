@@ -25,4 +25,5 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     public void deleteById(Long id) {
         companyUserRepository.deleteById(id);
     }
+
 }

@@ -15,4 +15,5 @@ public interface UserService {
 
     boolean existsByStaffIdIgnoreCase(String staffId);
 
+    boolean existsByCompanyUserId(Long id);
 }
