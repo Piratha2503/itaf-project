@@ -534,7 +534,10 @@ public class StatusCodeBundle {
     private String CompanyUserIdNotExistMessage;
     @Value("${message.success.delete.CompanyUser}")
     private String CompanyUserDeleteSuccessMessage;
-
+    @Value("${code.validation.CompanyUser.dependent}")
+    private String CompanyUserDeleteDependentCode;
+    @Value("${message.validation.companyUser.dependent}")
+    private String CompanyUserDeleteDependentMessage;
 
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")

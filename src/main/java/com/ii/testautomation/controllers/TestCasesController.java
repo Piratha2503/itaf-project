@@ -46,7 +46,7 @@ public class TestCasesController {
         if (!subModulesService.existsBySubModuleId(testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSubModulesNotExistCode(), statusCodeBundle.getSubModuleNotExistsMessage()));
         }
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testCaseRequest.getName()))
+        if (!ragexMaintainance.checkSpaceBeforeAfterWordsTestCases(testCaseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesAlreadyExistsCode(), statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));
@@ -73,7 +73,10 @@ public class TestCasesController {
                     statusCodeBundle.getTestCasesNotExistCode(),
                     statusCodeBundle.getTestCasesNotExistsMessage()));
         }
-          if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
+        if (!ragexMaintainance.checkSpaceBeforeAfterWordsTestCases(testCaseRequest.getName()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+
+        if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestCasesAlreadyExistsCode(),
                     statusCodeBundle.getTestCaseNameAlreadyExistsMessage()));

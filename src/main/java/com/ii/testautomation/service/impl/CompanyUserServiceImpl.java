@@ -15,4 +15,15 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     public boolean existsByLicenseId(Long id) {
         return companyUserRepository.existsByLicensesId(id);
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return companyUserRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        companyUserRepository.deleteById(id);
+    }
+
 }

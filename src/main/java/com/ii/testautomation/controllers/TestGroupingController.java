@@ -235,9 +235,8 @@ public class TestGroupingController {
         if (executionHistoryService.existByTestGropingId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingDeleteDependentMessage()));
         }
-        if (schedulingService.existsByTestGroupingId(id)){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getTestGroupingDeleteDependentMessage()));
-    }
+        if (schedulingService.existsByTestGroupingId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestGroupingDeleteDependentMessage()));
         testGroupingService.deleteTestGroupingById(id, projectId);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestGroupingSuccessMessage()));
     }

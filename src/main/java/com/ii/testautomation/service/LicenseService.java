@@ -1,7 +1,6 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.LicenseRequest;
-import com.ii.testautomation.dto.response.LicenseResponse;
 
 public interface LicenseService {
     void createLicense(LicenseRequest licenseRequest);
@@ -10,9 +9,7 @@ public interface LicenseService {
 
     boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users);
 
-    boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users,Long id);
-
-    boolean existsById(Long id);
+    boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users, Long id);
 
     boolean isUpdateNameExists(String name, Long id);
 
