@@ -27,6 +27,5 @@ public class CompanyUserController {
         companyUserService.deleteById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getCompanyUserDeleteSuccessMessage()));
     }
-
 }
 
