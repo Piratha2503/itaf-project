@@ -249,17 +249,24 @@ public class SchedulingServiceImpl implements SchedulingService {
     public void staticScheduling() throws IOException {
         System.out.println("==========================================DYNAMIC===============");
         List<Scheduling> schedulingList = schedulingRepository.findAll();
-
         if (schedulingList != null && !schedulingList.isEmpty()) {
             for (Scheduling scheduling : schedulingList) {
                 LocalDateTime nextExecutionTime = scheduling.getNextExecutionTime();
-                LocalDateTime currentTime = LocalDateTime.now();
-                long secondsDifference = Duration.between(nextExecutionTime, currentTime).getSeconds();
+                LocalDateTime startDateTime = LocalDateTime.parse(nextExecutionTime.toString());
+                startDateTime = startDateTime.withSecond(0).withNano(0);
+                System.out.println(startDateTime);
+                LocalDateTime currentTime = LocalDateTime.parse(LocalDateTime.now().toString());
+                currentTime = currentTime.withSecond(0).withNano(0);
+                System.out.println(currentTime);
                 if (scheduling.getCount() < scheduling.getNoOfTimes()) {
-                    if (currentTime.isAfter(nextExecutionTime) && secondsDifference < 60) {
+                    if (currentTime.equals(startDateTime)) {
                         autoExecution(scheduling);
                         System.out.println("triggered " + scheduling.getCount() + scheduling.getName());
                     }
+                } else {
+                    int countLast = 0;
+                    scheduling.setCount(countLast);
+                    schedulingRepository.save(scheduling);
                 }
             }
         }
@@ -280,7 +287,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
         schedulingExecution(scheduling.getTestCasesIds(), projectId, groupId, scheduling.getId());
     }
-
 
     private void schedulingExecution(List<Long> testCaseIds, Long projectId, Long groupingId, Long schedulingId) throws IOException {
         TestGrouping testGrouping = testGroupingRepository.findById(groupingId).get();
@@ -311,6 +317,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         jarExecution(projectId, schedulingId);
     }
 
+
     private void jarExecution(Long projectId, Long schedulingId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
@@ -329,11 +336,10 @@ public class SchedulingServiceImpl implements SchedulingService {
             Process runProcess = runProcessBuilder.start();
             runProcess.waitFor();
             System.out.println("executed");
-            executionCount++;
+            executionCount = executionCount + 1;
             scheduling.setCount(executionCount);
             schedulingRepository.save(scheduling);
             updateNextExecutionTime(scheduling.getId());
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -341,16 +347,14 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     private void updateNextExecutionTime(Long id) {
         Scheduling scheduling = schedulingRepository.findById(id).get();
-        int year = scheduling.getStartDateTime().getYear();
-        int month = scheduling.getStartDateTime().getMonthValue();
-        int day = scheduling.getStartDateTime().getDayOfMonth();
-        int hour = scheduling.getStartDateTime().getHour();
-        int minute = scheduling.getStartDateTime().getMinute();
-        int second = scheduling.getStartDateTime().getSecond();
-
+        int year = scheduling.getNextExecutionTime().getYear();
+        int month = scheduling.getNextExecutionTime().getMonthValue();
+        int day = scheduling.getNextExecutionTime().getDayOfMonth();
+        int hour = scheduling.getNextExecutionTime().getHour();
+        int minute = scheduling.getNextExecutionTime().getMinute();
+        int second = scheduling.getNextExecutionTime().getSecond();
         YearMonth yearMonth = YearMonth.of(year, month);
         int totalDaysInMonth = yearMonth.lengthOfMonth();
-
         if (scheduling.getYear() > 0) {
             year = year + scheduling.getYear();
         }
@@ -383,25 +387,6 @@ public class SchedulingServiceImpl implements SchedulingService {
                     if (month > 12) {
                         month = month - 12;
                         year++;
-                    }
-                }
-            }
-        }
-        if (scheduling.getMinutes() > 0) {
-            minute = minute + scheduling.getMinutes();
-            if (minute >= 60) {
-                minute = minute - 60;
-                hour++;
-                if (hour >= 24) {
-                    hour = 0;
-                    day++;
-                    if (day >= totalDaysInMonth) {
-                        day = day - totalDaysInMonth;
-                        month++;
-                        if (month > 12) {
-                            month = month - 12;
-                            year++;
-                        }
                     }
                 }
             }
