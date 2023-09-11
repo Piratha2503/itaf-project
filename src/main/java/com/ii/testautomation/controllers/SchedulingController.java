@@ -219,7 +219,6 @@ public class SchedulingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSchedulingUpdateSuccessMessage()));
 
     }
-    D://Invicta/\vijinthikaAssi\hellen\Data.xlsx
     @GetMapping(EndpointURI.SHEDULING_PROJECTID)
     public ResponseEntity<Object> viewByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, @PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
