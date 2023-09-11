@@ -472,12 +472,12 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public boolean existsByScheduleOption(int month, int week, int minutes, int hour, int year,LocalDateTime startTime) {
-        return schedulingRepository.existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutes(startTime,year,month,week,hour,minutes);
+    public boolean existsByScheduleOption(int month, int week, int minutes, int hour, int year,LocalDateTime startTime,Long projectId) {
+        return schedulingRepository.existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutesAndTestGroupingProjectId(startTime,year,month,week,hour,minutes,projectId);
     }
 
     @Override
-    public boolean isUpdateScheduleOptionExists(int month, int week, int minutes, int hour, int year, LocalDateTime startDateTime, Long id) {
-        return schedulingRepository.existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutesAndIdNot(startDateTime,year,month,week,hour,minutes,id);
+    public boolean isUpdateScheduleOptionExists(int month, int week, int minutes, int hour, int year, LocalDateTime startDateTime, Long id,Long projectId) {
+        return schedulingRepository.existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutesAndTestGroupingProjectIdAndIdNot( startDateTime, year, month, week, hour, minutes, id,projectId);
     }
 }
