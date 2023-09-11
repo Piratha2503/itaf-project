@@ -89,10 +89,10 @@ public final class EndpointURI {
     public static final String EXECUTION_HISTORY_EMAIL = EXECUTION_HISTORY+"/email";
 
     // URLs for Scheduling History
-    public static final String SCHEDULING_BY_ID = BASE_API_PATH + "Scheduling"+ID;
-    public static final String SHEDULING_PROJECTID = BASE_API_PATH+"Scheduling"+"/Project"+ID;
+    public static final String SCHEDULING_BY_ID = BASE_API_PATH + "scheduling"+ID;
+    public static final String SCHEDULING_PROJECT_ID = BASE_API_PATH+"scheduling"+"/Project"+ID;
     public static final String TEST_SCHEDULING = BASE_API_PATH + "scheduling";
-    public static final String SCHEDULES = BASE_API_PATH+"Scheduling";
+    public static final String SCHEDULES = BASE_API_PATH+"scheduling";
 
     public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
    //URls for users
@@ -105,8 +105,10 @@ public final class EndpointURI {
     public static final String LICENSE = BASE_API_PATH + "License";
     public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
 
+
     //URLs for CompanyUser
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
+    public static final String COMPANY_USER_BY_ID = COMPANY_USERS+ID;
 
     //URLs for Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";

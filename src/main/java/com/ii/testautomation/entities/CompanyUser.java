@@ -6,10 +6,11 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.sql.Date;
 
-@Entity
 @Getter
 @Setter
+@Entity
 public class CompanyUser extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

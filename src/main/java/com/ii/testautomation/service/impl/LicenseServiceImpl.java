@@ -1,13 +1,11 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.LicenseRequest;
+import com.ii.testautomation.dto.response.LicenseResponse;
 import com.ii.testautomation.entities.Licenses;
-import com.ii.testautomation.repositories.LicenseRepository;
 import com.ii.testautomation.repositories.LicenseRepository;
 import com.ii.testautomation.service.LicenseService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +30,20 @@ public class LicenseServiceImpl implements LicenseService {
     public boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users) {
         return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration,no_of_projects,no_of_users);
     }
+
     @Override
-    public boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users,Long id) {
+    public boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users, Long id) {
         return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(duration,no_of_projects,no_of_users,id);
+    }
+
+    @Override
+    public boolean isUpdateNameExists(String name, Long id) {
+        return licenseRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+    }
+
+    @Override
+    public void deleteLicenseById(Long id) {
+        licenseRepository.deleteById(id);
     }
 
     @Override
@@ -43,11 +52,10 @@ public class LicenseServiceImpl implements LicenseService {
     }
 
     @Override
-    public boolean isUpdateNameExists(String name, Long id) {
-        return licenseRepository.existsByNameIgnoreCaseAndIdNot(name, id);
-    }
-    @Override
-    public void deleteLicenseById(Long id) {
-        licenseRepository.deleteById(id);
+    public LicenseResponse getLicenseById(Long licenseId) {
+        Licenses licenses=licenseRepository.findById(licenseId).get();
+        LicenseResponse licenseResponse=new LicenseResponse();
+        BeanUtils.copyProperties(licenses,licenseResponse);
+        return licenseResponse;
     }
 }

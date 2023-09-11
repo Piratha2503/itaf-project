@@ -3,7 +3,6 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
-import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.UserService;
@@ -11,11 +10,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -101,6 +97,11 @@ public class UserServiceImpl implements UserService {
                 .compact();
 
         return token;
+    }
+
+    @Override
+    public boolean existsByCompanyUserId(Long id) {
+        return userRepository.existsByCompanyUserId(id);
     }
 
 }

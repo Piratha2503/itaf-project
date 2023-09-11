@@ -10,8 +10,8 @@ import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.service.TestScenariosService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.RagexMaintainance;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,9 +30,6 @@ public class TestScenariosController {
     private TestGroupingService testGroupingService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-    @Autowired
-    private RagexMaintainance ragexMaintainance;
-
 
     @PostMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
@@ -46,7 +43,7 @@ public class TestScenariosController {
         if (testScenariosRequest.getTestCasesId().isEmpty() && testScenariosRequest.getMainModuleIds().isEmpty()
                 && testScenariosRequest.getModuleIds().isEmpty() && testScenariosRequest.getSubModuleIds().isEmpty())
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testScenariosRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(testScenariosRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(), testScenariosRequest.getProjectId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
@@ -74,7 +71,7 @@ public class TestScenariosController {
                     statusCodeBundle.getTestScenarioNameAndIdNullMessage()));
 
         }
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(testScenariosRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(testScenariosRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
 
         if (testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(), testScenariosRequest.getName(), testScenariosRequest.getProjectId())) {

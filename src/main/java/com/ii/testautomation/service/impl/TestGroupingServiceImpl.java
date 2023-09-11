@@ -334,9 +334,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 addedTestCaseNames.add(testCaseName);
             }
             BeanUtils.copyProperties(testCase, testCaseResponse);
-            testCaseResponse.setName(testCaseName);
             testCaseResponseList.add(testCaseResponse);
         }
+
         for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
             TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
             testScenarioNames.add(testScenario.getName());
@@ -344,7 +344,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
         }
-        List<String> excelFileNames = testGrouping.getExcelFilePath();
+         List<String> excelFileNames = testGrouping.getExcelFilePath();
         List<String> newExcelFileNames = new ArrayList<>();
         if (excelFileNames != null && !excelFileNames.isEmpty()) {
             for (String excelPath : excelFileNames
@@ -361,7 +361,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGroupingResponse.setTestCaseName(testCaseNames);
         testGroupingResponse.setTestScenarioIds(testScenarioIds);
         testGroupingResponse.setTestScenarioName(testScenarioNames);
-
         return testGroupingResponse;
     }
 
@@ -712,5 +711,4 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponseList;
     }
-
 }
