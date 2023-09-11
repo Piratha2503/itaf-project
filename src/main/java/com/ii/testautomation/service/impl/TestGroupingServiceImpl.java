@@ -324,8 +324,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         Set<String> addedTestCaseNames = new HashSet<>();
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
-        List<TestCaseResponseSorted> testCaseResponseSortedList = new ArrayList<>();
-        List<TestScenarioResponseSorted> testScenarioResponseSortedList = new ArrayList<>();
 
         for (TestCases testCase : testGrouping.getTestCases()) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
@@ -338,7 +336,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             BeanUtils.copyProperties(testCase, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);
         }
-        testGroupingResponse.setTestCaseResponseSortedList(testCaseResponseSortedList);
+
         for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
             TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
             testScenarioNames.add(testScenario.getName());
@@ -346,8 +344,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
         }
-        testGroupingResponse.setTestScenarioResponseSortedList(testScenarioResponseSortedList);
-        List<String> excelFileNames = testGrouping.getExcelFilePath();
+         List<String> excelFileNames = testGrouping.getExcelFilePath();
         List<String> newExcelFileNames = new ArrayList<>();
         if (excelFileNames != null && !excelFileNames.isEmpty()) {
             for (String excelPath : excelFileNames
@@ -364,7 +361,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGroupingResponse.setTestCaseName(testCaseNames);
         testGroupingResponse.setTestScenarioIds(testScenarioIds);
         testGroupingResponse.setTestScenarioName(testScenarioNames);
-
         return testGroupingResponse;
     }
 
