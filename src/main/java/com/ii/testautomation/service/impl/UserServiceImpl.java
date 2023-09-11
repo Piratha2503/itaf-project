@@ -1,8 +1,11 @@
 package com.ii.testautomation.service.impl;
-
 import com.ii.testautomation.dto.request.UserRequest;
+import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
+import com.ii.testautomation.repositories.CompanyUserRepository;
+import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.UserService;
 import io.jsonwebtoken.Claims;
@@ -18,20 +21,26 @@ import java.util.Date;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+    @Autowired
+    private DesignationRepository designationRepository;
+
+    @Autowired
+    private CompanyUserRepository companyUserRepository;
 
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
+        CompanyUser companyUser = new CompanyUser();
+        Designation designation = new Designation();
+        designation.setId(userRequest.getDesignationId());
+        companyUser.setId(userRequest.getCompanyUserId());
+        user.setDesignation(designation);
+        user.setCompanyUser(companyUser);
         user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
         generateToken(user);
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
     }
 
     @Override
@@ -67,17 +76,20 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmailIgnoreCase(email);
+    }
+
+    @Override
+    public boolean existsByContactNo(String contactNo) {
+        return userRepository.existsByContactNumberIgnoreCase(contactNo);
+    }
     private String generateToken(Users user) {
         Date expiryDate = new Date(System.currentTimeMillis() + 60000);
-        Claims claims = Jwts.claims()
-                .setIssuer(user.getId().toString())
-                .setIssuedAt(user.getUpdatedAt())
-                .setExpiration(expiryDate);
+        Claims claims = Jwts.claims().setIssuer(user.getId().toString()).setIssuedAt(user.getUpdatedAt()).setExpiration(expiryDate);
 
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS256, "secret")
-                .compact();
+        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, "secret").compact();
 
         return token;
     }
@@ -91,5 +103,4 @@ public class UserServiceImpl implements UserService {
     public boolean existsByDesignationId(Long designationId) {
         return userRepository.existsByDesignationId(designationId);
     }
-
 }
