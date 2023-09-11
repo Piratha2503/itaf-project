@@ -87,8 +87,8 @@ public final class EndpointURI {
     public static final String EXECUTION_HISTORY_EMAIL = EXECUTION_HISTORY+"/email";
 
     // URLs for Scheduling History
-    public static final String SCHEDULING_BY_ID = BASE_API_PATH + "Scheduling"+ID;
-    public static final String SHEDULING_PROJECTID = BASE_API_PATH+"Scheduling"+"/Project"+ID;
+    public static final String SCHEDULING_BY_ID = BASE_API_PATH + "scheduling"+ID;
+    public static final String SCHEDULING_PROJECT_ID = BASE_API_PATH+"scheduling"+"/Project"+ID;
     public static final String TEST_SCHEDULING = BASE_API_PATH + "scheduling";
     public static final String SCHEDULES = BASE_API_PATH+"scheduling";
 

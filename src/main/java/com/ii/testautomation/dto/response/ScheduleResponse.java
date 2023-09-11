@@ -23,6 +23,5 @@ public class ScheduleResponse {
     private int month;
     private int week;
     private int minutes;
-    private int count;
     private boolean status;
 }

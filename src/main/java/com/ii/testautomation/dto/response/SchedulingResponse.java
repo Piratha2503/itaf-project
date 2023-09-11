@@ -26,7 +26,6 @@ public class SchedulingResponse {
     private int month;
     private int week;
     private int minutes;
-    private int count;
     private boolean status;
 
 }

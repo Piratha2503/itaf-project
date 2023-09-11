@@ -195,7 +195,7 @@ public class SchedulingController {
 
     }
 
-    @GetMapping(EndpointURI.SHEDULING_PROJECTID)
+    @GetMapping(value = EndpointURI.SCHEDULING_PROJECT_ID)
     public ResponseEntity<Object> viewByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, @PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
@@ -204,7 +204,14 @@ public class SchedulingController {
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.viewByProjectId(id, pageable, pagination), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getScheduleViewSuccessMessage()));
     }
+    @GetMapping(value = EndpointURI.SCHEDULING_BY_ID)
+    public ResponseEntity<Object> getSchedulingById(@PathVariable Long id) {
+        if (!schedulingService.existById(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(), statusCodeBundle.getSchedulingIdNotExistMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.getSchedulingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetSchedulingSuccessMessage()));
 
+    }
     @DeleteMapping(value = EndpointURI.SCHEDULING_BY_ID)
     public ResponseEntity<Object> deleteSchedulingById(@PathVariable Long id) {
         if (!schedulingService.existById(id)) {
@@ -214,13 +221,5 @@ public class SchedulingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteSchedulingSuccessMessage()));
     }
 
-    @GetMapping(value = EndpointURI.SCHEDULING_BY_ID)
-    public ResponseEntity<Object> getSchedulingById(@PathVariable Long id) {
-        if (!schedulingService.existById(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(), statusCodeBundle.getSchedulingIdNotExistMessage()));
-        }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.getSchedulingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetSchedulingSuccessMessage()));
-
-    }
 
 }

@@ -113,13 +113,13 @@ public class SchedulingServiceImpl implements SchedulingService {
     public ScheduleResponse getSchedulingById(Long id) {
         ScheduleResponse scheduleResponse = new ScheduleResponse();
         Scheduling scheduling = schedulingRepository.findById(id).get();
-        scheduleResponse.setId(scheduling.getId());
-        scheduleResponse.setName(scheduling.getName());
+        BeanUtils.copyProperties(scheduling,scheduleResponse);
         scheduleResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
         scheduleResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
         Map<Integer, Long> testScenarios = new HashMap<>();
         Map<Integer, Long> testCase = new HashMap<>();
         String schedulingCode = scheduling.getSchedulingCode();
+        scheduleResponse.setSchedulingCode(schedulingCode);
         List<Sequence> sequences = sequenceRepository.findBySchedulingCode(schedulingCode);
         for (Sequence sequence : sequences) {
             Integer count = sequence.getCount();
@@ -153,6 +153,7 @@ public class SchedulingServiceImpl implements SchedulingService {
 
         for (Scheduling scheduling : schedulingList) {
             SchedulingResponse schedulingResponse = new SchedulingResponse();
+            BeanUtils.copyProperties(scheduling,schedulingResponse);
             schedulingResponse.setTestGroupingId(scheduling.getTestGrouping().getId());
             schedulingResponse.setTestGroupingName(scheduling.getTestGrouping().getName());
             List<String> testCaseNames = new ArrayList<>();
@@ -172,8 +173,6 @@ public class SchedulingServiceImpl implements SchedulingService {
             schedulingResponse.setTestCasesNames(testCaseNames);
             schedulingResponse.setTestScenarioIds(testScenariosId);
             schedulingResponse.setTestScenarioNames(testScenariosNames);
-            schedulingResponse.setId(scheduling.getId());
-            schedulingResponse.setName(scheduling.getName());
             schedulingResponseList.add(schedulingResponse);
         }
         return schedulingResponseList;
