@@ -4,6 +4,7 @@ import com.ii.testautomation.dto.request.CompanyUserRequest;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.repositories.CompanyUserRepository;
+import com.ii.testautomation.repositories.LicenseRepository;
 import com.ii.testautomation.service.CompanyUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,13 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     @Autowired
     private CompanyUserRepository companyUserRepository;
 
+    @Autowired
+    private LicenseRepository licenseRepository;
+
 
     @Override
     public boolean existsByLicenseId(Long id) {
-        return companyUserRepository.existsByLicensesId(id);
+        return licenseRepository.existsById(id);
     }
 
     @Override

@@ -50,4 +50,10 @@ public class LicenseServiceImpl implements LicenseService {
     public void deleteLicenseById(Long id) {
         licenseRepository.deleteById(id);
     }
+
+    @Override
+    public Licenses findById(Long id) {
+        return licenseRepository.findById(id).get();
+    }
+
 }

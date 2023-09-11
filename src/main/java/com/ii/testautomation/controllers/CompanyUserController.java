@@ -38,8 +38,13 @@ public class CompanyUserController {
         if (companyUserService.isExistsByFirstNameAndLastName(companyUserRequest.getFirstName(),companyUserRequest.getLastName())){
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserFirstNameAndLastNameAlreadyExistMessage()));
         }
+        if (companyUserRequest.getStartDate() != null && companyUserRequest.getEndDate() != null
+                && companyUserRequest.getStartDate().isAfter(companyUserRequest.getEndDate())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getStartDateCanNotBeAfterEndDateMessage()));
+        }
         companyUserService.saveCompanyUser(companyUserRequest);
-        return ResponseEntity.ok((new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserSuccessfullyInsertedMessage() )));
-    }
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getCompanyUserSuccessfullyInsertedMessage()));
+        }
+
 
 }

@@ -13,7 +13,7 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
-    boolean existsByStaffIdIgnoreCase(String staffId);
+   // boolean existsByStaffIdIgnoreCase(String staffId);
 
     boolean existsByDesignationId(Long designationId);
 }

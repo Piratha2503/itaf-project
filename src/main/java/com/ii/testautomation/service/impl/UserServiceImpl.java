@@ -85,10 +85,10 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-    @Override
-    public boolean existsByStaffIdIgnoreCase(String staffId) {
-        return userRepository.existsByStaffIdIgnoreCase(staffId);
-    }
+//    @Override
+//    public boolean existsByStaffIdIgnoreCase(String staffId) {
+//        return userRepository.existsByStaffIdIgnoreCase(staffId);
+//    }
 
     @Override
     public boolean existsByDesignationId(Long designationId) {
