@@ -11,7 +11,7 @@ import java.util.Properties;
 
 @Configuration
 @Component
-@PropertySource("classpath:MessagesAndCodes.properties")
+@PropertySource("classpath:emailConfig.properties")
 public class EmailConfiguration {
     @Value("${spring.mail.username}")
     private String username;
