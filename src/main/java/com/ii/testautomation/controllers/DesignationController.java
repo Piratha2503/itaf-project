@@ -37,10 +37,8 @@ public class DesignationController {
 
         if (!designationService.existById(designationRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
-
         if(designationService.existsByNameIdNot(designationRequest.getId(),designationRequest.getName()))
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationAlreadyExistsCode(),statusCodeBundle.getDesignationAlreadyExistsMessage()));
-
         designationService.saveDesignation(designationRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationUpdateSuccessMessage()));
 

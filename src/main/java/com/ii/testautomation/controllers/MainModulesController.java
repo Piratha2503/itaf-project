@@ -38,7 +38,6 @@ public class MainModulesController {
     @Autowired
     private ProjectService projectService;
 
-
     @PostMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
         if (!Utils.checkRagexBeforeAfterWords(mainModulesRequest.getName()))

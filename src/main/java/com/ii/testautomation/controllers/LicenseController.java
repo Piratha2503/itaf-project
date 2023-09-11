@@ -20,7 +20,6 @@ public class LicenseController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-
     @Autowired
     private CompanyUserService companyUserService;
 

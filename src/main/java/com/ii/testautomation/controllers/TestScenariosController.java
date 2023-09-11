@@ -31,7 +31,6 @@ public class TestScenariosController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
 
-
     @PostMapping(EndpointURI.TEST_SCENARIO)
     public ResponseEntity<Object> insertScenario(@RequestBody TestScenariosRequest testScenariosRequest) {
         if (testScenariosRequest.getName() == null || testScenariosRequest.getProjectId() == null)
