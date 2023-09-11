@@ -123,12 +123,13 @@ public class TestCasesController {
             for (Map.Entry<Integer, TestCaseRequest> entry : testCaseRequestList.entrySet()) {
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), entry.getKey());
-                } else if (testCasesNames.contains(entry.getValue().getName())) {
-                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameDuplicateMessage(), entry.getKey());
                 }
                 else if (!Utils.checkRagexBeforeAfterWordsTestCases(entry.getValue().getName()))
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSpacesNotAllowedMessage(), entry.getKey());
-                else {
+                else if (testCasesNames.contains(entry.getValue().getName())) {
+                    testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameDuplicateMessage(), entry.getKey());
+                }
+                 else {
                     testCasesNames.add(entry.getValue().getName());
                 }
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getSubModuleName())) {
