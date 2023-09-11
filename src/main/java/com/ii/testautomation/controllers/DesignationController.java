@@ -1,7 +1,6 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
-import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -10,6 +9,7 @@ import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
+import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,9 @@ import java.util.List;
 public class DesignationController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
+
+    @Autowired
+    private UserService userService;
     @Autowired
     private DesignationService designationService;
     @Autowired
@@ -53,6 +56,21 @@ public class DesignationController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designationService.getAllDesignationByCompanyId(companyId), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
     }
+
+    @DeleteMapping(EndpointURI.DESIGNATION_BY_ID)
+    public ResponseEntity<Object>deleteDesignation(@PathVariable Long id){
+
+    if (!designationService.existsById(id)){
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationNotExistsCode(),statusCodeBundle.getDesignationNotExistMessage()));
+    }
+    if (userService.existsByDesignationId(id)){
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
+    }
+     designationService.deleteDesignationById(id);
+    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getDesignationSuccessfullyDeletedMessage()));
+
+    }
+
 
     @PutMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> updateDesignation(@RequestBody DesignationRequest designationRequest) {

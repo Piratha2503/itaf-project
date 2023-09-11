@@ -115,6 +115,9 @@ public final class EndpointURI {
     // User
     public static final String USER = BASE_API_PATH + "user";
 
+    public static final String DESIGNATION_BY_ID = BASE_API_PATH + "designation"+ID;
+
+    public static final String LICENSES_BY_ID = BASE_API_PATH + "license"+ID;
     private EndpointURI() {
     }
 }

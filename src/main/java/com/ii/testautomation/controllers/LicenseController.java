@@ -2,6 +2,7 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.LicenseRequest;
 import com.ii.testautomation.dto.search.LicensesSearch;
+import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -52,6 +53,27 @@ public class LicenseController {
 
     @PutMapping(EndpointURI.LICENSE)
     public ResponseEntity<Object> UpdateLicense(@RequestBody LicenseRequest licenseRequest) {
+        Licenses existingLicense = licenseService.findById(licenseRequest.getId());
+
+        if (licenseRequest.getName() == null) {
+            licenseRequest.setName(existingLicense.getName());
+        }
+
+        if (licenseRequest.getDuration() == null) {
+            licenseRequest.setDuration(existingLicense.getDuration());
+        }
+
+        if (licenseRequest.getNoOfProjects() == null) {
+            licenseRequest.setNoOfProjects(existingLicense.getNoOfProjects());
+        }
+
+        if (licenseRequest.getNoOfUsers() == null) {
+            licenseRequest.setNoOfUsers(existingLicense.getNoOfUsers());
+        }
+        if (licenseRequest.getPrice() == null) {
+            licenseRequest.setPrice(existingLicense.getPrice());
+        }
+
         if (!licenseService.existsById(licenseRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicensePackageNotExistMessage()));
 
@@ -60,7 +82,8 @@ public class LicenseController {
 
         if (licenseService.isUpdateByDurationAndNoOfProjectsAndNoOfUsers(licenseRequest.getDuration(), licenseRequest.getNoOfProjects(), licenseRequest.getNoOfUsers(), licenseRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicensePackageAlreadyExistMessage()));
-        licenseService.createLicense(licenseRequest);
+
+                 licenseService.createLicense(licenseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseSuccessfullyUpdatedMessage()));
     }
 

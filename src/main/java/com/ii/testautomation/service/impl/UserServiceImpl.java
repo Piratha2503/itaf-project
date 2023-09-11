@@ -97,5 +97,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
+
+    }
+    @Override
+    public boolean existsByDesignationId(Long designationId) {
+        return userRepository.existsByDesignationId(designationId);
     }
 }

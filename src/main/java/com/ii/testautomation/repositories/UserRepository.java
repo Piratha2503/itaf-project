@@ -7,10 +7,9 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<Users, Long> {
     boolean existsByEmailIgnoreCase(String email);
-
     List<Users> findByCompanyUserId(Long companyId);
-
+    boolean existsByEmail(String email);
+    boolean existsByDesignationId(Long designationId);
     boolean existsByCompanyUserId(Long id);
-
     boolean existsByContactNumberIgnoreCase(String contactNo);
 }
