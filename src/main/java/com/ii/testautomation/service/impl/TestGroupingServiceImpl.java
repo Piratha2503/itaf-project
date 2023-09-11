@@ -3,10 +3,7 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.config.ProgressWebSocketHandler;
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
-import com.ii.testautomation.dto.response.ProgressResponse;
-import com.ii.testautomation.dto.response.TestCaseResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
-import com.ii.testautomation.dto.response.TestScenariosResponse;
+import com.ii.testautomation.dto.response.*;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -337,9 +334,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 addedTestCaseNames.add(testCaseName);
             }
             BeanUtils.copyProperties(testCase, testCaseResponse);
-            testCaseResponse.setName(testCaseName);
             testCaseResponseList.add(testCaseResponse);
         }
+
         for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
             TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
             testScenarioNames.add(testScenario.getName());
@@ -347,7 +344,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
         }
-        List<String> excelFileNames = testGrouping.getExcelFilePath();
+         List<String> excelFileNames = testGrouping.getExcelFilePath();
         List<String> newExcelFileNames = new ArrayList<>();
         if (excelFileNames != null && !excelFileNames.isEmpty()) {
             for (String excelPath : excelFileNames
@@ -364,7 +361,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGroupingResponse.setTestCaseName(testCaseNames);
         testGroupingResponse.setTestScenarioIds(testScenarioIds);
         testGroupingResponse.setTestScenarioName(testScenarioNames);
-
         return testGroupingResponse;
     }
 
@@ -695,5 +691,4 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponseList;
     }
-
 }
