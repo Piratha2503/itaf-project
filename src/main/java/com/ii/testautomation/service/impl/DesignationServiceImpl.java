@@ -21,8 +21,17 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
+    public boolean existsByNameIdNot(Long id,String name) {
+        return designationRepository.existsByNameIgnoreCaseAndIdNot(name,id);
+    }
+
+    @Override
     public boolean existsByName(String designationName) {
         return designationRepository.existsByNameIgnoreCase(designationName);
     }
 
+    @Override
+    public boolean existById(Long id) {
+        return designationRepository.existsById(id);
+    }
 }
