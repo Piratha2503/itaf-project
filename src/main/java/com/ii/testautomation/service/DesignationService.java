@@ -10,11 +10,10 @@ public interface DesignationService {
     void saveDesignation(DesignationRequest designationRequest);
 
     boolean existsByName(String designationName);
-     List<DesignationResponse> getAllDesignationByCompanyId(Long companyId);
 
-
+    List<DesignationResponse> getAllDesignationByCompanyId(Long companyId);
 
     boolean existById(Long id);
 
-    boolean existsByNameIdNot(Long id,String name);
+    boolean existsByNameIdNot(Long id, String name);
 }
