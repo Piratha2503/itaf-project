@@ -1,5 +1,6 @@
 package com.ii.testautomation.service.impl;
 
+import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
@@ -14,10 +15,15 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.catalina.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@PropertySource("classpath:MessagesAndCodes.properties")
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -26,16 +32,15 @@ public class UserServiceImpl implements UserService {
     private CompanyUserRepository companyUserRepository;
     @Autowired
     private DesignationRepository designationRepository;
+    @Autowired
+    private EmailConfiguration emailConfiguration;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
-    @Override
-    public void saveUser(UserRequest userRequest) {
-        Users user = new Users();
-        user.setStatus(LoginStatus.NEW.getStatus());
-        BeanUtils.copyProperties(userRequest, user);
-        userRepository.save(user);
-        Users userWithId = userRepository.findByEmail(userRequest.getEmail());
-        generateToken(userWithId);
-    }
+    @Value("${user.verification.email.subject}")
+    private String userVerificationMailSubject;
+    @Value("${user.verification.email.body}")
+    private String userVerificationMailBody;
 
     @Override
     public boolean existsByEmail(String email) {
@@ -136,5 +141,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
+
 
 }
