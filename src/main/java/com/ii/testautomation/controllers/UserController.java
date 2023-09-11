@@ -26,6 +26,12 @@ public class UserController {
 
     @PutMapping(EndpointURI.USERS)
     public ResponseEntity<Object> updateUser(@RequestBody UserRequest userRequest) {
+        if (userRequest.getId() == null)
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode() ,statusCodeBundle.getUserIdCannotBeNullMessage()));
+        if (userRequest.getCompanyUserId() == null)
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode() ,statusCodeBundle.getCompanyUserIdNullMessage()));
+        if (userRequest.getDesignationId() == null)
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode() ,statusCodeBundle.getDesignationIdNullMessage()));
         if (!userService.existsByUserId(userRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistCode() ,statusCodeBundle.getUserIdNotExistMessage()));
         if (userService.existsByEmailAndIdNot(userRequest.getEmail(),userRequest.getId()))
