@@ -53,7 +53,6 @@ public class DesignationController {
         }
 
 
-
     @GetMapping(value = EndpointURI.DESIGNATION_BY_COMPANY_ID)
     public ResponseEntity<Object> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
         if (!companyUserService.existsById(companyId)) {
@@ -92,7 +91,6 @@ public class DesignationController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
         designationService.saveDesignation(designationRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationUpdateSuccessMessage()));
-
     }
 
     @GetMapping(value = EndpointURI.DESIGNATION_BY_ID)

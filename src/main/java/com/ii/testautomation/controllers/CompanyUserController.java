@@ -1,5 +1,4 @@
 package com.ii.testautomation.controllers;
-
 import com.ii.testautomation.dto.request.CompanyUserRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -38,7 +37,8 @@ public class CompanyUserController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private CompanyUserService companyUserService;
-
+    @Autowired
+    private UserService userService;
     @Autowired
     private DesignationService designationService;
 
@@ -67,10 +67,6 @@ public class CompanyUserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getCompanyUserSuccessfullyInsertedMessage()));
         }
 
-
-    @Autowired
-    private UserService userService;
-
     @PutMapping(value = EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> UpdateCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
         if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
@@ -82,7 +78,9 @@ public class CompanyUserController {
         if (companyUserService.isUpdateCompanyUserNameExists(companyUserRequest.getCompanyName(),companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserNameAlReadyExistsMessage()));
         }
-     //   if(designationRequest.getName()==null){    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),            statusCodeBundle.))}
+        if(companyUserRequest.getCompanyName()==null||companyUserRequest.getCompanyName().isEmpty()){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
+        }
         if (companyUserService.isUpdateEmailExists(companyUserRequest.getEmail(),companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserEmailAlReadyExistsMessage()));
         }
