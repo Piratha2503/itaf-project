@@ -94,7 +94,8 @@ public final class EndpointURI {
 
     public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
    //URls for users
-    public static final String  USERS=BASE_API_PATH+"user";
+    public static final String  USERS=BASE_API_PATH+"users";
+    public static final String USERS_DELETE=USERS+ID;
     //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";
 

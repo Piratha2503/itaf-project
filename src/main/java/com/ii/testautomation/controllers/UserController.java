@@ -33,7 +33,7 @@ public class UserController {
 
     }
 
-    @DeleteMapping(value = EndpointURI.DELETE_USER)
+    @DeleteMapping(value = EndpointURI.USERS_DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         if (!userService.existsByUsersId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistCode(),
