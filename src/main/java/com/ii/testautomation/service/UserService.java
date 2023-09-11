@@ -11,9 +11,7 @@ public interface UserService {
 
     boolean checkExpiry(String token);
 
-   // boolean existsByEmail(String email);
-
- //   boolean existsByStaffIdIgnoreCase(String staffId);
+    boolean existsByEmail(String email);
 
     boolean existsByCompanyUserId(Long id);
 }
