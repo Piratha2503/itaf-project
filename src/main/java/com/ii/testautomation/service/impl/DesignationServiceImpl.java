@@ -31,6 +31,16 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
+    public boolean existsById(Long id) {
+        return designationRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteDesignationById(Long id) {
+        designationRepository.deleteById(id);
+    }
+
+    @Override
     public boolean existById(Long id) {
         return designationRepository.existsById(id);
     }
