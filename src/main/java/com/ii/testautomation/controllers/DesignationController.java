@@ -41,18 +41,19 @@ public class DesignationController {
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
         if (designationService.existsByName(designationRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
-        if(designationRequest.getName().isEmpty()||designationRequest.getName()==null){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getDesignationNullValuesMessage()));
         }
-        if (designationService.existsByName(designationRequest.getName())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getDesignationAlreadyExistsCode(),
-                    statusCodeBundle.getDesignationAlreadyExistsMessage()));
+            if (designationRequest.getName().isEmpty() || designationRequest.getName() == null) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationNullValuesMessage()));
+            }
+            if (designationService.existsByName(designationRequest.getName())) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
+            }
+            designationService.saveDesignation(designationRequest);
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationSaveSuccessMessage()));
         }
-        designationService.saveDesignation(designationRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationSaveSuccessMessage()));
-    }
+
+
+
     @GetMapping(value = EndpointURI.DESIGNATION_BY_COMPANY_ID)
     public ResponseEntity<Object> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
         if (!companyUserService.existsById(companyId)) {
@@ -67,16 +68,16 @@ public class DesignationController {
     }
 
     @DeleteMapping(EndpointURI.DESIGNATION_BY_ID)
-    public ResponseEntity<Object>deleteDesignation(@PathVariable Long id){
+    public ResponseEntity<Object> deleteDesignation(@PathVariable Long id) {
 
-    if (!designationService.existsById(id)){
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationNotExistsCode(),statusCodeBundle.getDesignationNotExistMessage()));
-    }
-    if (userService.existsByDesignationId(id)){
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
-    }
-     designationService.deleteDesignationById(id);
-    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getDesignationSuccessfullyDeletedMessage()));
+        if (!designationService.existsById(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistMessage()));
+        }
+//    if (userService.existsByDesignationId(id)){
+//        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
+//    }
+        designationService.deleteDesignationById(id);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationSuccessfullyDeletedMessage()));
     }
 
 
@@ -84,7 +85,7 @@ public class DesignationController {
     public ResponseEntity<Object> updateDesignation(@RequestBody DesignationRequest designationRequest) {
 
         if (designationRequest.getId() == null || designationRequest.getName() == null)
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationNullValuesMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationNullValuesMessage()));
         if (!designationService.existById(designationRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
         if (designationService.existsByNameIdNot(designationRequest.getId(), designationRequest.getName()))
@@ -93,6 +94,7 @@ public class DesignationController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationUpdateSuccessMessage()));
 
     }
+
     @GetMapping(value = EndpointURI.DESIGNATION_BY_ID)
     public ResponseEntity<Object> GetDesignationById(@PathVariable Long id) {
         if (!designationService.existById(id)) {
