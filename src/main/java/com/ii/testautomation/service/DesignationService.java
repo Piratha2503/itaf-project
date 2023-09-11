@@ -6,4 +6,8 @@ public interface DesignationService {
     void saveDesignation(DesignationRequest designationRequest);
 
     boolean existsByName(String designationName);
+
+    boolean existsById(Long id);
+
+    void deleteDesignationById(Long id);
 }

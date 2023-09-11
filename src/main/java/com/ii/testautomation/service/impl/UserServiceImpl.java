@@ -90,4 +90,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByStaffIdIgnoreCase(staffId);
     }
 
+    @Override
+    public boolean existsByDesignationId(Long designationId) {
+        return userRepository.existsByDesignationId(designationId);
+    }
+
 }

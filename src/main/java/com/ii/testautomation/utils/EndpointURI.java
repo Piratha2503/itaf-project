@@ -107,6 +107,8 @@ public final class EndpointURI {
     //Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
 
+    public static final String DESIGNATION_BY_ID = BASE_API_PATH + "designation"+ID;
+
     public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
     private EndpointURI() {
     }

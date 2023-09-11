@@ -524,9 +524,42 @@ public class StatusCodeBundle {
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
+    @Value("${code.validation.Designation.notExists}")
+    private String DesignationNotExistsCode;
+    @Value("${code.validation.Designation.dependent}")
+    private String DesignationDependentCode;
     //Designation Message
     @Value("${message.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsMessage;
     @Value("${message.success.designation.save}")
     private String designationSaveSuccessMessage;
+    @Value("${message.failure.package.NotExist.designation}")
+    private String designationNotExistMessage;
+    @Value("${message.validation.Designation.assigned}")
+    private String designationDeleteDependentMessage;
+    @Value("${message.Success.package.Delete.Designation}")
+    private String designationSuccessfullyDeletedMessage;
+    //CompanyUser Code
+    @Value("${code.validation.CompanyUser.alreadyExists}")
+    private String CompanyUserAlreadyExistCode;
+    @Value("${code.validation.CompanyUser.notExists}")
+    private String CompanyUserNotExistCode;
+    @Value("${code.validation.CompanyUser.dependent}")
+    private String CompanyUserDependentCode;
+
+
+    //CompanyUser Message
+    @Value("${message.success.insert.CompanyUser}")
+    private String CompanyUserSuccessfullyInsertedMessage;
+    @Value("${message.failure.name.AlreadyExist.CompanyUser}")
+    private String CompanyUserNameAlreadyExistMessage;
+    @Value("${message.failure.license.Id.NotFound}")
+    private String LicenseIdNotFoundMessage;
+    @Value("${message.failure.contactNumber.AlreadyExist.CompanyUser}")
+    private String CompanyUserContactNumberAlreadyExistMessage;
+    @Value("${message.failure.email.AlreadyExist.CompanyUser}")
+    private String CompanyUserEmailAlreadyExistMessage;
+    @Value("${message.failure.firstNameAndLastName.AlreadyExist.CompanyUser}")
+    private String CompanyUserFirstNameAndLastNameAlreadyExistMessage;
+
 }
