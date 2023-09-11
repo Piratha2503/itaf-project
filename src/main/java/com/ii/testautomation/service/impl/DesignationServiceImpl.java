@@ -17,8 +17,8 @@ public class DesignationServiceImpl implements DesignationService {
 
     @Override
     public void saveDesignation(DesignationRequest designationRequest) {
-        Designation designation=new Designation();
-        BeanUtils.copyProperties(designationRequest,designation);
+        Designation designation = new Designation();
+        BeanUtils.copyProperties(designationRequest, designation);
         designationRepository.save(designation);
     }
 
@@ -26,4 +26,5 @@ public class DesignationServiceImpl implements DesignationService {
     public boolean existsByName(String designationName) {
         return designationRepository.existsByNameIgnoreCase(designationName);
     }
+
 }
