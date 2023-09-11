@@ -22,15 +22,15 @@ public interface SchedulingService {
 
     boolean existsBySchedulingNameByTestGroupingAndProjectId(String name, Long projectId);
 
-    public void updateScheduling(SchedulingRequest schedulingRequest);
+    void updateScheduling(SchedulingRequest schedulingRequest);
 
     boolean isUpdateNameExists(String Name, Long projectId, Long schedulingId);
 
     boolean existsByTestCaseId(Long testCaseId);
 
-    boolean existsByTestGroupingId(Long testGroupingId);
-
     boolean existsByScheduleOption(int month, int week, int minutes, int hour, int year, LocalDateTime startTime);
 
     boolean isUpdateScheduleOptionExists(int month, int week, int minutes, int hour, int year, LocalDateTime startDateTime, Long id);
+
+    boolean existsByTestGroupingId(Long id);
 }

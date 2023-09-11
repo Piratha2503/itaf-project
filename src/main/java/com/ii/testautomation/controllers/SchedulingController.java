@@ -33,6 +33,7 @@ public class SchedulingController {
     private ProjectService projectService;
     @Autowired
     private TestGroupingService testGroupingService;
+
     @PostMapping(value = EndpointURI.SCHEDULES)
     public ResponseEntity<Object> saveScheduling(@RequestBody SchedulingRequest schedulingRequest) {
         if ((schedulingRequest.getTestScenario() == null || schedulingRequest.getTestScenario().isEmpty()) && (schedulingRequest.getTestCase() == null || schedulingRequest.getTestCase().isEmpty())) {
@@ -54,58 +55,45 @@ public class SchedulingController {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), "testCasesNotExists"));
             }
         }
-        if(schedulingRequest.getStartDateTime()==null)
-        {
+        if (schedulingRequest.getStartDateTime() == null) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),statusCodeBundle.getStartDateCannotNull()));
+                    statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateCannotNull()));
         }
         if (schedulingRequest.getNoOfTimes() <= 0) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(), statusCodeBundle.getNoOfTimesCannotNull()));
         }
-        if(schedulingRequest.getHour()<=0 &&schedulingRequest.getMonth()<=0 && schedulingRequest.getWeek()<=0 && schedulingRequest.getMinutes()<=0 && schedulingRequest.getYear()<=0)
-        {
+        if (schedulingRequest.getHour() <= 0 && schedulingRequest.getMonth() <= 0 && schedulingRequest.getWeek() <= 0 && schedulingRequest.getMinutes() <= 0 && schedulingRequest.getYear() <= 0) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSelectAtleastOne()));
         }
-        if(schedulingService.existsByScheduleOption(schedulingRequest.getMonth(),schedulingRequest.getWeek(),schedulingRequest.getMinutes(),schedulingRequest.getHour(),schedulingRequest.getYear(),schedulingRequest.getStartDateTime()))
-        {
+        if (schedulingService.existsByScheduleOption(schedulingRequest.getMonth(), schedulingRequest.getWeek(), schedulingRequest.getMinutes(), schedulingRequest.getHour(), schedulingRequest.getYear(), schedulingRequest.getStartDateTime())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSchedulingAlreadyExists()));
         }
-        if(schedulingRequest.getMinutes()>0)
-        {
-            if(schedulingRequest.getHour()>0 || schedulingRequest.getMonth()>0 || schedulingRequest.getWeek()>0 || schedulingRequest.getYear()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getMinutesWiseSelected()));
+        if (schedulingRequest.getMinutes() > 0) {
+            if (schedulingRequest.getHour() > 0 || schedulingRequest.getMonth() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getYear() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMinutesWiseSelected()));
             }
         }
-        if(schedulingRequest.getYear()>0)
-        {
-            if(schedulingRequest.getHour()>0 || schedulingRequest.getMonth()>0 || schedulingRequest.getWeek()>0 || schedulingRequest.getMinutes()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getYearWiseSelected()));
+        if (schedulingRequest.getYear() > 0) {
+            if (schedulingRequest.getHour() > 0 || schedulingRequest.getMonth() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getMinutes() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getYearWiseSelected()));
             }
         }
-        if(schedulingRequest.getMonth()>0)
-        {
-            if(schedulingRequest.getHour()>0 || schedulingRequest.getYear()>0 || schedulingRequest.getWeek()>0 || schedulingRequest.getMinutes()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getMonthWiseSelected()));
+        if (schedulingRequest.getMonth() > 0) {
+            if (schedulingRequest.getHour() > 0 || schedulingRequest.getYear() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getMinutes() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMonthWiseSelected()));
             }
         }
-        if(schedulingRequest.getWeek()>0)
-        {
-            if(schedulingRequest.getHour()>0 || schedulingRequest.getYear()>0 || schedulingRequest.getMonth()>0 || schedulingRequest.getMinutes()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getWeekWiseSelected()));
+        if (schedulingRequest.getWeek() > 0) {
+            if (schedulingRequest.getHour() > 0 || schedulingRequest.getYear() > 0 || schedulingRequest.getMonth() > 0 || schedulingRequest.getMinutes() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWeekWiseSelected()));
             }
         }
-        if(schedulingRequest.getHour()>0)
-        {
-            if(schedulingRequest.getWeek()>0 || schedulingRequest.getYear()>0 || schedulingRequest.getWeek()>0 || schedulingRequest.getMinutes()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getHourWiseSelected()));
+        if (schedulingRequest.getHour() > 0) {
+            if (schedulingRequest.getWeek() > 0 || schedulingRequest.getYear() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getMinutes() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHourWiseSelected()));
             }
         }
         if (!projectService.hasJarPath(schedulingRequest.getProjectId())) {
@@ -129,7 +117,7 @@ public class SchedulingController {
         if (!schedulingService.existById(schedulingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getSchedulingNotExistCode(), statusCodeBundle.getSchedulingNotExistMessage()));
         }
-        if (schedulingService.isUpdateNameExists(schedulingRequest.getName(),schedulingRequest.getProjectId(), schedulingRequest.getId())) {
+        if (schedulingService.isUpdateNameExists(schedulingRequest.getName(), schedulingRequest.getProjectId(), schedulingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSchedulingNameAlreadyExists()));
         }
         if ((schedulingRequest.getTestScenario() == null || schedulingRequest.getTestScenario().isEmpty()) && (schedulingRequest.getTestCase() == null || schedulingRequest.getTestCase().isEmpty())) {
@@ -151,58 +139,45 @@ public class SchedulingController {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), "testCasesNotExists"));
             }
         }
-        if(schedulingRequest.getStartDateTime()==null)
-        {
+        if (schedulingRequest.getStartDateTime() == null) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),statusCodeBundle.getStartDateCannotNull()));
+                    statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateCannotNull()));
         }
         if (schedulingRequest.getNoOfTimes() <= 0) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(), statusCodeBundle.getNoOfTimesCannotNull()));
         }
-        if(schedulingRequest.getHour()<=0 &&schedulingRequest.getMonth()<=0 && schedulingRequest.getWeek()<=0 && schedulingRequest.getMinutes()<=0 && schedulingRequest.getYear()<=0)
-        {
+        if (schedulingRequest.getHour() <= 0 && schedulingRequest.getMonth() <= 0 && schedulingRequest.getWeek() <= 0 && schedulingRequest.getMinutes() <= 0 && schedulingRequest.getYear() <= 0) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSelectAtleastOne()));
         }
-        if(schedulingService.isUpdateScheduleOptionExists(schedulingRequest.getMonth(),schedulingRequest.getWeek(),schedulingRequest.getMinutes(),schedulingRequest.getHour(),schedulingRequest.getYear(),schedulingRequest.getStartDateTime(),schedulingRequest.getId()))
-        {
+        if (schedulingService.isUpdateScheduleOptionExists(schedulingRequest.getMonth(), schedulingRequest.getWeek(), schedulingRequest.getMinutes(), schedulingRequest.getHour(), schedulingRequest.getYear(), schedulingRequest.getStartDateTime(), schedulingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSchedulingAlreadyExists()));
         }
-        if(schedulingRequest.getMinutes()>0)
-        {
-            if(schedulingRequest.getHour()>0 || schedulingRequest.getMonth()>0 || schedulingRequest.getWeek()>0 || schedulingRequest.getYear()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getMinutesWiseSelected()));
+        if (schedulingRequest.getMinutes() > 0) {
+            if (schedulingRequest.getHour() > 0 || schedulingRequest.getMonth() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getYear() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMinutesWiseSelected()));
             }
         }
-        if(schedulingRequest.getYear()>0)
-        {
-            if(schedulingRequest.getHour()>0 || schedulingRequest.getMonth()>0 || schedulingRequest.getWeek()>0 || schedulingRequest.getMinutes()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getYearWiseSelected()));
+        if (schedulingRequest.getYear() > 0) {
+            if (schedulingRequest.getHour() > 0 || schedulingRequest.getMonth() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getMinutes() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getYearWiseSelected()));
             }
         }
-        if(schedulingRequest.getMonth()>0)
-        {
-            if(schedulingRequest.getHour()>0 || schedulingRequest.getYear()>0 || schedulingRequest.getWeek()>0 || schedulingRequest.getMinutes()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getMonthWiseSelected()));
+        if (schedulingRequest.getMonth() > 0) {
+            if (schedulingRequest.getHour() > 0 || schedulingRequest.getYear() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getMinutes() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getMonthWiseSelected()));
             }
         }
-        if(schedulingRequest.getWeek()>0)
-        {
-            if(schedulingRequest.getHour()>0 || schedulingRequest.getYear()>0 || schedulingRequest.getMonth()>0 || schedulingRequest.getMinutes()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getWeekWiseSelected()));
+        if (schedulingRequest.getWeek() > 0) {
+            if (schedulingRequest.getHour() > 0 || schedulingRequest.getYear() > 0 || schedulingRequest.getMonth() > 0 || schedulingRequest.getMinutes() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getWeekWiseSelected()));
             }
         }
-        if(schedulingRequest.getHour()>0)
-        {
-            if(schedulingRequest.getWeek()>0 || schedulingRequest.getYear()>0 || schedulingRequest.getWeek()>0 || schedulingRequest.getMinutes()>0)
-            {
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getHourWiseSelected()));
+        if (schedulingRequest.getHour() > 0) {
+            if (schedulingRequest.getWeek() > 0 || schedulingRequest.getYear() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getMinutes() > 0) {
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHourWiseSelected()));
             }
         }
         if (!projectService.hasJarPath(schedulingRequest.getProjectId())) {
@@ -219,6 +194,7 @@ public class SchedulingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSchedulingUpdateSuccessMessage()));
 
     }
+
     @GetMapping(EndpointURI.SHEDULING_PROJECTID)
     public ResponseEntity<Object> viewByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, @PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {

@@ -100,14 +100,15 @@ public final class EndpointURI {
 
     // License
     public static final String LICENSE = BASE_API_PATH + "License";
+    public static final String LICENSE_BY_ID = LICENSE + ID;
 
     //CompanyUser
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
+    public static final String COMPANY_USER_BY_ID = COMPANY_USERS+ID;
 
     //Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
 
-    public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
     private EndpointURI() {
     }
 }

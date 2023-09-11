@@ -22,4 +22,5 @@ public interface SchedulingRepository extends JpaRepository<Scheduling, Long>, Q
     boolean existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutes(LocalDateTime startDateTime, int year, int month, int week, int hour, int minutes);
 
     boolean existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutesAndIdNot(LocalDateTime startDateTime, int year, int month, int week, int hour, int minutes, Long id);
+
 }

@@ -4,7 +4,7 @@ import com.ii.testautomation.entities.CompanyUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>, QuerydslPredicateExecutor<CompanyUser> {
+public interface CompanyUserRepository extends JpaRepository<CompanyUser,Long>, QuerydslPredicateExecutor<CompanyUser> {
     boolean existsByLicensesId(Long licenseId);
 
     boolean existsByCompanyNameIgnoreCase(String name);
@@ -14,6 +14,4 @@ public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>,
     boolean existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName);
 
     boolean existsByContactNumber(String contactNumber);
-
-
 }
