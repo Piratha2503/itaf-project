@@ -26,6 +26,10 @@ public class DesignationController {
 
     @PostMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
+        if(designationRequest.getName().isEmpty()||designationRequest.getName()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getDesignationNullValuesMessage()));
+        }
         if (designationService.existsByName(designationRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getDesignationAlreadyExistsCode(),
@@ -71,7 +75,7 @@ public class DesignationController {
         if (!designationService.existById(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATION, designationService.GetDesignationById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationByIdSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATION, designationService.getDesignationById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationByIdSuccessMessage()));
     }
 
 }

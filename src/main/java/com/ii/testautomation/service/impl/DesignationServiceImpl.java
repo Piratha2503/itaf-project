@@ -27,7 +27,7 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
-    public DesignationResponse GetDesignationById(Long id) {
+    public DesignationResponse getDesignationById(Long id) {
         Designation designation =designationRepository.findById(id).get();
         DesignationResponse designationResponse=new DesignationResponse();
         BeanUtils.copyProperties(designation,designationResponse);
