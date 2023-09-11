@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<Users,Long> {
-    boolean existsByEmail(String email);
-    boolean existsByStaffIdIgnoreCase(String staffId);
+//    boolean existsByEmail(String email);
+//    boolean existsByStaffIdIgnoreCase(String staffId);
 
     List<Users> findByCompanyUserId(Long companyId);
 }

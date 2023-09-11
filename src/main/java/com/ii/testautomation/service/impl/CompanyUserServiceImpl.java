@@ -1,7 +1,11 @@
 package com.ii.testautomation.service.impl;
 
+import com.ii.testautomation.dto.request.CompanyUserRequest;
+import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.service.CompanyUserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +13,16 @@ import org.springframework.stereotype.Service;
 public class CompanyUserServiceImpl implements CompanyUserService {
     @Autowired
     private CompanyUserRepository companyUserRepository;
+
+    @Override
+    public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
+        CompanyUser companyUser = new CompanyUser();
+        Licenses licenses=new Licenses();
+        licenses.setId(companyUserRequest.getLicenses_id());
+        companyUser.setLicenses(licenses);
+        BeanUtils.copyProperties(companyUserRequest, companyUser);
+        companyUserRepository.save(companyUser);
+    }
 
     @Override
     public boolean existsByCompanyUserId(Long id) {

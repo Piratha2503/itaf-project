@@ -105,11 +105,12 @@ public final class EndpointURI {
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
 
     //Designation
-
-
     public static final String DESIGNATION = BASE_API_PATH+"designation";
-    public static final String DESIGNATION_BY_COMPANY_ID = DESIGNATION + "/companyUsers" + ID;
+    public static final String DESIGNATION_BY_COMPANY_ID = DESIGNATION + "/companyUser/{companyId}";
     public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
+
+    // User
+    public static final String USER = BASE_API_PATH + "user";
     private EndpointURI() {
     }
 }
