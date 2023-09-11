@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
+import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.CompanyUserRepository;
@@ -33,8 +34,8 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
-    public boolean existsByNameIdNot(Long id,String name) {
-        return designationRepository.existsByNameIgnoreCaseAndIdNot(name,id);
+    public boolean existsByNameIdNot(Long id, String name) {
+        return designationRepository.existsByNameIgnoreCaseAndIdNot(name, id);
     }
 
     @Override
@@ -42,26 +43,27 @@ public class DesignationServiceImpl implements DesignationService {
         return designationRepository.existsByNameIgnoreCase(designationName);
     }
 
-@Override
-public List<DesignationResponse> getAllDesignationByCompanyId(Long companyId) {
-    List<Users> usersList = userRepository.findByCompanyUserId(companyId);
-    Set<Designation> uniqueDesignations = new HashSet<>();
+    @Override
+    public List<DesignationResponse> getAllDesignationByCompanyId(Long companyId) {
+        List<Users> usersList = userRepository.findByCompanyUserId(companyId);
+        Set<Designation> uniqueDesignations = new HashSet<>();
 
-    for (Users user : usersList) {
-        Designation designation = user.getDesignation();
-        if (designation != null) {
-            uniqueDesignations.add(designation);
+        for (Users user : usersList) {
+            Designation designation = user.getDesignation();
+            if (designation != null) {
+                uniqueDesignations.add(designation);
+            }
         }
+
+        List<DesignationResponse> designationResponseList = new ArrayList<>();
+        for (Designation uniqueDesignation : uniqueDesignations) {
+            DesignationResponse designationResponse = new DesignationResponse();
+            BeanUtils.copyProperties(uniqueDesignation, designationResponse);
+            designationResponseList.add(designationResponse);
+        }
+        return designationResponseList;
     }
 
-    List<DesignationResponse> designationResponseList = new ArrayList<>();
-    for (Designation uniqueDesignation : uniqueDesignations) {
-        DesignationResponse designationResponse = new DesignationResponse();
-        BeanUtils.copyProperties(uniqueDesignation, designationResponse);
-        designationResponseList.add(designationResponse);
-    }
-    return designationResponseList;
-    }
     @Override
     public boolean existById(Long id) {
         return designationRepository.existsById(id);

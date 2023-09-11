@@ -7,7 +7,7 @@ import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.entities.QLicenses;
 import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.ii.testautomation.repositories.LicenseRepository;
+
 import com.ii.testautomation.service.LicenseService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;

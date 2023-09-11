@@ -534,25 +534,9 @@ public class StatusCodeBundle {
     @Value("${message.failure.id.notExist.License}")
     private String LicenseIdNotExistMessage;
 
-    // CompanyUser Codes
-    @Value("${code.validation.CompanyUser.notExists}")
-    private String CompanyUserNotExistCode;
-    @Value("${code.validation.CompanyUser.dependent}")
-    private String CompanyUserDeleteDependentCode;
-    // Company User Messages
-    @Value("${message.failure.id.notExist.CompanyUser}")
-    private String CompanyUserIdNotExistMessage;
-    @Value("${message.success.delete.CompanyUser}")
-    private String CompanyUserDeleteSuccessMessage;
-    @Value("${message.validation.companyUser.dependent}")
-    private String CompanyUserDeleteDependentMessage;
-
-    //CompanyUser Message
-    @Value("${message.success.companyUser.getAll}")
-    public String getAllCompanyUserSuccessfully;
+    //Designation Code
     @Value("${code.validation.designation.NotExist}")
     private String DesignationNotExistsCode;
-    //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
     //Designation Message
@@ -570,16 +554,25 @@ public class StatusCodeBundle {
     private String companyUserAlReadyExistsCode;
     @Value("${code.validation.companyUser.notExists}")
     private String companyUserNotExistsCode;
-
+    @Value("${code.validation.CompanyUser.notExists}")
+    private String CompanyUserNotExistCode;
+    @Value("${code.validation.CompanyUser.dependent}")
+    private String CompanyUserDeleteDependentCode;
     //companyUser Message
-    @Value("${message.validation.companyUser.notExists}")
-    private String companyUserNotExistsMessage;
+    @Value("${message.failure.id.notExist.CompanyUser}")
+    private String CompanyUserIdNotExistMessage;
+    @Value("${message.success.delete.CompanyUser}")
+    private String CompanyUserDeleteSuccessMessage;
+    @Value("${message.validation.companyUser.dependent}")
+    private String CompanyUserDeleteDependentMessage;
+    @Value("${message.success.companyUser.getAll}")
+    public String getAllCompanyUserSuccessfully;
     @Value("${message.validation.companyUser.name.alreadyExists}")
-    private String companyUseNameAlReadyExistsMessage;
+    private String companyUserNameAlReadyExistsMessage;
     @Value("${message.validation.companyUser.email.alreadyExists}")
-    private String companyUseEmailAlReadyExistsMessage;
+    private String companyUserEmailAlReadyExistsMessage;
     @Value("${message.validation.companyUser.contactNo.alreadyExists}")
-    private String companyUseContactNoAlReadyExistsMessage;
+    private String companyUserContactNoAlReadyExistsMessage;
     @Value("${message.success.update.companyUser}")
     private String updateCompanyUserSuccessMessage;
 

@@ -21,7 +21,7 @@ boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long id);
     List<CompanyUserResponse> getAllCompanyUserWithMultiSearch(Pageable pageable, PaginatedContentResponse.Pagination pagination, CompanyUserSearch companyUserSearch);
 
     boolean existsByLicenseId(Long id);
-    boolean existsByCompanyId(Long id);
+
 
     boolean existsById(Long id);
 

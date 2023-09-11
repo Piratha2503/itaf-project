@@ -10,7 +10,6 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.LicenseService;
 import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.RagexMaintainance;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
@@ -40,31 +39,26 @@ public class CompanyUserController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private CompanyUserService companyUserService;
-    @Autowired
-    private RagexMaintainance ragexMaintainance;
+
 
     @PutMapping(value = EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> UpdateCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
 
         if (!companyUserService.existsByCompanyUserId(companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserNotExistsMessage()));
+                    statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(companyUserRequest.getCompanyName()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
-
         if (companyUserService.isUpdateCompanyUserNameExists(companyUserRequest.getCompanyName(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUseNameAlReadyExistsMessage()));
+                    statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserNameAlReadyExistsMessage()));
         }
         if (companyUserService.isUpdateEmailExists(companyUserRequest.getEmail(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUseEmailAlReadyExistsMessage()));
+                    statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserEmailAlReadyExistsMessage()));
         }
         if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUseContactNoAlReadyExistsMessage()));
+                    statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserContactNoAlReadyExistsMessage()));
         }
         if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(),

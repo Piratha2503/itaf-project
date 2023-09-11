@@ -28,8 +28,7 @@ public class LicenseController {
 
     @Autowired
     private CompanyUserService companyUserService;
-    @Autowired
-    private RagexMaintainance ragexMaintainance;
+
     @GetMapping(value= EndpointURI.LICENSES)
     public ResponseEntity<Object>getAllLicense(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
