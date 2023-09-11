@@ -18,5 +18,15 @@ public class SchedulingResponse {
     private List<Long> testScenarioIds;
     private List<String> testScenarioNames;
     private LocalDateTime nextExecutionTime;
+    private String schedulingCode;
+    private LocalDateTime startDateTime;
+    private int year;
+    private int hour;
+    private int noOfTimes;
+    private int month;
+    private int week;
+    private int minutes;
+    private int count;
+    private boolean status;
 
 }
