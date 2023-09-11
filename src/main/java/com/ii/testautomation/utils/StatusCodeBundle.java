@@ -521,6 +521,10 @@ public class StatusCodeBundle {
     private String LicenseSuccessfullyDeletedMessage;
     @Value("${message.validation.License.assigned}")
     private String LicenseDeleteDependentMessage;
+
+    //CompanyUser Message
+    @Value("${message.success.companyUser.getAll}")
+    public String getAllCompanyUserSuccessfully;
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
