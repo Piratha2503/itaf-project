@@ -23,7 +23,7 @@ public class Users extends DateAudit {
     private String contactNumber;
     @ManyToOne
     @JoinColumn(name = "designation_id", nullable = false)
-    private List<Designation> designation;
+    private Designation designation;
     @ManyToOne
     @JoinColumn(name = "company_user_id", nullable = false)
     private CompanyUser companyUser;
