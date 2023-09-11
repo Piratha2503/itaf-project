@@ -449,11 +449,10 @@ public class StatusCodeBundle {
     @Value("${message.error.endDate}")
     private String executionHistoryEndDateBeforeStartDateMessage;
 
-
     //Scheduling Code
     @Value("${code.failure.Id.notExist.scheduling}")
     private String schedulingNotExistCode;
-    //Scheduling Messages
+    //Scheduling
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingNotExistMessage;
     @Value("${message.success.delete.scheduling}")
@@ -470,6 +469,7 @@ public class StatusCodeBundle {
     private String schedulingTestCasesAndScenarioEmpty;
     @Value("${message.success.update.scheduling}")
     private String schedulingUpdateSuccessMessage;
+    //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
@@ -496,7 +496,6 @@ public class StatusCodeBundle {
     private String userAlreadyExistCode;
     @Value("${code.validation.user.notExists}")
     private String userNotExistCode;
-
     //login Messages
     @Value("${message.success.verify.registered}")
     private String RegistrationSuccessMessage;
@@ -512,11 +511,11 @@ public class StatusCodeBundle {
     private String saveUserSuccessMessage;
     @Value("${message.validation.user.name.alreadyExists}")
     private String userIdExistMessage;
-
+    @Value("${message.validation.user.contactNo.alreadyExists}")
+    private String UserContactNoAlReadyExistsMessage;
     // Ragex
     @Value("${message.failure.space}")
     private String SpacesNotAllowedMessage;
-
     // License Codes
     @Value("${code.validation.License.alreadyExists}")
     private String LicenseAlreadyExistCode;
@@ -524,6 +523,7 @@ public class StatusCodeBundle {
     private String LicenseNotExistCode;
     @Value("${message.validation.License.assigned}")
     private String LicenseDeleteDependentCode;
+
     // License Messages
     @Value("${message.success.insert.License}")
     private String LicenseInsertSuccessMessage;
@@ -539,16 +539,20 @@ public class StatusCodeBundle {
     private String LicenseSuccessfullyDeletedMessage;
     @Value("${message.validation.License.assigned}")
     private String LicenseDeleteDependentMessage;
+    @Value("${message.success.get.licenses}")
+    private String getLicenseSuccessMessage;
+    @Value("${message.validation.License.notExits}")
+    private String LicenseNotExistsMessage;
     @Value("${message.success.view.License}")
     private String LicenseViewSuccessMessage;
     @Value("${message.failure.id.notExist.License}")
     private String LicenseIdNotExistMessage;
-
-    // CompanyUser Codes
-    @Value("${code.validation.CompanyUser.notExists}")
-    private String CompanyUserNotExistCode;
+    //Designation Code
+    @Value("${message.success.getById.License}")
+    private String LicenseGetByIdSuccessMessage;
     @Value("${code.validation.CompanyUser.dependent}")
     private String CompanyUserDeleteDependentCode;
+
     // Company User Messages
     @Value("${message.failure.id.notExist.CompanyUser}")
     private String CompanyUserIdNotExistMessage;
@@ -556,24 +560,88 @@ public class StatusCodeBundle {
     private String CompanyUserDeleteSuccessMessage;
     @Value("${message.validation.companyUser.dependent}")
     private String CompanyUserDeleteDependentMessage;
+    @Value("${message.success.companyUser.getById}")
+    private  String getCompanyUserByIdSuccessMessage;
 
     //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")
     public String getAllCompanyUserSuccessfully;
-    @Value("${code.validation.designation.NotExist}")
+    @Value("${code.validation.Designation.notExists}")
     private String DesignationNotExistsCode;
+
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
+
+
     //Designation Message
+    @Value("${message.validation.designation.notExists}")
+    private String designationNotExistsMessage;
     @Value("${message.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsMessage;
     @Value("${message.success.designation.save}")
     private String designationSaveSuccessMessage;
+    @Value("${message.success.get.designation}")
+    private String getDesignationSuccessMessage;
     @Value("${message.success.designation.update}")
     private String designationUpdateSuccessMessage;
     @Value("${message.validation.designation.NotExist}")
     private String DesignationNotExistsMessage;
+    //companyUser code
+    @Value("${code.validation.companyUser.alreadyExists}")
+    private String companyUserAlReadyExistsCode;
+    @Value("${code.validation.companyUser.notExists}")
+    private String companyUserNotExistsCode;
+
+    //companyUser Message
+
+    @Value("${message.validation.companyUser.name.alreadyExists}")
+    private String companyUserNameAlReadyExistsMessage;
+    @Value("${message.validation.companyUser.email.alreadyExists}")
+    private String companyUserEmailAlReadyExistsMessage;
+    @Value("${message.validation.companyUser.contactNo.alreadyExists}")
+    private String companyUserContactNoAlReadyExistsMessage;
+    @Value("${message.success.update.companyUser}")
+    private String updateCompanyUserSuccessMessage;
+    @Value("${message.validation.get.designation.notHave}")
+    private String getCompanyuserIdNotHaveDesignation;
+    @Value("${message.failure.package.NotExist.designation}")
+    private String designationNotExistMessage;
+    @Value("${message.validation.Designation.assigned}")
+    private String designationDeleteDependentMessage;
+    @Value("${message.Success.package.Delete.Designation}")
+    private String designationSuccessfullyDeletedMessage;
+    @Value("${message.success.designation.getById}")
+    private String getDesignationByIdSuccessMessage;
+
+    //CompanyUser Code
+    @Value("${code.validation.CompanyUser.alreadyExists}")
+    private String CompanyUserAlreadyExistCode;
+    @Value("${code.validation.CompanyUser.notExists}")
+    private String CompanyUserNotExistCode;
+    @Value("${code.validation.CompanyUser.dependent}")
+    private String CompanyUserDependentCode;
+    @Value("${code.validation.CompanyUser.emailAlreadyExists}")
+    private String CompanyUserEmailAlreadyExistsCode;
+    @Value("${code.validation.CompanyUser.contactNumberAlreadyExists}")
+    private String CompanyUserContactNumberAlreadyExistsCode;
+
+
+    //CompanyUser Message
+    @Value("${message.success.insert.CompanyUser}")
+    private String CompanyUserSuccessfullyInsertedMessage;
+    @Value("${message.failure.name.AlreadyExist.CompanyUser}")
+    private String CompanyUserNameAlreadyExistMessage;
+    @Value("${message.failure.license.Id.NotFound}")
+    private String LicenseIdNotFoundMessage;
+    @Value("${message.failure.contactNumber.AlreadyExist.CompanyUser}")
+    private String CompanyUserContactNumberAlreadyExistMessage;
+    @Value("${message.failure.email.AlreadyExist.CompanyUser}")
+    private String CompanyUserEmailAlreadyExistMessage;
+    @Value("${message.failure.firstNameAndLastName.AlreadyExist.CompanyUser}")
+    private String CompanyUserFirstNameAndLastNameAlreadyExistMessage;
+    @Value("${message.failure.CompanyUser.StartAndEndDate.NotMatched}")
+    private String StartDateCanNotBeAfterEndDateMessage;
     @Value("${message.failure.designation.nullValues}")
     private String DesignationNullValuesMessage;
 
