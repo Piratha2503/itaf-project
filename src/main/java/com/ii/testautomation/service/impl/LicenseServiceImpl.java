@@ -28,7 +28,6 @@ public class LicenseServiceImpl implements LicenseService {
     private LicensesRepository licenseRepository;
 
 
-
     @Override
     public List<LicenseResponse> multiSearchLicensesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, LicensesSearch licensesSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -51,7 +50,7 @@ public class LicenseServiceImpl implements LicenseService {
     @Override
     public void createLicense(LicenseRequest licenseRequest) {
         Licenses licenses = new Licenses();
-        BeanUtils.copyProperties(licenseRequest,licenses);
+        BeanUtils.copyProperties(licenseRequest, licenses);
         licenseRepository.save(licenses);
     }
 
@@ -62,12 +61,12 @@ public class LicenseServiceImpl implements LicenseService {
 
     @Override
     public boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users) {
-        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration,no_of_projects,no_of_users);
+        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration, no_of_projects, no_of_users);
     }
 
     @Override
     public boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users, Long id) {
-        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(duration,no_of_projects,no_of_users,id);
+        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(duration, no_of_projects, no_of_users, id);
     }
 
     @Override
@@ -79,7 +78,6 @@ public class LicenseServiceImpl implements LicenseService {
     public void deleteLicenseById(Long id) {
         licenseRepository.deleteById(id);
     }
-
 
 
     @Override
