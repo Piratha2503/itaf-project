@@ -9,15 +9,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<Users,Long> {
-//    boolean existsByEmail(String email);
-//    boolean existsByStaffIdIgnoreCase(String staffId);
-
-
+public interface UserRepository extends JpaRepository<Users, Long> {
 
     boolean existsByEmail(String email);
-    @Query("SELECT u.designation FROM Users u WHERE u.companyUser = :companyUser")
-    List<Designation> findByCompanyUser(@Param("companyUser")CompanyUser companyUser);
 
     List<Users> findByDesignation(Designation designation);
 
