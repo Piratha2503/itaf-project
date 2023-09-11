@@ -38,7 +38,6 @@ public class UserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserAlreadyExistCode() ,statusCodeBundle.getUserContactNumberAlreadyExistMessage()));
         userService.updateUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserUpdateSuccessMessage()));
-
     }
 
     public ResponseEntity<Object> verifyUser(@PathVariable String token) {
