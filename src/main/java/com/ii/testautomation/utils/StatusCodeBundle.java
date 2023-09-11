@@ -564,17 +564,16 @@ public class StatusCodeBundle {
     private String CompanyUserDeleteDependentMessage;
     @Value("${message.success.companyUser.getById}")
     private  String getCompanyUserByIdSuccessMessage;
-
-    //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")
     public String getAllCompanyUserSuccessfully;
-    @Value("${code.validation.Designation.notExists}")
-    private String DesignationNotExistsCode;
 
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
-
+    @Value("${code.validation.Designation.dependent}")
+    private String DesignationDependentCode;
+    @Value("${code.validation.Designation.notExists}")
+    private String DesignationNotExistsCode;
 
     //Designation Message
     @Value("${message.validation.designation.notExists}")
@@ -589,14 +588,8 @@ public class StatusCodeBundle {
     private String designationUpdateSuccessMessage;
     @Value("${message.validation.designation.NotExist}")
     private String DesignationNotExistsMessage;
-    //companyUser code
-    @Value("${code.validation.companyUser.alreadyExists}")
-    private String companyUserAlReadyExistsCode;
-    @Value("${code.validation.companyUser.notExists}")
-    private String companyUserNotExistsCode;
 
     //companyUser Message
-
     @Value("${message.validation.companyUser.name.alreadyExists}")
     private String companyUserNameAlReadyExistsMessage;
     @Value("${message.validation.companyUser.email.alreadyExists}")
@@ -627,7 +620,6 @@ public class StatusCodeBundle {
     private String CompanyUserEmailAlreadyExistsCode;
     @Value("${code.validation.CompanyUser.contactNumberAlreadyExists}")
     private String CompanyUserContactNumberAlreadyExistsCode;
-
 
     //CompanyUser Message
     @Value("${message.success.insert.CompanyUser}")

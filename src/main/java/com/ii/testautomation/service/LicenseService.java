@@ -7,6 +7,7 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+
 import com.ii.testautomation.entities.Licenses;
 
 public interface LicenseService {
@@ -27,5 +28,6 @@ public interface LicenseService {
     Licenses findById(Long id);
 
     boolean existsById(Long id);
+
     LicenseResponse getLicenseById(Long licenseId);
 }
