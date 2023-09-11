@@ -3,10 +3,7 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.config.ProgressWebSocketHandler;
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
-import com.ii.testautomation.dto.response.ProgressResponse;
-import com.ii.testautomation.dto.response.TestCaseResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
-import com.ii.testautomation.dto.response.TestScenariosResponse;
+import com.ii.testautomation.dto.response.*;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -327,6 +324,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         Set<String> addedTestCaseNames = new HashSet<>();
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
+        List<TestCaseResponseSorted> testCaseResponseSortedList = new ArrayList<>();
 
         for (TestCases testCase : testGrouping.getTestCases()) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
@@ -336,6 +334,14 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 testCaseIds.add(testCase.getId());
                 addedTestCaseNames.add(testCaseName);
             }
+            TestCaseResponseSorted testCaseResponseSorted = new TestCaseResponseSorted();
+            testCaseResponseSorted.setId(testCase.getId());
+            testCaseResponseSorted.setName(testCase.getName());
+            if (schedulingRepository.existsByTestGroupingId(testCase.getId()))
+                testCaseResponseSorted.setScheduledStatus(false);
+            else testCaseResponseSorted.setScheduledStatus(true);
+            testCaseResponseSortedList.add(testCaseResponseSorted);
+            testCaseResponse.setTestCaseResponseSortedList(testCaseResponseSortedList);
             BeanUtils.copyProperties(testCase, testCaseResponse);
             testCaseResponse.setName(testCaseName);
             testCaseResponseList.add(testCaseResponse);

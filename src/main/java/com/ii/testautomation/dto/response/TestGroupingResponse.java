@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -24,4 +25,6 @@ public class TestGroupingResponse {
     private List<String> excelFile;
     private List<TestScenariosResponse> testScenariosResponseList;
     private List<TestCaseResponse> testCaseResponseList;
+    private Map<Long,Boolean> sortedTestCaseIds;
+    private Map<String,Boolean> sortedTestCaseName;
 }
