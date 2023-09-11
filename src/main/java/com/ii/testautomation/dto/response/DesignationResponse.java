@@ -6,4 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DesignationResponse {
+    private Long id;
+    private String name;
 }

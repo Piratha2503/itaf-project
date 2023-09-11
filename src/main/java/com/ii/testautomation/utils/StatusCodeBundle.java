@@ -578,6 +578,8 @@ public class StatusCodeBundle {
     private String DesignationNotExistsMessage;
     @Value("${message.failure.designation.nullValues}")
     private String DesignationNullValuesMessage;
+    @Value("${message.success.designation.getById}")
+    private String getDesignationByIdSuccessMessage;
 
     //User Codes
     @Value("${code.validation.user.alreadyExists}")
