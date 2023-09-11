@@ -33,7 +33,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
         CompanyUser companyUser = new CompanyUser();
-        Licenses licenses=licensesRepository.findById(companyUserRequest.getLicenses_id()).get();
+        Licenses licenses = licensesRepository.findById(companyUserRequest.getLicenses_id()).get();
         companyUser.setLicenses(licenses);
         BeanUtils.copyProperties(companyUserRequest, companyUser);
         companyUserRepository.save(companyUser);
@@ -45,19 +45,20 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     }
 
     @Override
-    public boolean isUpdateCompanyUserNameExists(String name,Long licensesId, Long id) {
+    public boolean isUpdateCompanyUserNameExists(String name, Long licensesId, Long id) {
         return companyUserRepository.existsByCompanyNameIgnoreCaseAndLicensesIdAndIdNot(name, licensesId, id);
     }
 
-    public boolean isUpdateEmailExists(String email, Long licensesId,Long id) {
+    public boolean isUpdateEmailExists(String email, Long licensesId, Long id) {
         return companyUserRepository.existsByEmailIgnoreCaseAndLicensesIdAndIdNot(email, licensesId, id);
     }
 
     @Override
-    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long licensesId, Long id) {
-        return companyUserRepository.existsByContactNumberIgnoreCaseAndLicensesIdAndIdNot(contactNumber,licensesId,id);
+    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long licensesId, Long id) {
+        return companyUserRepository.existsByContactNumberIgnoreCaseAndLicensesIdAndIdNot(contactNumber, licensesId, id);
 
     }
+
     @Override
     public List<CompanyUserResponse> getAllCompanyUserWithMultiSearch(Pageable pageable, PaginatedContentResponse.Pagination pagination, CompanyUserSearch companyUserSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();

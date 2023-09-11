@@ -22,9 +22,9 @@ import java.util.Date;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-   private UsersRepository userRepository;
+    private UsersRepository userRepository;
     @Autowired
-   private DesignationRepository designationRepository;
+    private DesignationRepository designationRepository;
 
     @Autowired
     private CompanyUserRepository companyUserRepository;
@@ -32,8 +32,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
-        CompanyUser companyUser=new CompanyUser();
-        Designation designation=new Designation();
+        CompanyUser companyUser = new CompanyUser();
+        Designation designation = new Designation();
         designation.setId(userRequest.getDesignationId());
         companyUser.setId(userRequest.getCompanyUserId());
         user.setDesignation(designation);
@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         generateToken(user);
     }
+
     @Override
     public void verifyUser(String token) {
         Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(token).getBody();
@@ -89,15 +90,9 @@ public class UserServiceImpl implements UserService {
 
     private String generateToken(Users user) {
         Date expiryDate = new Date(System.currentTimeMillis() + 60000);
-        Claims claims = Jwts.claims()
-                .setIssuer(user.getId().toString())
-                .setIssuedAt(user.getUpdatedAt())
-                .setExpiration(expiryDate);
+        Claims claims = Jwts.claims().setIssuer(user.getId().toString()).setIssuedAt(user.getUpdatedAt()).setExpiration(expiryDate);
 
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS256, "secret")
-                .compact();
+        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, "secret").compact();
 
         return token;
     }
@@ -106,7 +101,4 @@ public class UserServiceImpl implements UserService {
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
     }
-
-
-
 }
