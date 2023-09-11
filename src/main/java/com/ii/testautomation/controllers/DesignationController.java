@@ -77,5 +77,4 @@ public class DesignationController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATION, designationService.getDesignationById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationByIdSuccessMessage()));
     }
-
 }
