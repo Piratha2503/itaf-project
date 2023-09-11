@@ -577,14 +577,31 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         for (Scheduling scheduling : schedulingList
         ){
             List<TestCases> testCasesList=scheduling.getTestCases();
-            for (TestCases testCases : testCasesList
-            ){
-                SchedulingGroupingTestCases schedulingGroupingTestCases1=new SchedulingGroupingTestCases();
-                schedulingGroupingTestCases1.setSchedulingId(scheduling.getId());
-                schedulingGroupingTestCases1.setTestCaseId(testCases.getId());
-                schedulingGroupingTestCases1.setTestCaseName(testCases.getName());
-                schedulingGroupingTestCases1.setGroupId(groupId);
-                schedulingGroupingTestCases.add(schedulingGroupingTestCases1);
+            if(testCasesList!=null) {
+                for (TestCases testCases : testCasesList
+                ) {
+                    SchedulingGroupingTestCases schedulingGroupingTestCases1 = new SchedulingGroupingTestCases();
+                    schedulingGroupingTestCases1.setSchedulingId(scheduling.getId());
+                    schedulingGroupingTestCases1.setTestCaseId(testCases.getId());
+                    schedulingGroupingTestCases1.setTestCaseName(testCases.getName());
+                    schedulingGroupingTestCases1.setGroupId(groupId);
+                    schedulingGroupingTestCases.add(schedulingGroupingTestCases1);
+                }
+            }
+            List<TestScenarios> testScenariosList=scheduling.getTestScenarios();
+            if(testScenariosList!=null) {
+                for (TestScenarios testScenarios : testScenariosList
+                ) {
+                    for (TestCases testCases : testScenarios.getTestCases()
+                    ) {
+                        SchedulingGroupingTestCases schedulingGroupingTestCases1 = new SchedulingGroupingTestCases();
+                        schedulingGroupingTestCases1.setSchedulingId(scheduling.getId());
+                        schedulingGroupingTestCases1.setTestCaseId(testCases.getId());
+                        schedulingGroupingTestCases1.setTestCaseName(testCases.getName());
+                        schedulingGroupingTestCases1.setGroupId(groupId);
+                        schedulingGroupingTestCases.add(schedulingGroupingTestCases1);
+                    }
+                }
             }
         }
         return schedulingGroupingTestCases;

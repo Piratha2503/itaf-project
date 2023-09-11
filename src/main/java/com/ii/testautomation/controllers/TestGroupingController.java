@@ -288,7 +288,7 @@ public class TestGroupingController {
         {
            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),statusCodeBundle.getGroupingNotHaveTScheduledTestCases()));
         }
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getTestGroupingTestCasesSuccessfully()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING_SCHEDULING_TESTCASES,schedulingGroupingTestCases,RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getTestGroupingTestCasesSuccessfully()));
     }
 
 }
