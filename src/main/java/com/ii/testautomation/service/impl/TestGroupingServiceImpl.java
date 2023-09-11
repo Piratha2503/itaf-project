@@ -364,10 +364,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         return testGroupingResponse;
     }
 
-    @Override
-    public int calculatePercentage() {
-        return 0;
-    }
+  
 
     @Override
     public boolean existByProjectId(Long projectId) {

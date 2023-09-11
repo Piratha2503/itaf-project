@@ -35,7 +35,6 @@ public interface TestGroupingService {
 
     TestGroupingResponse getTestGroupingById(Long id);
 
-    int calculatePercentage();
 
     boolean existByProjectId(Long projectId);
 
