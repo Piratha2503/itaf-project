@@ -6,6 +6,7 @@ import com.ii.testautomation.dto.response.SchedulingResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SchedulingService {
@@ -23,9 +24,13 @@ public interface SchedulingService {
 
     public void updateScheduling(SchedulingRequest schedulingRequest);
 
-    boolean isUpdateNameExists(String Name, Long SchedulingId);
+    boolean isUpdateNameExists(String Name, Long projectId, Long schedulingId);
 
     boolean existsByTestCaseId(Long testCaseId);
 
     boolean existsByTestGroupingId(Long testGroupingId);
+
+    boolean existsByScheduleOption(int month, int week, int minutes, int hour, int year, LocalDateTime startTime);
+
+    boolean isUpdateScheduleOptionExists(int month, int week, int minutes, int hour, int year, LocalDateTime startDateTime, Long id);
 }

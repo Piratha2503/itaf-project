@@ -237,8 +237,8 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public boolean isUpdateNameExists(String Name, Long schedulingId) {
-        return schedulingRepository.existsByNameIgnoreCaseAndIdNot(Name, schedulingId);
+    public boolean isUpdateNameExists(String Name, Long projectId,Long schedulingId) {
+        return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(Name,projectId,schedulingId);
     }
 
     @Transactional
@@ -470,5 +470,15 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Override
     public boolean existsByTestGroupingId(Long testGroupingId) {
         return schedulingRepository.existsByTestGroupingId(testGroupingId);
+    }
+
+    @Override
+    public boolean existsByScheduleOption(int month, int week, int minutes, int hour, int year,LocalDateTime startTime) {
+        return schedulingRepository.existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutes(startTime,year,month,week,hour,minutes);
+    }
+
+    @Override
+    public boolean isUpdateScheduleOptionExists(int month, int week, int minutes, int hour, int year, LocalDateTime startDateTime, Long id) {
+        return schedulingRepository.existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutesAndIdNot(startDateTime,year,month,week,hour,minutes,id);
     }
 }
