@@ -32,7 +32,9 @@ public class CompanyUserController {
 
     @PutMapping(value = EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> UpdateCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
-
+        if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseNotExistsMessage()));
+        }
         if (!companyUserService.existsByCompanyUserId(companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
@@ -44,9 +46,6 @@ public class CompanyUserController {
         }
         if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserContactNoAlReadyExistsMessage()));
-        }
-        if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseNotExistsMessage()));
         }
         companyUserService.saveCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateCompanyUserSuccessMessage()));
