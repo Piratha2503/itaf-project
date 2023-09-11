@@ -453,7 +453,7 @@ public class StatusCodeBundle {
     //Scheduling Code
     @Value("${code.failure.Id.notExist.scheduling}")
     private String schedulingNotExistCode;
-    //Scheduling
+    //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingNotExistMessage;
     @Value("${message.success.delete.scheduling}")
@@ -464,16 +464,32 @@ public class StatusCodeBundle {
     private String saveTestSchedulingSuccessMessage;
     @Value("${message.failure.name.AlreadyExist.Scheduling}")
     private String schedulingNameAlreadyExists;
+    @Value("${message.validation.AlreadyExist.Scheduling}")
+    private String schedulingAlreadyExists;
     @Value("${message.failure.scheduling.Empty}")
     private String schedulingTestCasesAndScenarioEmpty;
     @Value("${message.success.update.scheduling}")
     private String schedulingUpdateSuccessMessage;
-
-    //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
+    @Value("${message.validation.startDate.null.scheduling}")
+    private String StartDateCannotNull;
+    @Value("${message.validation.noOfTimes.null.scheduling}")
+    private String noOfTimesCannotNull;
+    @Value("${message.validation.minutes.selected.scheduling}")
+    private String minutesWiseSelected;
+    @Value("${message.validation.week.selected.scheduling}")
+    private String weekWiseSelected;
+    @Value("${message.validation.month.selected.scheduling}")
+    private String monthWiseSelected;
+    @Value("${message.validation.year.selected.scheduling}")
+    private String yearWiseSelected;
+    @Value("${message.validation.hour.selected.scheduling}")
+    private String hourWiseSelected;
+    @Value("${message.validation.select.atleast.scheduling}")
+    private String selectAtleastOne;
 
     //login Codes
     @Value("${code.validation.user.alreadyExists}")
