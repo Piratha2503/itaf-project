@@ -338,12 +338,11 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             TestCaseResponseSorted testCaseResponseSorted = new TestCaseResponseSorted();
             testCaseResponseSorted.setId(testCase.getId());
             testCaseResponseSorted.setName(testCase.getName());
-            if (schedulingRepository.existsByTestCasesId(testCase.getId()))
+            if (schedulingRepository.existsByTestCasesIdAndTestGroupingId(testCase.getId(),testGrouping.getId()))
                 testCaseResponseSorted.setScheduledStatus(false);
             else testCaseResponseSorted.setScheduledStatus(true);
             testCaseResponseSortedList.add(testCaseResponseSorted);
             BeanUtils.copyProperties(testCase, testCaseResponse);
-            testCaseResponse.setName(testCaseName);
             testCaseResponseList.add(testCaseResponse);
         }
         testGroupingResponse.setTestCaseResponseSortedList(testCaseResponseSortedList);
@@ -356,7 +355,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             TestScenarioResponseSorted testScenarioResponseSorted = new TestScenarioResponseSorted();
             testScenarioResponseSorted.setId(testScenario.getId());
             testScenarioResponseSorted.setName(testScenario.getName());
-          if (schedulingRepository.existsByTestScenariosId(testScenario.getId()))
+          if (schedulingRepository.existsByTestScenariosIdAndTestGroupingId(testScenario.getId(),testGrouping.getId()))
               testScenarioResponseSorted.setScheduledStatus(false);
           else testScenarioResponseSorted.setScheduledStatus(true);
           testScenarioResponseSortedList.add(testScenarioResponseSorted);
