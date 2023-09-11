@@ -86,7 +86,7 @@ public class SchedulingController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteSchedulingSuccessMessage()));
     }
 
-    @PostMapping(value = EndpointURI.TEST_SCHEDULING)
+    @PostMapping(value = EndpointURI.SCHEDULES)
     public ResponseEntity<Object> saveScheduling(@RequestBody SchedulingRequest schedulingRequest) {
         if ((schedulingRequest.getTestScenario() == null || schedulingRequest.getTestScenario().isEmpty()) && (schedulingRequest.getTestCase() == null || schedulingRequest.getTestCase().isEmpty())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSchedulingTestCasesAndScenarioEmpty()));

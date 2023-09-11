@@ -90,7 +90,7 @@ public final class EndpointURI {
     public static final String SCHEDULING_BY_ID = BASE_API_PATH + "Scheduling"+ID;
     public static final String SHEDULING_PROJECTID = BASE_API_PATH+"Scheduling"+"/Project"+ID;
     public static final String TEST_SCHEDULING = BASE_API_PATH + "scheduling";
-    public static final String SCHEDULES = BASE_API_PATH+"Scheduling";
+    public static final String SCHEDULES = BASE_API_PATH+"scheduling";
 
     public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
     public static final String  USERS=BASE_API_PATH+"user";
