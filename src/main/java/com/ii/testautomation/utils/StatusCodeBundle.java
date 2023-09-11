@@ -557,10 +557,11 @@ public class StatusCodeBundle {
     @Value("${message.validation.companyUser.dependent}")
     private String CompanyUserDeleteDependentMessage;
 
-
     //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")
     public String getAllCompanyUserSuccessfully;
+    @Value("${code.validation.designation.NotExist}")
+    private String DesignationNotExistsCode;
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
@@ -569,4 +570,8 @@ public class StatusCodeBundle {
     private String DesignationAlreadyExistsMessage;
     @Value("${message.success.designation.save}")
     private String designationSaveSuccessMessage;
+    @Value("${message.success.designation.update}")
+    private String designationUpdateSuccessMessage;
+    @Value("${message.validation.designation.NotExist}")
+    private String DesignationNotExistsMessage;
 }
