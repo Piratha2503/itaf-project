@@ -43,13 +43,13 @@ public class MainModulesController {
     @PostMapping(EndpointURI.MAIN_MODULE)
     public ResponseEntity<Object> insertMainModules(@RequestBody MainModulesRequest mainModulesRequest) {
         if (!ragexMaintainance.checkSpaceBeforeAfterWords(mainModulesRequest.getName()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
         if (mainModulesService.isExistMainModulesName(mainModulesRequest.getName(), mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
         if (!ragexMaintainance.checkSpaceBeforeAfterWords(mainModulesRequest.getPrefix()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (mainModulesService.isExistPrefix(mainModulesRequest.getPrefix(), mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
         mainModulesService.saveMainModules(mainModulesRequest);
@@ -75,11 +75,11 @@ public class MainModulesController {
         if (!mainModulesService.isExistModulesId(mainModulesRequest.getModuleId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getModuleIdNotFound()));
         if (!ragexMaintainance.checkSpaceBeforeAfterWords(mainModulesRequest.getName()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (mainModulesService.isUpdateMainModulesNameExist(mainModulesRequest.getName(), mainModulesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesNameAlreadyExistMessage()));
         if (!ragexMaintainance.checkSpaceBeforeAfterWords(mainModulesRequest.getPrefix()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (mainModulesService.isUpdateMainModulesPrefixExist(mainModulesRequest.getPrefix(), mainModulesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getMainModulesPrefixAlreadyExistMessage()));
 
