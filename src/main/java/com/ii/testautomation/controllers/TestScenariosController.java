@@ -30,8 +30,6 @@ public class TestScenariosController {
     private TestGroupingService testGroupingService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-    @Autowired
-    private Utils utils;
 
 
     @PostMapping(EndpointURI.TEST_SCENARIO)
@@ -46,7 +44,7 @@ public class TestScenariosController {
         if (testScenariosRequest.getTestCasesId().isEmpty() && testScenariosRequest.getMainModuleIds().isEmpty()
                 && testScenariosRequest.getModuleIds().isEmpty() && testScenariosRequest.getSubModuleIds().isEmpty())
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenarioNotExistCode(), statusCodeBundle.getTestCasesNotProvidedMessage()));
-        if (!utils.checkRagexBeforeAfterWords(testScenariosRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(testScenariosRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testScenariosService.existsByTestScenarioNameIgnoreCase(testScenariosRequest.getName(), testScenariosRequest.getProjectId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestScenariosAlreadyExistCode(), statusCodeBundle.getTestScenariosNameAlreadyExistMessage()));
@@ -74,7 +72,7 @@ public class TestScenariosController {
                     statusCodeBundle.getTestScenarioNameAndIdNullMessage()));
 
         }
-        if (!utils.checkRagexBeforeAfterWords(testScenariosRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(testScenariosRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
 
         if (testScenariosService.isUpdateTestScenariosNameExists(testScenariosRequest.getId(), testScenariosRequest.getName(), testScenariosRequest.getProjectId())) {

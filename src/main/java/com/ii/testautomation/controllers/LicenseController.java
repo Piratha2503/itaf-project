@@ -19,15 +19,14 @@ public class LicenseController {
     private LicenseService licenseService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-    @Autowired
-    private Utils utils;
+
 
     @Autowired
     private CompanyUserService companyUserService;
 
     @PostMapping(EndpointURI.LICENSE)
     public ResponseEntity<Object> createLicense(@RequestBody LicenseRequest licenseRequest) {
-        if (!utils.checkRagexBeforeAfterWords(licenseRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(licenseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (licenseService.existsByName(licenseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicenseNameAlreadyExistMessage()));

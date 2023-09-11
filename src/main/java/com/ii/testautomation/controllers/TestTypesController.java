@@ -33,12 +33,10 @@ public class TestTypesController {
     private TestGroupingService testGroupingService;
     @Autowired
     private ProjectService projectService;
-    @Autowired
-    private Utils utils;
 
     @PostMapping(EndpointURI.TEST_TYPE)
     public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
-        if (!utils.checkRagexBeforeAfterWords(testTypesRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getTestTypeNameAlReadyExistMessage()));
@@ -54,7 +52,7 @@ public class TestTypesController {
                     RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getTestTypeNotExistCode(),
                     statusCodeBundle.getTestTypeIdNotFoundMessage()));
-        if (!utils.checkRagexBeforeAfterWords(testTypesRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
 
         if (testTypesService.isExistsTestTypesByNameIgnoreCaseAndIdNot(

@@ -45,8 +45,6 @@ public class SchedulingController {
     private ProjectService projectService;
     @Autowired
     private TestGroupingService testGroupingService;
-    @Autowired
-    private Utils utils;
 
     @GetMapping(EndpointURI.SHEDULING_PROJECTID)
     public ResponseEntity<Object> viewByProjectId(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, @PathVariable Long id) {
@@ -60,7 +58,7 @@ public class SchedulingController {
 
     @PutMapping(value = EndpointURI.SCHEDULES)
     public ResponseEntity<Object> updateScheduling(@RequestBody SchedulingRequest schedulingRequest) {
-        if (!utils.checkRagexBeforeAfterWords(schedulingRequest.getName())) {
+        if (!Utils.checkRagexBeforeAfterWords(schedulingRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         }
         if (schedulingService.isUpdateNameExists(schedulingRequest.getName(), schedulingRequest.getId())) {

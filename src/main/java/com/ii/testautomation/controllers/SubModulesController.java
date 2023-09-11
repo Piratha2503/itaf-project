@@ -36,8 +36,6 @@ public class SubModulesController {
     private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-    @Autowired
-    private Utils utils;
 
     @PostMapping(value = EndpointURI.SUBMODULE)
     public ResponseEntity<Object> saveSubModules(@RequestBody SubModulesRequest subModulesRequest) {
@@ -46,14 +44,14 @@ public class SubModulesController {
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
         }
-        if (!utils.checkRagexBeforeAfterWords(subModulesRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(subModulesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (subModulesService.existsBySubModulesName(subModulesRequest.getName(), subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
         }
-        if (!utils.checkRagexBeforeAfterWords(subModulesRequest.getPrefix()))
+        if (!Utils.checkRagexBeforeAfterWords(subModulesRequest.getPrefix()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
 
         if (subModulesService.existsBySubModulesPrefix(subModulesRequest.getPrefix(), subModulesRequest.getMain_module_Id())) {
@@ -154,14 +152,14 @@ public class SubModulesController {
                     statusCodeBundle.getMainModulesNotExistCode(),
                     statusCodeBundle.getMainModuleNotExistsMessage()));
         }
-        if (!utils.checkRagexBeforeAfterWords(subModulesRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(subModulesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (subModulesService.isUpdateSubModuleNameExits(subModulesRequest.getName(), subModulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
                     statusCodeBundle.getSubModuleNameAlReadyExistMessage()));
         }
-        if (!utils.checkRagexBeforeAfterWords(subModulesRequest.getPrefix()))
+        if (!Utils.checkRagexBeforeAfterWords(subModulesRequest.getPrefix()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
 
         if (subModulesService.isUpdateSubModulePrefixExits(subModulesRequest.getPrefix(), subModulesRequest.getId())) {
