@@ -3,7 +3,7 @@ package com.ii.testautomation.controllers;
 import com.ii.testautomation.dto.request.DesignationRequest;
 import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.enums.RequestStatus;
-import com.ii.testautomation.repositories.UserRepository;
+import com.ii.testautomation.repositories.UsersRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
@@ -31,21 +31,16 @@ public class DesignationController {
     @Autowired
     private UserService userService;
     @Autowired
-    private UserRepository userRepository;
+    private UsersRepository userRepository;
 
     @PostMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
         if (designationService.existsByName(designationRequest.getName())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getDesignationAlreadyExistsCode(),
-                    statusCodeBundle.getDesignationAlreadyExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
         }
         designationService.saveDesignation(designationRequest);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getDesignationSaveSuccessMessage()));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationSaveSuccessMessage()));
     }
-
     @GetMapping(value = EndpointURI.DESIGNATION_BY_COMPANY_ID)
     public ResponseEntity<Object> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
         if (!companyUserService.existsById(companyId)) {
@@ -56,11 +51,8 @@ public class DesignationController {
         if (designations.isEmpty() && designations.equals(null)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getGetCompanyuserIdNotHaveDesignation()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designationService.getAllDesignationByCompanyId(companyId),
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designationService.getAllDesignationByCompanyId(companyId), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
     }
-
-
     @PutMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> updateDesignation(@RequestBody DesignationRequest designationRequest) {
 
@@ -70,7 +62,5 @@ public class DesignationController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
         designationService.saveDesignation(designationRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationUpdateSuccessMessage()));
-
     }
-
 }
