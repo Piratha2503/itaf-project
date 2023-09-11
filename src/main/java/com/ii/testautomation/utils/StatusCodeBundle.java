@@ -524,6 +524,7 @@ public class StatusCodeBundle {
     private String LicenseNotExistCode;
     @Value("${message.validation.License.assigned}")
     private String LicenseDeleteDependentCode;
+
     // License Messages
     @Value("${message.success.insert.License}")
     private String LicenseInsertSuccessMessage;
@@ -544,11 +545,11 @@ public class StatusCodeBundle {
     @Value("${message.failure.id.notExist.License}")
     private String LicenseIdNotExistMessage;
 
-    // CompanyUser Codes
-    @Value("${code.validation.CompanyUser.notExists}")
-    private String CompanyUserNotExistCode;
+
+
     @Value("${code.validation.CompanyUser.dependent}")
     private String CompanyUserDeleteDependentCode;
+
     // Company User Messages
     @Value("${message.failure.id.notExist.CompanyUser}")
     private String CompanyUserIdNotExistMessage;
@@ -556,19 +557,18 @@ public class StatusCodeBundle {
     private String CompanyUserDeleteSuccessMessage;
     @Value("${message.validation.companyUser.dependent}")
     private String CompanyUserDeleteDependentMessage;
-
-    //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")
     public String getAllCompanyUserSuccessfully;
-    @Value("${code.validation.designation.NotExist}")
-    private String DesignationNotExistsCode;
+
+
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
     @Value("${code.validation.Designation.notExists}")
     private String DesignationNotExistsCode;
-    @Value("${code.validation.Designation.dependent}")
+     @Value("${code.validation.Designation.dependent}")
     private String DesignationDependentCode;
+
     //Designation Message
     @Value("${message.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsMessage;
@@ -584,6 +584,7 @@ public class StatusCodeBundle {
     private String designationDeleteDependentMessage;
     @Value("${message.Success.package.Delete.Designation}")
     private String designationSuccessfullyDeletedMessage;
+
     //CompanyUser Code
     @Value("${code.validation.CompanyUser.alreadyExists}")
     private String CompanyUserAlreadyExistCode;
