@@ -33,7 +33,7 @@ public class CompanyUserController {
                                                      CompanyUserSearch companyUserSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
-        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.MODULES,companyUserService.getAllCompanyUserWithMultiSearch(pageable,pagination,companyUserSearch),
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.COMPANY_USERS,companyUserService.getAllCompanyUserWithMultiSearch(pageable,pagination,companyUserSearch),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllCompanyUserSuccessfully, pagination));
     }
 }

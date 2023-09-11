@@ -10,7 +10,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-
 public class Users extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,14 +17,11 @@ public class Users extends DateAudit {
     @Column(unique = true, nullable = false)
     private String email;
     private String password;
-    private String staffName;
     private String status;
-    private String staffId;
-    private String description;
     private String firstName;
     private String lastName;
     private String contactNumber;
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "designation_id", nullable = false)
     private List<Designation> designation;
     @ManyToOne
