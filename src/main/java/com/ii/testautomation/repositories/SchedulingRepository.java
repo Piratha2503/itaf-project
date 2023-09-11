@@ -22,4 +22,7 @@ public interface SchedulingRepository extends JpaRepository<Scheduling,Long>, Qu
 
     boolean existsByTestGrouping_TestCases_Id(Long id);
 
+    boolean existsByTestCasesId(Long id);
+
+    boolean existsByTestScenariosId(Long id);
 }

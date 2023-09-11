@@ -19,5 +19,4 @@ public class TestCaseResponse {
     private String mainModuleName;
     private Long projectId;
     private String projectName;
-    private List<TestCaseResponseSorted> testCaseResponseSortedList;
 }

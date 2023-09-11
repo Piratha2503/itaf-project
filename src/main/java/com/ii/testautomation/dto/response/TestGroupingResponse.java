@@ -27,4 +27,6 @@ public class TestGroupingResponse {
     private List<TestCaseResponse> testCaseResponseList;
     private Map<Long,Boolean> sortedTestCaseIds;
     private Map<String,Boolean> sortedTestCaseName;
+    private List<TestCaseResponseSorted> testCaseResponseSortedList;
+    private List<TestScenarioResponseSorted> testScenarioResponseSortedList;
 }

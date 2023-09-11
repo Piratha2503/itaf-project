@@ -325,6 +325,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         List<TestCaseResponse> testCaseResponseList = new ArrayList<>();
         List<TestScenariosResponse> testScenariosResponseList = new ArrayList<>();
         List<TestCaseResponseSorted> testCaseResponseSortedList = new ArrayList<>();
+        List<TestScenarioResponseSorted> testScenarioResponseSortedList = new ArrayList<>();
 
         for (TestCases testCase : testGrouping.getTestCases()) {
             TestCaseResponse testCaseResponse = new TestCaseResponse();
@@ -337,22 +338,30 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             TestCaseResponseSorted testCaseResponseSorted = new TestCaseResponseSorted();
             testCaseResponseSorted.setId(testCase.getId());
             testCaseResponseSorted.setName(testCase.getName());
-            if (schedulingRepository.existsByTestGroupingId(testCase.getId()))
+            if (schedulingRepository.existsByTestCasesId(testCase.getId()))
                 testCaseResponseSorted.setScheduledStatus(false);
             else testCaseResponseSorted.setScheduledStatus(true);
             testCaseResponseSortedList.add(testCaseResponseSorted);
-            testCaseResponse.setTestCaseResponseSortedList(testCaseResponseSortedList);
             BeanUtils.copyProperties(testCase, testCaseResponse);
             testCaseResponse.setName(testCaseName);
             testCaseResponseList.add(testCaseResponse);
         }
+        testGroupingResponse.setTestCaseResponseSortedList(testCaseResponseSortedList);
         for (TestScenarios testScenario : testGrouping.getTestScenarios()) {
             TestScenariosResponse testScenariosResponse = new TestScenariosResponse();
             testScenarioNames.add(testScenario.getName());
             testScenarioIds.add(testScenario.getId());
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
+            TestScenarioResponseSorted testScenarioResponseSorted = new TestScenarioResponseSorted();
+            testScenarioResponseSorted.setId(testScenario.getId());
+            testScenarioResponseSorted.setName(testScenario.getName());
+          if (schedulingRepository.existsByTestScenariosId(testScenario.getId()))
+              testScenarioResponseSorted.setScheduledStatus(false);
+          else testScenarioResponseSorted.setScheduledStatus(true);
+          testScenarioResponseSortedList.add(testScenarioResponseSorted);
         }
+        testGroupingResponse.setTestScenarioResponseSortedList(testScenarioResponseSortedList);
         List<String> excelFileNames = testGrouping.getExcelFilePath();
         List<String> newExcelFileNames = new ArrayList<>();
         if (excelFileNames != null && !excelFileNames.isEmpty()) {
