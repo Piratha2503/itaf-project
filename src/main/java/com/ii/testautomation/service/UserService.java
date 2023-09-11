@@ -13,5 +13,7 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
+    boolean existsByContactNo(String contactNo);
+
     boolean existsByCompanyUserId(Long id);
 }
