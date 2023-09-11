@@ -1,7 +1,9 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
+import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.enums.RequestStatus;
+import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
@@ -29,7 +31,7 @@ public class DesignationController {
     @Autowired
     private UserService userService;
     @Autowired
-    private UsersRepository userRepository;
+    private UserRepository userRepository;
 
     @PostMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {

@@ -7,7 +7,7 @@ import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
-import com.ii.testautomation.repositories.UsersRepository;
+import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -22,7 +22,7 @@ import java.util.Date;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    private UsersRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private DesignationRepository designationRepository;
 

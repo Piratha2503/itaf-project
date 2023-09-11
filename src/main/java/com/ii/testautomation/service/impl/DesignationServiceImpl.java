@@ -6,7 +6,7 @@ import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
-import com.ii.testautomation.repositories.UsersRepository;
+import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.DesignationService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class DesignationServiceImpl implements DesignationService {
     @Autowired
     private DesignationRepository designationRepository;
     @Autowired
-    private UsersRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private CompanyUserRepository companyUserRepository;
 
