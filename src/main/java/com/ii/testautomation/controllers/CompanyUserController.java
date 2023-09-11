@@ -39,7 +39,8 @@ public class CompanyUserController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private CompanyUserService companyUserService;
-
+    @Autowired
+    private UserService userService;
 
     @PutMapping(value = EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> UpdateCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
@@ -67,8 +68,7 @@ public class CompanyUserController {
         companyUserService.saveCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateCompanyUserSuccessMessage()));
     }
-    @Autowired
-    private UserService userService;
+
 
     @DeleteMapping(EndpointURI.COMPANY_USER_BY_ID)
     public ResponseEntity<Object> deleteById(@PathVariable Long id) {
