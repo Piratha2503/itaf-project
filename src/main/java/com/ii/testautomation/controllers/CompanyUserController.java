@@ -38,13 +38,13 @@ public class CompanyUserController {
         if (!companyUserService.existsByCompanyUserId(companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
-        if (companyUserService.isUpdateCompanyUserNameExists(companyUserRequest.getCompanyName(), companyUserRequest.getId())) {
+        if (companyUserService.isUpdateCompanyUserNameExists(companyUserRequest.getCompanyName(),companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserNameAlReadyExistsMessage()));
         }
-        if (companyUserService.isUpdateEmailExists(companyUserRequest.getEmail(), companyUserRequest.getId())) {
+        if (companyUserService.isUpdateEmailExists(companyUserRequest.getEmail(),companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserEmailAlReadyExistsMessage()));
         }
-        if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(), companyUserRequest.getId())) {
+        if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(),companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserContactNoAlReadyExistsMessage()));
         }
         companyUserService.saveCompanyUser(companyUserRequest);

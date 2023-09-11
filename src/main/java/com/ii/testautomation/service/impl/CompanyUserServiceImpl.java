@@ -45,19 +45,16 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     }
 
     @Override
-    public boolean isUpdateCompanyUserNameExists(String name, Long id) {
-        Long licensesId = companyUserRepository.findById(id).get().getLicenses().getId();
+    public boolean isUpdateCompanyUserNameExists(String name,Long licensesId, Long id) {
         return companyUserRepository.existsByCompanyNameIgnoreCaseAndLicensesIdAndIdNot(name, licensesId, id);
     }
 
-    public boolean isUpdateEmailExists(String email, Long id) {
-        Long licensesId = companyUserRepository.findById(id).get().getLicenses().getId();
+    public boolean isUpdateEmailExists(String email, Long licensesId,Long id) {
         return companyUserRepository.existsByEmailIgnoreCaseAndLicensesIdAndIdNot(email, licensesId, id);
     }
 
     @Override
-    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long id) {
-        Long licensesId = companyUserRepository.findById(id).get().getLicenses().getId();
+    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long licensesId, Long id) {
         return companyUserRepository.existsByContactNumberIgnoreCaseAndLicensesIdAndIdNot(contactNumber,licensesId,id);
 
     }

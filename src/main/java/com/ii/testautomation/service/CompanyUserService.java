@@ -11,12 +11,14 @@ import java.util.List;
 
 public interface CompanyUserService {
     void saveCompanyUser(CompanyUserRequest companyUserRequest);
+
     boolean existsByCompanyUserId(Long id);
 
-    boolean isUpdateCompanyUserNameExists(String name, Long id);
-   boolean isUpdateEmailExists(String email,Long id);
+    boolean isUpdateCompanyUserNameExists(String name, Long licenseId,Long id);
 
-boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long id);
+    boolean isUpdateEmailExists(String email,Long licenseId, Long id);
+
+    boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long licenseId, Long id);
 
     List<CompanyUserResponse> getAllCompanyUserWithMultiSearch(Pageable pageable, PaginatedContentResponse.Pagination pagination, CompanyUserSearch companyUserSearch);
 
