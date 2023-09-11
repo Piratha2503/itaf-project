@@ -67,7 +67,7 @@ public class SchedulingController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSelectAtleastOne()));
         }
-        if (schedulingService.existsByScheduleOption(schedulingRequest.getMonth(), schedulingRequest.getWeek(), schedulingRequest.getMinutes(), schedulingRequest.getHour(), schedulingRequest.getYear(), schedulingRequest.getStartDateTime())) {
+        if (schedulingService.existsByScheduleOption(schedulingRequest.getMonth(), schedulingRequest.getWeek(), schedulingRequest.getMinutes(), schedulingRequest.getHour(), schedulingRequest.getYear(), schedulingRequest.getStartDateTime(),schedulingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSchedulingAlreadyExists()));
         }
@@ -151,7 +151,7 @@ public class SchedulingController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSelectAtleastOne()));
         }
-        if (schedulingService.isUpdateScheduleOptionExists(schedulingRequest.getMonth(), schedulingRequest.getWeek(), schedulingRequest.getMinutes(), schedulingRequest.getHour(), schedulingRequest.getYear(), schedulingRequest.getStartDateTime(), schedulingRequest.getId())) {
+        if (schedulingService.isUpdateScheduleOptionExists(schedulingRequest.getMonth(), schedulingRequest.getWeek(), schedulingRequest.getMinutes(), schedulingRequest.getHour(), schedulingRequest.getYear(), schedulingRequest.getStartDateTime(), schedulingRequest.getId(), schedulingRequest.getProjectId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSchedulingAlreadyExists()));
         }

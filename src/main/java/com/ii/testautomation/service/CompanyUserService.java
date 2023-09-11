@@ -36,4 +36,5 @@ public interface CompanyUserService {
     boolean existsById(Long id);
 
     void deleteById(Long id);
+    CompanyUserResponse getCompanyUserById(Long id);
 }

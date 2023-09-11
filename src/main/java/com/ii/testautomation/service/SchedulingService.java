@@ -28,9 +28,9 @@ public interface SchedulingService {
 
     boolean existsByTestCaseId(Long testCaseId);
 
-    boolean existsByScheduleOption(int month, int week, int minutes, int hour, int year, LocalDateTime startTime);
+    boolean existsByScheduleOption(int month, int week, int minutes, int hour, int year, LocalDateTime startTime,Long projectId);
 
-    boolean isUpdateScheduleOptionExists(int month, int week, int minutes, int hour, int year, LocalDateTime startDateTime, Long id);
+    boolean isUpdateScheduleOptionExists(int month, int week, int minutes, int hour, int year, LocalDateTime startDateTime, Long id,Long projectId);
 
     boolean existsByTestGroupingId(Long id);
 }

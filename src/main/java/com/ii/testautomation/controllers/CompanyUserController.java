@@ -7,6 +7,7 @@ import com.ii.testautomation.dto.request.CompanyUserRequest;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
@@ -108,5 +109,15 @@ public class CompanyUserController {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.COMPANY_USERS, companyUserService.getAllCompanyUserWithMultiSearch(pageable, pagination, companyUserSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllCompanyUserSuccessfully, pagination));
+    }
+
+    @GetMapping(value = EndpointURI.COMPANY_USER_BY_ID)
+    public ResponseEntity<Object> GetCompanyUserById(@PathVariable Long id){
+        if(!companyUserService.existsById(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getCompanyUserNotExistCode(),
+                    statusCodeBundle.getCompanyUserIdNotExistMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.COMPANY_USERS, companyUserService.getCompanyUserById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getGetCompanyUserByIdSuccessMessage()));
     }
 }

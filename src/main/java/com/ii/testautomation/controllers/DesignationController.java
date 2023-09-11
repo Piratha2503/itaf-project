@@ -7,8 +7,10 @@ import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
+import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.EndpointURI;
@@ -39,6 +41,14 @@ public class DesignationController {
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
         if (designationService.existsByName(designationRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
+        if(designationRequest.getName().isEmpty()||designationRequest.getName()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getDesignationNullValuesMessage()));
+        }
+        if (designationService.existsByName(designationRequest.getName())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getDesignationAlreadyExistsCode(),
+                    statusCodeBundle.getDesignationAlreadyExistsMessage()));
         }
         designationService.saveDesignation(designationRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationSaveSuccessMessage()));
@@ -62,9 +72,9 @@ public class DesignationController {
     if (!designationService.existsById(id)){
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationNotExistsCode(),statusCodeBundle.getDesignationNotExistMessage()));
     }
-//    if (userService.existsByDesignationId(id)){
-//        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
-//    }
+    if (userService.existsByDesignationId(id)){
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
+    }
      designationService.deleteDesignationById(id);
     return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getDesignationSuccessfullyDeletedMessage()));
     }
@@ -83,5 +93,11 @@ public class DesignationController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationUpdateSuccessMessage()));
 
     }
-
+    @GetMapping(value = EndpointURI.DESIGNATION_BY_ID)
+    public ResponseEntity<Object> GetDesignationById(@PathVariable Long id) {
+        if (!designationService.existById(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATION, designationService.getDesignationById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationByIdSuccessMessage()));
+    }
 }

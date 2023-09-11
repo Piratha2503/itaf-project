@@ -23,4 +23,5 @@ public class Constants {
   public static final String DESIGNATIONS = "Designations";
 
   public static final String COMPANY_USERS="companyUsers";
+  public  static final String DESIGNATION="designation";
 }

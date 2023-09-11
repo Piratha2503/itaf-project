@@ -37,6 +37,14 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
+    public DesignationResponse getDesignationById(Long id) {
+        Designation designation =designationRepository.findById(id).get();
+        DesignationResponse designationResponse=new DesignationResponse();
+        BeanUtils.copyProperties(designation,designationResponse);
+        return designationResponse;
+    }
+
+    @Override
     public boolean existsByName(String designationName) {
         return designationRepository.existsByNameIgnoreCase(designationName);
     }
