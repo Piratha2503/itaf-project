@@ -2,6 +2,7 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.LicenseRequest;
 import com.ii.testautomation.dto.response.LicenseResponse;
+import com.ii.testautomation.entities.Licenses;
 
 public interface LicenseService {
     void createLicense(LicenseRequest licenseRequest);
@@ -15,6 +16,8 @@ public interface LicenseService {
     boolean isUpdateNameExists(String name, Long id);
 
     void deleteLicenseById(Long id);
+
+    Licenses findById(Long id);
 
     boolean existsById(Long id);
     LicenseResponse getLicenseById(Long licenseId);

@@ -6,6 +6,7 @@ import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.utils.Constants;
+import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 public class DesignationController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
+
+    @Autowired
+    private UserService userService;
     @Autowired
     private DesignationService designationService;
 
@@ -33,11 +37,26 @@ public class DesignationController {
                 statusCodeBundle.getDesignationSaveSuccessMessage()));
     }
 
+    @DeleteMapping(EndpointURI.DESIGNATION_BY_ID)
+    public ResponseEntity<Object>deleteDesignation(@PathVariable Long id){
+
+    if (!designationService.existsById(id)){
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationNotExistsCode(),statusCodeBundle.getDesignationNotExistMessage()));
+    }
+    if (userService.existsByDesignationId(id)){
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
+    }
+     designationService.deleteDesignationById(id);
+    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getDesignationSuccessfullyDeletedMessage()));
+
+    }
+
+
     @PutMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> updateDesignation(@RequestBody DesignationRequest designationRequest) {
 
         if (designationRequest.getId() == null || designationRequest.getName() == null)
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationNullValuesMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationNullValuesMessage()));
         if (!designationService.existById(designationRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
         if (designationService.existsByNameIdNot(designationRequest.getId(), designationRequest.getName()))

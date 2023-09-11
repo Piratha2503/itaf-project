@@ -58,4 +58,10 @@ public class LicenseServiceImpl implements LicenseService {
         BeanUtils.copyProperties(licenses,licenseResponse);
         return licenseResponse;
     }
+
+    @Override
+    public Licenses findById(Long id) {
+        return licenseRepository.findById(id).get();
+    }
+
 }
