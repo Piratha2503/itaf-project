@@ -13,7 +13,7 @@ public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>,
 
     boolean existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName);
 
-    boolean existsByContactNumber(String contactNumber);
+    boolean existsByContactNumberIgnoreCase(String contactNumber);
 
     boolean existsByCompanyNameIgnoreCaseAndLicensesIdAndIdNot(String companyName, Long licensesId, Long id);
 
