@@ -3,8 +3,10 @@ package com.ii.testautomation.controllers;
 import com.ii.testautomation.dto.request.LicenseRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.LicenseService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
@@ -47,6 +49,15 @@ public class LicenseController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicensePackageAlreadyExistMessage()));
         licenseService.createLicense(licenseRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseSuccessfullyUpdatedMessage()));
+    }
+
+    @GetMapping(value = EndpointURI.LICENSE_BY_ID)
+    public ResponseEntity<Object> getLicenseById(@PathVariable Long id){
+        if(!licenseService.existsById(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getLicenseNotExistCode(),
+                    statusCodeBundle.getLicensePackageNotExistMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.LICENSE, licenseService.getLicenseById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLicenseGetByIdSuccessMessage()));
     }
 
     @DeleteMapping(EndpointURI.LICENSE_BY_ID)
