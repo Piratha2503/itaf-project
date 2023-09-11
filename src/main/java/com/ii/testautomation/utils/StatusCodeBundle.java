@@ -481,6 +481,7 @@ public class StatusCodeBundle {
     @Value("${code.validation.user.notExists}")
     private String userNotExistCode;
 
+
     //login Messages
     @Value("${message.success.verify.registered}")
     private String RegistrationSuccessMessage;
@@ -496,6 +497,8 @@ public class StatusCodeBundle {
     private String saveUserSuccessMessage;
     @Value("${message.validation.user.name.alreadyExists}")
     private String userIdExistMessage;
+    @Value("${message.validation.user.contactNo.alreadyExists}")
+    private String UserContactNoAlReadyExistsMessage;
 
     // Ragex
     @Value("${message.failure.space}")
@@ -528,7 +531,6 @@ public class StatusCodeBundle {
     private String getLicenseSuccessMessage;
     @Value("${message.validation.License.notExits}")
     private String LicenseNotExistsMessage;
-
     @Value("${message.success.view.License}")
     private String LicenseViewSuccessMessage;
     @Value("${message.failure.id.notExist.License}")
@@ -548,6 +550,11 @@ public class StatusCodeBundle {
     private String designationSaveSuccessMessage;
     @Value("${message.success.get.designation}")
     private String getDesignationSuccessMessage;
+    @Value("${message.success.designation.update}")
+    private String designationUpdateSuccessMessage;
+    @Value("${message.validation.designation.NotExist}")
+    private String DesignationNotExistsMessage;
+
 
     //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")
@@ -575,14 +582,9 @@ public class StatusCodeBundle {
     private String companyUserContactNoAlReadyExistsMessage;
     @Value("${message.success.update.companyUser}")
     private String updateCompanyUserSuccessMessage;
-
-
-    @Value("${message.success.designation.update}")
-    private String designationUpdateSuccessMessage;
-    @Value("${message.validation.designation.NotExist}")
-    private String DesignationNotExistsMessage;
     @Value("${message.validation.get.designation.notHave}")
     private String getCompanyuserIdNotHaveDesignation;
+
 
 
 }
