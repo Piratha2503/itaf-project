@@ -544,15 +544,9 @@ public class StatusCodeBundle {
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
-    @Value("${code.validation.designation.NotExist}")
-    private String DesignationNotExistsCode;
     //Designation Message
     @Value("${message.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsMessage;
-    @Value("${message.validation.designation.NotExist}")
-    private String DesignationNotExistsMessage;
     @Value("${message.success.designation.save}")
     private String designationSaveSuccessMessage;
-    @Value("${message.success.designation.update}")
-    private String designationUpdateSuccessMessage;
 }
