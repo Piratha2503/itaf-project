@@ -563,6 +563,10 @@ public class StatusCodeBundle {
     private String CompanyUserDeleteSuccessMessage;
     @Value("${message.validation.companyUser.dependent}")
     private String CompanyUserDeleteDependentMessage;
+    @Value("${message.success.companyUser.getById}")
+    private  String getCompanyUserByIdSuccessMessage;
+
+    //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")
     public String getAllCompanyUserSuccessfully;
 
@@ -589,6 +593,8 @@ public class StatusCodeBundle {
     private String designationDeleteDependentMessage;
     @Value("${message.Success.package.Delete.Designation}")
     private String designationSuccessfullyDeletedMessage;
+    @Value("${message.success.designation.getById}")
+    private String getDesignationByIdSuccessMessage;
 
     //CompanyUser Code
     @Value("${code.validation.CompanyUser.alreadyExists}")

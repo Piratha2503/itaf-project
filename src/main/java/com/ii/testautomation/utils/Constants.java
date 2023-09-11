@@ -22,4 +22,5 @@ public class Constants {
   public static final String SCHEDULES = "Schedules";
   public static final String LICENSE = "License";
   public static final String COMPANY_USERS="companyUsers";
+  public  static final String DESIGNATION="designation";
 }

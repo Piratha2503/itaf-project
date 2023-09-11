@@ -23,9 +23,9 @@ public interface SchedulingRepository extends JpaRepository<Scheduling, Long>, Q
     boolean existsByTestScenariosId(Long id);
     boolean existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_IdAndIdNot(String name, Long projectId, Long id);
 
-    boolean existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutes(LocalDateTime startDateTime, int year, int month, int week, int hour, int minutes);
+    boolean existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutesAndTestGroupingProjectId(LocalDateTime startDateTime, int year, int month, int week, int hour, int minutes,Long projectId);
 
-    boolean existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutesAndIdNot(LocalDateTime startDateTime, int year, int month, int week, int hour, int minutes, Long id);
+    boolean existsByStartDateTimeAndYearAndMonthAndWeekAndHourAndMinutesAndTestGroupingProjectIdAndIdNot(LocalDateTime startDateTime, int year, int month, int week, int hour, int minutes, Long id,Long projectId);
 
     List<Scheduling> findByTestGroupingId(Long testGroupingId);
 }
