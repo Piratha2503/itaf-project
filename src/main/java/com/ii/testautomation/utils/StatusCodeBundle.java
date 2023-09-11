@@ -333,6 +333,8 @@ public class StatusCodeBundle {
     private String testGroupingNotExistCode;
     @Value("${code.validation.testScenario.notExists}")
     private String testScenarioNotExistCode;
+    @Value("${code.validation.testGrouping.Dependent}")
+    private String testGroupingDependentCode;
 
     //TestGrouping Message
     @Value("${message.validation.testGrouping.Name.alreadyExists}")
@@ -521,6 +523,24 @@ public class StatusCodeBundle {
     private String LicenseSuccessfullyDeletedMessage;
     @Value("${message.validation.License.assigned}")
     private String LicenseDeleteDependentMessage;
+    @Value("${message.success.view.License}")
+    private String LicenseViewSuccessMessage;
+    @Value("${message.failure.id.notExist.License}")
+    private String LicenseIdNotExistMessage;
+
+    // CompanyUser Codes
+    @Value("${code.validation.CompanyUser.notExists}")
+    private String CompanyUserNotExistCode;
+    @Value("${code.validation.CompanyUser.dependent}")
+    private String CompanyUserDeleteDependentCode;
+    // Company User Messages
+    @Value("${message.failure.id.notExist.CompanyUser}")
+    private String CompanyUserIdNotExistMessage;
+    @Value("${message.success.delete.CompanyUser}")
+    private String CompanyUserDeleteSuccessMessage;
+    @Value("${message.validation.companyUser.dependent}")
+    private String CompanyUserDeleteDependentMessage;
+
 
     //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")

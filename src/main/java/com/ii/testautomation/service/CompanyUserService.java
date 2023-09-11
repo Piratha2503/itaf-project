@@ -12,4 +12,8 @@ public interface CompanyUserService {
     List<CompanyUserResponse> getAllCompanyUserWithMultiSearch(Pageable pageable, PaginatedContentResponse.Pagination pagination, CompanyUserSearch companyUserSearch);
 
     boolean existsByLicenseId(Long id);
+
+    boolean existsById(Long id);
+
+    void deleteById(Long id);
 }

@@ -8,10 +8,7 @@ import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
@@ -20,9 +17,9 @@ public class DesignationController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private DesignationService designationService;
+
     @PostMapping(EndpointURI.DESIGNATION)
-    public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest)
-    {
+    public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
         if(designationService.existsByName(designationRequest.getName()))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),

@@ -1,4 +1,5 @@
-package com.ii.testautomation.utils;
+package com.ii.testautomation.config;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +13,6 @@ import java.util.Properties;
 @Component
 @PropertySource("classpath:emailConfig.properties")
 public class EmailConfiguration {
-
     @Value("${spring.mail.username}")
     private String username;
     @Value("${spring.mail.password}")
@@ -49,5 +49,4 @@ public class EmailConfiguration {
         props.put("mail.debug", debug);
         return mailSender;
     }
-
 }

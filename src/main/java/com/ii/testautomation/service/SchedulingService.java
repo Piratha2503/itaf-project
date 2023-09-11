@@ -32,5 +32,5 @@ public interface SchedulingService {
 
     boolean existsByTestCaseId(Long testCaseId);
 
-    boolean existsByTestGroupingId(Long testGroupingId);
+    boolean existsByTestGroupingId(Long id);
 }

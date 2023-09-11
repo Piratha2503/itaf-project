@@ -14,6 +14,7 @@ import com.ii.testautomation.service.TestGroupingService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,6 +58,9 @@ public class SchedulingController {
 
     @PutMapping(value = EndpointURI.SCHEDULES)
     public ResponseEntity<Object> updateScheduling(@RequestBody SchedulingRequest schedulingRequest) {
+        if (!Utils.checkRagexBeforeAfterWords(schedulingRequest.getName())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+        }
         if (schedulingService.isUpdateNameExists(schedulingRequest.getName(), schedulingRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSchedulingNameAlreadyExists()));
         }
