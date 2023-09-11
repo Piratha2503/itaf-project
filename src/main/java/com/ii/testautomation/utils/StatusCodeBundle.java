@@ -478,7 +478,10 @@ public class StatusCodeBundle {
     private String userAlreadyExistCode;
     @Value("${code.validation.user.notExists}")
     private String userNotExistCode;
-
+    @Value("${code.validation.users.dependent}")
+    private String usersDeleteDependentCode;
+    @Value("${message.validation.users.dependent}")
+    private String usersDeleteDependentMessage;
     //login Messages
     @Value("${message.success.verify.registered}")
     private String RegistrationSuccessMessage;
@@ -494,6 +497,8 @@ public class StatusCodeBundle {
     private String saveUserSuccessMessage;
     @Value("${message.validation.user.name.alreadyExists}")
     private String userIdExistMessage;
+    @Value("${message.success.delete.user}")
+    private String userDeleteSuccessMessage;
 
     // Ragex
     @Value("${message.failure.space}")

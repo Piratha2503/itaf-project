@@ -93,21 +93,21 @@ public final class EndpointURI {
     public static final String SCHEDULES = BASE_API_PATH+"Scheduling";
 
     public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
+   //URls for users
     public static final String  USERS=BASE_API_PATH+"user";
-
-    // Email Link
+    //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";
 
-    // License
+    //URLs for  License
     public static final String LICENSE = BASE_API_PATH + "License";
+    public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
 
-    //CompanyUser
+    //URLs for CompanyUser
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
 
-    //Designation
+    //URLs for Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
 
-    public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
     private EndpointURI() {
     }
 }

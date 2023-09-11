@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,5 +21,8 @@ public class Project extends DateAudit {
     private String jarFilePath;
     private String configFilePath;
     private String projectPath;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id", nullable = false)
+    private List<Users> users;
 
 }

@@ -4,12 +4,14 @@ import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.entities.Users;
+import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -22,6 +24,9 @@ import java.util.Date;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ProjectRepository projectRepository;
 
     @Override
     public void saveUser(UserRequest userRequest) {
@@ -36,6 +41,19 @@ public class UserServiceImpl implements UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    public boolean existsByUsersId(Long usersId) {
+        return userRepository.existsById(usersId);
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        Users users = userRepository.findById(id).get();
+        users.setStatus(LoginStatus.DEACTIVATE.getStatus());
+        userRepository.save(users);
+    }
+
 
     @Override
     public void verifyUser(String token) {

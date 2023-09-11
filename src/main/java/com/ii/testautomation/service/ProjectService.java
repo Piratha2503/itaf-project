@@ -53,6 +53,8 @@ public interface ProjectService {
 
     public boolean hasConfigPath(Long projectId);
 
+    boolean existsByUsersId(Long usersId);
+
 }
 
 
