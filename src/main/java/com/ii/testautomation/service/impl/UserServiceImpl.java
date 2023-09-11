@@ -5,9 +5,9 @@ import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
-import com.ii.testautomation.entities.Users;
+import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
-import com.ii.testautomation.repositories.UserRepository;
+import com.ii.testautomation.repositories.UsersRepository;
 import com.ii.testautomation.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,23 +17,27 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-   private UserRepository userRepository;
+   private UsersRepository userRepository;
     @Autowired
    private DesignationRepository designationRepository;
+
+    @Autowired
+    private CompanyUserRepository companyUserRepository;
 
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
         CompanyUser companyUser=new CompanyUser();
+        Designation designation=new Designation();
+        designation.setId(userRequest.getDesignationId());
         companyUser.setId(userRequest.getCompanyUserId());
-        List<Designation> designationList=new ArrayList<>();
+        user.setDesignation(designation);
+        user.setCompanyUser(companyUser);
         user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
@@ -72,6 +76,17 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByContactNo(String contactNo) {
+        return userRepository.existsByContactNumber(contactNo);
+    }
+
     private String generateToken(Users user) {
         Date expiryDate = new Date(System.currentTimeMillis() + 60000);
         Claims claims = Jwts.claims()
@@ -91,5 +106,7 @@ public class UserServiceImpl implements UserService {
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
     }
+
+
 
 }

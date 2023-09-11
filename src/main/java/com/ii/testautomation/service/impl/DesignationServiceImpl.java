@@ -6,7 +6,7 @@ import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
-import com.ii.testautomation.repositories.UserRepository;
+import com.ii.testautomation.repositories.UsersRepository;
 import com.ii.testautomation.service.DesignationService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class DesignationServiceImpl implements DesignationService {
     @Autowired
     private DesignationRepository designationRepository;
     @Autowired
-    private UserRepository userRepository;
+    private UsersRepository userRepository;
     @Autowired
     private CompanyUserRepository companyUserRepository;
 
@@ -47,14 +47,12 @@ public class DesignationServiceImpl implements DesignationService {
     public List<DesignationResponse> getAllDesignationByCompanyId(Long companyId) {
         List<Users> usersList = userRepository.findByCompanyUserId(companyId);
         Set<Designation> uniqueDesignations = new HashSet<>();
-
         for (Users user : usersList) {
             Designation designation = user.getDesignation();
             if (designation != null) {
                 uniqueDesignations.add(designation);
             }
         }
-
         List<DesignationResponse> designationResponseList = new ArrayList<>();
         for (Designation uniqueDesignation : uniqueDesignations) {
             DesignationResponse designationResponse = new DesignationResponse();
@@ -63,7 +61,6 @@ public class DesignationServiceImpl implements DesignationService {
         }
         return designationResponseList;
     }
-
     @Override
     public boolean existById(Long id) {
         return designationRepository.existsById(id);

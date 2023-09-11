@@ -449,7 +449,6 @@ public class StatusCodeBundle {
     @Value("${message.error.endDate}")
     private String executionHistoryEndDateBeforeStartDateMessage;
 
-
     //Scheduling Code
     @Value("${code.failure.Id.notExist.scheduling}")
     private String schedulingNotExistCode;
@@ -468,20 +467,16 @@ public class StatusCodeBundle {
     private String schedulingTestCasesAndScenarioEmpty;
     @Value("${message.success.update.scheduling}")
     private String schedulingUpdateSuccessMessage;
-
     //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
-
     //login Codes
     @Value("${code.validation.user.alreadyExists}")
     private String userAlreadyExistCode;
     @Value("${code.validation.user.notExists}")
     private String userNotExistCode;
-
-
     //login Messages
     @Value("${message.success.verify.registered}")
     private String RegistrationSuccessMessage;
@@ -499,11 +494,9 @@ public class StatusCodeBundle {
     private String userIdExistMessage;
     @Value("${message.validation.user.contactNo.alreadyExists}")
     private String UserContactNoAlReadyExistsMessage;
-
     // Ragex
     @Value("${message.failure.space}")
     private String SpacesNotAllowedMessage;
-
     // License Codes
     @Value("${code.validation.License.alreadyExists}")
     private String LicenseAlreadyExistCode;
@@ -511,7 +504,6 @@ public class StatusCodeBundle {
     private String LicenseNotExistCode;
     @Value("${message.validation.License.assigned}")
     private String LicenseDeleteDependentCode;
-
     // License Messages
     @Value("${message.success.insert.License}")
     private String LicenseInsertSuccessMessage;
@@ -535,7 +527,6 @@ public class StatusCodeBundle {
     private String LicenseViewSuccessMessage;
     @Value("${message.failure.id.notExist.License}")
     private String LicenseIdNotExistMessage;
-
     //Designation Code
     @Value("${code.validation.designation.NotExist}")
     private String DesignationNotExistsCode;
@@ -554,8 +545,6 @@ public class StatusCodeBundle {
     private String designationUpdateSuccessMessage;
     @Value("${message.validation.designation.NotExist}")
     private String DesignationNotExistsMessage;
-
-
     //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")
     private String companyUserAlReadyExistsCode;
@@ -584,7 +573,4 @@ public class StatusCodeBundle {
     private String updateCompanyUserSuccessMessage;
     @Value("${message.validation.get.designation.notHave}")
     private String getCompanyuserIdNotHaveDesignation;
-
-
-
 }

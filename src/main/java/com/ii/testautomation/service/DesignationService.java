@@ -2,7 +2,6 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
 import com.ii.testautomation.dto.response.DesignationResponse;
-import com.ii.testautomation.entities.Designation;
 
 import java.util.List;
 
