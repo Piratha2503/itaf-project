@@ -48,6 +48,5 @@ public class UserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getEmailVerificationFailureMessage()));
         userService.verifyUser(token);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getEmailVerificationSuccessMessage()));
-
     }
 }
