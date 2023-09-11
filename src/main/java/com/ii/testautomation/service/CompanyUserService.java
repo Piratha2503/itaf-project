@@ -22,4 +22,8 @@ boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long id);
 
     boolean existsByLicenseId(Long id);
     boolean existsByCompanyId(Long id);
+
+    boolean existsById(Long id);
+
+    void deleteById(Long id);
 }

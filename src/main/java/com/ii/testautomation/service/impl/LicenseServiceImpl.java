@@ -7,6 +7,7 @@ import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.entities.QLicenses;
 import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.repositories.LicenseRepository;
 import com.ii.testautomation.service.LicenseService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
@@ -14,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Service;
 
 
@@ -62,24 +64,26 @@ public class LicenseServiceImpl implements LicenseService {
     public boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users) {
         return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration,no_of_projects,no_of_users);
     }
-    @Override
-    public boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users,Long id) {
-        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(duration,no_of_projects,no_of_users,id);
-    }
 
     @Override
-    public boolean existsById(Long id) {
-        return licenseRepository.existsById(id);
+    public boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users, Long id) {
+        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(duration,no_of_projects,no_of_users,id);
     }
 
     @Override
     public boolean isUpdateNameExists(String name, Long id) {
         return licenseRepository.existsByNameIgnoreCaseAndIdNot(name, id);
     }
+
     @Override
     public void deleteLicenseById(Long id) {
         licenseRepository.deleteById(id);
     }
 
 
+
+    @Override
+    public boolean existsById(Long id) {
+        return licenseRepository.existsById(id);
+    }
 }

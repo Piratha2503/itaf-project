@@ -5,11 +5,13 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
 import com.ii.testautomation.enums.RequestStatus;
+import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.LicenseService;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.RagexMaintainance;
+import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Access;
 
@@ -69,6 +72,18 @@ public class CompanyUserController {
         }
         companyUserService.saveCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateCompanyUserSuccessMessage()));
+    }
+    @Autowired
+    private UserService userService;
+
+    @DeleteMapping(EndpointURI.COMPANY_USER_BY_ID)
+    public ResponseEntity<Object> deleteById(@PathVariable Long id) {
+        if (userService.existsByCompanyUserId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserDeleteDependentCode(),statusCodeBundle.getCompanyUserDeleteDependentMessage()));
+        if (!companyUserService.existsById(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
+        companyUserService.deleteById(id);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getCompanyUserDeleteSuccessMessage()));
     }
 
     @GetMapping(EndpointURI.COMPANY_USERS)

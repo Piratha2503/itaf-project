@@ -9,8 +9,8 @@ import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.LicenseService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.RagexMaintainance;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +25,7 @@ public class LicenseController {
     private LicenseService licenseService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
+
     @Autowired
     private CompanyUserService companyUserService;
     @Autowired
@@ -47,7 +48,7 @@ public class LicenseController {
 
     @PostMapping(EndpointURI.LICENSE)
     public ResponseEntity<Object> createLicense(@RequestBody LicenseRequest licenseRequest) {
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(licenseRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(licenseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (licenseService.existsByName(licenseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicenseNameAlreadyExistMessage()));

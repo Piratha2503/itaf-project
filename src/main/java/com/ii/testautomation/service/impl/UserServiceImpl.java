@@ -15,8 +15,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -87,6 +85,11 @@ public class UserServiceImpl implements UserService {
                 .compact();
 
         return token;
+    }
+
+    @Override
+    public boolean existsByCompanyUserId(Long id) {
+        return userRepository.existsByCompanyUserId(id);
     }
 
 }

@@ -333,6 +333,8 @@ public class StatusCodeBundle {
     private String testGroupingNotExistCode;
     @Value("${code.validation.testScenario.notExists}")
     private String testScenarioNotExistCode;
+    @Value("${code.validation.testGrouping.Dependent}")
+    private String testGroupingDependentCode;
 
     //TestGrouping Message
     @Value("${message.validation.testGrouping.Name.alreadyExists}")
@@ -527,16 +529,32 @@ public class StatusCodeBundle {
     @Value("${message.validation.License.notExits}")
     private String LicenseNotExistsMessage;
 
+    @Value("${message.success.view.License}")
+    private String LicenseViewSuccessMessage;
+    @Value("${message.failure.id.notExist.License}")
+    private String LicenseIdNotExistMessage;
+
+    // CompanyUser Codes
+    @Value("${code.validation.CompanyUser.notExists}")
+    private String CompanyUserNotExistCode;
+    @Value("${code.validation.CompanyUser.dependent}")
+    private String CompanyUserDeleteDependentCode;
+    // Company User Messages
+    @Value("${message.failure.id.notExist.CompanyUser}")
+    private String CompanyUserIdNotExistMessage;
+    @Value("${message.success.delete.CompanyUser}")
+    private String CompanyUserDeleteSuccessMessage;
+    @Value("${message.validation.companyUser.dependent}")
+    private String CompanyUserDeleteDependentMessage;
 
     //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")
     public String getAllCompanyUserSuccessfully;
+    @Value("${code.validation.designation.NotExist}")
+    private String DesignationNotExistsCode;
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
-    @Value("${code.validation.designation.notExists}")
-    private String DesignationNotExistsCode;
-
     //Designation Message
     @Value("${message.validation.designation.notExists}")
     private String designationNotExistsMessage;
@@ -566,4 +584,8 @@ public class StatusCodeBundle {
     private String updateCompanyUserSuccessMessage;
 
 
+    @Value("${message.success.designation.update}")
+    private String designationUpdateSuccessMessage;
+    @Value("${message.validation.designation.NotExist}")
+    private String DesignationNotExistsMessage;
 }

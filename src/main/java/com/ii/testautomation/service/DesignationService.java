@@ -13,4 +13,8 @@ public interface DesignationService {
      List<DesignationResponse> getAllDesignationByCompanyId(Long companyId);
 
 
+
+    boolean existById(Long id);
+
+    boolean existsByNameIdNot(Long id,String name);
 }

@@ -1,7 +1,6 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
-import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.CompanyUserRepository;
@@ -34,6 +33,11 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
+    public boolean existsByNameIdNot(Long id,String name) {
+        return designationRepository.existsByNameIgnoreCaseAndIdNot(name,id);
+    }
+
+    @Override
     public boolean existsByName(String designationName) {
         return designationRepository.existsByNameIgnoreCase(designationName);
     }
@@ -57,8 +61,9 @@ public List<DesignationResponse> getAllDesignationByCompanyId(Long companyId) {
         designationResponseList.add(designationResponse);
     }
     return designationResponseList;
-}
-
-
-
+    }
+    @Override
+    public boolean existById(Long id) {
+        return designationRepository.existsById(id);
+    }
 }

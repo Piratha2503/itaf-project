@@ -101,8 +101,11 @@ public final class EndpointURI {
     // License
     public static final String LICENSE = BASE_API_PATH + "License";
     public static final String LICENSES = BASE_API_PATH + SEARCH + SLASH + "Licenses";
+    public static final String LICENSE_BY_ID = LICENSE + ID;
+
     //CompanyUser
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
+    public static final String COMPANY_USER_BY_ID = COMPANY_USERS+ID;
 
     //Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
@@ -111,6 +114,7 @@ public final class EndpointURI {
 
     // User
     public static final String USER = BASE_API_PATH + "user";
+
     private EndpointURI() {
     }
 }
