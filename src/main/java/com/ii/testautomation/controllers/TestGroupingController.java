@@ -144,7 +144,6 @@ public class TestGroupingController {
                 if (!testCasesService.existsByTestCasesId(testCaseId)) {
                     return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
                 }
-
             }
         }
         if (testGroupingRequest.getSubModuleIds() != null) {

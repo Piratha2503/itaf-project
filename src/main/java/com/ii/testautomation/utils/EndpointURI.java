@@ -13,7 +13,7 @@ public final class EndpointURI {
 
     // URLs for Project
     public static final String PROJECT = BASE_API_PATH + "project";
-    public static final String PROJECT_FILE = PROJECT+"/updateFile";
+    public static final String PROJECT_FILE = PROJECT + "/updateFile";
     public static final String PROJECT_IMPORT = PROJECT + "/import";
     public static final String PROJECTS = BASE_API_PATH + SEARCH + SLASH + "products";
     public static final String PROJECT_BY_ID = PROJECT + ID;
@@ -37,7 +37,7 @@ public final class EndpointURI {
     //URLs for modules
     public static final String MODULE = BASE_API_PATH + "module";
     public static final String MODULE_BY_ID = MODULE + ID;
-    public static final String MODULE_BY_PROJECT_ID = MODULE +"/project" +ID;
+    public static final String MODULE_BY_PROJECT_ID = MODULE + "/project" + ID;
     public static final String MODULES = BASE_API_PATH + SEARCH + SLASH + "modules";
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectIdWithPagination" + ID;
 
@@ -104,6 +104,8 @@ public final class EndpointURI {
     //URLs for  License
     public static final String LICENSE = BASE_API_PATH + "License";
     public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
+    public static final String LICENSES = BASE_API_PATH + SEARCH + SLASH + "Licenses";
+
 
 
     //URLs for CompanyUser
@@ -112,7 +114,16 @@ public final class EndpointURI {
 
     //URLs for Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
-    public static final String DESIGNATION_BY_ID=DESIGNATION+ID;
+    public static final String DESIGNATION_BY_COMPANY_ID = DESIGNATION + "/user/{companyId}";
+
+
+    // User
+    public static final String USER = BASE_API_PATH + "user";
+
+    public static final String DESIGNATION_BY_ID = BASE_API_PATH + "designation"+ID;
+
+    public static final String DESIGNATIONS_BY_ID=DESIGNATION+ID;
+
     public static final String LICENSES_BY_ID = BASE_API_PATH + "license"+ID;
     private EndpointURI() {
     }

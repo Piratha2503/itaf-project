@@ -18,6 +18,8 @@ public interface UserService {
     void deleteUserById(Long id);
 
 
+    boolean existsByContactNo(String contactNo);
+
     boolean existsByDesignationId(Long designationId);
     boolean existsByCompanyUserId(Long id);
 }
