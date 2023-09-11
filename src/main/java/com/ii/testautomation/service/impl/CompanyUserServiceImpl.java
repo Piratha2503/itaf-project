@@ -111,4 +111,18 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     public void deleteById(Long id) {
         companyUserRepository.deleteById(id);
     }
+
+    @Override
+    public CompanyUserResponse getCompanyUserById(Long id) {
+        CompanyUser companyUser =companyUserRepository.findById(id).get();
+        CompanyUserResponse companyUserResponse=new CompanyUserResponse();
+        companyUserResponse.setLicenseId(companyUser.getLicenses().getId());
+        companyUserResponse.setLicenseName(companyUser.getLicenses().getName());
+        companyUserResponse.setLicenseDuration(companyUser.getLicenses().getDuration());
+        companyUserResponse.setPrice(companyUser.getLicenses().getPrice());
+        companyUserResponse.setNoOfUsers(companyUser.getLicenses().getNoOfUsers());
+        companyUserResponse.setNoOfProjects(companyUser.getLicenses().getNoOfProjects());
+        BeanUtils.copyProperties(companyUser,companyUserResponse);
+        return companyUserResponse;
+    }
 }

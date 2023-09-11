@@ -556,6 +556,8 @@ public class StatusCodeBundle {
     private String CompanyUserDeleteSuccessMessage;
     @Value("${message.validation.companyUser.dependent}")
     private String CompanyUserDeleteDependentMessage;
+    @Value("${message.success.companyUser.getById}")
+    private  String getCompanyUserByIdSuccessMessage;
 
     //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")
