@@ -9,6 +9,7 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
+import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.service.LicenseService;
 import com.ii.testautomation.service.UserService;
@@ -36,6 +37,9 @@ public class CompanyUserController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private CompanyUserService companyUserService;
+
+    @Autowired
+    private DesignationService designationService;
 
     @PostMapping(EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object>saveCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
@@ -77,6 +81,7 @@ public class CompanyUserController {
         if (companyUserService.isUpdateCompanyUserNameExists(companyUserRequest.getCompanyName(),companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserNameAlReadyExistsMessage()));
         }
+     //   if(designationRequest.getName()==null){    return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),            statusCodeBundle.))}
         if (companyUserService.isUpdateEmailExists(companyUserRequest.getEmail(),companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserEmailAlReadyExistsMessage()));
         }

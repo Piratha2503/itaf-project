@@ -1,6 +1,7 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
+import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -32,8 +33,6 @@ public class DesignationController {
     @Autowired
     private CompanyUserService companyUserService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private UserRepository userRepository;
 
     @PostMapping(EndpointURI.DESIGNATION)
@@ -63,12 +62,11 @@ public class DesignationController {
     if (!designationService.existsById(id)){
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationNotExistsCode(),statusCodeBundle.getDesignationNotExistMessage()));
     }
-    if (userService.existsByDesignationId(id)){
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
-    }
+//    if (userService.existsByDesignationId(id)){
+//        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
+//    }
      designationService.deleteDesignationById(id);
     return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getDesignationSuccessfullyDeletedMessage()));
-
     }
 
 

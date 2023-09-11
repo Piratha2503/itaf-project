@@ -5,11 +5,9 @@ import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
-import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
-import com.ii.testautomation.repositories.LicenseRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import org.springframework.beans.BeanUtils;
@@ -128,7 +126,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
     @Override
     public boolean existsByLicenseId(Long id) {
-        return licenseRepository.existsById(id);
+        return licensesRepository.existsById(id);
     }
 
     @Override
