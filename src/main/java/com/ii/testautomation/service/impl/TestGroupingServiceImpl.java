@@ -335,13 +335,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 testCaseIds.add(testCase.getId());
                 addedTestCaseNames.add(testCaseName);
             }
-            TestCaseResponseSorted testCaseResponseSorted = new TestCaseResponseSorted();
-            testCaseResponseSorted.setId(testCase.getId());
-            testCaseResponseSorted.setName(testCase.getName());
-            if (schedulingRepository.existsByTestCasesIdAndTestGroupingId(testCase.getId(),testGrouping.getId()))
-                testCaseResponseSorted.setScheduledStatus(false);
-            else testCaseResponseSorted.setScheduledStatus(true);
-            testCaseResponseSortedList.add(testCaseResponseSorted);
             BeanUtils.copyProperties(testCase, testCaseResponse);
             testCaseResponseList.add(testCaseResponse);
         }
@@ -352,13 +345,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             testScenarioIds.add(testScenario.getId());
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
-            TestScenarioResponseSorted testScenarioResponseSorted = new TestScenarioResponseSorted();
-            testScenarioResponseSorted.setId(testScenario.getId());
-            testScenarioResponseSorted.setName(testScenario.getName());
-          if (schedulingRepository.existsByTestScenariosIdAndTestGroupingId(testScenario.getId(),testGrouping.getId()))
-              testScenarioResponseSorted.setScheduledStatus(false);
-          else testScenarioResponseSorted.setScheduledStatus(true);
-          testScenarioResponseSortedList.add(testScenarioResponseSorted);
         }
         testGroupingResponse.setTestScenarioResponseSortedList(testScenarioResponseSortedList);
         List<String> excelFileNames = testGrouping.getExcelFilePath();
@@ -709,5 +695,4 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return testGroupingResponseList;
     }
-
 }
