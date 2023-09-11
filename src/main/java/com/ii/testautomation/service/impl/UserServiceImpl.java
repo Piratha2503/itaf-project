@@ -1,5 +1,4 @@
 package com.ii.testautomation.service.impl;
-
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
@@ -79,15 +78,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsByEmail(String email) {
-
-        return userRepository.existsByEmail(email);
+        return userRepository.existsByEmailIgnoreCase(email);
     }
 
     @Override
     public boolean existsByContactNo(String contactNo) {
         return userRepository.existsByContactNumber(contactNo);
     }
-
     private String generateToken(Users user) {
         Date expiryDate = new Date(System.currentTimeMillis() + 60000);
         Claims claims = Jwts.claims().setIssuer(user.getId().toString()).setIssuedAt(user.getUpdatedAt()).setExpiration(expiryDate);
