@@ -1,12 +1,17 @@
 package com.ii.testautomation.service.impl;
 
+import com.ii.testautomation.dto.request.CompanyUserRequest;
+import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.repositories.CompanyUserRepository;
+import com.ii.testautomation.repositories.LicenseRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
+import org.springframework.beans.BeanUtils;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +27,9 @@ import java.util.List;
 public class CompanyUserServiceImpl implements CompanyUserService {
     @Autowired
     private CompanyUserRepository companyUserRepository;
+
+    @Autowired
+    private LicenseRepository licenseRepository;
 
     @Override
     public List<CompanyUserResponse> getAllCompanyUserWithMultiSearch(Pageable pageable, PaginatedContentResponse.Pagination pagination, CompanyUserSearch companyUserSearch) {
@@ -99,7 +107,37 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
     @Override
     public boolean existsByLicenseId(Long id) {
-        return companyUserRepository.existsByLicensesId(id);
+        return licenseRepository.existsById(id);
+    }
+
+    @Override
+    public boolean isExistCompanyUserName(String companyName) {
+        return companyUserRepository.existsByCompanyNameIgnoreCase(companyName);
+    }
+
+    @Override
+    public boolean isExistByCompanyUserEmail(String email) {
+        return companyUserRepository.existsByEmailIgnoreCase(email);
+    }
+
+    @Override
+    public boolean isExistByCompanyUserContactNumber(String contactNumber) {
+        return companyUserRepository.existsByContactNumber(contactNumber);
+    }
+
+    @Override
+    public boolean isExistsByFirstNameAndLastName(String firstName, String lastName) {
+        return companyUserRepository.existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName);
+    }
+
+    @Override
+    public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
+        CompanyUser companyUser=new CompanyUser();
+        Licenses licenses=new Licenses();
+        licenses.setId(companyUserRequest.getLicenses_id());
+        companyUser.setLicenses(licenses);
+        BeanUtils.copyProperties(companyUserRequest,companyUser);
+        companyUserRepository.save(companyUser);
     }
 
     @Override

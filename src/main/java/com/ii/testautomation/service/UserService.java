@@ -18,5 +18,6 @@ public interface UserService {
     void deleteUserById(Long id);
 
 
+    boolean existsByDesignationId(Long designationId);
     boolean existsByCompanyUserId(Long id);
 }
