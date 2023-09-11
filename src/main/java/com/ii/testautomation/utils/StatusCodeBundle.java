@@ -547,6 +547,8 @@ public class StatusCodeBundle {
     private String LicenseViewSuccessMessage;
     @Value("${message.failure.id.notExist.License}")
     private String LicenseIdNotExistMessage;
+    @Value("${message.failure.License.name.null}")
+    private String LicenseNameNullOrEmptyMessage;
     //Designation Code
     @Value("${message.success.getById.License}")
     private String LicenseGetByIdSuccessMessage;
