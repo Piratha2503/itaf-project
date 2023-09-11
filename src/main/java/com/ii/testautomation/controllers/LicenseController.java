@@ -3,13 +3,11 @@ package com.ii.testautomation.controllers;
 import com.ii.testautomation.dto.request.LicenseRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
-import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.LicenseService;
-import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
-import com.ii.testautomation.utils.RagexMaintainance;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +19,14 @@ public class LicenseController {
     private LicenseService licenseService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-    @Autowired
-    private RagexMaintainance ragexMaintainance;
+
 
     @Autowired
     private CompanyUserService companyUserService;
 
     @PostMapping(EndpointURI.LICENSE)
     public ResponseEntity<Object> createLicense(@RequestBody LicenseRequest licenseRequest) {
-        if (!ragexMaintainance.checkSpaceBeforeAfterWords(licenseRequest.getName()))
+        if (!Utils.checkRagexBeforeAfterWords(licenseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (licenseService.existsByName(licenseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseAlreadyExistCode(), statusCodeBundle.getLicenseNameAlreadyExistMessage()));

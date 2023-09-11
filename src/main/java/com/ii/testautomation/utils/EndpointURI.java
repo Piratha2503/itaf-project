@@ -4,7 +4,6 @@ package com.ii.testautomation.utils;
  * Contains all the rest EndPoint URL constants
  */
 public final class EndpointURI {
-
     private static final String BASE_API_PATH = "/api/v1/";
     private static final String SLASH = "/";
     private static final String SEARCH = "search";
