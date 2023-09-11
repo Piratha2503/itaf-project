@@ -11,9 +11,9 @@ public class ProgressController {
     @Autowired
     private TestGroupingService testGroupingService;
 
-    @RequestMapping(value="/calculateProgressPercentage")
-    public ResponseEntity<Integer> getProgressBarPercentage() {
-        int percentage = testGroupingService.calculatePercentage();
-        return ResponseEntity.ok(percentage);
-    }
+//    @RequestMapping(value="/calculateProgressPercentage")
+//    public ResponseEntity<Integer> getProgressBarPercentage() {
+//        int percentage = testGroupingService .calculatePercentage();
+//        return ResponseEntity.ok(percentage);
+//    }
 }

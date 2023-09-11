@@ -1,5 +1,4 @@
 package com.ii.testautomation.service.impl;
-
 import com.ii.testautomation.dto.request.DesignationRequest;
 import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.entities.Designation;
@@ -11,7 +10,6 @@ import com.ii.testautomation.service.DesignationService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
