@@ -8,6 +8,7 @@ import com.ii.testautomation.dto.search.CompanyUserSearch;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.repositories.CompanyUserRepository;
+import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import org.springframework.beans.BeanUtils;
@@ -26,12 +27,13 @@ import java.util.List;
 public class CompanyUserServiceImpl implements CompanyUserService {
     @Autowired
     private CompanyUserRepository companyUserRepository;
+    @Autowired
+    private LicensesRepository licensesRepository;
 
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
         CompanyUser companyUser = new CompanyUser();
-        Licenses licenses=new Licenses();
-        licenses.setId(companyUserRequest.getLicenses_id());
+        Licenses licenses=licensesRepository.findById(companyUserRequest.getLicenses_id()).get();
         companyUser.setLicenses(licenses);
         BeanUtils.copyProperties(companyUserRequest, companyUser);
         companyUserRepository.save(companyUser);
