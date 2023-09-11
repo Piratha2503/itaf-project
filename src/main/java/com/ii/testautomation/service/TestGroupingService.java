@@ -2,6 +2,7 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.SchedulingGroupingTestCases;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.ProgressBar;
@@ -56,4 +57,6 @@ public interface TestGroupingService {
     void execution(ExecutionRequest executionRequest) throws IOException;
 
     boolean folderExists(Long groupId);
+
+    List<SchedulingGroupingTestCases> getScheduledTestCases(Long groupId);
 }

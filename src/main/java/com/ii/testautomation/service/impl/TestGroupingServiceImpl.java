@@ -3,10 +3,7 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.config.ProgressWebSocketHandler;
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
-import com.ii.testautomation.dto.response.ProgressResponse;
-import com.ii.testautomation.dto.response.TestCaseResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
-import com.ii.testautomation.dto.response.TestScenariosResponse;
+import com.ii.testautomation.dto.response.*;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
@@ -572,6 +569,26 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             if (file.exists()) return true;
         }
         return false;
+    }
+
+    @Override
+    public List<SchedulingGroupingTestCases> getScheduledTestCases(Long groupId) {
+        List<Scheduling> schedulingList=schedulingRepository.findByTestGroupingId(groupId);
+        List<SchedulingGroupingTestCases> schedulingGroupingTestCases=new ArrayList<>();
+        for (Scheduling scheduling : schedulingList
+        ){
+            List<TestCases> testCasesList=scheduling.getTestCases();
+            for (TestCases testCases : testCasesList
+            ){
+                SchedulingGroupingTestCases schedulingGroupingTestCases1=new SchedulingGroupingTestCases();
+                schedulingGroupingTestCases1.setSchedulingId(scheduling.getId());
+                schedulingGroupingTestCases1.setTestCaseId(testCases.getId());
+                schedulingGroupingTestCases1.setTestCaseName(testCases.getName());
+                schedulingGroupingTestCases1.setGroupId(groupId);
+                schedulingGroupingTestCases.add(schedulingGroupingTestCases1);
+            }
+        }
+        return schedulingGroupingTestCases;
     }
 
     @Override
