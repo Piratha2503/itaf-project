@@ -574,4 +574,23 @@ public class StatusCodeBundle {
     private String designationUpdateSuccessMessage;
     @Value("${message.validation.designation.NotExist}")
     private String DesignationNotExistsMessage;
+    @Value("${message.failure.designation.nullValues}")
+    private String DesignationNullValuesMessage;
+
+    //User Codes
+    @Value("${code.validation.user.alreadyExists}")
+    private String UserAlreadyExistsCode;
+    @Value("${code.validation.user.notExists}")
+    private String UserNotExistsCode;
+    // User Messages
+    @Value("${message.validation.user.email.alreadyExists}")
+    private String UserEmailAlreadyExistMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String UserNameAlreadyExistMessage;
+    @Value("${message.validation.user.notExist}")
+    private String UserIdNotExistMessage;
+    @Value("${message.success.update.user}")
+    private String UserUpdateSuccessMessage;
+    @Value("${message.validation.user.contactNumber.alreadyExists}")
+    private String UserContactNumberAlreadyExistMessage;
 }
