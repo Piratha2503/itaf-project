@@ -92,7 +92,7 @@ public class SchedulingController {
             }
         }
         if (schedulingRequest.getHour() > 0) {
-            if (schedulingRequest.getWeek() > 0 || schedulingRequest.getYear() > 0 || schedulingRequest.getWeek() > 0 || schedulingRequest.getMinutes() > 0) {
+            if (schedulingRequest.getWeek() > 0 || schedulingRequest.getYear() > 0 || schedulingRequest.getMonth() > 0 || schedulingRequest.getMinutes() > 0) {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getHourWiseSelected()));
             }
         }
