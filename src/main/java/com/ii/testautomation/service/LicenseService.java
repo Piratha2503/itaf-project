@@ -1,6 +1,7 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.LicenseRequest;
+import com.ii.testautomation.dto.response.LicenseResponse;
 import com.ii.testautomation.entities.Licenses;
 
 public interface LicenseService {
@@ -19,4 +20,5 @@ public interface LicenseService {
     Licenses findById(Long id);
 
     boolean existsById(Long id);
+    LicenseResponse getLicenseById(Long licenseId);
 }
