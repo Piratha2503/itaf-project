@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsByContactNo(String contactNo) {
-        return userRepository.existsByContactNumber(contactNo);
+        return userRepository.existsByContactNumberIgnoreCase(contactNo);
     }
     private String generateToken(Users user) {
         Date expiryDate = new Date(System.currentTimeMillis() + 60000);
