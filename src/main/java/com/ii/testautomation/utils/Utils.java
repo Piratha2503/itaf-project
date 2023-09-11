@@ -25,7 +25,7 @@ public class Utils {
     }
     public static boolean checkRagexBeforeAfterWords(String input)
     {
-        String regexPattern = "^(?!\\\\s)[A-Za-z0-9]+(?:\\\\s[A-Za-z0-9]+)*$";
+        String regexPattern = "^[^\\W\\s]+\\s*[^\\W\\s]+$";
 
         Pattern pattern = Pattern.compile(regexPattern);
 

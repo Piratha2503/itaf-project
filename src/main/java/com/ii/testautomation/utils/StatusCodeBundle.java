@@ -452,7 +452,7 @@ public class StatusCodeBundle {
     //Scheduling Code
     @Value("${code.failure.Id.notExist.scheduling}")
     private String schedulingNotExistCode;
-    //Scheduling
+    //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingNotExistMessage;
     @Value("${message.success.delete.scheduling}")
@@ -463,6 +463,8 @@ public class StatusCodeBundle {
     private String saveTestSchedulingSuccessMessage;
     @Value("${message.failure.name.AlreadyExist.Scheduling}")
     private String schedulingNameAlreadyExists;
+    @Value("${message.validation.AlreadyExist.Scheduling}")
+    private String schedulingAlreadyExists;
     @Value("${message.failure.scheduling.Empty}")
     private String schedulingTestCasesAndScenarioEmpty;
     @Value("${message.success.update.scheduling}")
@@ -472,6 +474,23 @@ public class StatusCodeBundle {
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
+    @Value("${message.validation.startDate.null.scheduling}")
+    private String StartDateCannotNull;
+    @Value("${message.validation.noOfTimes.null.scheduling}")
+    private String noOfTimesCannotNull;
+    @Value("${message.validation.minutes.selected.scheduling}")
+    private String minutesWiseSelected;
+    @Value("${message.validation.week.selected.scheduling}")
+    private String weekWiseSelected;
+    @Value("${message.validation.month.selected.scheduling}")
+    private String monthWiseSelected;
+    @Value("${message.validation.year.selected.scheduling}")
+    private String yearWiseSelected;
+    @Value("${message.validation.hour.selected.scheduling}")
+    private String hourWiseSelected;
+    @Value("${message.validation.select.atleast.scheduling}")
+    private String selectAtleastOne;
+
     //login Codes
     @Value("${code.validation.user.alreadyExists}")
     private String userAlreadyExistCode;
@@ -528,6 +547,25 @@ public class StatusCodeBundle {
     @Value("${message.failure.id.notExist.License}")
     private String LicenseIdNotExistMessage;
     //Designation Code
+    @Value("${message.success.getById.License}")
+    private String LicenseGetByIdSuccessMessage;
+
+    // CompanyUser Codes
+    @Value("${code.validation.CompanyUser.notExists}")
+    private String CompanyUserNotExistCode;
+    @Value("${code.validation.CompanyUser.dependent}")
+    private String CompanyUserDeleteDependentCode;
+    // Company User Messages
+    @Value("${message.failure.id.notExist.CompanyUser}")
+    private String CompanyUserIdNotExistMessage;
+    @Value("${message.success.delete.CompanyUser}")
+    private String CompanyUserDeleteSuccessMessage;
+    @Value("${message.validation.companyUser.dependent}")
+    private String CompanyUserDeleteDependentMessage;
+
+    //CompanyUser Message
+    @Value("${message.success.companyUser.getAll}")
+    public String getAllCompanyUserSuccessfully;
     @Value("${code.validation.designation.NotExist}")
     private String DesignationNotExistsCode;
     @Value("${code.validation.designation.alreadyExist}")
@@ -550,10 +588,7 @@ public class StatusCodeBundle {
     private String companyUserAlReadyExistsCode;
     @Value("${code.validation.companyUser.notExists}")
     private String companyUserNotExistsCode;
-    @Value("${code.validation.CompanyUser.notExists}")
-    private String CompanyUserNotExistCode;
-    @Value("${code.validation.CompanyUser.dependent}")
-    private String CompanyUserDeleteDependentCode;
+
     //companyUser Message
     @Value("${message.failure.id.notExist.CompanyUser}")
     private String CompanyUserIdNotExistMessage;
@@ -573,4 +608,23 @@ public class StatusCodeBundle {
     private String updateCompanyUserSuccessMessage;
     @Value("${message.validation.get.designation.notHave}")
     private String getCompanyuserIdNotHaveDesignation;
+    @Value("${message.failure.designation.nullValues}")
+    private String DesignationNullValuesMessage;
+
+    //User Codes
+    @Value("${code.validation.user.alreadyExists}")
+    private String UserAlreadyExistsCode;
+    @Value("${code.validation.user.notExists}")
+    private String UserNotExistsCode;
+    // User Messages
+    @Value("${message.validation.user.email.alreadyExists}")
+    private String UserEmailAlreadyExistMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String UserNameAlreadyExistMessage;
+    @Value("${message.validation.user.notExist}")
+    private String UserIdNotExistMessage;
+    @Value("${message.success.update.user}")
+    private String UserUpdateSuccessMessage;
+    @Value("${message.validation.user.contactNumber.alreadyExists}")
+    private String UserContactNumberAlreadyExistMessage;
 }

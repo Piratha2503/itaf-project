@@ -3,6 +3,7 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.LicenseRequest;
 import com.ii.testautomation.dto.response.LicenseResponse;
 import com.ii.testautomation.dto.search.LicensesSearch;
+import com.ii.testautomation.dto.response.LicenseResponse;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.entities.QLicenses;
 import com.ii.testautomation.repositories.LicensesRepository;
@@ -61,12 +62,12 @@ public class LicenseServiceImpl implements LicenseService {
 
     @Override
     public boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users) {
-        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration, no_of_projects, no_of_users);
+        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsers(duration,no_of_projects,no_of_users);
     }
 
     @Override
     public boolean isUpdateByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long no_of_projects, Long no_of_users, Long id) {
-        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(duration, no_of_projects, no_of_users, id);
+        return licenseRepository.existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(duration,no_of_projects,no_of_users,id);
     }
 
     @Override
@@ -79,9 +80,16 @@ public class LicenseServiceImpl implements LicenseService {
         licenseRepository.deleteById(id);
     }
 
-
     @Override
     public boolean existsById(Long id) {
         return licenseRepository.existsById(id);
+    }
+
+    @Override
+    public LicenseResponse getLicenseById(Long licenseId) {
+        Licenses licenses=licenseRepository.findById(licenseId).get();
+        LicenseResponse licenseResponse=new LicenseResponse();
+        BeanUtils.copyProperties(licenses,licenseResponse);
+        return licenseResponse;
     }
 }

@@ -1,9 +1,7 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
-import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.enums.RequestStatus;
-import com.ii.testautomation.repositories.UsersRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
@@ -53,14 +51,19 @@ public class DesignationController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designationService.getAllDesignationByCompanyId(companyId), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
     }
+
     @PutMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> updateDesignation(@RequestBody DesignationRequest designationRequest) {
 
+        if (designationRequest.getId() == null || designationRequest.getName() == null)
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationNullValuesMessage()));
         if (!designationService.existById(designationRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
         if (designationService.existsByNameIdNot(designationRequest.getId(), designationRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
         designationService.saveDesignation(designationRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationUpdateSuccessMessage()));
+
     }
+
 }
