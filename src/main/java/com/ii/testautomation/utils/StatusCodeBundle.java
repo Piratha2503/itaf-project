@@ -524,6 +524,7 @@ public class StatusCodeBundle {
     private String LicenseNotExistCode;
     @Value("${message.validation.License.assigned}")
     private String LicenseDeleteDependentCode;
+
     // License Messages
     @Value("${message.success.insert.License}")
     private String LicenseInsertSuccessMessage;
@@ -543,9 +544,6 @@ public class StatusCodeBundle {
     private String LicenseViewSuccessMessage;
     @Value("${message.success.getById.License}")
     private String LicenseGetByIdSuccessMessage;
-
-
-
     @Value("${code.validation.CompanyUser.dependent}")
     private String CompanyUserDeleteDependentCode;
 
@@ -558,7 +556,6 @@ public class StatusCodeBundle {
     private String CompanyUserDeleteDependentMessage;
     @Value("${message.success.companyUser.getAll}")
     public String getAllCompanyUserSuccessfully;
-
 
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
@@ -591,6 +588,10 @@ public class StatusCodeBundle {
     private String CompanyUserNotExistCode;
     @Value("${code.validation.CompanyUser.dependent}")
     private String CompanyUserDependentCode;
+    @Value("${code.validation.CompanyUser.emailAlreadyExists}")
+    private String CompanyUserEmailAlreadyExistsCode;
+    @Value("${code.validation.CompanyUser.contactNumberAlreadyExists}")
+    private String CompanyUserContactNumberAlreadyExistsCode;
 
 
     //CompanyUser Message
@@ -608,7 +609,6 @@ public class StatusCodeBundle {
     private String CompanyUserFirstNameAndLastNameAlreadyExistMessage;
     @Value("${message.failure.CompanyUser.StartAndEndDate.NotMatched}")
     private String StartDateCanNotBeAfterEndDateMessage;
-
     @Value("${message.failure.designation.nullValues}")
     private String DesignationNullValuesMessage;
 
