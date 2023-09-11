@@ -83,11 +83,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByStaffIdIgnoreCase(String staffId) {
-        return userRepository.existsByStaffIdIgnoreCase(staffId);
-    }
-
-    @Override
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
     }
