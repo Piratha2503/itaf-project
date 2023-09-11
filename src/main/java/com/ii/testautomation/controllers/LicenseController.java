@@ -1,4 +1,5 @@
 package com.ii.testautomation.controllers;
+
 import com.ii.testautomation.dto.request.LicenseRequest;
 import com.ii.testautomation.dto.search.LicensesSearch;
 import com.ii.testautomation.enums.RequestStatus;
@@ -29,21 +30,12 @@ public class LicenseController {
     @Autowired
     private CompanyUserService companyUserService;
 
-    @GetMapping(value= EndpointURI.LICENSES)
-    public ResponseEntity<Object>getAllLicense(@RequestParam(name = "page") int page,
-                                                 @RequestParam(name = "size") int size,
-                                                 @RequestParam(name = "direction") String direction,
-                                                 @RequestParam(name = "sortField") String sortField,
-                                                 LicensesSearch licensesSearch) {
+    @GetMapping(value = EndpointURI.LICENSES)
+    public ResponseEntity<Object> getAllLicense(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, LicensesSearch licensesSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
-        return ResponseEntity.ok(new ContentResponse<>(Constants.LICENSE,licenseService.multiSearchLicensesWithPagination(pageable, pagination, licensesSearch),
-                RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getGetLicenseSuccessMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.LICENSE, licenseService.multiSearchLicensesWithPagination(pageable, pagination, licensesSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetLicenseSuccessMessage()));
     }
-
-
 
     @PostMapping(EndpointURI.LICENSE)
     public ResponseEntity<Object> createLicense(@RequestBody LicenseRequest licenseRequest) {
