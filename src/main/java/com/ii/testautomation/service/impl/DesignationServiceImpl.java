@@ -24,15 +24,11 @@ import java.util.Set;
 public class DesignationServiceImpl implements DesignationService {
     @Autowired
     private DesignationRepository designationRepository;
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private CompanyUserRepository companyUserRepository;
     @Override
     public void saveDesignation(DesignationRequest designationRequest) {
-        Designation designation=new Designation();
-        BeanUtils.copyProperties(designationRequest,designation);
+        Designation designation = new Designation();
+        BeanUtils.copyProperties(designationRequest, designation);
         designationRepository.save(designation);
     }
 
@@ -55,5 +51,6 @@ public class DesignationServiceImpl implements DesignationService {
         }
         return designations;
     }
+
 
 }

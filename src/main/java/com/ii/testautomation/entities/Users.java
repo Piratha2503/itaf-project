@@ -10,7 +10,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-
 public class Users extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
