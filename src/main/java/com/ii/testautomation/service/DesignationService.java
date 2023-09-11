@@ -10,4 +10,8 @@ public interface DesignationService {
     boolean existsById(Long id);
 
     void deleteDesignationById(Long id);
+
+    boolean existById(Long id);
+
+    boolean existsByNameIdNot(Long id,String name);
 }

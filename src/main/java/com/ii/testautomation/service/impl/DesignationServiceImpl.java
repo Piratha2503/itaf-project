@@ -1,9 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
-import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
-import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.service.DesignationService;
 import org.springframework.beans.BeanUtils;
@@ -17,9 +15,14 @@ public class DesignationServiceImpl implements DesignationService {
 
     @Override
     public void saveDesignation(DesignationRequest designationRequest) {
-        Designation designation=new Designation();
-        BeanUtils.copyProperties(designationRequest,designation);
+        Designation designation = new Designation();
+        BeanUtils.copyProperties(designationRequest, designation);
         designationRepository.save(designation);
+    }
+
+    @Override
+    public boolean existsByNameIdNot(Long id,String name) {
+        return designationRepository.existsByNameIgnoreCaseAndIdNot(name,id);
     }
 
     @Override
@@ -35,5 +38,10 @@ public class DesignationServiceImpl implements DesignationService {
     @Override
     public void deleteDesignationById(Long id) {
         designationRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existById(Long id) {
+        return designationRepository.existsById(id);
     }
 }

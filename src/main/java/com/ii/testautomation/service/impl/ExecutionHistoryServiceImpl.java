@@ -29,7 +29,7 @@ import java.util.List;
 
 @Service
 @Component
-@PropertySource("classpath:emailConfig.properties")
+@PropertySource("classpath:MessagesAndCodes.properties")
 public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Autowired
     private ExecutionHistoryRepository executionHistoryRepository;
@@ -44,7 +44,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
     @Value("${email.set.subject}")
     private String emailSubject;
 
-
     @Override
     public List<ExecutionHistoryResponse> viewByTestGroupingId(Long id) {
         List<ExecutionHistoryResponse> executionHistoryResponseList = new ArrayList<>();
@@ -55,7 +54,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
             BeanUtils.copyProperties(executionHistory, executionHistoryResponse);
             executionHistoryResponseList.add(executionHistoryResponse);
         }
-
         return executionHistoryResponseList;
     }
 

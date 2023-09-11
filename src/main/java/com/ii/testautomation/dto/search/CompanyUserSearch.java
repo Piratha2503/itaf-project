@@ -2,6 +2,7 @@ package com.ii.testautomation.dto.search;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDate;
@@ -14,7 +15,9 @@ public class CompanyUserSearch {
     private String email;
     private String contactNumber;
     private String status;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
     private String licenseName;
     private Long licenseDuration;

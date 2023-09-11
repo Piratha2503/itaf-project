@@ -8,4 +8,6 @@ public interface UserRepository extends JpaRepository<Users,Long> {
    // boolean existsByStaffIdIgnoreCase(String staffId);
 
     boolean existsByDesignationId(Long designationId);
+
+    boolean existsByCompanyUserId(Long id);
 }

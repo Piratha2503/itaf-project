@@ -333,6 +333,8 @@ public class StatusCodeBundle {
     private String testGroupingNotExistCode;
     @Value("${code.validation.testScenario.notExists}")
     private String testScenarioNotExistCode;
+    @Value("${code.validation.testGrouping.Dependent}")
+    private String testGroupingDependentCode;
 
     //TestGrouping Message
     @Value("${message.validation.testGrouping.Name.alreadyExists}")
@@ -462,16 +464,32 @@ public class StatusCodeBundle {
     private String saveTestSchedulingSuccessMessage;
     @Value("${message.failure.name.AlreadyExist.Scheduling}")
     private String schedulingNameAlreadyExists;
+    @Value("${message.validation.AlreadyExist.Scheduling}")
+    private String schedulingAlreadyExists;
     @Value("${message.failure.scheduling.Empty}")
     private String schedulingTestCasesAndScenarioEmpty;
     @Value("${message.success.update.scheduling}")
     private String schedulingUpdateSuccessMessage;
-
-    //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")
     private String getSchedulingSuccessMessage;
+    @Value("${message.validation.startDate.null.scheduling}")
+    private String StartDateCannotNull;
+    @Value("${message.validation.noOfTimes.null.scheduling}")
+    private String noOfTimesCannotNull;
+    @Value("${message.validation.minutes.selected.scheduling}")
+    private String minutesWiseSelected;
+    @Value("${message.validation.week.selected.scheduling}")
+    private String weekWiseSelected;
+    @Value("${message.validation.month.selected.scheduling}")
+    private String monthWiseSelected;
+    @Value("${message.validation.year.selected.scheduling}")
+    private String yearWiseSelected;
+    @Value("${message.validation.hour.selected.scheduling}")
+    private String hourWiseSelected;
+    @Value("${message.validation.select.atleast.scheduling}")
+    private String selectAtleastOne;
 
     //login Codes
     @Value("${code.validation.user.alreadyExists}")
@@ -521,6 +539,29 @@ public class StatusCodeBundle {
     private String LicenseSuccessfullyDeletedMessage;
     @Value("${message.validation.License.assigned}")
     private String LicenseDeleteDependentMessage;
+    @Value("${message.success.view.License}")
+    private String LicenseViewSuccessMessage;
+    @Value("${message.failure.id.notExist.License}")
+    private String LicenseIdNotExistMessage;
+
+    // CompanyUser Codes
+    @Value("${code.validation.CompanyUser.notExists}")
+    private String CompanyUserNotExistCode;
+    @Value("${code.validation.CompanyUser.dependent}")
+    private String CompanyUserDeleteDependentCode;
+    // Company User Messages
+    @Value("${message.failure.id.notExist.CompanyUser}")
+    private String CompanyUserIdNotExistMessage;
+    @Value("${message.success.delete.CompanyUser}")
+    private String CompanyUserDeleteSuccessMessage;
+    @Value("${message.validation.companyUser.dependent}")
+    private String CompanyUserDeleteDependentMessage;
+
+    //CompanyUser Message
+    @Value("${message.success.companyUser.getAll}")
+    public String getAllCompanyUserSuccessfully;
+    @Value("${code.validation.designation.NotExist}")
+    private String DesignationNotExistsCode;
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
@@ -533,6 +574,10 @@ public class StatusCodeBundle {
     private String DesignationAlreadyExistsMessage;
     @Value("${message.success.designation.save}")
     private String designationSaveSuccessMessage;
+    @Value("${message.success.designation.update}")
+    private String designationUpdateSuccessMessage;
+    @Value("${message.validation.designation.NotExist}")
+    private String DesignationNotExistsMessage;
     @Value("${message.failure.package.NotExist.designation}")
     private String designationNotExistMessage;
     @Value("${message.validation.Designation.assigned}")

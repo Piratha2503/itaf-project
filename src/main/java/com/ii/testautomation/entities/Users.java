@@ -10,7 +10,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-
 public class Users extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +17,6 @@ public class Users extends DateAudit {
     @Column(unique = true, nullable = false)
     private String email;
     private String password;
-    private String staffName;
     private String status;
     private String firstName;
     private String lastName;
