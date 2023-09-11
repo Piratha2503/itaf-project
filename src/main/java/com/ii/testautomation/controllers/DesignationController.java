@@ -69,7 +69,6 @@ public class DesignationController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationUpdateSuccessMessage()));
 
     }
-
     @GetMapping(value = EndpointURI.DESIGNATION_BY_ID)
     public ResponseEntity<Object> GetDesignationById(@PathVariable Long id) {
         if (!designationService.existById(id)) {
