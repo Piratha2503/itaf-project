@@ -32,10 +32,11 @@ public class DesignationController {
                 statusCodeBundle.getDesignationSaveSuccessMessage()));
     }
 
-
     @PutMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> updateDesignation(@RequestBody DesignationRequest designationRequest) {
 
+        if (designationRequest.getId() == null || designationRequest.getName() == null)
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationNullValuesMessage()));
         if (!designationService.existById(designationRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
         if(designationService.existsByNameIdNot(designationRequest.getId(),designationRequest.getName()))

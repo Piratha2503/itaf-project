@@ -558,4 +558,7 @@ public class StatusCodeBundle {
     private String designationUpdateSuccessMessage;
     @Value("${message.validation.designation.NotExist}")
     private String DesignationNotExistsMessage;
+    @Value("${message.failure.designation.nullValues}")
+    private String DesignationNullValuesMessage;
+
 }
