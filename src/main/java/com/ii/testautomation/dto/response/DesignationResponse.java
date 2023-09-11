@@ -10,6 +10,4 @@ import java.util.List;
 public class DesignationResponse {
     private Long id;
     private String name;
-    private List<String> companyUser;
-
 }

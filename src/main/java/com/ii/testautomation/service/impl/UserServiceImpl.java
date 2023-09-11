@@ -1,6 +1,8 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.UserRequest;
+import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.entities.Users;
@@ -39,9 +41,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         generateToken(user);
     }
-
-
-
     @Override
     public void verifyUser(String token) {
         Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(token).getBody();
@@ -89,10 +88,5 @@ public class UserServiceImpl implements UserService {
 
         return token;
     }
-
-//    @Override
-//    public boolean existsByStaffIdIgnoreCase(String staffId) {
-//        return userRepository.existsByStaffIdIgnoreCase(staffId);
-//    }
 
 }

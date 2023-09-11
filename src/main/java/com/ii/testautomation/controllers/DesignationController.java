@@ -2,11 +2,16 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
 import com.ii.testautomation.dto.response.DesignationResponse;
+import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
+import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.RequestStatus;
+import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
@@ -26,6 +31,13 @@ public class DesignationController {
     @Autowired
     private DesignationService designationService;
 
+    @Autowired
+    private CompanyUserService companyUserService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
         if (designationService.existsByName(designationRequest.getName())) {
@@ -39,13 +51,12 @@ public class DesignationController {
                 statusCodeBundle.getDesignationSaveSuccessMessage()));
     }
 
-    @GetMapping(value=EndpointURI.DESIGNATION_BY_COMPANY_ID)
+    @GetMapping(value = EndpointURI.DESIGNATION_BY_COMPANY_ID)
     public ResponseEntity<Object> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
-     List<Designation> designations = designationService.getAllDesignationByCompanyId(companyId);
-        if (designations.isEmpty()) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
+        if (!companyUserService.existsByCompanyId(companyId)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserNotExistsMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designations,
+        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designationService.getAllDesignationByCompanyId(companyId),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
     }
 
