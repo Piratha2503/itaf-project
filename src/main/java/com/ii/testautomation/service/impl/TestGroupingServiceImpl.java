@@ -566,6 +566,55 @@ public class TestGroupingServiceImpl implements TestGroupingService {
     }
 
     @Override
+    public List<SchedulingGroupingTestCases> getScheduledTestCases(Long groupId) {
+        List<Scheduling> schedulingList=schedulingRepository.findByTestGroupingId(groupId);
+        List<SchedulingGroupingTestCases> schedulingGroupingTestCases=new ArrayList<>();
+        for (Scheduling scheduling : schedulingList
+        ){
+            List<TestCases> testCasesList=scheduling.getTestCases();
+            if(testCasesList!=null) {
+                for (TestCases testCases : testCasesList
+                ) {
+                    SchedulingGroupingTestCases schedulingGroupingTestCases1 = new SchedulingGroupingTestCases();
+                    schedulingGroupingTestCases1.setSchedulingId(scheduling.getId());
+                    schedulingGroupingTestCases1.setTestCaseId(testCases.getId());
+                    schedulingGroupingTestCases1.setTestCaseName(testCases.getName());
+                    schedulingGroupingTestCases1.setGroupId(groupId);
+                    schedulingGroupingTestCases.add(schedulingGroupingTestCases1);
+                }
+            }
+        }
+        return schedulingGroupingTestCases;
+    }
+    @Override
+    public List<ScheduledTestScenarioResponse> getScheduledTestScenario(Long groupId) {
+        List<Scheduling> schedulingList=schedulingRepository.findByTestGroupingId(groupId);
+        List<ScheduledTestScenarioResponse> scheduledTestScenarioResponses=new ArrayList<>();
+        for (Scheduling scheduling : schedulingList
+        ) {
+            List<TestScenarios> testScenariosList = scheduling.getTestScenarios();
+            if (testScenariosList != null) {
+                for (TestScenarios testScenarios : testScenariosList
+                ) {
+                    ScheduledTestScenarioResponse schedulingTestScenarioResponse = new ScheduledTestScenarioResponse();
+                    schedulingTestScenarioResponse.setSchedulingId(scheduling.getId());
+                    schedulingTestScenarioResponse.setGroupId(groupId);
+                    schedulingTestScenarioResponse.setTestScenarioId(testScenarios.getId());
+                    schedulingTestScenarioResponse.setTestScenarioName(testScenarios.getName());
+                    Map<Long,String> testCasesMap=new HashMap<>();
+                    for (TestCases testCases : testScenarios.getTestCases()
+                    ) {
+                        testCasesMap.put(testCases.getId(),testCases.getName());
+                    }
+                    schedulingTestScenarioResponse.setTestCases(testCasesMap);
+                    scheduledTestScenarioResponses.add(schedulingTestScenarioResponse);
+                }
+            }
+        }
+        return scheduledTestScenarioResponses;
+    }
+
+    @Override
     public boolean existsByTestGroupingNameByTestCaseAndProjectId(String name, Long projectId) {
         return testGroupingRepository.existsByNameIgnoreCaseAndTestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }

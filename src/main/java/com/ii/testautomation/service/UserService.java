@@ -17,10 +17,21 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
+    boolean existsByUsersId(Long usersId);
+
     boolean existsByContactNo(String contactNo);
 
     boolean existsByDesignationId(Long designationId);
+
     boolean existsByCompanyUserId(Long id);
 
     List<UserResponse> getUserByCompanyId(Long id);
+
+    boolean existsByUserId(Long id);
+
+    boolean existsByEmailAndIdNot(String email, Long id);
+
+    boolean existsByContactNumberAndIdNot(String contactNumber, Long id);
+
+    void updateUser(UserRequest userRequest);
 }
