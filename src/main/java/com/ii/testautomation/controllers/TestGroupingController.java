@@ -6,6 +6,8 @@ import com.ii.testautomation.config.ProgressWebSocketHandler;
 import com.ii.testautomation.config.WebSocketConfig;
 import com.ii.testautomation.dto.request.ExecutionRequest;
 import com.ii.testautomation.dto.request.TestGroupingRequest;
+import com.ii.testautomation.dto.response.ScheduledTestScenarioResponse;
+import com.ii.testautomation.dto.response.SchedulingGroupingTestCases;
 import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.search.TestGroupingSearch;
 import com.ii.testautomation.enums.RequestStatus;
@@ -274,4 +276,33 @@ public class TestGroupingController {
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(pageable, pagination, id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
+    @GetMapping(value = EndpointURI.TEST_GROUPING_SCHEDULING)
+    public ResponseEntity<Object> getScheduledTestCases(@PathVariable Long id)
+    {
+        if(!testGroupingService.existsByTestGroupingId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        List<SchedulingGroupingTestCases> schedulingGroupingTestCases=testGroupingService.getScheduledTestCases(id);
+        if(schedulingGroupingTestCases==null && schedulingGroupingTestCases.isEmpty())
+        {
+           return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),statusCodeBundle.getGroupingNotHaveTScheduledTestCases()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING_SCHEDULING_TESTCASES,schedulingGroupingTestCases,RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getTestGroupingTestCasesSuccessfully()));
+    }
+    @GetMapping(value = EndpointURI.TEST_GROUPING_SCHEDULING_TESTCASES)
+    public ResponseEntity<Object> getScheduledTestScenarios(@PathVariable Long id)
+    {
+        if(!testGroupingService.existsByTestGroupingId(id))
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
+        }
+        List<ScheduledTestScenarioResponse> schedulingGroupingTestCases=testGroupingService.getScheduledTestScenario(id);
+        if(schedulingGroupingTestCases==null && schedulingGroupingTestCases.isEmpty())
+        {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFileFailureCode(),statusCodeBundle.getGroupingNotHaveTScheduledTestCases()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING_SCHEDULING_TESTCASES,schedulingGroupingTestCases,RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getTestGroupingTestCasesSuccessfully()));
+    }
+
 }

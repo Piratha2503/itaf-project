@@ -3,6 +3,7 @@ package com.ii.testautomation.controllers;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private ProjectService projectService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
     @Autowired
@@ -53,6 +56,7 @@ public class UserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getEmailVerificationFailureMessage()));
         userService.verifyUser(token);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getEmailVerificationSuccessMessage()));
+
     }
 
     @PostMapping(value = EndpointURI.USERS)
