@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-
 import java.util.List;
 
 public interface SubModulesRepository extends JpaRepository<SubModules, Long>, QuerydslPredicateExecutor<SubModules> {
@@ -27,5 +26,4 @@ public interface SubModulesRepository extends JpaRepository<SubModules, Long>, Q
     boolean existsByMainModule_Modules_ProjectId(Long projectId);
 
     SubModules findByNameIgnoreCaseAndMainModule_Modules_ProjectId(String subModuleName, Long projectId);
-
 }

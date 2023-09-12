@@ -293,7 +293,6 @@ public class MainModulesServiceImp implements MainModulesService {
             int columnIndex = cell.getColumnIndex();
             columnMap.put(cellValue, columnIndex);
         }
-
         return columnMap;
     }
 }

@@ -67,6 +67,7 @@ public class DesignationServiceImpl implements DesignationService {
         }
         return designationResponseList;
     }
+
     @Override
     public boolean existsById(Long id) {
         return designationRepository.existsById(id);
