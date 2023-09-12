@@ -3,15 +3,18 @@ package com.ii.testautomation.controllers;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.scanner.Constant;
 
 @RestController
 @CrossOrigin
@@ -74,9 +77,13 @@ public class UserController {
         userService.saveUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveUserSuccessMessage()));
     }
-    //    public ResponseEntity<Object> getUserById(@PathVariable Long id){
-//        if(!userService.existsByUsersId(id)){
-//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle))
-//        }
-//    }
+
+        @GetMapping(value = EndpointURI.USER_BY_ID)
+        public ResponseEntity<Object> getUserById(@PathVariable Long id){
+        if(!userService.existsByUserId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistCode(),
+                    statusCodeBundle.getUserIdNotExistMessage()));
+        }
+            return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getUserById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetUserByIdSuccessMessage()));
+    }
 }

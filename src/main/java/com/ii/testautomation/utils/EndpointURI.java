@@ -119,6 +119,8 @@ public final class EndpointURI {
     // User
     public static final String USER = BASE_API_PATH + "user";
 
+    public static final String USER_BY_ID=USER+ID;
+
     public static final String DESIGNATION_BY_ID = BASE_API_PATH + "designation"+ID;
 
     public static final String DESIGNATIONS_BY_ID=DESIGNATION+ID;

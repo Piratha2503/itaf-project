@@ -24,7 +24,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @PropertySource("classpath:MessagesAndCodes.properties")
 @Service
@@ -128,20 +130,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        Users user=userRepository.findById(id).get();
-        UserResponse userResponse=new UserResponse();
-        userResponse.setCompany_user_id(user.getCompanyUser().getId());
+        Users user = userRepository.findById(id).get();
+        UserResponse userResponse = new UserResponse();
+        userResponse.setCompanyUserId(user.getCompanyUser().getId());
         userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
-        userResponse.setDesignation_id(user.getDesignation().getId());
+        userResponse.setDesignationId(user.getDesignation().getId());
         userResponse.setDesignationName(user.getDesignation().getName());
-        BeanUtils.copyProperties(user,userResponse);
+        BeanUtils.copyProperties(user, userResponse);
         return userResponse;
     }
 
-    @Override
-    public boolean existsByUsersId(Long usersId) {
-        return userRepository.existsById(usersId);
-    }
 
     @Override
     public boolean existsByDesignationId(Long designationId) {

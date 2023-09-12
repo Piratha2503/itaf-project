@@ -670,4 +670,6 @@ public class StatusCodeBundle {
     private String UserContactNumberAlreadyExistMessage;
     @Value("${message.failure.userId.null}")
     private String UserIdCannotBeNullMessage;
+    @Value("${message.success.getById.user}")
+    private String getUserByIdSuccessMessage;
 }
