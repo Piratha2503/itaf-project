@@ -92,7 +92,6 @@ public class UserServiceImpl implements UserService {
         Users user = userRepository.findById(id).get();
         user.setStatus(LoginStatus.VERIFIED.getStatus());
         userRepository.save(user);
-
     }
 
     @Override
