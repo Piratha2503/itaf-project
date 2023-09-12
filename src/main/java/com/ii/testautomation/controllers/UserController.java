@@ -3,6 +3,7 @@ package com.ii.testautomation.controllers;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.ProjectService;
@@ -49,14 +50,14 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserUpdateSuccessMessage()));
     }
 
+    @PostMapping(EndpointURI.VERIFY_USER)
     public ResponseEntity<Object> verifyUser(@PathVariable String token) {
-        if (userService.checkExpiry(token))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
-        if (userService.verifyToken(token))
+        if (!userService.verifyToken(token))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getEmailVerificationFailureMessage()));
+        if (!userService.checkExpiry(token))
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
         userService.verifyUser(token);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getEmailVerificationSuccessMessage()));
-
     }
 
     @PostMapping(value = EndpointURI.USERS)
