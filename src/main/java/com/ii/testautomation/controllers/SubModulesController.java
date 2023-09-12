@@ -258,5 +258,4 @@ public class SubModulesController {
         return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.SUBMODULES, subModulesService.getSubModulesByProjectIdWithPagination(id, pageable, pagination),
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSubModulesByProjectId(), pagination));
     }
-
 }

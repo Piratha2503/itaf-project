@@ -4,7 +4,6 @@ import com.ii.testautomation.dto.request.ModulesRequest;
 import com.ii.testautomation.dto.response.ModulesResponse;
 import com.ii.testautomation.dto.response.ProjectModuleResponse;
 import com.ii.testautomation.dto.search.ModuleSearch;
-import com.ii.testautomation.dto.search.TestCaseSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -13,7 +12,10 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.MainModulesService;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
-import com.ii.testautomation.utils.*;
+import com.ii.testautomation.utils.Constants;
+import com.ii.testautomation.utils.EndpointURI;
+import com.ii.testautomation.utils.StatusCodeBundle;
+import com.ii.testautomation.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -94,7 +96,6 @@ public class ModulesController {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.MODULES, modulesService.multiSearchModules(pageable, pagination, moduleSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetAllModuleSuccessMessage()));
-
     }
 
     @GetMapping(value = EndpointURI.MODULE_BY_ID)

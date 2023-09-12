@@ -7,18 +7,19 @@ import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
-import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.*;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
+import com.ii.testautomation.utils.EndpointURI;
+import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @CrossOrigin
