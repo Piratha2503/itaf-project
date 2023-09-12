@@ -51,5 +51,7 @@ public interface ProjectService {
 
     boolean hasJarPath(Long projectId);
 
+    boolean existsByUsersId(Long usersId);
+
     public boolean hasConfigPath(Long projectId);
 }
