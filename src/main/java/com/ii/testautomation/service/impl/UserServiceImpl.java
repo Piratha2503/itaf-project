@@ -1,6 +1,5 @@
 package com.ii.testautomation.service.impl;
 
-import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
@@ -18,7 +17,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -237,4 +235,12 @@ public class UserServiceImpl implements UserService {
         }
 
     }
+
+    @Override
+    public void deleteUserById(Long id) {
+        Users users = userRepository.findById(id).get();
+        users.setStatus(LoginStatus.DEACTIVATE.getStatus());
+        userRepository.save(users);
+    }
+
 }

@@ -9,6 +9,7 @@ public final class EndpointURI {
     private static final String SEARCH = "search";
     private static final String SEARCH_WITH_PAGE = "page";
     private static final String ID = "/{id}";
+    private static final String PASSWORD = "/{password}";
     private static final String PROJECT_ID = "/{projectId}";
 
     // URLs for Project
@@ -97,6 +98,9 @@ public final class EndpointURI {
    //URls for users
     public static final String  USERS=BASE_API_PATH+"users";
     public static final String USERS_DELETE=USERS+ID;
+    public static final String USER_RESET_PASSWORD =USERS+ID+"/reset"+PASSWORD;
+    public static final String USER = BASE_API_PATH + "user";
+
     //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";
 
@@ -105,8 +109,6 @@ public final class EndpointURI {
     public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
     public static final String LICENSES = BASE_API_PATH + SEARCH + SLASH + "Licenses";
 
-
-
     //URLs for CompanyUser
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
     public static final String COMPANY_USER_BY_ID = COMPANY_USERS+ID;
@@ -114,13 +116,7 @@ public final class EndpointURI {
     //URLs for Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
     public static final String DESIGNATION_BY_COMPANY_ID = DESIGNATION + "/user/{companyId}";
-
-
-    // User
-    public static final String USER = BASE_API_PATH + "user";
-
     public static final String DESIGNATION_BY_ID = BASE_API_PATH + "designation"+ID;
-
     public static final String DESIGNATIONS_BY_ID=DESIGNATION+ID;
 
     public static final String LICENSES_BY_ID = BASE_API_PATH + "license"+ID;

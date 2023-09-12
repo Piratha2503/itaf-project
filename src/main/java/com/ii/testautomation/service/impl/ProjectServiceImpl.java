@@ -422,5 +422,9 @@ public class ProjectServiceImpl implements ProjectService {
         errorMessages.put(key, errorList);
     }
 
+    @Override
+    public boolean existsByUsersId(Long usersId) {
+        return projectRepository.existsByUsersId(usersId);
+    }
 }
 
