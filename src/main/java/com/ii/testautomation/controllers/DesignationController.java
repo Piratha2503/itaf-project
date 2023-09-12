@@ -52,16 +52,15 @@ public class DesignationController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationSaveSuccessMessage()));
         }
 
-
     @GetMapping(value = EndpointURI.DESIGNATION_BY_COMPANY_ID)
     public ResponseEntity<Object> getAllDesignationsByCompanyId(@PathVariable Long companyId) {
         if (!companyUserService.existsById(companyId)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
         List<DesignationResponse> designations = designationService.getAllDesignationByCompanyId(companyId);
 
         if (designations.isEmpty() && designations.equals(null)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getGetCompanyuserIdNotHaveDesignation()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getGetCompanyuserIdNotHaveDesignation()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designationService.getAllDesignationByCompanyId(companyId), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
     }

@@ -41,6 +41,8 @@ public class LicenseController {
 
     @PostMapping(EndpointURI.LICENSE)
     public ResponseEntity<Object> createLicense(@RequestBody LicenseRequest licenseRequest) {
+        if (licenseRequest.getName() == null || licenseRequest.getName().isEmpty())
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getLicenseNameNullOrEmptyMessage()));
         if (!Utils.checkRagexBeforeAfterWords(licenseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (licenseService.existsByName(licenseRequest.getName()))

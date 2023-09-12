@@ -9,8 +9,7 @@ public class Utils {
         return field != null && !field.isEmpty();
     }
 
-    public static boolean checkRagexBeforeAfterWordsTestCases(String input)
-    {
+    public static boolean checkRagexBeforeAfterWordsTestCases(String input) {
         String regexPattern = "^(?!\\s)[A-Za-z0-9.]+(?:\\s[A-Za-z0-9.]+)*$";
 
         Pattern pattern = Pattern.compile(regexPattern);
@@ -23,8 +22,8 @@ public class Utils {
             return false;
         }
     }
-    public static boolean checkRagexBeforeAfterWords(String input)
-    {
+
+    public static boolean checkRagexBeforeAfterWords(String input) {
         String regexPattern = "^[^\\W\\s]+\\s*[^\\W\\s]+$";
 
         Pattern pattern = Pattern.compile(regexPattern);

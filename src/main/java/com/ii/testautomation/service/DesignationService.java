@@ -21,6 +21,5 @@ public interface DesignationService {
 
     boolean existsByNameIdNot(Long id, String name);
 
-
     DesignationResponse getDesignationById(Long id);
 }
