@@ -52,9 +52,4 @@ public interface ProjectService {
     boolean hasJarPath(Long projectId);
 
     public boolean hasConfigPath(Long projectId);
-
-
 }
-
-
-
