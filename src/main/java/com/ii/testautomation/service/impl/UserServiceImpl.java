@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.UserRequest;
+import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.UserRepository;
@@ -11,6 +12,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -87,6 +89,24 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByCompanyUserId(id);
 
     }
+
+    @Override
+    public UserResponse getUserById(Long id) {
+        Users user=userRepository.findById(id).get();
+        UserResponse userResponse=new UserResponse();
+        userResponse.setCompany_user_id(user.getCompanyUser().getId());
+        userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
+        userResponse.setDesignation_id(user.getDesignation().getId());
+        userResponse.setDesignationName(user.getDesignation().getName());
+        BeanUtils.copyProperties(user,userResponse);
+        return userResponse;
+    }
+
+    @Override
+    public boolean existsByUsersId(Long usersId) {
+        return userRepository.existsById(usersId);
+    }
+
     @Override
     public boolean existsByDesignationId(Long designationId) {
         return userRepository.existsByDesignationId(designationId);

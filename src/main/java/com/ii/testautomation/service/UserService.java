@@ -1,6 +1,7 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.UserRequest;
+import com.ii.testautomation.dto.response.UserResponse;
 
 public interface UserService {
     void saveUser(UserRequest userRequest);
@@ -15,4 +16,6 @@ public interface UserService {
 
     boolean existsByDesignationId(Long designationId);
     boolean existsByCompanyUserId(Long id);
+    UserResponse getUserById(Long id);
+    boolean existsByUsersId(Long usersId);
 }

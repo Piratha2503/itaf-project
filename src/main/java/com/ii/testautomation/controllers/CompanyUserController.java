@@ -33,6 +33,8 @@ public class CompanyUserController {
     private StatusCodeBundle statusCodeBundle;
     @Autowired
     private CompanyUserService companyUserService;
+    @Autowired
+    private UserService userService;
 
     @PostMapping(EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object>saveCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
@@ -59,12 +61,8 @@ public class CompanyUserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getCompanyUserSuccessfullyInsertedMessage()));
         }
 
-
-    @Autowired
-    private UserService userService;
-
-    @DeleteMapping(EndpointURI.COMPANY_USER_BY_ID)
-    public ResponseEntity<Object> deleteById(@PathVariable Long id) {
+        @DeleteMapping(EndpointURI.COMPANY_USER_BY_ID)
+        public ResponseEntity<Object> deleteById(@PathVariable Long id) {
         if (!companyUserService.existsById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
         if (userService.existsByCompanyUserId(id))
