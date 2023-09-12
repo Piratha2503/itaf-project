@@ -583,23 +583,35 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                     schedulingGroupingTestCases.add(schedulingGroupingTestCases1);
                 }
             }
-            List<TestScenarios> testScenariosList=scheduling.getTestScenarios();
-            if(testScenariosList!=null) {
+        }
+        return schedulingGroupingTestCases;
+    }
+    @Override
+    public List<ScheduledTestScenarioResponse> getScheduledTestScenario(Long groupId) {
+        List<Scheduling> schedulingList=schedulingRepository.findByTestGroupingId(groupId);
+        List<ScheduledTestScenarioResponse> scheduledTestScenarioResponses=new ArrayList<>();
+        for (Scheduling scheduling : schedulingList
+        ) {
+            List<TestScenarios> testScenariosList = scheduling.getTestScenarios();
+            if (testScenariosList != null) {
                 for (TestScenarios testScenarios : testScenariosList
                 ) {
+                    ScheduledTestScenarioResponse schedulingTestScenarioResponse = new ScheduledTestScenarioResponse();
+                    schedulingTestScenarioResponse.setSchedulingId(scheduling.getId());
+                    schedulingTestScenarioResponse.setGroupId(groupId);
+                    schedulingTestScenarioResponse.setTestScenarioId(testScenarios.getId());
+                    schedulingTestScenarioResponse.setTestScenarioName(testScenarios.getName());
+                    Map<Long,String> testCasesMap=new HashMap<>();
                     for (TestCases testCases : testScenarios.getTestCases()
                     ) {
-                        SchedulingGroupingTestCases schedulingGroupingTestCases1 = new SchedulingGroupingTestCases();
-                        schedulingGroupingTestCases1.setSchedulingId(scheduling.getId());
-                        schedulingGroupingTestCases1.setTestCaseId(testCases.getId());
-                        schedulingGroupingTestCases1.setTestCaseName(testCases.getName());
-                        schedulingGroupingTestCases1.setGroupId(groupId);
-                        schedulingGroupingTestCases.add(schedulingGroupingTestCases1);
+                        testCasesMap.put(testCases.getId(),testCases.getName());
                     }
+                    schedulingTestScenarioResponse.setTestCases(testCasesMap);
+                    scheduledTestScenarioResponses.add(schedulingTestScenarioResponse);
                 }
             }
         }
-        return schedulingGroupingTestCases;
+        return scheduledTestScenarioResponses;
     }
 
     @Override

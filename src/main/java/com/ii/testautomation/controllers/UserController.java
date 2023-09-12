@@ -39,19 +39,6 @@ public class UserController {
 
     }
 
-    @DeleteMapping(value = EndpointURI.USERS_DELETE)
-    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
-        if (!userService.existsByUsersId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistCode(),
-                    statusCodeBundle.getUserIdExistMessage()));
-        }
-        if (!projectService.existsByUsersId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUsersDeleteDependentCode(),
-                    statusCodeBundle.getUsersDeleteDependentMessage()));
-        }
-        userService.deleteUserById(id);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserDeleteSuccessMessage()));
-    }
     @PostMapping(value = EndpointURI.USERS)
     public ResponseEntity<Object> saveUser(@RequestBody UserRequest userRequest) {
         if (!companyUserService.existsById(userRequest.getCompanyUserId()))

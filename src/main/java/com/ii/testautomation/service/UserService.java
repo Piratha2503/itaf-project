@@ -15,8 +15,6 @@ public interface UserService {
 
     boolean existsByUsersId(Long usersId);
 
-    void deleteUserById(Long id);
-
 
     boolean existsByContactNo(String contactNo);
 

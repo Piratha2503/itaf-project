@@ -70,7 +70,7 @@ public final class EndpointURI {
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;
     public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update";
-
+    public static final String TEST_GROUPING_SCHEDULING_TESTCASES= TEST_GROUPING + "/scheduling"+"/testCases"+ID;
     public static final String TEST_GROUPING_SCHEDULING= TEST_GROUPING + "/scheduling"+ID;
 
     // URLs for TestScenario

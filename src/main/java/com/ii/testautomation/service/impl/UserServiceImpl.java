@@ -52,12 +52,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsById(usersId);
     }
 
-    @Override
-    public void deleteUserById(Long id) {
-        Users users = userRepository.findById(id).get();
-        users.setStatus(LoginStatus.DEACTIVATE.getStatus());
-        userRepository.save(users);
-    }
 
 
     @Override
