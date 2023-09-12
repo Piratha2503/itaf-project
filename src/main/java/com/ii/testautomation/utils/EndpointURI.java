@@ -99,7 +99,7 @@ public final class EndpointURI {
     public static final String  USERS=BASE_API_PATH+"users";
     public static final String USERS_DELETE=USERS+ID;
     public static final String USER_RESET_PASSWORD =USERS+ID+"/reset"+PASSWORD;
-    public static final String USER = BASE_API_PATH + "user";
+    public static final String USER_BY_ID= USERS +ID;
 
     //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";
@@ -116,13 +116,6 @@ public final class EndpointURI {
     //URLs for Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
     public static final String DESIGNATION_BY_COMPANY_ID = DESIGNATION + "/user/{companyId}";
-
-
-    // User
-    public static final String USER = BASE_API_PATH + "user";
-
-    public static final String USER_BY_ID=USER+ID;
-
     public static final String DESIGNATION_BY_ID = BASE_API_PATH + "designation"+ID;
     public static final String DESIGNATIONS_BY_ID=DESIGNATION+ID;
 
