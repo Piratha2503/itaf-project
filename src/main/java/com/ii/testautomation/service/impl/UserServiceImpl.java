@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
-        userRepository.findByEmail(user.getEmail());
+        Users userWithId =userRepository.findByEmail(user.getEmail());
         Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
         try {
             InputStream inputStream = resource.getInputStream();
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
             }
             reader.close();
             String htmlContentAsString = htmlContent.toString();
-            String Token = generateToken(user);
+            String Token = generateToken(userWithId);
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             helper.setTo(user.getEmail());
@@ -113,6 +113,7 @@ public class UserServiceImpl implements UserService {
         Users user = userRepository.findById(id).get();
         user.setStatus(LoginStatus.VERIFIED.getStatus());
         userRepository.save(user);
+
     }
 
     @Override
