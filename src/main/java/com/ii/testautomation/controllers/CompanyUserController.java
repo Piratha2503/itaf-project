@@ -56,9 +56,6 @@ public class CompanyUserController {
         if (companyUserService.isExistByCompanyUserContactNumber(companyUserRequest.getContactNumber())){
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getCompanyUserContactNumberAlreadyExistsCode(),statusCodeBundle.getCompanyUserContactNumberAlreadyExistMessage()));
         }
-        if (companyUserService.isExistsByFirstNameAndLastName(companyUserRequest.getFirstName(),companyUserRequest.getLastName())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserFirstNameAndLastNameAlreadyExistMessage()));
-        }
         if (companyUserRequest.getStartDate() != null && companyUserRequest.getEndDate() != null
                 && companyUserRequest.getStartDate().isAfter(companyUserRequest.getEndDate())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getStartDateCanNotBeAfterEndDateMessage()));
