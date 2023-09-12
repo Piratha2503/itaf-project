@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.Random;
 
 @Component
-@PropertySource("classpath:emailConfig.properties")
+@PropertySource("classpath:MessagesAndCodes.properties")
 public class TempPassword {
 
     @Value("${temp.password.set.random}")
@@ -15,8 +15,7 @@ public class TempPassword {
     @Value("${temp.password.length}")
     private int passwordLength;
 
-    public String TempPassword()
-    {
+    public String TempPassword() {
         String characters = passwordCharacters;
         int length = passwordLength;
         Random random = new Random();
