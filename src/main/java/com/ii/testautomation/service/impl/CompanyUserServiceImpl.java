@@ -143,10 +143,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     @Override
     public boolean isExistByCompanyUserContactNumber(String contactNumber) {
         return companyUserRepository.existsByContactNumber(contactNumber);
-
     }
-
-
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
         CompanyUser companyUser=new CompanyUser();
