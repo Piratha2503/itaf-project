@@ -15,12 +15,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.catalina.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -67,8 +65,6 @@ public class UserServiceImpl implements UserService {
     public boolean existsByUsersId(Long usersId) {
         return userRepository.existsById(usersId);
     }
-
-
 
     @Override
     public void verifyUser(String token) {
@@ -139,7 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsByEmailAndIdNot(String email, Long id) {
-        return userRepository.existsByEmailIgnoreCaseAndIdNot(email,id);
+        return userRepository.existsByEmailIgnoreCaseAndIdNot(email, id);
     }
 
     @Override
