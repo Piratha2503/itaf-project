@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private String userVerificationMailSubject;
     @Value("${user.verification.email.body}")
     private String userVerificationMailBody;
+
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
@@ -100,6 +101,7 @@ public class UserServiceImpl implements UserService {
     public boolean existsByContactNo(String contactNo) {
         return userRepository.existsByContactNumberIgnoreCase(contactNo);
     }
+
     private String generateToken(Users user) {
         Date expiryDate = new Date(System.currentTimeMillis() + 60000);
         Claims claims = Jwts.claims().setIssuer(user.getId().toString()).setIssuedAt(user.getUpdatedAt()).setExpiration(expiryDate);
@@ -113,6 +115,7 @@ public class UserServiceImpl implements UserService {
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
     }
+
     @Override
     public boolean existsByDesignationId(Long designationId) {
         return userRepository.existsByDesignationId(designationId);
@@ -125,12 +128,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsByEmailAndIdNot(String email, Long id) {
-        return userRepository.existsByEmailAndIdNot(email,id);
+        return userRepository.existsByEmailIgnoreCaseAndIdNot(email,id);
     }
 
     @Override
     public boolean existsByContactNumberAndIdNot(String contactNumber, Long id) {
-        return userRepository.existsByContactNumberAndIdNot(contactNumber, id);
+        return userRepository.existsByContactNumberIgnoreCaseAndIdNot(contactNumber, id);
     }
 
     @Override
