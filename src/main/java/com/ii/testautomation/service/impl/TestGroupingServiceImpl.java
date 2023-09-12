@@ -75,8 +75,8 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             ) {
                 try {
                     if (Objects.requireNonNull(multipartFile.getOriginalFilename()).endsWith(".csv")) return true;
-                        Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
-                        workbook.close();
+                    Workbook workbook = WorkbookFactory.create(multipartFile.getInputStream());
+                    workbook.close();
                 } catch (Exception e) {
                     return false;
                 }
@@ -344,7 +344,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             BeanUtils.copyProperties(testScenario, testScenariosResponse);
             testScenariosResponseList.add(testScenariosResponse);
         }
-         List<String> excelFileNames = testGrouping.getExcelFilePath();
+        List<String> excelFileNames = testGrouping.getExcelFilePath();
         List<String> newExcelFileNames = new ArrayList<>();
         if (excelFileNames != null && !excelFileNames.isEmpty()) {
             for (String excelPath : excelFileNames
@@ -362,11 +362,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         testGroupingResponse.setTestScenarioIds(testScenarioIds);
         testGroupingResponse.setTestScenarioName(testScenarioNames);
         return testGroupingResponse;
-    }
-
-    @Override
-    public int calculatePercentage() {
-        return 0;
     }
 
     @Override
@@ -568,6 +563,55 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             if (file.exists()) return true;
         }
         return false;
+    }
+
+    @Override
+    public List<SchedulingGroupingTestCases> getScheduledTestCases(Long groupId) {
+        List<Scheduling> schedulingList=schedulingRepository.findByTestGroupingId(groupId);
+        List<SchedulingGroupingTestCases> schedulingGroupingTestCases=new ArrayList<>();
+        for (Scheduling scheduling : schedulingList
+        ){
+            List<TestCases> testCasesList=scheduling.getTestCases();
+            if(testCasesList!=null) {
+                for (TestCases testCases : testCasesList
+                ) {
+                    SchedulingGroupingTestCases schedulingGroupingTestCases1 = new SchedulingGroupingTestCases();
+                    schedulingGroupingTestCases1.setSchedulingId(scheduling.getId());
+                    schedulingGroupingTestCases1.setTestCaseId(testCases.getId());
+                    schedulingGroupingTestCases1.setTestCaseName(testCases.getName());
+                    schedulingGroupingTestCases1.setGroupId(groupId);
+                    schedulingGroupingTestCases.add(schedulingGroupingTestCases1);
+                }
+            }
+        }
+        return schedulingGroupingTestCases;
+    }
+    @Override
+    public List<ScheduledTestScenarioResponse> getScheduledTestScenario(Long groupId) {
+        List<Scheduling> schedulingList=schedulingRepository.findByTestGroupingId(groupId);
+        List<ScheduledTestScenarioResponse> scheduledTestScenarioResponses=new ArrayList<>();
+        for (Scheduling scheduling : schedulingList
+        ) {
+            List<TestScenarios> testScenariosList = scheduling.getTestScenarios();
+            if (testScenariosList != null) {
+                for (TestScenarios testScenarios : testScenariosList
+                ) {
+                    ScheduledTestScenarioResponse schedulingTestScenarioResponse = new ScheduledTestScenarioResponse();
+                    schedulingTestScenarioResponse.setSchedulingId(scheduling.getId());
+                    schedulingTestScenarioResponse.setGroupId(groupId);
+                    schedulingTestScenarioResponse.setTestScenarioId(testScenarios.getId());
+                    schedulingTestScenarioResponse.setTestScenarioName(testScenarios.getName());
+                    Map<Long,String> testCasesMap=new HashMap<>();
+                    for (TestCases testCases : testScenarios.getTestCases()
+                    ) {
+                        testCasesMap.put(testCases.getId(),testCases.getName());
+                    }
+                    schedulingTestScenarioResponse.setTestCases(testCasesMap);
+                    scheduledTestScenarioResponses.add(schedulingTestScenarioResponse);
+                }
+            }
+        }
+        return scheduledTestScenarioResponses;
     }
 
     @Override

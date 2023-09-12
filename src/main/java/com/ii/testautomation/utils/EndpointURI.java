@@ -13,7 +13,7 @@ public final class EndpointURI {
 
     // URLs for Project
     public static final String PROJECT = BASE_API_PATH + "project";
-    public static final String PROJECT_FILE = PROJECT+"/updateFile";
+    public static final String PROJECT_FILE = PROJECT + "/updateFile";
     public static final String PROJECT_IMPORT = PROJECT + "/import";
     public static final String PROJECTS = BASE_API_PATH + SEARCH + SLASH + "products";
     public static final String PROJECT_BY_ID = PROJECT + ID;
@@ -37,7 +37,7 @@ public final class EndpointURI {
     //URLs for modules
     public static final String MODULE = BASE_API_PATH + "module";
     public static final String MODULE_BY_ID = MODULE + ID;
-    public static final String MODULE_BY_PROJECT_ID = MODULE +"/project" +ID;
+    public static final String MODULE_BY_PROJECT_ID = MODULE + "/project" + ID;
     public static final String MODULES = BASE_API_PATH + SEARCH + SLASH + "modules";
     public static final String MODULES_BY_ID = BASE_API_PATH + "moduleByProjectIdWithPagination" + ID;
 
@@ -70,6 +70,8 @@ public final class EndpointURI {
     public static final String TEST_GROUPING_BY_TEST_TYPE_ID = TEST_GROUPING + "/testType" + ID;
     public static final String TEST_GROUPING_BY_PROJECT_ID = TEST_GROUPING + "/project" + ID;
     public static final String TEST_GROUPING_UPDATE_EXECUTION_STATUS = TEST_GROUPING + "/update";
+    public static final String TEST_GROUPING_SCHEDULING_TESTCASES= TEST_GROUPING + "/scheduling"+"/testCases"+ID;
+    public static final String TEST_GROUPING_SCHEDULING= TEST_GROUPING + "/scheduling"+ID;
 
     // URLs for TestScenario
     public static final String TEST_SCENARIO = BASE_API_PATH + "testScenario";
@@ -92,23 +94,35 @@ public final class EndpointURI {
     public static final String TEST_SCHEDULING = BASE_API_PATH + "scheduling";
     public static final String SCHEDULES = BASE_API_PATH+"scheduling";
 
-    public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
-    public static final String  USERS=BASE_API_PATH+"user";
-
-    // Email Link
+   //URls for users
+    public static final String  USERS=BASE_API_PATH+"users";
+    public static final String USERS_DELETE=USERS+ID;
+    //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";
 
-    // License
+    //URLs for  License
     public static final String LICENSE = BASE_API_PATH + "License";
-    public static final String LICENSE_BY_ID = LICENSE + ID;
+    public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
+    public static final String LICENSES = BASE_API_PATH + SEARCH + SLASH + "Licenses";
 
-    //CompanyUser
+
+
+    //URLs for CompanyUser
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
     public static final String COMPANY_USER_BY_ID = COMPANY_USERS+ID;
 
-    //Designation
+    //URLs for Designation
     public static final String DESIGNATION = BASE_API_PATH+"designation";
-    public static final String DESIGNATION_BY_ID=DESIGNATION+ID;
+    public static final String DESIGNATION_BY_COMPANY_ID = DESIGNATION + "/user/{companyId}";
+
+
+    // User
+    public static final String USER = BASE_API_PATH + "user";
+
+    public static final String DESIGNATION_BY_ID = BASE_API_PATH + "designation"+ID;
+
+    public static final String DESIGNATIONS_BY_ID=DESIGNATION+ID;
+
     public static final String LICENSES_BY_ID = BASE_API_PATH + "license"+ID;
     private EndpointURI() {
     }

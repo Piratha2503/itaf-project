@@ -5,10 +5,9 @@ import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
-import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.repositories.CompanyUserRepository;
-import com.ii.testautomation.repositories.LicenseRepository;
+import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import org.springframework.beans.BeanUtils;
@@ -27,9 +26,29 @@ import java.util.List;
 public class CompanyUserServiceImpl implements CompanyUserService {
     @Autowired
     private CompanyUserRepository companyUserRepository;
-
     @Autowired
-    private LicenseRepository licenseRepository;
+    private LicensesRepository licensesRepository;
+
+
+    @Override
+    public boolean existsByCompanyUserId(Long id) {
+        return companyUserRepository.existsById(id);
+    }
+
+    @Override
+    public boolean isUpdateCompanyUserNameExists(String name, Long licensesId, Long id) {
+        return companyUserRepository.existsByCompanyNameIgnoreCaseAndLicensesIdAndIdNot(name, licensesId, id);
+    }
+
+    public boolean isUpdateEmailExists(String email, Long licensesId, Long id) {
+        return companyUserRepository.existsByEmailIgnoreCaseAndLicensesIdAndIdNot(email, licensesId, id);
+    }
+
+    @Override
+    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long licensesId, Long id) {
+        return companyUserRepository.existsByContactNumberIgnoreCaseAndLicensesIdAndIdNot(contactNumber, licensesId, id);
+
+    }
 
     @Override
     public List<CompanyUserResponse> getAllCompanyUserWithMultiSearch(Pageable pageable, PaginatedContentResponse.Pagination pagination, CompanyUserSearch companyUserSearch) {
@@ -107,7 +126,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
     @Override
     public boolean existsByLicenseId(Long id) {
-        return licenseRepository.existsById(id);
+        return licensesRepository.existsById(id);
     }
 
     @Override
