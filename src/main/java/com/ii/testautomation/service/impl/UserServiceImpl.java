@@ -52,14 +52,17 @@ public class UserServiceImpl implements UserService {
     private ResourceLoader resourceLoader;
     @Autowired
     private EmailBody emailBody;
+    @Autowired
+    ProjectRepository projectRepository;
 
     @Value("${user.verification.email.subject}")
     private String userVerificationMailSubject;
     @Value("${user.verification.email.body}")
     private String userVerificationMailBody;
-
-    @Autowired
-    ProjectRepository projectRepository;
+    @Value("${reset.password.email.subject}")
+    private String passwordResetMailSubject;
+    @Value("${reset.password.email.body}")
+    private String passwordResetMailBody;
 
     @Override
     public void saveUser(UserRequest userRequest) {
@@ -74,31 +77,7 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
         Users userWithId =userRepository.findByEmail(user.getEmail());
-        Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
-        try {
-            InputStream inputStream = resource.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder htmlContent = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                htmlContent.append(line);
-            }
-            reader.close();
-            String htmlContentAsString = htmlContent.toString();
-            String Token = generateToken(userWithId);
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            helper.setTo(user.getEmail());
-            helper.setSubject(userVerificationMailSubject);
-            helper.setText(userVerificationMailBody+emailBody.getEmailBody1()+Token+emailBody.getEmailBody2(), true);
-            javaMailSender.send(mimeMessage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-
+        generateEmail(userWithId);
     }
 
     @Override
@@ -209,5 +188,41 @@ public class UserServiceImpl implements UserService {
         else newUser.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
 
         userRepository.save(user);
+    }
+
+    private void generateEmail(Users user) {
+
+        Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
+        try {
+            InputStream inputStream = resource.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder htmlContent = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                htmlContent.append(line);
+            }
+            reader.close();
+            String htmlContentAsString = htmlContent.toString();
+            String Token = generateToken(user);
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            if (user.getStatus() == LoginStatus.NEW.getStatus()) {
+                helper.setSubject(userVerificationMailSubject);
+                helper.setText(userVerificationMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
+            }
+            else
+            {
+                helper.setSubject(passwordResetMailSubject);
+                helper.setText(passwordResetMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
+            }
+            javaMailSender.send(mimeMessage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
