@@ -86,16 +86,5 @@ public class UserController {
         userService.deleteUserById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserDeleteSuccessMessage()));
     }
-    @PutMapping(value = EndpointURI.USER_RESET_PASSWORD)
-    public ResponseEntity<Object> resetPassword(@PathVariable Long id,@PathVariable String password)
-    {
-        if(!userService.existsByUsersId(id))
-        {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getUserNotExistCode(),
-                    statusCodeBundle.getUserIdExistMessage()));
-        }
-        userService.resetPassword(id,password);
-        return null;
-    }
+
 }

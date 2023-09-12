@@ -31,5 +31,4 @@ public interface UserService {
 
     void deleteUserById(Long id);
 
-    void resetPassword(Long id, String password);
 }

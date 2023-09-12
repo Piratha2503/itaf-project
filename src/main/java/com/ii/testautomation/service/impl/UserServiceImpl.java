@@ -164,10 +164,4 @@ public class UserServiceImpl implements UserService {
         userRepository.save(users);
     }
 
-    @Override
-    public void resetPassword(Long id, String password) {
-        Users users = userRepository.findById(id).get();
-
-    }
-
 }
