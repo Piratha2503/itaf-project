@@ -589,6 +589,14 @@ public class StatusCodeBundle {
     private String DesignationIdNullMessage;
     @Value("${message.validation.Designation.assigned}")
     private String designationDeleteDependentMessage;
+    @Value("${message.failure.designation.nullValues}")
+    private String DesignationNullValuesMessage;
+    @Value("${message.failure.package.NotExist.designation}")
+    private String designationNotExistMessage;
+    @Value("${message.Success.package.Delete.Designation}")
+    private String designationSuccessfullyDeletedMessage;
+    @Value("${message.success.designation.getById}")
+    private String getDesignationByIdSuccessMessage;
     //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")
     private String companyUserAlReadyExistsCode;
@@ -621,8 +629,6 @@ public class StatusCodeBundle {
     private String CompanyUserFirstNameAndLastNameAlreadyExistMessage;
     @Value("${message.failure.CompanyUser.StartAndEndDate.NotMatched}")
     private String StartDateCanNotBeAfterEndDateMessage;
-    @Value("${message.failure.designation.nullValues}")
-    private String DesignationNullValuesMessage;
     @Value("${message.failure.companyUserId.null}")
     private String CompanyUserIdNullMessage;
     @Value("${message.validation.companyUser.name.alreadyExists}")
@@ -635,12 +641,6 @@ public class StatusCodeBundle {
     private String updateCompanyUserSuccessMessage;
     @Value("${message.validation.get.designation.notHave}")
     private String getCompanyuserIdNotHaveDesignation;
-    @Value("${message.failure.package.NotExist.designation}")
-    private String designationNotExistMessage;
-    @Value("${message.Success.package.Delete.Designation}")
-    private String designationSuccessfullyDeletedMessage;
-    @Value("${message.success.designation.getById}")
-    private String getDesignationByIdSuccessMessage;
     @Value("${message.failure.id.notExist.CompanyUser}")
     private String CompanyUserIdNotExistMessage;
     @Value("${message.success.delete.CompanyUser}")
