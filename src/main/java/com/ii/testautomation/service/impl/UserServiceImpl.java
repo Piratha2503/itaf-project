@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.UUID;
 
 @PropertySource("classpath:MessagesAndCodes.properties")
 @Service
@@ -63,6 +64,10 @@ public class UserServiceImpl implements UserService {
     private String passwordResetMailSubject;
     @Value("${reset.password.email.body}")
     private String passwordResetMailBody;
+    @Value("${email.send.temporaryPassword.subject}")
+    private String temporaryPasswordSendMailSubject;
+    @Value("${email.send.temporaryPassword.body}")
+    private String temporaryPasswordSendMailBody;
 
     @Override
     public void saveUser(UserRequest userRequest) {
@@ -87,17 +92,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyUser(String token) {
-        Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(String.valueOf(LoginStatus.SECURITY_KEY)).parseClaimsJws(token).getBody();
         Long id = Long.parseLong(claims.getIssuer());
         Users user = userRepository.findById(id).get();
         user.setStatus(LoginStatus.VERIFIED.getStatus());
+        UUID uuid = UUID.randomUUID();
+        String tempPassword = uuid.toString().substring(0,8);
+        user.setPassword(tempPassword);
         userRepository.save(user);
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(user.getEmail());
+        simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody+tempPassword);
+        javaMailSender.send(simpleMailMessage);
     }
 
     @Override
     public boolean verifyToken(String token) {
         try {
-            Jwts.parser().setSigningKey("secret").parseClaimsJws(token);
+            Jwts.parser().setSigningKey(String.valueOf(LoginStatus.SECURITY_KEY)).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
