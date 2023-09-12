@@ -649,6 +649,8 @@ public class StatusCodeBundle {
     private String CompanyUserDeleteDependentMessage;
     @Value("${message.success.companyUser.getById}")
     private String getCompanyUserByIdSuccessMessage;
+    @Value("${message.validation.companyUser.name.null}")
+    private String companyUserNameNull;
 
     //User Codes
     @Value("${code.validation.user.alreadyExists}")

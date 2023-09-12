@@ -15,7 +15,6 @@ public interface UserService {
 
     boolean existsByUsersId(Long usersId);
 
-
     boolean existsByContactNo(String contactNo);
 
     boolean existsByDesignationId(Long designationId);
