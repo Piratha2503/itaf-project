@@ -1,6 +1,5 @@
 package com.ii.testautomation.service.impl;
 
-import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
@@ -17,9 +16,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,16 +30,6 @@ public class UserServiceImpl implements UserService {
     private CompanyUserRepository companyUserRepository;
     @Autowired
     private DesignationRepository designationRepository;
-    @Autowired
-    private EmailConfiguration emailConfiguration;
-    @Autowired
-    private JavaMailSender javaMailSender;
-
-    @Value("${user.verification.email.subject}")
-    private String userVerificationMailSubject;
-    @Value("${user.verification.email.body}")
-    private String userVerificationMailBody;
-
     @Autowired
     ProjectRepository projectRepository;
 
@@ -175,6 +162,12 @@ public class UserServiceImpl implements UserService {
         Users users = userRepository.findById(id).get();
         users.setStatus(LoginStatus.DEACTIVATE.getStatus());
         userRepository.save(users);
+    }
+
+    @Override
+    public void resetPassword(Long id, String password) {
+        Users users = userRepository.findById(id).get();
+
     }
 
 }
