@@ -94,7 +94,6 @@ public final class EndpointURI {
     public static final String TEST_SCHEDULING = BASE_API_PATH + "scheduling";
     public static final String SCHEDULES = BASE_API_PATH+"scheduling";
 
-    public static final String CALCULATE_PROGRESS_PERCENTAGE = BASE_API_PATH + "calculateProgressPercentage";
    //URls for users
     public static final String  USERS=BASE_API_PATH+"users";
     public static final String USERS_DELETE=USERS+ID;
