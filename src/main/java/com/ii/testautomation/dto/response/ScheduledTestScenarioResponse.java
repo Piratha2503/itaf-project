@@ -10,8 +10,7 @@ import java.util.Map;
 public class ScheduledTestScenarioResponse {
     private Long testScenarioId;
     private String testScenarioName;
-    private Map<Long,String> testCases;
+    private Map<Long, String> testCases;
     private Long schedulingId;
     private Long groupId;
-
 }
