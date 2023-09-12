@@ -5,17 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>, QuerydslPredicateExecutor<CompanyUser> {
-    boolean existsByLicensesId(Long licenseId);
 
     boolean existsByCompanyNameIgnoreCase(String name);
 
     boolean existsByEmailIgnoreCase(String email);
 
     boolean existsByContactNumber(String contactNumber);
-
-    boolean existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName);
-
-    boolean existsByContactNumberIgnoreCase(String contactNumber);
 
     boolean existsByCompanyNameIgnoreCaseAndLicensesIdAndIdNot(String companyName, Long licensesId, Long id);
 
