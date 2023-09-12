@@ -29,8 +29,6 @@ public interface CompanyUserService {
 
     boolean isExistByCompanyUserContactNumber(String contactNumber);
 
-    boolean isExistsByFirstNameAndLastName(String firstName,String lastName);
-
     void saveCompanyUser(CompanyUserRequest companyUserRequest);
 
     boolean existsById(Long id);
