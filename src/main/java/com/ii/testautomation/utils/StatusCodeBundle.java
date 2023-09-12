@@ -175,6 +175,7 @@ public class StatusCodeBundle {
     private String mainModulesNameDuplicateMessage;
     @Value("${message.validation.mainModule.notMapped}")
     private String mainModulesNotMappedWithProjectMessage;
+
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
     private String moduleAlReadyExistsCode;
@@ -182,6 +183,7 @@ public class StatusCodeBundle {
     private String moduleNotExistsCode;
     @Value("${code.validation.module.dependent}")
     private String moduleDependentCode;
+
     //Modules Message
     @Value("${message.validation.module.file.empty}")
     private String moduleFileEmptyMessage;
@@ -279,6 +281,7 @@ public class StatusCodeBundle {
     private String testCasesAlreadyExistsCode;
     @Value("${code.validation.testcases.dependent}")
     private String testCasesDependentCode;
+
     //TestCase Message
     @Value("${message.validation.testcase.file.name.empty}")
     private String testCaseNameEmptyMessage;
@@ -326,6 +329,7 @@ public class StatusCodeBundle {
     private String getAllTestCasesSuccessMainModuleIdMessage;
     @Value("${message.success.testcase.byModuleId}")
     private String getTestCasesByModuleIdSuccessMessage;
+
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
@@ -335,6 +339,7 @@ public class StatusCodeBundle {
     private String testScenarioNotExistCode;
     @Value("${code.validation.testGrouping.Dependent}")
     private String testGroupingDependentCode;
+
     //TestGrouping Message
     @Value("${message.validation.testGrouping.Name.alreadyExists}")
     private String testGroupingNameAlReadyExistMessage;
@@ -394,6 +399,7 @@ public class StatusCodeBundle {
     private String testScenariosNotExistCode;
     @Value("${code.validation.testScenario.dependent}")
     private String testScenarioDependentCode;
+
     //TestScenario Messages
     @Value("${message.success.insert.testScenario}")
     private String testScenariosSaveMessage;
@@ -423,6 +429,7 @@ public class StatusCodeBundle {
     private String testCasesNotProvidedMessage;
     @Value("${message.validation.testScenario.nameAndId.null}")
     private String testScenarioNameAndIdNullMessage;
+
     //Execution Code
     @Value("${code.failure.executionHistory.notExist}")
     private String executionHistoryNotExistsCode;
@@ -471,6 +478,7 @@ public class StatusCodeBundle {
     private String schedulingTestCasesAndScenarioEmpty;
     @Value("${message.success.update.scheduling}")
     private String schedulingUpdateSuccessMessage;
+
     //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingIdNotExistMessage;
@@ -562,7 +570,6 @@ public class StatusCodeBundle {
     @Value("${message.failure.LicenceId.null}")
     private String LicenseIdNullMessage;
 
-
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
@@ -585,7 +592,6 @@ public class StatusCodeBundle {
     @Value("${message.success.companyUser.getById}")
     private  String getCompanyUserByIdSuccessMessage;
 
-
     //Designation Message
     @Value("${message.validation.designation.notExists}")
     private String designationNotExistsMessage;
@@ -605,7 +611,6 @@ public class StatusCodeBundle {
     private String designationDeleteDependentMessage;
     @Value("${message.failure.designation.nullValues}")
     private String DesignationNullValuesMessage;
-
 
     //companyUser Message
     @Value("${message.validation.companyUser.name.alreadyExists}")
@@ -685,6 +690,4 @@ public class StatusCodeBundle {
     private String CompanyIdNotAssignedForUserMessage;
     @Value("${message.success.GetAllUser.ByCompanyId}")
     private String AllUserByCompanyIdMessage;
-
-
 }
