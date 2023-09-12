@@ -496,6 +496,7 @@ public class StatusCodeBundle {
     private String userAlreadyExistCode;
     @Value("${code.validation.user.notExists}")
     private String userNotExistCode;
+
     //login Messages
     @Value("${message.success.verify.registered}")
     private String RegistrationSuccessMessage;
@@ -547,6 +548,7 @@ public class StatusCodeBundle {
     private String LicenseViewSuccessMessage;
     @Value("${message.failure.id.notExist.License}")
     private String LicenseIdNotExistMessage;
+
     //Designation Code
     @Value("${message.success.getById.License}")
     private String LicenseGetByIdSuccessMessage;
@@ -572,7 +574,8 @@ public class StatusCodeBundle {
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
-
+    @Value("${code.validation.Designation.dependent}")
+    private String DesignationDependentCode;
 
     //Designation Message
     @Value("${message.validation.designation.notExists}")
@@ -587,6 +590,7 @@ public class StatusCodeBundle {
     private String designationUpdateSuccessMessage;
     @Value("${message.validation.designation.NotExist}")
     private String DesignationNotExistsMessage;
+
     //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")
     private String companyUserAlReadyExistsCode;
@@ -594,7 +598,6 @@ public class StatusCodeBundle {
     private String companyUserNotExistsCode;
 
     //companyUser Message
-
     @Value("${message.validation.companyUser.name.alreadyExists}")
     private String companyUserNameAlReadyExistsMessage;
     @Value("${message.validation.companyUser.email.alreadyExists}")
@@ -650,6 +653,7 @@ public class StatusCodeBundle {
     private String UserAlreadyExistsCode;
     @Value("${code.validation.user.notExists}")
     private String UserNotExistsCode;
+
     // User Messages
     @Value("${message.validation.user.email.alreadyExists}")
     private String UserEmailAlreadyExistMessage;
@@ -661,4 +665,8 @@ public class StatusCodeBundle {
     private String UserUpdateSuccessMessage;
     @Value("${message.validation.user.contactNumber.alreadyExists}")
     private String UserContactNumberAlreadyExistMessage;
+    @Value("${message.failure.companyIdNot.Assigned}")
+    private String CompanyIdNotAssignedForUserMessage;
+    @Value("${message.success.GetAllUser.ByCompanyId}")
+    private String AllUserByCompanyIdMessage;
 }

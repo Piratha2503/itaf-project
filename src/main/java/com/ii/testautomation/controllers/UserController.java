@@ -4,9 +4,11 @@ import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
+import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,4 +52,16 @@ public class UserController {
         userService.saveUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveUserSuccessMessage()));
     }
+
+   @GetMapping(value = EndpointURI.USERS_BY_COMPANY_ID)
+    public ResponseEntity<Object>getAllUserByCompanyId(@PathVariable Long id){
+        if(!userService.existsByCompanyUserId(id)){
+           return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getCompanyUserNotExistCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
+        }
+        if(userService.getUserByCompanyId(id).isEmpty()){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyIdNotAssignedForUserMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getUserByCompanyId(id),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getAllUserByCompanyIdMessage()));
+
+   }
 }
