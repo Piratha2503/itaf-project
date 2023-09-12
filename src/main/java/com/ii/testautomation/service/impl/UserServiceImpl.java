@@ -8,6 +8,7 @@ import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
+import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.EmailBody;
@@ -15,7 +16,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.catalina.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +58,9 @@ public class UserServiceImpl implements UserService {
     @Value("${user.verification.email.body}")
     private String userVerificationMailBody;
 
+    @Autowired
+    ProjectRepository projectRepository;
+
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
@@ -96,6 +99,11 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public boolean existsByUsersId(Long usersId) {
+        return userRepository.existsById(usersId);
     }
 
     @Override
@@ -167,7 +175,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsByEmailAndIdNot(String email, Long id) {
-        return userRepository.existsByEmailIgnoreCaseAndIdNot(email,id);
+        return userRepository.existsByEmailIgnoreCaseAndIdNot(email, id);
     }
 
     @Override

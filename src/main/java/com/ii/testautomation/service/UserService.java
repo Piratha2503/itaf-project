@@ -13,6 +13,8 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
+    boolean existsByUsersId(Long usersId);
+
     boolean existsByContactNo(String contactNo);
 
     boolean existsByDesignationId(Long designationId);

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,5 +21,4 @@ public class Project extends DateAudit {
     private String jarFilePath;
     private String configFilePath;
     private String projectPath;
-
 }

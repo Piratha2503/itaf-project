@@ -48,9 +48,6 @@ public class CompanyUserController {
         if (companyUserService.isExistByCompanyUserContactNumber(companyUserRequest.getContactNumber())){
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getCompanyUserContactNumberAlreadyExistsCode(),statusCodeBundle.getCompanyUserContactNumberAlreadyExistMessage()));
         }
-        if (companyUserService.isExistsByFirstNameAndLastName(companyUserRequest.getFirstName(),companyUserRequest.getLastName())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserFirstNameAndLastNameAlreadyExistMessage()));
-        }
         if (companyUserRequest.getStartDate() != null && companyUserRequest.getEndDate() != null
                 && companyUserRequest.getStartDate().isAfter(companyUserRequest.getEndDate())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getStartDateCanNotBeAfterEndDateMessage()));
@@ -71,7 +68,7 @@ public class CompanyUserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlreadyExistCode(), statusCodeBundle.getCompanyUserNameAlReadyExistsMessage()));
         }
         if(companyUserRequest.getCompanyName()==null||companyUserRequest.getCompanyName().isEmpty()){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserNameNull()));
         }
         if (companyUserService.isUpdateEmailExists(companyUserRequest.getEmail(),companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlreadyExistCode(), statusCodeBundle.getCompanyUserEmailAlReadyExistsMessage()));

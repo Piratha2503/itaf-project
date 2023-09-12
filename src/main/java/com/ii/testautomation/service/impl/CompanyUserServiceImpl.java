@@ -140,12 +140,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     public boolean isExistByCompanyUserContactNumber(String contactNumber) {
         return companyUserRepository.existsByContactNumber(contactNumber);
     }
-
-    @Override
-    public boolean isExistsByFirstNameAndLastName(String firstName, String lastName) {
-        return companyUserRepository.existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName);
-    }
-
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
         CompanyUser companyUser=new CompanyUser();
