@@ -28,4 +28,6 @@ public interface UserService {
     boolean existsByContactNumberAndIdNot(String contactNumber, Long id);
 
     void updateUser(UserRequest userRequest);
+
+    void deleteUserById(Long id);
 }
