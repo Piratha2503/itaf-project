@@ -67,7 +67,6 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         Path reportPath = Path.of(path + File.separator + reportName.toString() + ".html");
         String myfile = Files.readString(reportPath);
         return myfile;
-
     }
 
     @Override
@@ -91,13 +90,11 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
             executionHistoryResponse.setTestGroupingId(id);
             executionHistoryResponseList.add(executionHistoryResponse);
         }
-
         return executionHistoryResponseList;
     }
 
     @Override
     public void emailHistoryReports(EmailRequest emailRequest) throws IOException, MessagingException {
-
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
         for (Long id : emailRequest.getHistoryReportIds())
@@ -159,5 +156,4 @@ public class ExecutionHistoryServiceImpl implements ExecutionHistoryService {
         File file = reportPath.toFile();
         return file;
     }
-
 }

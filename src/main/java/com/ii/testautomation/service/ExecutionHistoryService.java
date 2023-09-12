@@ -2,10 +2,8 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.EmailRequest;
 import com.ii.testautomation.dto.response.ExecutionHistoryResponse;
-
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 

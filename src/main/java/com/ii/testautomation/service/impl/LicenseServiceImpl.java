@@ -3,12 +3,10 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.LicenseRequest;
 import com.ii.testautomation.dto.response.LicenseResponse;
 import com.ii.testautomation.dto.search.LicensesSearch;
-import com.ii.testautomation.dto.response.LicenseResponse;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.entities.QLicenses;
 import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-
 import com.ii.testautomation.service.LicenseService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
@@ -17,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.stereotype.Service;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +22,6 @@ import java.util.List;
 public class LicenseServiceImpl implements LicenseService {
     @Autowired
     private LicensesRepository licenseRepository;
-
 
     @Override
     public List<LicenseResponse> multiSearchLicensesWithPagination(Pageable pageable, PaginatedContentResponse.Pagination pagination, LicensesSearch licensesSearch) {
@@ -97,5 +91,4 @@ public class LicenseServiceImpl implements LicenseService {
     public Licenses findById(Long id) {
         return licenseRepository.findById(id).get();
     }
-
 }

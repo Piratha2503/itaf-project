@@ -13,7 +13,6 @@ import com.ii.testautomation.service.CompanyUserService;
 import org.springframework.beans.BeanUtils;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +27,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     private CompanyUserRepository companyUserRepository;
     @Autowired
     private LicensesRepository licensesRepository;
-
 
     @Override
     public boolean existsByCompanyUserId(Long id) {
@@ -122,7 +120,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         }
         return companyUserResponseList;
     }
-
 
     @Override
     public boolean existsByLicenseId(Long id) {

@@ -1,12 +1,10 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.CompanyUserRequest;
-
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
-
 import java.util.List;
 
 public interface CompanyUserService {
@@ -36,5 +34,6 @@ public interface CompanyUserService {
     boolean existsById(Long id);
 
     void deleteById(Long id);
+
     CompanyUserResponse getCompanyUserById(Long id);
 }

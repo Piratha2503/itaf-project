@@ -91,7 +91,6 @@ public class ModulesServiceImpl implements ModulesService {
         }
         if (Utils.isNotNullAndEmpty(moduleSearch.getModulePrefix())) {
             booleanBuilder.and(QModules.modules.prefix.containsIgnoreCase(moduleSearch.getModulePrefix()));
-            //  booleanBuilder.and(QModules.modules.prefix.likeIgnoreCase("%" + searchTerm + "%"));
         }
         List<ModulesResponse> modulesResponseList = new ArrayList<>();
         Page<Modules> modulesPage = modulesRepository.findAll(booleanBuilder, pageable);
