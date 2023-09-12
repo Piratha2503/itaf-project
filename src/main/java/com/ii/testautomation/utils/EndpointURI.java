@@ -99,7 +99,7 @@ public final class EndpointURI {
 
     public static final String  USERS_BY_COMPANY_ID =BASE_API_PATH+"userByCompanyUser"+ID;
 
-    // Email Link
+
    //URls for users
     public static final String USERS_DELETE=USERS+ID;
     //URLs for Email Link
@@ -109,8 +109,6 @@ public final class EndpointURI {
     public static final String LICENSE = BASE_API_PATH + "License";
     public static final String LICENSE_BY_ID = BASE_API_PATH + "license"+ID;
     public static final String LICENSES = BASE_API_PATH + SEARCH + SLASH + "Licenses";
-
-
 
     //URLs for CompanyUser
     public static final String COMPANY_USERS=BASE_API_PATH+"companyUsers";
