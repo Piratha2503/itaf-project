@@ -655,8 +655,6 @@ public class StatusCodeBundle {
     private String CompanyUserContactNumberAlreadyExistMessage;
     @Value("${message.failure.email.AlreadyExist.CompanyUser}")
     private String CompanyUserEmailAlreadyExistMessage;
-    @Value("${message.failure.firstNameAndLastName.AlreadyExist.CompanyUser}")
-    private String CompanyUserFirstNameAndLastNameAlreadyExistMessage;
     @Value("${message.failure.CompanyUser.StartAndEndDate.NotMatched}")
     private String StartDateCanNotBeAfterEndDateMessage;
     @Value("${message.failure.companyUserId.null}")

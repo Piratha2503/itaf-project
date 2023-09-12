@@ -145,6 +145,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
     }
 
+    }
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
         CompanyUser companyUser=new CompanyUser();
