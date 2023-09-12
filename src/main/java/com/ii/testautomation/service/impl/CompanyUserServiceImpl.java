@@ -123,7 +123,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
     @Override
     public boolean existsByLicenseId(Long id) {
-        return licensesRepository.existsById(id);
+        return companyUserRepository.existsByLicensesId(id);
     }
 
     @Override
