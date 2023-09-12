@@ -10,6 +10,7 @@ import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.EmailBody;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -19,10 +20,19 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
 
 @PropertySource("classpath:MessagesAndCodes.properties")
@@ -38,6 +48,10 @@ public class UserServiceImpl implements UserService {
     private EmailConfiguration emailConfiguration;
     @Autowired
     private JavaMailSender javaMailSender;
+    @Autowired
+    private ResourceLoader resourceLoader;
+    @Autowired
+    private EmailBody emailBody;
 
     @Value("${user.verification.email.subject}")
     private String userVerificationMailSubject;
@@ -56,7 +70,32 @@ public class UserServiceImpl implements UserService {
         user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
-        generateToken(user);
+        userRepository.findByEmail(user.getEmail());
+        Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
+        try {
+            InputStream inputStream = resource.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder htmlContent = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                htmlContent.append(line);
+            }
+            reader.close();
+            String htmlContentAsString = htmlContent.toString();
+            String Token = generateToken(user);
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            helper.setSubject(userVerificationMailSubject);
+            helper.setText(userVerificationMailBody+emailBody.getEmailBody1()+Token+emailBody.getEmailBody2(), true);
+            javaMailSender.send(mimeMessage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
