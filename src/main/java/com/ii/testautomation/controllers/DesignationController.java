@@ -72,13 +72,12 @@ public class DesignationController {
         if (!designationService.existsById(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistMessage()));
         }
-    if (userService.existsByDesignationId(id)){
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
-    }
+        if (userService.existsByDesignationId(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationDependentCode(),statusCodeBundle.getDesignationDeleteDependentMessage()));
+        }
         designationService.deleteDesignationById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationSuccessfullyDeletedMessage()));
     }
-
 
     @PutMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> updateDesignation(@RequestBody DesignationRequest designationRequest) {

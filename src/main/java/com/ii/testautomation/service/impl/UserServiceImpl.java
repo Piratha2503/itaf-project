@@ -48,11 +48,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    @Override
     public boolean existsByUsersId(Long usersId) {
         return userRepository.existsById(usersId);
     }

@@ -583,8 +583,8 @@ public class StatusCodeBundle {
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")
     private String DesignationAlreadyExistsCode;
-
-
+    @Value("${code.validation.Designation.dependent}")
+    private String DesignationDependentCode;
     //Designation Message
     @Value("${message.validation.designation.notExists}")
     private String designationNotExistsMessage;
@@ -598,6 +598,8 @@ public class StatusCodeBundle {
     private String designationUpdateSuccessMessage;
     @Value("${message.validation.designation.NotExist}")
     private String DesignationNotExistsMessage;
+    @Value("${message.validation.Designation.assigned}")
+    private String designationDeleteDependentMessage;
     //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")
     private String companyUserAlReadyExistsCode;
@@ -618,8 +620,6 @@ public class StatusCodeBundle {
     private String getCompanyuserIdNotHaveDesignation;
     @Value("${message.failure.package.NotExist.designation}")
     private String designationNotExistMessage;
-    @Value("${message.validation.Designation.assigned}")
-    private String designationDeleteDependentMessage;
     @Value("${message.Success.package.Delete.Designation}")
     private String designationSuccessfullyDeletedMessage;
     @Value("${message.success.designation.getById}")
