@@ -7,7 +7,6 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.LicenseService;
 import com.ii.testautomation.utils.Constants;
@@ -28,7 +27,6 @@ public class LicenseController {
     private LicenseService licenseService;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-
     @Autowired
     private CompanyUserService companyUserService;
 

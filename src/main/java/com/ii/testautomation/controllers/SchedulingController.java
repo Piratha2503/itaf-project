@@ -204,6 +204,7 @@ public class SchedulingController {
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.viewByProjectId(id, pageable, pagination), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getScheduleViewSuccessMessage()));
     }
+
     @GetMapping(value = EndpointURI.SCHEDULING_BY_ID)
     public ResponseEntity<Object> getSchedulingById(@PathVariable Long id) {
         if (!schedulingService.existById(id)) {
@@ -212,6 +213,7 @@ public class SchedulingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.SCHEDULES, schedulingService.getSchedulingById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetSchedulingSuccessMessage()));
 
     }
+
     @DeleteMapping(value = EndpointURI.SCHEDULING_BY_ID)
     public ResponseEntity<Object> deleteSchedulingById(@PathVariable Long id) {
         if (!schedulingService.existById(id)) {
@@ -220,5 +222,4 @@ public class SchedulingController {
         schedulingService.deleteScheduling(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteSchedulingSuccessMessage()));
     }
-
 }

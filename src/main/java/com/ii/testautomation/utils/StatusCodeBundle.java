@@ -471,7 +471,6 @@ public class StatusCodeBundle {
     private String schedulingTestCasesAndScenarioEmpty;
     @Value("${message.success.update.scheduling}")
     private String schedulingUpdateSuccessMessage;
-    //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingIdNotExistMessage;
     @Value("${message.success.get.scheduling}")

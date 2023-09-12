@@ -72,7 +72,6 @@ public class ProjectController {
                 statusCodeBundle.getSaveProjectSuccessMessage()));
     }
 
-
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestParam String project,
                                               @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,

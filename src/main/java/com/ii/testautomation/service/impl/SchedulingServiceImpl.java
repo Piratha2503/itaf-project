@@ -108,7 +108,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
 
-
     @Override
     public ScheduleResponse getSchedulingById(Long id) {
         ScheduleResponse scheduleResponse = new ScheduleResponse();
@@ -268,7 +267,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
     }
 
-
     private void autoExecution(Scheduling scheduling) throws IOException {
         Long projectId = null;
         Long groupId = null;
@@ -312,7 +310,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
         jarExecution(projectId, schedulingId);
     }
-
 
     private void jarExecution(Long projectId, Long schedulingId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
@@ -461,6 +458,7 @@ public class SchedulingServiceImpl implements SchedulingService {
             }
         }
     }
+
     @Override
     public boolean existsByTestCaseId(Long testCaseId) {
         return schedulingRepository.existsByTestGrouping_TestCases_Id(testCaseId);
