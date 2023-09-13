@@ -538,7 +538,7 @@ public class StatusCodeBundle {
     private String LicenseAlreadyExistCode;
     @Value("${code.validation.License.notExists}")
     private String LicenseNotExistCode;
-    @Value("${message.validation.License.assigned}")
+    @Value("${code.validation.License.assigned}")
     private String LicenseDeleteDependentCode;
 
     // License Messages

@@ -12,5 +12,4 @@ public interface LicensesRepository extends JpaRepository<Licenses,Long> , Query
     boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long noOfProjects, Long noOfUsers);
    boolean existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(Long duration, Long noOfProjects, Long noOfUsers, Long Id);
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
-
 }

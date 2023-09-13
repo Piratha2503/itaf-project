@@ -10,4 +10,6 @@ import java.sql.Timestamp;
 public class ProjectSearch {
     private String code;
     private String name;
+
+
 }

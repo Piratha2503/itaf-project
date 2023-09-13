@@ -2,16 +2,20 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.dto.request.UserRequest;
+import com.ii.testautomation.dto.response.MainModulesResponse;
+import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.response.UserResponse;
-import com.ii.testautomation.entities.CompanyUser;
-import com.ii.testautomation.entities.Designation;
-import com.ii.testautomation.entities.Users;
+import com.ii.testautomation.dto.search.UserSearch;
+import com.ii.testautomation.entities.*;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.UserRepository;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Utils;
+import com.querydsl.core.BooleanBuilder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -20,6 +24,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -127,21 +133,21 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public List<UserResponse> getUserByCompanyId(Long id) {
-        List<UserResponse>UserResponseList=new ArrayList<>();
-        List<Users>UsersList=userRepository.findByCompanyUserId(id);
-        for (Users users:UsersList){
-            UserResponse userResponse=new UserResponse();
-            userResponse.setCompanyUserId(users.getCompanyUser().getId());
-            userResponse.setCompanyUserName(users.getCompanyUser().getCompanyName());
-            userResponse.setDesignationId(users.getDesignation().getId());
-            BeanUtils.copyProperties(users,userResponse);
-            UserResponseList.add(userResponse);
-        }
-
-        return UserResponseList;
-    }
+//    @Override
+//    public List<UserResponse> getUserByCompanyId(Long id) {
+//        List<UserResponse>UserResponseList=new ArrayList<>();
+//        List<Users>UsersList=userRepository.findByCompanyUserId(id);
+//        for (Users users:UsersList){
+//            UserResponse userResponse=new UserResponse();
+//            userResponse.setCompanyUserId(users.getCompanyUser().getId());
+//            userResponse.setCompanyUserName(users.getCompanyUser().getCompanyName());
+//            userResponse.setDesignationId(users.getDesignation().getId());
+//            BeanUtils.copyProperties(users,userResponse);
+//            UserResponseList.add(userResponse);
+//        }
+//
+//        return UserResponseList;
+//    }
 
     @Override
     public boolean existsByDesignationId(Long designationId) {
@@ -189,4 +195,37 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
-}
+
+    @Override
+    public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
+           BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
+            booleanBuilder.and(QUsers.users.firstName.containsIgnoreCase(userSearch.getFirstName()));
+        }
+        if (Utils.isNotNullAndEmpty(userSearch.getLastName())) {
+            booleanBuilder.and(QUsers.users.lastName.containsIgnoreCase(userSearch.getLastName()));
+        }
+        if (Utils.isNotNullAndEmpty(userSearch.getCompanyUserName())) {
+            booleanBuilder.and(QUsers.users.companyUser.companyName.containsIgnoreCase(userSearch.getCompanyUserName()));
+        }
+        if (Utils.isNotNullAndEmpty(userSearch.getDesignationName())) {
+            booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
+        }
+        List<UserResponse> userResponseList = new ArrayList<>();
+        Page<Users> usersPage = userRepository.findUserByCompanyUserId(companyUserId,pageable);
+        pagination.setTotalRecords(usersPage.getTotalElements());
+        pagination.setPageSize(usersPage.getTotalPages());
+        for (Users users : usersPage) {
+            UserResponse userResponse = new UserResponse();
+            userResponse.setCompanyUserId(users.getCompanyUser().getId());
+            userResponse.setDesignationId(users.getDesignation().getId());
+            BeanUtils.copyProperties(users, userResponse);
+            userResponseList.add(userResponse);
+        }
+        return userResponseList;
+    }
+
+
+
+    }
+
