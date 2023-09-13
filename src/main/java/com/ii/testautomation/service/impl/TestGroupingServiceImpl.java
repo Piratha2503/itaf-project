@@ -9,7 +9,6 @@ import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.*;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.TestGroupingService;
-import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -515,7 +514,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         try {
             ProgressResponse progressResponse = new ProgressResponse();
             progressResponse.setProjectId(projectId);
-            simpMessagingTemplate.convertAndSend(EndpointURI.WEBSOCKET, progressResponse);
+            simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
