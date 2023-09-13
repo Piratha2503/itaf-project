@@ -26,6 +26,5 @@ public class Constants {
   public static final String DESIGNATION="designation";
   public static final String SECRET_KEY = "Secret";
   public static final String TOKEN_VERIFIED = "Token Verified";
-  public  static final String DESIGNATION="designation";
   public static final String USERS="users";
 }
