@@ -460,6 +460,12 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
+    public boolean checkStartDate(LocalDateTime startDate) {
+        if(startDate.isAfter(LocalDateTime.now())) return true;
+        return false;
+    }
+
+    @Override
     public boolean existsByTestCaseId(Long testCaseId) {
         return schedulingRepository.existsByTestGrouping_TestCases_Id(testCaseId);
     }
