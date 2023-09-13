@@ -510,6 +510,8 @@ public class StatusCodeBundle {
     private String EmailVerificationFailureMessage;
     @Value("${message.failure.token.expired}")
     private String TokenExpiredMessage;
+    @Value("${message.failure.token.alreadyUsed}")
+    private String TokenAlreadyUsedMessage;
     @Value("${message.validation.user.email.alreadyExists}")
     private String userEmailAlReadyExistMessage;
     @Value("${message.success.save.user}")

@@ -70,6 +70,13 @@ public class UserServiceImpl implements UserService {
     private String temporaryPasswordSendMailSubject;
     @Value("${email.send.temporaryPassword.body}")
     private String temporaryPasswordSendMailBody;
+    @Value("${message.failure.email.verify}")
+    private String emailVerificationFailureMessage;
+    @Value("${message.failure.token.expired}")
+    private String tokenExpiredMessage;
+    @Value("${message.failure.token.alreadyUsed}")
+    private String tokenAlreadyUsedMessage;
+
 
     @Override
     public void saveUser(UserRequest userRequest) {
@@ -110,15 +117,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean verifyToken(String token) {
+    public String verifyToken(String token) {
         try {
             Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
-            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token.toString()).getBody();
+            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
             Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
-            if (user.getStatus().equals(LoginStatus.NEW.toString())) return true;
-            else return false;
-        } catch (Exception e) {
-            return false;
+            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return tokenAlreadyUsedMessage;
+            else return Constants.TOKEN_VERIFIED;
+        } catch (ExpiredJwtException e) {
+
+            return tokenExpiredMessage;
+        }
+        catch (Exception e) {
+            return emailVerificationFailureMessage;
         }
     }
 
@@ -154,7 +165,6 @@ public class UserServiceImpl implements UserService {
         String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
         return token;
     }
-
     @Override
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);

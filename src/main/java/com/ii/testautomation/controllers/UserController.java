@@ -52,12 +52,14 @@ public class UserController {
 
     @PostMapping(EndpointURI.VERIFY_USER)
     public ResponseEntity<Object> verifyUser(@PathVariable String token) {
-        if (!userService.verifyToken(token))
+        if (userService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
+       return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
+        if (userService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getEmailVerificationFailureMessage()));
-        if (!userService.checkExpiry(token))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
+        if (userService.verifyToken(token).equals(statusCodeBundle.getTokenAlreadyUsedMessage()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenAlreadyUsedMessage()));
         userService.verifyUser(token);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getEmailVerificationSuccessMessage()));
+       return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getEmailVerificationSuccessMessage()));
     }
 
     @PostMapping(value = EndpointURI.USERS)
