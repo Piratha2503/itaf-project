@@ -491,6 +491,8 @@ public class StatusCodeBundle {
     private String hourWiseSelected;
     @Value("${message.validation.select.atleast.scheduling}")
     private String selectAtleastOne;
+    @Value("${message.validation.timeAfter.Scheduling}")
+    private String startTimeAfterCurrentTime;
 
     //login Codes
     @Value("${code.validation.user.alreadyExists}")
