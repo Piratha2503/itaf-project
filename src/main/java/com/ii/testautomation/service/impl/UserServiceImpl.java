@@ -2,8 +2,6 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.dto.request.UserRequest;
-import com.ii.testautomation.dto.response.MainModulesResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
 import com.ii.testautomation.entities.*;
@@ -196,7 +194,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    @Override
     public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
            BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
@@ -212,13 +209,15 @@ public class UserServiceImpl implements UserService {
             booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
         }
         List<UserResponse> userResponseList = new ArrayList<>();
-        Page<Users> usersPage = userRepository.findUserByCompanyUserId(companyUserId,pageable);
+        Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
         pagination.setTotalRecords(usersPage.getTotalElements());
         pagination.setPageSize(usersPage.getTotalPages());
         for (Users users : usersPage) {
             UserResponse userResponse = new UserResponse();
             userResponse.setCompanyUserId(users.getCompanyUser().getId());
             userResponse.setDesignationId(users.getDesignation().getId());
+            userResponse.setCompanyUserName(users.getCompanyUser().getCompanyName());
+
             BeanUtils.copyProperties(users, userResponse);
             userResponseList.add(userResponse);
         }

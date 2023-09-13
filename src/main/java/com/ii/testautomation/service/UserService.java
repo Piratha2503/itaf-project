@@ -7,6 +7,7 @@ import com.ii.testautomation.dto.response.TestScenariosResponse;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -42,4 +43,5 @@ public interface UserService {
 
     List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
 
+    //List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
 }
