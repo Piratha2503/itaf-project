@@ -78,8 +78,8 @@ public class UserServiceImpl implements UserService {
         companyUser.setId(userRequest.getCompanyUserId());
         user.setDesignation(designation);
         user.setCompanyUser(companyUser);
-        user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
+        user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
         Users userWithId =userRepository.findByEmail(user.getEmail());
         generateEmail(userWithId);
