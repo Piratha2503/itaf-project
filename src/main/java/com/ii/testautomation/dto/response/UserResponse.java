@@ -15,6 +15,8 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String contactNumber;
-    private List<Long> designationId;
+    private Long designationId;
     private Long companyUserId;
+    private String designationName;
+    private String companyUserName;
 }
