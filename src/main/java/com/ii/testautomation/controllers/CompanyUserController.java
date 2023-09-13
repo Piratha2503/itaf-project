@@ -20,6 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @CrossOrigin
 public class CompanyUserController {
@@ -48,9 +50,6 @@ public class CompanyUserController {
         if (companyUserService.isExistByCompanyUserContactNumber(companyUserRequest.getContactNumber())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserContactNumberAlreadyExistsCode(), statusCodeBundle.getCompanyUserContactNumberAlreadyExistMessage()));
         }
-        if (companyUserRequest.getStartDate() != null && companyUserRequest.getEndDate() != null && companyUserRequest.getStartDate().isAfter(companyUserRequest.getEndDate())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateCanNotBeAfterEndDateMessage()));
-        }
         companyUserService.saveCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getCompanyUserSuccessfullyInsertedMessage()));
     }
@@ -75,6 +74,8 @@ public class CompanyUserController {
         if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(), companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlreadyExistCode(), statusCodeBundle.getCompanyUserContactNoAlReadyExistsMessage()));
         }
+
+
         companyUserService.saveCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateCompanyUserSuccessMessage()));
     }

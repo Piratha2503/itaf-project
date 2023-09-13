@@ -667,4 +667,16 @@ public class StatusCodeBundle {
     private String UserContactNumberAlreadyExistMessage;
     @Value("${message.failure.userId.null}")
     private String UserIdCannotBeNullMessage;
+    @Value("${message.validation.user.contact}")
+    private String UserContactNoNotGiven;
+    @Value("${message.validation.user.email}")
+    private String UserEmailNotGiven;
+    @Value("${message.validation.user.firstName}")
+    private String UserFirstNameNotGiven;
+    @Value("${message.validation.user.companyUserId}")
+    private String UserCompanyUserIdNotGiven;
+    @Value("${message.validation.user.designationId}")
+    private String UserDesignationIdNotGiven;
+
+
 }
