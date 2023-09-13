@@ -33,4 +33,6 @@ public interface SchedulingService {
     boolean isUpdateScheduleOptionExists(int month, int week, int minutes, int hour, int year, LocalDateTime startDateTime, Long id,Long projectId);
 
     boolean existsByTestGroupingId(Long id);
+
+    boolean checkStartDate(LocalDateTime startDate);
 }
