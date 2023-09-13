@@ -515,7 +515,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             ProgressResponse progressResponse = new ProgressResponse();
             progressResponse.setProjectId(projectId);
             simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
-            System.out.println("Hi Send");
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
