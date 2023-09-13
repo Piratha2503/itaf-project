@@ -4,6 +4,7 @@ import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
+import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
@@ -26,6 +27,8 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -35,7 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @PropertySource("classpath:MessagesAndCodes.properties")
@@ -169,6 +174,20 @@ public class UserServiceImpl implements UserService {
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
     }
+
+
+    @Override
+    public UserResponse getUserById(Long id) {
+        Users user = userRepository.findById(id).get();
+        UserResponse userResponse = new UserResponse();
+        userResponse.setCompanyUserId(user.getCompanyUser().getId());
+        userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
+        userResponse.setDesignationId(user.getDesignation().getId());
+        userResponse.setDesignationName(user.getDesignation().getName());
+        BeanUtils.copyProperties(user, userResponse);
+        return userResponse;
+    }
+
 
     @Override
     public boolean existsByDesignationId(Long designationId) {

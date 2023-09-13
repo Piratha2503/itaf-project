@@ -491,6 +491,8 @@ public class StatusCodeBundle {
     private String hourWiseSelected;
     @Value("${message.validation.select.atleast.scheduling}")
     private String selectAtleastOne;
+    @Value("${message.validation.timeAfter.Scheduling}")
+    private String startTimeAfterCurrentTime;
 
     //login Codes
     @Value("${code.validation.user.alreadyExists}")
@@ -669,4 +671,6 @@ public class StatusCodeBundle {
     private String UserContactNumberAlreadyExistMessage;
     @Value("${message.failure.userId.null}")
     private String UserIdCannotBeNullMessage;
+    @Value("${message.success.getById.user}")
+    private String getUserByIdSuccessMessage;
 }

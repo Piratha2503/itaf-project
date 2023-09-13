@@ -5,6 +5,7 @@ package com.ii.testautomation.utils;
  */
 public final class EndpointURI {
     private static final String BASE_API_PATH = "/api/v1/";
+    public static final String WEBSOCKET="/queue/percentage";
     private static final String SLASH = "/";
     private static final String SEARCH = "search";
     private static final String SEARCH_WITH_PAGE = "page";
@@ -101,6 +102,7 @@ public final class EndpointURI {
     public static final String USER_RESET_PASSWORD =USERS+ID+"/reset"+PASSWORD;
     public static final String USER = BASE_API_PATH + "user";
     public static final String VERIFY_USER = USER+"/{token}";
+    public static final String USER_BY_ID= USERS +ID;
 
     //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";

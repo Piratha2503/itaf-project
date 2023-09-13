@@ -512,6 +512,9 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();
         try {
+            ProgressResponse progressResponse = new ProgressResponse();
+            progressResponse.setProjectId(projectId);
+            simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
