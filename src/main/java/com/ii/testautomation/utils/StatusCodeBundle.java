@@ -603,10 +603,6 @@ public class StatusCodeBundle {
     private String companyUserAlReadyExistsCode;
     @Value("${code.validation.companyUser.notExists}")
     private String companyUserNotExistsCode;
-    @Value("${code.validation.CompanyUser.alreadyExists}")
-    private String CompanyUserAlreadyExistCode;
-    @Value("${code.validation.CompanyUser.notExists}")
-    private String CompanyUserNotExistCode;
     @Value("${code.validation.CompanyUser.dependent}")
     private String CompanyUserDependentCode;
     @Value("${code.validation.CompanyUser.emailAlreadyExists}")
