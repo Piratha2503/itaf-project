@@ -7,9 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-public interface LicensesRepository extends JpaRepository<Licenses,Long> , QuerydslPredicateExecutor<Licenses> {
+public interface LicensesRepository extends JpaRepository<Licenses, Long>, QuerydslPredicateExecutor<Licenses> {
     boolean existsByNameIgnoreCase(String name);
+
     boolean existsByDurationAndNoOfProjectsAndNoOfUsers(Long duration, Long noOfProjects, Long noOfUsers);
-   boolean existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(Long duration, Long noOfProjects, Long noOfUsers, Long Id);
+
+    boolean existsByDurationAndNoOfProjectsAndNoOfUsersAndIdNot(Long duration, Long noOfProjects, Long noOfUsers, Long Id);
+
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 }

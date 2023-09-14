@@ -4,7 +4,10 @@ import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
-import com.ii.testautomation.entities.*;
+import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Designation;
+import com.ii.testautomation.entities.QUsers;
+import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
@@ -12,6 +15,7 @@ import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.EmailBody;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
 import io.jsonwebtoken.Claims;
@@ -22,14 +26,25 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @PropertySource("classpath:MessagesAndCodes.properties")
 @Service
@@ -44,14 +59,25 @@ public class UserServiceImpl implements UserService {
     private EmailConfiguration emailConfiguration;
     @Autowired
     private JavaMailSender javaMailSender;
+    @Autowired
+    private ResourceLoader resourceLoader;
+    @Autowired
+    private EmailBody emailBody;
+    @Autowired
+    ProjectRepository projectRepository;
 
     @Value("${user.verification.email.subject}")
     private String userVerificationMailSubject;
     @Value("${user.verification.email.body}")
     private String userVerificationMailBody;
-
-    @Autowired
-    ProjectRepository projectRepository;
+    @Value("${reset.password.email.subject}")
+    private String passwordResetMailSubject;
+    @Value("${reset.password.email.body}")
+    private String passwordResetMailBody;
+    @Value("${email.send.temporaryPassword.subject}")
+    private String temporaryPasswordSendMailSubject;
+    @Value("${email.send.temporaryPassword.body}")
+    private String temporaryPasswordSendMailBody;
 
     @Override
     public void saveUser(UserRequest userRequest) {
@@ -65,7 +91,8 @@ public class UserServiceImpl implements UserService {
         user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
         userRepository.save(user);
-        generateToken(user);
+        Users userWithId = userRepository.findByEmail(user.getEmail());
+        generateEmail(userWithId);
     }
 
     @Override
@@ -75,17 +102,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyUser(String token) {
-        Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(String.valueOf(LoginStatus.SECURITY_KEY)).parseClaimsJws(token).getBody();
         Long id = Long.parseLong(claims.getIssuer());
         Users user = userRepository.findById(id).get();
         user.setStatus(LoginStatus.VERIFIED.getStatus());
+        UUID uuid = UUID.randomUUID();
+        String tempPassword = uuid.toString().substring(0, 8);
+        user.setPassword(tempPassword);
         userRepository.save(user);
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(user.getEmail());
+        simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody + tempPassword);
+        javaMailSender.send(simpleMailMessage);
     }
 
     @Override
     public boolean verifyToken(String token) {
         try {
-            Jwts.parser().setSigningKey("secret").parseClaimsJws(token);
+            Jwts.parser().setSigningKey(String.valueOf(LoginStatus.SECURITY_KEY)).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -130,6 +165,17 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByCompanyUserId(id);
     }
 
+    @Override
+    public UserResponse getUserById(Long id) {
+        Users user = userRepository.findById(id).get();
+        UserResponse userResponse = new UserResponse();
+        userResponse.setCompanyUserId(user.getCompanyUser().getId());
+        userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
+        userResponse.setDesignationId(user.getDesignation().getId());
+        userResponse.setDesignationName(user.getDesignation().getName());
+        BeanUtils.copyProperties(user, userResponse);
+        return userResponse;
+    }
 
 
     @Override
@@ -180,7 +226,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
-           BooleanBuilder booleanBuilder = new BooleanBuilder();
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
             booleanBuilder.and(QUsers.users.firstName.containsIgnoreCase(userSearch.getFirstName()));
         }
@@ -194,7 +240,7 @@ public class UserServiceImpl implements UserService {
             booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
         }
         List<UserResponse> userResponseList = new ArrayList<>();
-        Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
+        Page<Users> usersPage = userRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(usersPage.getTotalElements());
         pagination.setPageSize(usersPage.getTotalPages());
         for (Users users : usersPage) {
@@ -210,6 +256,48 @@ public class UserServiceImpl implements UserService {
     }
 
 
+}
+
+
+    private void generateEmail(Users user) {
+
+        Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
+        try {
+            InputStream inputStream = resource.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder htmlContent = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                htmlContent.append(line);
+            }
+            reader.close();
+            String htmlContentAsString = htmlContent.toString();
+            String Token = generateToken(user);
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            if (user.getStatus() == LoginStatus.NEW.getStatus()) {
+                helper.setSubject(userVerificationMailSubject);
+                helper.setText(userVerificationMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
+            } else {
+                helper.setSubject(passwordResetMailSubject);
+                helper.setText(passwordResetMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
+            }
+            javaMailSender.send(mimeMessage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
+    @Override
+    public void deleteUserById(Long id) {
+        Users users = userRepository.findById(id).get();
+        users.setStatus(LoginStatus.DEACTIVATE.getStatus());
+        userRepository.save(users);
+    }
+
+}

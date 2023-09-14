@@ -6,9 +6,9 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
@@ -37,21 +37,21 @@ public class UserController {
     @PutMapping(EndpointURI.USERS)
     public ResponseEntity<Object> updateUser(@RequestBody UserRequest userRequest) {
         if (userRequest.getId() == null)
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode() ,statusCodeBundle.getUserIdCannotBeNullMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserIdCannotBeNullMessage()));
         if (userRequest.getCompanyUserId() == null)
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode() ,statusCodeBundle.getCompanyUserIdNullMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNullMessage()));
         if (userRequest.getDesignationId() == null)
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode() ,statusCodeBundle.getDesignationIdNullMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationIdNullMessage()));
         if (!userService.existsByUserId(userRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistCode() ,statusCodeBundle.getUserIdNotExistMessage()));
-        if (userService.existsByEmailAndIdNot(userRequest.getEmail(),userRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserAlreadyExistCode() ,statusCodeBundle.getUserEmailAlReadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistCode(), statusCodeBundle.getUserIdNotExistMessage()));
+        if (userService.existsByEmailAndIdNot(userRequest.getEmail(), userRequest.getId()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserAlreadyExistCode(), statusCodeBundle.getUserEmailAlReadyExistMessage()));
         if (!companyUserService.existsById(userRequest.getCompanyUserId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getCompanyUserNotExistCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         if (!designationService.existById(userRequest.getDesignationId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
-        if (userService.existsByContactNumberAndIdNot(userRequest.getContactNumber(),userRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserAlreadyExistCode() ,statusCodeBundle.getUserContactNumberAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
+        if (userService.existsByContactNumberAndIdNot(userRequest.getContactNumber(), userRequest.getId()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserAlreadyExistCode(), statusCodeBundle.getUserContactNumberAlreadyExistMessage()));
         userService.updateUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserUpdateSuccessMessage()));
     }
@@ -82,22 +82,44 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveUserSuccessMessage()));
     }
 
-   @GetMapping(value = EndpointURI.USERS_BY_COMPANY_ID)
-    public ResponseEntity<Object>getAllUserByCompanyIdWithPagination(@PathVariable Long id,
-                                                                     @RequestParam(name = "page") int page,
-                                                                     @RequestParam(name = "size") int size,
-                                                                     @RequestParam(name = "direction") String direction,
-                                                                     @RequestParam(name = "sortField") String sortField,
-                                                                     UserSearch userSearch) {
-       Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
-       PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
-        if(!userService.existsByCompanyUserId(id)){
-           return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getCompanyUserNotExistCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
+    @GetMapping(value = EndpointURI.USERS_BY_COMPANY_ID)
+    public ResponseEntity<Object> getAllUserByCompanyIdWithPagination(@PathVariable Long id,
+                                                                      @RequestParam(name = "page") int page,
+                                                                      @RequestParam(name = "size") int size,
+                                                                      @RequestParam(name = "direction") String direction,
+                                                                      @RequestParam(name = "sortField") String sortField,
+                                                                      UserSearch userSearch) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
+        if (!userService.existsByCompanyUserId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
-        if(userService.getAllUserByCompanyUserId(pageable,pagination, id, userSearch).isEmpty()){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyIdNotAssignedForUserMessage()));
+        if (userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch).isEmpty()) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyIdNotAssignedForUserMessage()));
         }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getAllUserByCompanyUserId(pageable,pagination, id, userSearch),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getAllUserByCompanyIdMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.USERS, userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
 
-   }
+    }
+
+    @DeleteMapping(value = EndpointURI.USERS_DELETE)
+    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
+        if (!userService.existsByUsersId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistCode(), statusCodeBundle.getUserIdExistMessage()));
+        }
+        if (projectService.existsByUsersId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUsersDeleteDependentCode(), statusCodeBundle.getUsersDeleteDependentMessage()));
+        }
+        userService.deleteUserById(id);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserDeleteSuccessMessage()));
+    }
+
+
+    @GetMapping(value = EndpointURI.USER_BY_ID)
+    public ResponseEntity<Object> getUserById(@PathVariable Long id) {
+        if (!userService.existsByUserId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistCode(),
+                    statusCodeBundle.getUserIdNotExistMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.USERS, userService.getUserById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetUserByIdSuccessMessage()));
+    }
 }

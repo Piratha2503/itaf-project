@@ -7,12 +7,12 @@ import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
-import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
-import com.ii.testautomation.utils.Constants;
+import com.ii.testautomation.utils.*;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @CrossOrigin
 public class DesignationController {
     @Autowired
     private StatusCodeBundle statusCodeBundle;
-
     @Autowired
     private UserService userService;
     @Autowired
@@ -41,6 +39,11 @@ public class DesignationController {
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
         if (designationRequest.getName().isEmpty() || designationRequest.getName() == null) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationNullValuesMessage()));
+        }
+        if (!Utils.checkRagexBeforeAfterWords(designationRequest.getName())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
+                    statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getSpacesNotAllowedMessage()));
         }
         if (designationService.existsByName(designationRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));

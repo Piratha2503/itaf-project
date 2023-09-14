@@ -108,7 +108,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         return schedulingRepository.existsByNameIgnoreCaseAndTestGrouping_TestCases_SubModule_MainModule_Modules_Project_Id(name, projectId);
     }
 
-
     @Override
     public ScheduleResponse getSchedulingById(Long id) {
         ScheduleResponse scheduleResponse = new ScheduleResponse();
@@ -268,7 +267,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
     }
 
-
     private void autoExecution(Scheduling scheduling) throws IOException {
         Long projectId = null;
         Long groupId = null;
@@ -313,7 +311,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         jarExecution(projectId, schedulingId);
     }
 
-
     private void jarExecution(Long projectId, Long schedulingId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
@@ -324,7 +321,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         try {
             ProgressResponse progressResponse = new ProgressResponse();
             progressResponse.setProjectId(projectId);
-            simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
+            simpMessagingTemplate.convertAndSend("/queue/percentage/schedule/"+projectId, progressResponse);
             System.out.println("Hi Send");
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
@@ -445,7 +442,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                 progressResponse.setPercentage(percentageInt);
                 progressResponse.setGroupName(progressBar.getTestGrouping().getName());
                 progressResponse.setGroupId(progressBar.getTestGrouping().getId());
-                simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getTestGrouping().getId(), progressResponse);
+                simpMessagingTemplate.convertAndSend("/queue/percentage/schedule/" + progressBar.getTestGrouping().getProject().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();
                     List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
@@ -461,6 +458,13 @@ public class SchedulingServiceImpl implements SchedulingService {
             }
         }
     }
+
+    @Override
+    public boolean checkStartDate(LocalDateTime startDate) {
+        if(startDate.isAfter(LocalDateTime.now())) return true;
+        return false;
+    }
+
     @Override
     public boolean existsByTestCaseId(Long testCaseId) {
         return schedulingRepository.existsByTestGrouping_TestCases_Id(testCaseId);

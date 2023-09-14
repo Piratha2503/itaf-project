@@ -13,7 +13,8 @@ public interface TestCasesRepository extends JpaRepository<TestCases, Long>, Que
     boolean existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(String name, Long projectId);
 
     List<TestCases> findBySubModuleId(Long submoduleId);
-    List<TestCases> findBySubModuleIdAndIdNot(Long submoduleId,Long id);
+
+    List<TestCases> findBySubModuleIdAndIdNot(Long submoduleId, Long id);
 
     boolean existsByNameIgnoreCaseAndSubModule_MainModule_Modules_Project_IdAndIdNot(String name, Long projectId, Long id);
 
@@ -22,6 +23,7 @@ public interface TestCasesRepository extends JpaRepository<TestCases, Long>, Que
     boolean existsByNameIgnoreCaseAndSubModuleIdAndIdNot(String name, Long subModuleId, Long id);
 
     List<TestCases> findAllTestCasesBySubModuleId(Long id);
+
     List<TestCases> findBySubModule_MainModule_Modules_Id(Long ModuleId);
 
     List<TestCases> findBySubModule_MainModule_Id(Long MainModuleId);
@@ -41,6 +43,4 @@ public interface TestCasesRepository extends JpaRepository<TestCases, Long>, Que
     List<TestCases> findBySubModuleIdAndSubModule_MainModule_Modules_Project_Id(Long subModuleId, Long projectId);
 
     List<TestCases> findByNameContainingIgnoreCaseAndSubModule_MainModule_Modules_Project_Id(String name, Long projectId);
-
-
 }

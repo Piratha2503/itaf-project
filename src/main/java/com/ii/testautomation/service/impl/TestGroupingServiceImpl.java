@@ -503,15 +503,18 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 }
             }
         }
-        jarExecution(executionRequest.getProjectId());
+        jarExecution(executionRequest.getProjectId(),executionRequest.getTestGroupingId());
     }
 
-    private void jarExecution(Long projectId) {
+    private void jarExecution(Long projectId,Long groupId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
         String jarDirectory = jarFile.getParent();
         try {
+            ProgressResponse progressResponse = new ProgressResponse();
+            progressResponse.setProjectId(projectId);
+            simpMessagingTemplate.convertAndSend("/queue/percentage/group/"+groupId, progressResponse);
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
@@ -537,7 +540,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 progressResponse.setPercentage(percentageInt);
                 progressResponse.setGroupName(progressBar.getTestGrouping().getName());
                 progressResponse.setGroupId(progressBar.getTestGrouping().getId());
-                simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getTestGrouping().getId(), progressResponse);
+                simpMessagingTemplate.convertAndSend("/queue/percentage/group/" + progressBar.getTestGrouping().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();
                     List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());

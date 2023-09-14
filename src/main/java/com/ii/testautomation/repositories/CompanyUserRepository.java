@@ -17,6 +17,4 @@ public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>,
     boolean existsByEmailIgnoreCaseAndLicensesIdAndIdNot(String email, Long licensesId, Long id);
 
     boolean existsByContactNumberIgnoreCaseAndLicensesIdAndIdNot(String contactNumber, Long licensesId, Long id);
-
-
 }

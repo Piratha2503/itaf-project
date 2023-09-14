@@ -4,9 +4,7 @@ import com.ii.testautomation.entities.TestScenarios;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
-import java.util.Map;
 
 public interface TestScenariosRepository extends JpaRepository<TestScenarios, Long> {
     Page<TestScenarios> findDistinctTestScenariosByTestCases_SubModule_MainModule_Modules_Project_Id(Long projectId, Pageable pageable);

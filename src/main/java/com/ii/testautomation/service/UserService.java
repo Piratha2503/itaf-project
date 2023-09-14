@@ -1,13 +1,9 @@
 package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.UserRequest;
-import com.ii.testautomation.dto.response.MainModulesResponse;
-import com.ii.testautomation.dto.response.TestGroupingResponse;
-import com.ii.testautomation.dto.response.TestScenariosResponse;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -31,8 +27,6 @@ public interface UserService {
 
     boolean existsByCompanyUserId(Long id);
 
-   // List<UserResponse> getUserByCompanyId(Long id);
-
     boolean existsByUserId(Long id);
 
     boolean existsByEmailAndIdNot(String email, Long id);
@@ -41,7 +35,10 @@ public interface UserService {
 
     void updateUser(UserRequest userRequest);
 
+    void deleteUserById(Long id);
+
+    UserResponse getUserById(Long id);
+
     List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
 
-    //List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
 }
