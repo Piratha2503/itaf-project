@@ -104,7 +104,8 @@ public class TestScenariosController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getProjectNotExistsMessage()));
         }
         return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.TESTSCENARIOS, testScenariosService.getAllTestScenariosByProjectIdWithPagination(id, pageable, pagination),
-                RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
+                RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllTestScenarioSuccessGivenProjectId(), pagination));
     }
 

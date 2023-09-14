@@ -23,8 +23,11 @@ public class Constants {
   public static final String LICENSE="license";
   public static final String DESIGNATIONS = "Designations";
   public static final String COMPANY_USERS="companyUsers";
-  public static final String DESIGNATION="designation";
+  public  static final String DESIGNATION="designation";
+
+  public  static final String USER="users";
+  public  static final String USERS="users";
   public static final String SECRET_KEY = "Secret";
   public static final String TOKEN_VERIFIED = "Token Verified";
-  public static final String USERS="users";
+
 }

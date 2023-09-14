@@ -16,5 +16,6 @@ public class UserRequest {
     private String lastName;
     private String contactNumber;
     private Long companyUserId;
+    private String companyUserName;
     private Long designationId;
 }
