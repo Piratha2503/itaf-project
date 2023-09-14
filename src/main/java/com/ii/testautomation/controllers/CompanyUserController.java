@@ -2,6 +2,7 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.CompanyUserRequest;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
+import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -50,6 +51,9 @@ public class CompanyUserController {
         }
         if(companyUserRequest.getCompanyName()==null){
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyNameNotGivenMessage()));
+        }
+        if (companyUserRequest.getStartDate() != null ) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateNotGiven()));
         }
         if (!companyUserService.existsByLicenseId(companyUserRequest.getLicenses_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotFoundMessage()));
