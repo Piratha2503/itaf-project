@@ -14,13 +14,9 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
 
     List<Users> findByCompanyUserId(Long companyId);
 
-    boolean existsByEmail(String email);
-
     boolean existsByDesignationId(Long designationId);
 
     boolean existsByCompanyUserId(Long id);
-
-    Users findByEmail(String email);
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 

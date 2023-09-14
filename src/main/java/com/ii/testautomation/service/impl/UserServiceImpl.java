@@ -131,21 +131,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-//    @Override
-//    public List<UserResponse> getUserByCompanyId(Long id) {
-//        List<UserResponse>UserResponseList=new ArrayList<>();
-//        List<Users>UsersList=userRepository.findByCompanyUserId(id);
-//        for (Users users:UsersList){
-//            UserResponse userResponse=new UserResponse();
-//            userResponse.setCompanyUserId(users.getCompanyUser().getId());
-//            userResponse.setCompanyUserName(users.getCompanyUser().getCompanyName());
-//            userResponse.setDesignationId(users.getDesignation().getId());
-//            BeanUtils.copyProperties(users,userResponse);
-//            UserResponseList.add(userResponse);
-//        }
-//
-//        return UserResponseList;
-//    }
 
     @Override
     public boolean existsByDesignationId(Long designationId) {
