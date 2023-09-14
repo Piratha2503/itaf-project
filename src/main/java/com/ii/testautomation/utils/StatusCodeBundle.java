@@ -14,13 +14,16 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class StatusCodeBundle {
-    // Common Success code
+    // Common codes
     @Value("${code.success.common}")
     private String commonSuccessCode;
     @Value("${code.failure.common}")
     private String failureCode;
     @Value("${code.failure.file}")
     private String fileFailureCode;
+    @Value("${code.nullValues.received}")
+    private String NullValuesCode;
+
     // Common File Failure Message
     @Value("${message.file.failure.common}")
     private String fileFailureMessage;
@@ -454,6 +457,7 @@ public class StatusCodeBundle {
     //Scheduling Code
     @Value("${code.failure.Id.notExist.scheduling}")
     private String schedulingNotExistCode;
+
     //Scheduling Messages
     @Value("${message.failure.Id.notExist.scheduling}")
     private String schedulingNotExistMessage;
@@ -494,40 +498,10 @@ public class StatusCodeBundle {
     @Value("${message.validation.timeAfter.Scheduling}")
     private String startTimeAfterCurrentTime;
 
-    //login Codes
-    @Value("${code.validation.user.alreadyExists}")
-    private String userAlreadyExistCode;
-    @Value("${code.validation.user.notExists}")
-    private String userNotExistCode;
-    @Value("${code.validation.users.dependent}")
-    private String usersDeleteDependentCode;
-    @Value("${message.validation.users.dependent}")
-    private String usersDeleteDependentMessage;
-    //login Messages
-    @Value("${message.success.verify.registered}")
-    private String RegistrationSuccessMessage;
-    @Value("${message.success.email.verify}")
-    private String EmailVerificationSuccessMessage;
-    @Value("${message.failure.email.verify}")
-    private String EmailVerificationFailureMessage;
-    @Value("${message.failure.token.expired}")
-    private String TokenExpiredMessage;
-    @Value("${message.failure.token.alreadyUsed}")
-    private String TokenAlreadyUsedMessage;
-    @Value("${message.validation.user.email.alreadyExists}")
-    private String userEmailAlReadyExistMessage;
-    @Value("${message.success.save.user}")
-    private String saveUserSuccessMessage;
-    @Value("${message.validation.user.name.alreadyExists}")
-    private String userIdExistMessage;
-    @Value("${message.validation.user.contactNo.alreadyExists}")
-    private String UserContactNoAlReadyExistsMessage;
-    @Value("${message.success.delete.user}")
-    private String userDeleteSuccessMessage;
-
     // Ragex
     @Value("${message.failure.space}")
     private String SpacesNotAllowedMessage;
+
     // License Codes
     @Value("${code.validation.License.alreadyExists}")
     private String LicenseAlreadyExistCode;
@@ -575,6 +549,7 @@ public class StatusCodeBundle {
     private String LicenseGetByIdSuccessMessage;
     @Value("${code.validation.CompanyUser.dependent}")
     private String CompanyUserDeleteDependentCode;
+
     //Designation Message
     @Value("${message.validation.designation.notExists}")
     private String designationNotExistsMessage;
@@ -600,6 +575,7 @@ public class StatusCodeBundle {
     private String designationSuccessfullyDeletedMessage;
     @Value("${message.success.designation.getById}")
     private String getDesignationByIdSuccessMessage;
+
     //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")
     private String companyUserAlReadyExistsCode;
@@ -615,6 +591,7 @@ public class StatusCodeBundle {
     private String CompanyUserEmailAlreadyExistsCode;
     @Value("${code.validation.CompanyUser.contactNumberAlreadyExists}")
     private String CompanyUserContactNumberAlreadyExistsCode;
+
     //CompanyUser Message
     @Value("${message.success.companyUser.getAll}")
     public String getAllCompanyUserSuccessfully;
@@ -658,6 +635,8 @@ public class StatusCodeBundle {
     private String UserAlreadyExistsCode;
     @Value("${code.validation.user.notExists}")
     private String UserNotExistsCode;
+    @Value("${code.validation.users.dependent}")
+    private String usersDeleteDependentCode;
     // User Messages
     @Value("${message.validation.user.email.alreadyExists}")
     private String UserEmailAlreadyExistMessage;
@@ -673,4 +652,48 @@ public class StatusCodeBundle {
     private String UserIdCannotBeNullMessage;
     @Value("${message.success.getById.user}")
     private String getUserByIdSuccessMessage;
+    @Value("${message.validation.user.email.alreadyExists}")
+    private String userEmailAlReadyExistMessage;
+    @Value("${message.success.save.user}")
+    private String saveUserSuccessMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String userIdExistMessage;
+    @Value("${message.validation.user.contactNo.alreadyExists}")
+    private String UserContactNoAlReadyExistsMessage;
+    @Value("${message.success.delete.user}")
+    private String userDeleteSuccessMessage;
+    @Value("${message.success.verify.registered}")
+    private String RegistrationSuccessMessage;
+    @Value("${message.validation.users.dependent}")
+    private String usersDeleteDependentMessage;
+
+    //login Codes
+
+
+    //login Messages
+    @Value("${message.success.email.verify}")
+    private String EmailVerificationSuccessMessage;
+    @Value("${message.failure.email.verify}")
+    private String EmailVerificationFailureMessage;
+    @Value("${message.failure.email.notExist}")
+    private String EmailNotExistMessage;
+    @Value("${message.failure.token.expired}")
+    private String TokenExpiredMessage;
+    @Value("${message.failure.token.alreadyUsed}")
+    private String TokenAlreadyUsedMessage;
+    @Value("${message.failure.userName.Password}")
+    private String InvalidUserNamePasswordMessage;
+    @Value("${message.Success.userName.Password}")
+    private String LoginSuccessMessage;
+    @Value("${message.failure.email.null}")
+    private String EmailCannotNullMessage;
+    @Value("${message.failure.password.null}")
+    private String PasswordCannotNullMessage;
+    @Value("${message.failure.user.deActive}")
+    private String UserDeactivatedMessage;
+    @Value("${message.failure.user.locked}")
+    private String UserLockedMessage;
+    @Value("${message.Success.userName.tempPassword}")
+    private String TempPasswordLoginSuccessMessage;
+
 }

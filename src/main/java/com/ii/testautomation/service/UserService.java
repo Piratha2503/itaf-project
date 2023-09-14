@@ -10,8 +10,6 @@ public interface UserService {
 
     String verifyToken(String token);
 
-    boolean checkExpiry(String token);
-
     boolean existsByEmail(String email);
 
     boolean existsByUsersId(Long usersId);
@@ -33,4 +31,12 @@ public interface UserService {
     void deleteUserById(Long id);
 
     UserResponse getUserById(Long id);
+
+    void invalidPassword(String email);
+
+    boolean existsByStatus(String status);
+
+    boolean existsByEmailAndPassword(String email, String password);
+
+    void changePassword(Long id, String password);
 }

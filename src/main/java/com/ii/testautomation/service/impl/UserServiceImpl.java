@@ -28,8 +28,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -38,10 +37,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @PropertySource("classpath:MessagesAndCodes.properties")
@@ -79,7 +75,6 @@ public class UserServiceImpl implements UserService {
     @Value("${email.send.temporaryPassword.body}")
     private String temporaryPasswordSendMailBody;
 
-
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
@@ -103,18 +98,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyUser(String token) {
+       BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
         Long id = Long.parseLong(claims.getIssuer());
         Users user = userRepository.findById(id).get();
         user.setStatus(LoginStatus.PENDING.getStatus());
         UUID uuid = UUID.randomUUID();
         String tempPassword = uuid.toString().substring(0,8);
-        user.setPassword(tempPassword);
+        user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
         userRepository.save(user);
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(user.getEmail());
         simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
-        simpleMailMessage.setText(temporaryPasswordSendMailBody+"-->"+tempPassword);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody+""+tempPassword);
         javaMailSender.send(simpleMailMessage);
     }
 
@@ -136,22 +132,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkExpiry(String token) {
-        try {
-            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token.toString()).getBody();
-            Users users = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
-
-            if (claims != null) {
-                Timestamp timestamp = users.getUpdatedAt();
-                return claims.getExpiration().before(new Date(timestamp.getTime()+120000));
-            }
-        } catch (ExpiredJwtException ex) {
-
-        }
-        return false;
-    }
-
-    @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmailIgnoreCase(email);
     }
@@ -167,11 +147,11 @@ public class UserServiceImpl implements UserService {
         String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
         return token;
     }
+
     @Override
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
     }
-
 
     @Override
     public UserResponse getUserById(Long id) {
@@ -185,6 +165,26 @@ public class UserServiceImpl implements UserService {
         return userResponse;
     }
 
+    @Override
+    public void invalidPassword(String email) {
+        Users user = userRepository.findByEmail(email);
+        if (user.getWrongCount()>0)
+            user.setWrongCount(user.getWrongCount() - 1);
+        else user.setStatus(LoginStatus.LOCKED.getStatus());
+        userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsByStatus(String status) {
+        return userRepository.existsByStatus(status);
+    }
+
+    @Override
+    public boolean existsByEmailAndPassword(String email, String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        Users user = userRepository.findByEmail(email);
+        return bCryptPasswordEncoder.matches(password,user.getPassword());
+    }
 
     @Override
     public boolean existsByDesignationId(Long designationId) {
@@ -276,4 +276,11 @@ public class UserServiceImpl implements UserService {
         userRepository.save(users);
     }
 
+    @Override
+    public void changePassword(Long id, String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        Users users = userRepository.findById(id).get();
+        users.setPassword(bCryptPasswordEncoder.encode(password));
+        userRepository.save(users);
+    }
 }

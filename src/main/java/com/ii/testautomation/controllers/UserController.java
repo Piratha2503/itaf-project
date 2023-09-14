@@ -1,6 +1,7 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.UserRequest;
+import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -41,15 +42,15 @@ public class UserController {
         if (userRequest.getDesignationId() == null)
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getDesignationIdNullMessage()));
         if (!userService.existsByUserId(userRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistCode(), statusCodeBundle.getUserIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getUserIdNotExistMessage()));
         if (userService.existsByEmailAndIdNot(userRequest.getEmail(), userRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserAlreadyExistCode(), statusCodeBundle.getUserEmailAlReadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserAlreadyExistsCode(), statusCodeBundle.getUserEmailAlreadyExistMessage()));
         if (!companyUserService.existsById(userRequest.getCompanyUserId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         if (!designationService.existById(userRequest.getDesignationId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
         if (userService.existsByContactNumberAndIdNot(userRequest.getContactNumber(), userRequest.getId()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserAlreadyExistCode(), statusCodeBundle.getUserContactNumberAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserAlreadyExistsCode(), statusCodeBundle.getUserContactNumberAlreadyExistMessage()));
         userService.updateUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserUpdateSuccessMessage()));
     }
@@ -73,7 +74,7 @@ public class UserController {
         if (!designationService.existById(userRequest.getDesignationId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
         if (userService.existsByEmail(userRequest.getEmail())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserEmailAlReadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserEmailAlreadyExistMessage()));
         }
         if (userService.existsByContactNo(userRequest.getContactNumber())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserContactNoAlReadyExistsMessage()));
@@ -85,7 +86,7 @@ public class UserController {
     @DeleteMapping(value = EndpointURI.USERS_DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         if (!userService.existsByUsersId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistCode(), statusCodeBundle.getUserIdExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getUserIdExistMessage()));
         }
         if (projectService.existsByUsersId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUsersDeleteDependentCode(), statusCodeBundle.getUsersDeleteDependentMessage()));
@@ -94,13 +95,35 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserDeleteSuccessMessage()));
     }
 
+    @GetMapping(value = EndpointURI.USER_BY_ID)
+    public ResponseEntity<Object> getUserById(@PathVariable Long id) {
+        if(!userService.existsByUserId(id))
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getUserIdNotExistMessage()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getUserById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetUserByIdSuccessMessage()));
+    }
 
-        @GetMapping(value = EndpointURI.USER_BY_ID)
-        public ResponseEntity<Object> getUserById(@PathVariable Long id){
-        if(!userService.existsByUserId(id)){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistCode(),
-                    statusCodeBundle.getUserIdNotExistMessage()));
+    @PostMapping(EndpointURI.USER_LOGIN)
+    public ResponseEntity<Object> loginUser(@RequestBody UserRequest userRequest) {
+        if (userRequest.getEmail() == null || userRequest.getEmail().isEmpty())
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getEmailCannotNullMessage()));
+        else if (userRequest.getPassword() == null || userRequest.getPassword().isEmpty())
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getPasswordCannotNullMessage()));
+        else if (!userService.existsByEmail(userRequest.getEmail()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getEmailNotExistMessage()));
+        else if (userService.existsByStatus(LoginStatus.DEACTIVATE.getStatus()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
+        else if (userService.existsByStatus(LoginStatus.LOCKED.getStatus()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getUserLockedMessage()));
+        else if (userService.existsByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword())) {
+                     if (userService.existsByStatus(LoginStatus.ACTIVE.getStatus()))
+                     return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLoginSuccessMessage()));
+                     if (userService.existsByStatus(LoginStatus.PENDING.getStatus()))
+                     return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTempPasswordLoginSuccessMessage()));
         }
-            return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getUserById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetUserByIdSuccessMessage()));
+        else if (userService.existsByEmail(userRequest.getEmail()) && !userService.existsByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword())) {
+            userService.invalidPassword(userRequest.getEmail());
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
+        }
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
     }
 }
