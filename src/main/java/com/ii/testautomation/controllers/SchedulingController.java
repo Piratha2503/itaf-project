@@ -59,10 +59,10 @@ public class SchedulingController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateCannotNull()));
         }
-        if(schedulingService.checkStartDate(schedulingRequest.getStartDateTime())){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getStartTimeAfterCurrentTime()));
-        }
+//        if(schedulingService.checkStartDate(schedulingRequest.getStartDateTime())){
+//            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+//                    statusCodeBundle.getStartTimeAfterCurrentTime()));
+//        }
         if (schedulingRequest.getNoOfTimes() <= 0) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(), statusCodeBundle.getNoOfTimesCannotNull()));

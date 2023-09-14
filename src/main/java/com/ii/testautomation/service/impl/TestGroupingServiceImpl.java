@@ -503,10 +503,10 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 }
             }
         }
-        jarExecution(executionRequest.getProjectId());
+        jarExecution(executionRequest.getProjectId(),executionRequest.getTestGroupingId());
     }
 
-    private void jarExecution(Long projectId) {
+    private void jarExecution(Long projectId,Long groupId) {
         String savedFilePath = projectRepository.findById(projectId).get().getJarFilePath();
         File jarFile = new File(savedFilePath);
         String jarFileName = jarFile.getName();
@@ -514,7 +514,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         try {
             ProgressResponse progressResponse = new ProgressResponse();
             progressResponse.setProjectId(projectId);
-            simpMessagingTemplate.convertAndSend("/queue/percentage", progressResponse);
+            simpMessagingTemplate.convertAndSend("/queue/percentage/group/"+groupId, progressResponse);
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
@@ -540,18 +540,18 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                 progressResponse.setPercentage(percentageInt);
                 progressResponse.setGroupName(progressBar.getTestGrouping().getName());
                 progressResponse.setGroupId(progressBar.getTestGrouping().getId());
-                simpMessagingTemplate.convertAndSend("/queue/percentage/" + progressBar.getTestGrouping().getId(), progressResponse);
+                simpMessagingTemplate.convertAndSend("/queue/percentage/group/" + progressBar.getTestGrouping().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();
+                    testGrouping.setExecutionStatus(false);
+                    progressBarRepository.deleteById(progressBar.getId());
                     List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
                     for (ExecutedTestCase executedTestCase1 : executedTestCases) {
                         executedTestCaseRepository.deleteById(executedTestCase1.getId());
                     }
-                    testGrouping.setExecutionStatus(false);
-                    progressBarRepository.deleteById(progressBar.getId());
                 }
                 System.out.println("Percentage: " + progressResponse + "%");
-
+                System.out.println("Percentage: "+percentageInt);
             } else {
                 System.out.println("Total number of test cases is zero.");
             }

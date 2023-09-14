@@ -14,6 +14,7 @@ import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
+import com.ii.testautomation.utils.StatusCodeBundle;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -62,6 +63,8 @@ public class UserServiceImpl implements UserService {
     private EmailBody emailBody;
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    private StatusCodeBundle statusCodeBundle;
 
     @Value("${user.verification.email.subject}")
     private String userVerificationMailSubject;
@@ -75,12 +78,6 @@ public class UserServiceImpl implements UserService {
     private String temporaryPasswordSendMailSubject;
     @Value("${email.send.temporaryPassword.body}")
     private String temporaryPasswordSendMailBody;
-    @Value("${message.failure.email.verify}")
-    private String emailVerificationFailureMessage;
-    @Value("${message.failure.token.expired}")
-    private String tokenExpiredMessage;
-    @Value("${message.failure.token.alreadyUsed}")
-    private String tokenAlreadyUsedMessage;
 
 
     @Override
@@ -127,14 +124,14 @@ public class UserServiceImpl implements UserService {
             Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
             Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
             Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
-            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return tokenAlreadyUsedMessage;
+            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
             else return Constants.TOKEN_VERIFIED;
         } catch (ExpiredJwtException e) {
 
-            return tokenExpiredMessage;
+            return statusCodeBundle.getTokenExpiredMessage();
         }
         catch (Exception e) {
-            return emailVerificationFailureMessage;
+            return statusCodeBundle.getEmailVerificationFailureMessage();
         }
     }
 
