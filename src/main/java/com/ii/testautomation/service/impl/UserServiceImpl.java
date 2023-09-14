@@ -292,12 +292,10 @@ public class UserServiceImpl implements UserService {
             helper.setTo(user.getEmail());
             if (user.getStatus() == LoginStatus.NEW.getStatus()) {
                 helper.setSubject(userVerificationMailSubject);
-                helper.setText(Token, true);
+                helper.setText(userVerificationMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
             }
             else
             {
-                helper.setText(userVerificationMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
-            } else {
                 helper.setSubject(passwordResetMailSubject);
                 helper.setText(Token, true);
             }
