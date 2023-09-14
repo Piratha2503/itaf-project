@@ -4,8 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum LoginStatus {
-
-    NEW("new"), VERIFIED("verified"), ACTIVE("active"), DEACTIVATE("deactivate"), SECURITY_KEY("Secret");
+    NEW("new"), VERIFIED("verified"), ACTIVE("active"), DEACTIVATE("deactivate"), PENDING("pending");
 
     private String status;
 
@@ -14,9 +13,7 @@ public enum LoginStatus {
         this.status = status;
     }
 
-    public static LoginStatus getByStatus(String status)
-    {
-
+    public static LoginStatus getByStatus(String status) {
         for (LoginStatus loginStatus : values())
         {
             if (loginStatus.getStatus().equals(status))
@@ -24,10 +21,6 @@ public enum LoginStatus {
                 return loginStatus;
             }
         }
-
-
         throw new AssertionError("Request status not found for given status [status: " + status + "]");
     }
-
-
 }

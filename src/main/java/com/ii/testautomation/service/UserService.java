@@ -8,7 +8,7 @@ public interface UserService {
 
     void verifyUser(String token);
 
-    boolean verifyToken(String token);
+    String verifyToken(String token);
 
     boolean checkExpiry(String token);
 
