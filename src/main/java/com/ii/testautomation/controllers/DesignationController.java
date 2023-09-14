@@ -58,7 +58,7 @@ public class DesignationController {
         List<DesignationResponse> designations = designationService.getAllDesignationByCompanyId(companyId);
 
         if (designations.isEmpty() && designations.equals(null)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getGetCompanyUserIdNotHaveDesignation()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getGetCompanyuserIdNotHaveDesignation()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designationService.getAllDesignationByCompanyId(companyId), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
     }

@@ -665,8 +665,7 @@ public class StatusCodeBundle {
     @Value("${message.failure.companyUser.licenseId}")
     private String CompanyUserLicenseIdNotGivenMessage;
 
-    @Value("${message.validation.get.designation.notHave}")
-    private String getCompanyUserIdNotHaveDesignation;
+
 
     @Value("${message.failure.companyUser.contactNumber}")
     private String CompanyUserContactNumberNotGivenMessage;
