@@ -449,8 +449,6 @@ public class SchedulingServiceImpl implements SchedulingService {
                     for (ExecutedTestCase executedTestCase1 : executedTestCases) {
                         executedTestCaseRepository.deleteById(executedTestCase1.getId());
                     }
-                    testGrouping.setExecutionStatus(false);
-                    progressBarRepository.deleteById(progressBar.getId());
                 }
                 System.out.println("Percentage: " + progressResponse + "%");
             } else {
