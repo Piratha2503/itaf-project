@@ -1,6 +1,8 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.UserRequest;
+import com.ii.testautomation.dto.response.ModulesResponse;
+import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
@@ -19,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -94,13 +98,9 @@ public class UserController {
         if (!userService.existsByCompanyUserId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
-        if (userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch).isEmpty()) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyIdNotAssignedForUserMessage()));
-        }
-        return ResponseEntity.ok(new ContentResponse<>(Constants.USERS, userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
-
+        List<UserResponse> userResponseList = userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch);
+        return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userResponseList, RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
     }
-
     @DeleteMapping(value = EndpointURI.USERS_DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         if (!userService.existsByUsersId(id)) {
@@ -112,8 +112,6 @@ public class UserController {
         userService.deleteUserById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserDeleteSuccessMessage()));
     }
-
-
     @GetMapping(value = EndpointURI.USER_BY_ID)
     public ResponseEntity<Object> getUserById(@PathVariable Long id) {
         if (!userService.existsByUserId(id)) {

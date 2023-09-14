@@ -10,7 +10,5 @@ public class UserSearch {
     private String firstName;
     private String lastName;
     private String companyUserName;
-    private Long companyUserId;
     private String designationName;
-    private Long designationId;
 }

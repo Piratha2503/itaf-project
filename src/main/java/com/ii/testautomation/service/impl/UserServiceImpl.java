@@ -225,8 +225,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
+    @Override
+        public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
+
         if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
             booleanBuilder.and(QUsers.users.firstName.containsIgnoreCase(userSearch.getFirstName()));
         }
@@ -239,8 +241,11 @@ public class UserServiceImpl implements UserService {
         if (Utils.isNotNullAndEmpty(userSearch.getDesignationName())) {
             booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
         }
+        if (companyUserId!=null) {
+            booleanBuilder.and(QUsers.users.companyUser.id.eq(companyUserId));
+        }
         List<UserResponse> userResponseList = new ArrayList<>();
-        Page<Users> usersPage = userRepository.findAll(booleanBuilder, pageable);
+        Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
         pagination.setTotalRecords(usersPage.getTotalElements());
         pagination.setPageSize(usersPage.getTotalPages());
         for (Users users : usersPage) {
@@ -254,10 +259,6 @@ public class UserServiceImpl implements UserService {
         }
         return userResponseList;
     }
-
-
-}
-
 
     private void generateEmail(Users user) {
 
