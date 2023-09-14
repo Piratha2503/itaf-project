@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
             booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
         }
         List<UserResponse> userResponseList = new ArrayList<>();
-        Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
+        Page<Users> usersPage = userRepository.findByCompanyUserId(companyUserId,booleanBuilder,pageable);
         pagination.setTotalRecords(usersPage.getTotalElements());
         pagination.setPageSize(usersPage.getTotalPages());
         for (Users users : usersPage) {
@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService {
             userResponse.setCompanyUserId(users.getCompanyUser().getId());
             userResponse.setDesignationId(users.getDesignation().getId());
             userResponse.setCompanyUserName(users.getCompanyUser().getCompanyName());
-
+            userResponse.setDesignationName(users.getDesignation().getName());
             BeanUtils.copyProperties(users, userResponse);
             userResponseList.add(userResponse);
         }

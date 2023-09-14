@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
 
     boolean existsByContactNumberIgnoreCase(String contactNo);
 
-    Page<Users> findByCompanyUserId(Long id,BooleanBuilder booleanBuilder, Pageable pageable);
+    Page<Users> findByCompanyUserId(Long companyUserId,BooleanBuilder booleanBuilder, Pageable pageable);
 
     Page<Users> findByCompanyUser_Id(BooleanBuilder booleanBuilder, Pageable pageable);
 
