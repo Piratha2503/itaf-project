@@ -2,6 +2,10 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.UserResponse;
+import com.ii.testautomation.dto.search.UserSearch;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
+import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
     void saveUser(UserRequest userRequest);
@@ -39,4 +43,7 @@ public interface UserService {
     boolean existsByEmailAndPassword(String email, String password);
 
     void changePassword(Long id, String password);
+
+    List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
+
 }

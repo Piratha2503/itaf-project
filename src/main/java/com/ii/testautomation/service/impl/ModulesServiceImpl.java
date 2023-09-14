@@ -4,7 +4,6 @@ import com.ii.testautomation.dto.request.ModulesRequest;
 import com.ii.testautomation.dto.response.*;
 import com.ii.testautomation.dto.search.ModuleSearch;
 import com.ii.testautomation.entities.*;
-import com.ii.testautomation.entities.QTestCases;
 import com.ii.testautomation.repositories.MainModulesRepository;
 import com.ii.testautomation.repositories.ModulesRepository;
 import com.ii.testautomation.repositories.SubModulesRepository;

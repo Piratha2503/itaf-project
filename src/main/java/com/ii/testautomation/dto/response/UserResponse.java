@@ -3,8 +3,6 @@ package com.ii.testautomation.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 public class UserResponse {
@@ -16,7 +14,7 @@ public class UserResponse {
     private String lastName;
     private String contactNumber;
     private Long designationId;
-    private Long companyUserId;
     private String designationName;
+    private Long companyUserId;
     private String companyUserName;
 }

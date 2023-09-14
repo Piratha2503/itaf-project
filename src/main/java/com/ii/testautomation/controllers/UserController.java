@@ -2,9 +2,15 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.enums.LoginStatus;
+import com.ii.testautomation.dto.response.ModulesResponse;
+import com.ii.testautomation.dto.response.UserResponse;
+import com.ii.testautomation.dto.search.UserSearch;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.response.common.ContentResponse;
+import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.ProjectService;
@@ -13,8 +19,13 @@ import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -80,6 +91,20 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveUserSuccessMessage()));
     }
 
+    @GetMapping(value = EndpointURI.USERS_BY_COMPANY_ID)
+    public ResponseEntity<Object> getAllUserByCompanyIdWithPagination(@PathVariable Long id,
+                                                                      @RequestParam(name = "page") int page,
+                                                                      @RequestParam(name = "size") int size,
+                                                                      @RequestParam(name = "direction") String direction,
+                                                                      @RequestParam(name = "sortField") String sortField,
+                                                                      UserSearch userSearch) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
+        if (!userService.existsByCompanyUserId(id)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
+        }
+            return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
+    }
     @DeleteMapping(value = EndpointURI.USERS_DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         if (!userService.existsByUsersId(id)) {

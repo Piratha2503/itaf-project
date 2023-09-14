@@ -178,6 +178,7 @@ public class StatusCodeBundle {
     private String mainModulesNameDuplicateMessage;
     @Value("${message.validation.mainModule.notMapped}")
     private String mainModulesNotMappedWithProjectMessage;
+
     //Modules Code
     @Value("${code.validation.module.alreadyExists}")
     private String moduleAlReadyExistsCode;
@@ -185,6 +186,7 @@ public class StatusCodeBundle {
     private String moduleNotExistsCode;
     @Value("${code.validation.module.dependent}")
     private String moduleDependentCode;
+
     //Modules Message
     @Value("${message.validation.module.file.empty}")
     private String moduleFileEmptyMessage;
@@ -282,6 +284,7 @@ public class StatusCodeBundle {
     private String testCasesAlreadyExistsCode;
     @Value("${code.validation.testcases.dependent}")
     private String testCasesDependentCode;
+
     //TestCase Message
     @Value("${message.validation.testcase.file.name.empty}")
     private String testCaseNameEmptyMessage;
@@ -329,6 +332,7 @@ public class StatusCodeBundle {
     private String getAllTestCasesSuccessMainModuleIdMessage;
     @Value("${message.success.testcase.byModuleId}")
     private String getTestCasesByModuleIdSuccessMessage;
+
     //TestGrouping Code
     @Value("${code.validation.testGrouping.alreadyExists}")
     private String testGroupingAlReadyExistCode;
@@ -338,6 +342,7 @@ public class StatusCodeBundle {
     private String testScenarioNotExistCode;
     @Value("${code.validation.testGrouping.Dependent}")
     private String testGroupingDependentCode;
+
     //TestGrouping Message
     @Value("${message.validation.testGrouping.Name.alreadyExists}")
     private String testGroupingNameAlReadyExistMessage;
@@ -397,6 +402,7 @@ public class StatusCodeBundle {
     private String testScenariosNotExistCode;
     @Value("${code.validation.testScenario.dependent}")
     private String testScenarioDependentCode;
+
     //TestScenario Messages
     @Value("${message.success.insert.testScenario}")
     private String testScenariosSaveMessage;
@@ -426,6 +432,7 @@ public class StatusCodeBundle {
     private String testCasesNotProvidedMessage;
     @Value("${message.validation.testScenario.nameAndId.null}")
     private String testScenarioNameAndIdNullMessage;
+
     //Execution Code
     @Value("${code.failure.executionHistory.notExist}")
     private String executionHistoryNotExistsCode;
@@ -498,6 +505,38 @@ public class StatusCodeBundle {
     @Value("${message.validation.timeAfter.Scheduling}")
     private String startTimeAfterCurrentTime;
 
+    //login Codes
+    @Value("${code.validation.user.alreadyExists}")
+    private String userAlreadyExistCode;
+    @Value("${code.validation.user.notExists}")
+    private String userNotExistCode;
+    @Value("${code.validation.users.dependent}")
+    private String usersDeleteDependentCode;
+    @Value("${message.validation.users.dependent}")
+    private String usersDeleteDependentMessage;
+
+    //login Messages
+    @Value("${message.success.verify.registered}")
+    private String RegistrationSuccessMessage;
+    @Value("${message.success.email.verify}")
+    private String EmailVerificationSuccessMessage;
+    @Value("${message.failure.email.verify}")
+    private String EmailVerificationFailureMessage;
+    @Value("${message.failure.token.expired}")
+    private String TokenExpiredMessage;
+    @Value("${message.failure.token.alreadyUsed}")
+    private String TokenAlreadyUsedMessage;
+    @Value("${message.validation.user.email.alreadyExists}")
+    private String userEmailAlReadyExistMessage;
+    @Value("${message.success.save.user}")
+    private String saveUserSuccessMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String userIdExistMessage;
+    @Value("${message.validation.user.contactNo.alreadyExists}")
+    private String UserContactNoAlReadyExistsMessage;
+    @Value("${message.success.delete.user}")
+    private String userDeleteSuccessMessage;
+
     // Ragex
     @Value("${message.failure.space}")
     private String SpacesNotAllowedMessage;
@@ -507,7 +546,7 @@ public class StatusCodeBundle {
     private String LicenseAlreadyExistCode;
     @Value("${code.validation.License.notExists}")
     private String LicenseNotExistCode;
-    @Value("${message.validation.License.assigned}")
+    @Value("${code.validation.License.assigned}")
     private String LicenseDeleteDependentCode;
 
     // License Messages
@@ -550,6 +589,50 @@ public class StatusCodeBundle {
     @Value("${code.validation.CompanyUser.dependent}")
     private String CompanyUserDeleteDependentCode;
 
+    // Company User Messages
+    @Value("${message.failure.id.notExist.CompanyUser}")
+    private String CompanyUserIdNotExistMessage;
+    @Value("${message.success.delete.CompanyUser}")
+    private String CompanyUserDeleteSuccessMessage;
+    @Value("${message.validation.companyUser.dependent}")
+    private String CompanyUserDeleteDependentMessage;
+    @Value("${message.success.companyUser.getById}")
+    private  String getCompanyUserByIdSuccessMessage;
+    @Value("${message.validation.companyUser.name.alreadyExists}")
+    private String companyUserNameAlReadyExistsMessage;
+    @Value("${message.validation.companyUser.email.alreadyExists}")
+    private String companyUserEmailAlReadyExistsMessage;
+    @Value("${message.validation.companyUser.contactNo.alreadyExists}")
+    private String companyUserContactNoAlReadyExistsMessage;
+    @Value("${message.success.update.companyUser}")
+    private String updateCompanyUserSuccessMessage;
+    @Value("${message.validation.get.designation.notHave}")
+    private String getCompanyuserIdNotHaveDesignation;
+    @Value("${message.failure.package.NotExist.designation}")
+    private String designationNotExistMessage;
+    @Value("${message.Success.package.Delete.Designation}")
+    private String designationSuccessfullyDeletedMessage;
+    @Value("${message.success.designation.getById}")
+    private String getDesignationByIdSuccessMessage;
+    @Value("${message.success.companyUser.getAll}")
+    public String getAllCompanyUserSuccessfully;
+    @Value("${message.success.insert.CompanyUser}")
+    private String CompanyUserSuccessfullyInsertedMessage;
+    @Value("${message.failure.name.AlreadyExist.CompanyUser}")
+    private String CompanyUserNameAlreadyExistMessage;
+    @Value("${message.failure.license.Id.NotFound}")
+    private String LicenseIdNotFoundMessage;
+    @Value("${message.failure.contactNumber.AlreadyExist.CompanyUser}")
+    private String CompanyUserContactNumberAlreadyExistMessage;
+    @Value("${message.failure.email.AlreadyExist.CompanyUser}")
+    private String CompanyUserEmailAlreadyExistMessage;
+    @Value("${message.failure.CompanyUser.StartAndEndDate.NotMatched}")
+    private String StartDateCanNotBeAfterEndDateMessage;
+    @Value("${message.failure.companyUserId.null}")
+    private String CompanyUserIdNullMessage;
+    @Value("${message.validation.companyUser.name.null}")
+    private String companyUserNameNull;
+
     //Designation Message
     @Value("${message.validation.designation.notExists}")
     private String designationNotExistsMessage;
@@ -569,6 +652,7 @@ public class StatusCodeBundle {
     private String designationDeleteDependentMessage;
     @Value("${message.failure.designation.nullValues}")
     private String DesignationNullValuesMessage;
+
     @Value("${message.failure.package.NotExist.designation}")
     private String designationNotExistMessage;
     @Value("${message.Success.package.Delete.Designation}")
@@ -635,9 +719,8 @@ public class StatusCodeBundle {
     private String UserAlreadyExistsCode;
     @Value("${code.validation.user.notExists}")
     private String UserNotExistsCode;
-    @Value("${code.validation.users.dependent}")
-    private String usersDeleteDependentCode;
-    // User Messages
+
+      // User Messages
     @Value("${message.validation.user.email.alreadyExists}")
     private String UserEmailAlreadyExistMessage;
     @Value("${message.validation.user.name.alreadyExists}")
@@ -650,35 +733,23 @@ public class StatusCodeBundle {
     private String UserContactNumberAlreadyExistMessage;
     @Value("${message.failure.userId.null}")
     private String UserIdCannotBeNullMessage;
+    @Value("${message.failure.companyIdNot.Assigned}")
+    private String CompanyIdNotAssignedForUserMessage;
+    @Value("${message.success.GetAllUser.ByCompanyId}")
+    private String AllUserByCompanyIdMessage;
     @Value("${message.success.getById.user}")
     private String getUserByIdSuccessMessage;
     @Value("${message.validation.user.email.alreadyExists}")
     private String userEmailAlReadyExistMessage;
     @Value("${message.success.save.user}")
     private String saveUserSuccessMessage;
-    @Value("${message.validation.user.name.alreadyExists}")
-    private String userIdExistMessage;
-    @Value("${message.validation.user.contactNo.alreadyExists}")
-    private String UserContactNoAlReadyExistsMessage;
-    @Value("${message.success.delete.user}")
-    private String userDeleteSuccessMessage;
-    @Value("${message.success.verify.registered}")
-    private String RegistrationSuccessMessage;
-    @Value("${message.validation.users.dependent}")
-    private String usersDeleteDependentMessage;
 
     //login Codes
 
 
     //login Messages
-    @Value("${message.success.email.verify}")
-    private String EmailVerificationSuccessMessage;
-    @Value("${message.failure.email.verify}")
-    private String EmailVerificationFailureMessage;
     @Value("${message.failure.email.notExist}")
     private String EmailNotExistMessage;
-    @Value("${message.failure.token.expired}")
-    private String TokenExpiredMessage;
     @Value("${message.failure.token.alreadyUsed}")
     private String TokenAlreadyUsedMessage;
     @Value("${message.failure.userName.Password}")

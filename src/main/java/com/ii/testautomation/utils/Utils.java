@@ -17,7 +17,6 @@ public class Utils {
        return true;
 
     }
-
     private Utils()
     {
     }
