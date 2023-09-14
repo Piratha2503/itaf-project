@@ -272,7 +272,6 @@ public class UserServiceImpl implements UserService {
         }
         return userResponseList;
     }
-
     private void generateEmail(Users user) {
 
         Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
@@ -306,14 +305,11 @@ public class UserServiceImpl implements UserService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-
     }
-
     @Override
     public void deleteUserById(Long id) {
         Users users = userRepository.findById(id).get();
         users.setStatus(LoginStatus.DEACTIVATE.getStatus());
         userRepository.save(users);
     }
-
 }
