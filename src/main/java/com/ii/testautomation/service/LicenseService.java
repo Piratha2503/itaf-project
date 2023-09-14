@@ -30,4 +30,5 @@ public interface LicenseService {
     boolean existsById(Long id);
 
     LicenseResponse getLicenseById(Long licenseId);
+
 }
