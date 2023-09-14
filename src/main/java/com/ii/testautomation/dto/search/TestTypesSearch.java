@@ -4,7 +4,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TestTypesSearch
-{    private Long id;
+public class TestTypesSearch{
+    private Long id;
     private String name;
 }

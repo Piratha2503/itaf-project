@@ -2,13 +2,18 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.UserResponse;
+import com.ii.testautomation.dto.search.UserSearch;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface UserService {
     void saveUser(UserRequest userRequest);
 
     void verifyUser(String token);
 
-    boolean verifyToken(String token);
+    String verifyToken(String token);
 
     boolean checkExpiry(String token);
 
@@ -33,4 +38,7 @@ public interface UserService {
     void deleteUserById(Long id);
 
     UserResponse getUserById(Long id);
+
+    List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
+
 }

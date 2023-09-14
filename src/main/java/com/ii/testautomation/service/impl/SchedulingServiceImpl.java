@@ -322,13 +322,12 @@ public class SchedulingServiceImpl implements SchedulingService {
             ProgressResponse progressResponse = new ProgressResponse();
             progressResponse.setProjectId(projectId);
             simpMessagingTemplate.convertAndSend("/queue/percentage/schedule/"+projectId, progressResponse);
-            System.out.println("Hi Send");
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
             Process runProcess = runProcessBuilder.start();
             runProcess.waitFor();
-            System.out.println("executed");
+            simpMessagingTemplate.convertAndSend("/queue/percentage/schedule/"+projectId, progressResponse);
             executionCount = executionCount + 1;
             scheduling.setCount(executionCount);
             schedulingRepository.save(scheduling);
@@ -445,6 +444,8 @@ public class SchedulingServiceImpl implements SchedulingService {
                 simpMessagingTemplate.convertAndSend("/queue/percentage/schedule/" + progressBar.getTestGrouping().getProject().getId(), progressResponse);
                 if (percentageInt == 100) {
                     TestGrouping testGrouping = progressBar.getTestGrouping();
+                    testGrouping.setExecutionStatus(false);
+                    progressBarRepository.deleteById(progressBar.getId());
                     List<ExecutedTestCase> executedTestCases = executedTestCaseRepository.findByTestGroupingId(testGrouping.getId());
                     for (ExecutedTestCase executedTestCase1 : executedTestCases) {
                         executedTestCaseRepository.deleteById(executedTestCase1.getId());

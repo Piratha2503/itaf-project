@@ -34,7 +34,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Service
 public class TestGroupingServiceImpl implements TestGroupingService {
     @Autowired
@@ -550,10 +549,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
                         executedTestCaseRepository.deleteById(executedTestCase1.getId());
                     }
                 }
-                System.out.println("Percentage: " + progressResponse + "%");
-
-            } else {
-                System.out.println("Total number of test cases is zero.");
             }
         }
     }
@@ -589,6 +584,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
         }
         return schedulingGroupingTestCases;
     }
+
     @Override
     public List<ScheduledTestScenarioResponse> getScheduledTestScenario(Long groupId) {
         List<Scheduling> schedulingList=schedulingRepository.findByTestGroupingId(groupId);

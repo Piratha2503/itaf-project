@@ -2,17 +2,24 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.dto.request.UserRequest;
+import com.ii.testautomation.dto.response.UserResponse;
+import com.ii.testautomation.dto.search.UserSearch;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
-import com.ii.testautomation.dto.response.UserResponse;
+import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.UserRepository;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
+import com.ii.testautomation.utils.Utils;
+import com.querydsl.core.BooleanBuilder;
+import com.ii.testautomation.utils.StatusCodeBundle;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -23,11 +30,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -36,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +68,8 @@ public class UserServiceImpl implements UserService {
     private EmailBody emailBody;
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    private StatusCodeBundle statusCodeBundle;
 
     @Value("${user.verification.email.subject}")
     private String userVerificationMailSubject;
@@ -74,6 +84,7 @@ public class UserServiceImpl implements UserService {
     @Value("${email.send.temporaryPassword.body}")
     private String temporaryPasswordSendMailBody;
 
+
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
@@ -83,10 +94,10 @@ public class UserServiceImpl implements UserService {
         companyUser.setId(userRequest.getCompanyUserId());
         user.setDesignation(designation);
         user.setCompanyUser(companyUser);
-        user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
+        user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
-        Users userWithId =userRepository.findByEmail(user.getEmail());
+        Users userWithId = userRepository.findByEmail(user.getEmail());
         generateEmail(userWithId);
     }
 
@@ -97,38 +108,48 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyUser(String token) {
-        Claims claims = Jwts.parser().setSigningKey(String.valueOf(LoginStatus.SECURITY_KEY)).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
         Long id = Long.parseLong(claims.getIssuer());
         Users user = userRepository.findById(id).get();
-        user.setStatus(LoginStatus.VERIFIED.getStatus());
+        user.setStatus(LoginStatus.PENDING.getStatus());
         UUID uuid = UUID.randomUUID();
-        String tempPassword = uuid.toString().substring(0,8);
+        String tempPassword = uuid.toString().substring(0, 8);
         user.setPassword(tempPassword);
         userRepository.save(user);
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(user.getEmail());
         simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
-        simpleMailMessage.setText(temporaryPasswordSendMailBody+tempPassword);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody + tempPassword);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody+"-->"+tempPassword);
         javaMailSender.send(simpleMailMessage);
     }
 
     @Override
-    public boolean verifyToken(String token) {
+    public String verifyToken(String token) {
         try {
-            Jwts.parser().setSigningKey(String.valueOf(LoginStatus.SECURITY_KEY)).parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
+            Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
+            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
+            Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
+            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
+            else return Constants.TOKEN_VERIFIED;
+        } catch (ExpiredJwtException e) {
+
+            return statusCodeBundle.getTokenExpiredMessage();
+        }
+        catch (Exception e) {
+            return statusCodeBundle.getEmailVerificationFailureMessage();
         }
     }
 
     @Override
     public boolean checkExpiry(String token) {
         try {
-            Claims claims = Jwts.parser().parseClaimsJws(token).getBody();
-            if (claims != null) {
+            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token.toString()).getBody();
+            Users users = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
 
-                return claims.getExpiration().before(new Date(System.currentTimeMillis()));
+            if (claims != null) {
+                Timestamp timestamp = users.getUpdatedAt();
+                return claims.getExpiration().before(new Date(timestamp.getTime()+120000));
             }
         } catch (ExpiredJwtException ex) {
 
@@ -147,19 +168,15 @@ public class UserServiceImpl implements UserService {
     }
 
     private String generateToken(Users user) {
-        Date expiryDate = new Date(System.currentTimeMillis() + 60000);
+        Date expiryDate = new Date(System.currentTimeMillis() + 120000);
         Claims claims = Jwts.claims().setIssuer(user.getId().toString()).setIssuedAt(user.getUpdatedAt()).setExpiration(expiryDate);
-
-        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, "secret").compact();
-
+        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
         return token;
     }
-
     @Override
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
     }
-
 
     @Override
     public UserResponse getUserById(Long id) {
@@ -221,6 +238,40 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+        public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
+            booleanBuilder.and(QUsers.users.firstName.containsIgnoreCase(userSearch.getFirstName()));
+        }
+        if (Utils.isNotNullAndEmpty(userSearch.getLastName())) {
+            booleanBuilder.and(QUsers.users.lastName.containsIgnoreCase(userSearch.getLastName()));
+        }
+        if (Utils.isNotNullAndEmpty(userSearch.getCompanyUserName())) {
+            booleanBuilder.and(QUsers.users.companyUser.companyName.containsIgnoreCase(userSearch.getCompanyUserName()));
+        }
+        if (Utils.isNotNullAndEmpty(userSearch.getDesignationName())) {
+            booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
+        }
+        if (companyUserId!=null) {
+            booleanBuilder.and(QUsers.users.companyUser.id.eq(companyUserId));
+        }
+        List<UserResponse> userResponseList = new ArrayList<>();
+        Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
+        pagination.setTotalRecords(usersPage.getTotalElements());
+        pagination.setPageSize(usersPage.getTotalPages());
+        for (Users users : usersPage) {
+            UserResponse userResponse = new UserResponse();
+            userResponse.setCompanyUserId(users.getCompanyUser().getId());
+            userResponse.setDesignationId(users.getDesignation().getId());
+            userResponse.setCompanyUserName(users.getCompanyUser().getCompanyName());
+            userResponse.setDesignationName(users.getDesignation().getName());
+            BeanUtils.copyProperties(users, userResponse);
+            userResponseList.add(userResponse);
+        }
+        return userResponseList;
+    }
     private void generateEmail(Users user) {
 
         Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
@@ -245,7 +296,7 @@ public class UserServiceImpl implements UserService {
             else
             {
                 helper.setSubject(passwordResetMailSubject);
-                helper.setText(passwordResetMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
+                helper.setText(Token, true);
             }
             javaMailSender.send(mimeMessage);
 
@@ -254,14 +305,11 @@ public class UserServiceImpl implements UserService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-
     }
-
     @Override
     public void deleteUserById(Long id) {
         Users users = userRepository.findById(id).get();
         users.setStatus(LoginStatus.DEACTIVATE.getStatus());
         userRepository.save(users);
     }
-
 }
