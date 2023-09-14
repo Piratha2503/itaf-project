@@ -81,8 +81,8 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRequest, user);
         user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
-      //  Users userWithId =userRepository.findByEmail(user.getEmail());
-      //  generateEmail(userWithId);
+        Users userWithId =userRepository.findByEmail(user.getEmail());
+        generateEmail(userWithId);
     }
 
     @Override

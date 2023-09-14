@@ -628,6 +628,8 @@ public class StatusCodeBundle {
     private String StartDateCanNotBeAfterEndDateMessage;
     @Value("${message.failure.companyUserId.null}")
     private String CompanyUserIdNullMessage;
+    @Value("${message.failure.companyUser.licenseId}")
+    private String CompanyUserLicenseIdNotGivenMessage;
     @Value("${message.validation.companyUser.name.alreadyExists}")
     private String companyUserNameAlReadyExistsMessage;
     @Value("${message.validation.companyUser.email.alreadyExists}")
@@ -637,7 +639,7 @@ public class StatusCodeBundle {
     @Value("${message.success.update.companyUser}")
     private String updateCompanyUserSuccessMessage;
     @Value("${message.validation.get.designation.notHave}")
-    private String getCompanyuserIdNotHaveDesignation;
+    private String getCompanyUserIdNotHaveDesignation;
     @Value("${message.failure.id.notExist.CompanyUser}")
     private String CompanyUserIdNotExistMessage;
     @Value("${message.success.delete.CompanyUser}")
@@ -648,6 +650,16 @@ public class StatusCodeBundle {
     private String getCompanyUserByIdSuccessMessage;
     @Value("${message.validation.companyUser.name.null}")
     private String companyUserNameNull;
+    @Value("${message.failure.companyUser.contactNumber}")
+    private String CompanyUserContactNumberNotGivenMessage;
+    @Value("${message.failure.CompanyUser.email}")
+    private String CompanyUserEmailNotGiven;
+    @Value("${message.validation.CompanyUser.contactNumber.not}")
+    private String CompanyUserContactNumberNotGiven;
+    @Value("${message.failure.companyUser.Id}")
+    private String CompanyUserIdNotGivenMessage;
+    @Value("${message.failure.companyUser.companyname}")
+    private String CompanyNameNotGivenMessage;
 
     //User Codes
     @Value("${code.validation.user.alreadyExists}")
@@ -668,8 +680,8 @@ public class StatusCodeBundle {
     @Value("${message.failure.userId.null}")
     private String UserIdCannotBeNullMessage;
     @Value("${message.validation.user.contact}")
-    private String UserContactNoNotGiven;
-    @Value("${message.validation.user.email}")
+    private String UserContactNumberNotGiven;
+    @Value("${message.failure.user.email.not}")
     private String UserEmailNotGiven;
     @Value("${message.validation.user.firstName}")
     private String UserFirstNameNotGiven;

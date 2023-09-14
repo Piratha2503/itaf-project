@@ -32,8 +32,6 @@ public class DesignationController {
     private DesignationService designationService;
     @Autowired
     private CompanyUserService companyUserService;
-    @Autowired
-    private UserRepository userRepository;
 
     @PostMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
@@ -60,7 +58,7 @@ public class DesignationController {
         List<DesignationResponse> designations = designationService.getAllDesignationByCompanyId(companyId);
 
         if (designations.isEmpty() && designations.equals(null)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getGetCompanyuserIdNotHaveDesignation()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getGetCompanyUserIdNotHaveDesignation()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATIONS, designationService.getAllDesignationByCompanyId(companyId), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationSuccessMessage()));
     }
