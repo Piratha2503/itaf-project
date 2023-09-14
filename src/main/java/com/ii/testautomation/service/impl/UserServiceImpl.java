@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRequest, user);
         user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
-        Users userWithId =userRepository.findByEmail(user.getEmail());
+        Users userWithId = userRepository.findByEmail(user.getEmail());
         generateEmail(userWithId);
     }
 
@@ -108,13 +108,13 @@ public class UserServiceImpl implements UserService {
         Users user = userRepository.findById(id).get();
         user.setStatus(LoginStatus.PENDING.getStatus());
         UUID uuid = UUID.randomUUID();
-        String tempPassword = uuid.toString().substring(0,8);
+        String tempPassword = uuid.toString().substring(0, 8);
         user.setPassword(tempPassword);
         userRepository.save(user);
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(user.getEmail());
         simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
-        simpleMailMessage.setText(temporaryPasswordSendMailBody+"-->"+tempPassword);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody + "-->" + tempPassword);
         javaMailSender.send(simpleMailMessage);
     }
 
@@ -124,13 +124,13 @@ public class UserServiceImpl implements UserService {
             Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
             Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
             Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
-            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
+            if (!user.getStatus().equals(LoginStatus.NEW.getStatus()))
+                return statusCodeBundle.getTokenAlreadyUsedMessage();
             else return Constants.TOKEN_VERIFIED;
         } catch (ExpiredJwtException e) {
 
             return statusCodeBundle.getTokenExpiredMessage();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return statusCodeBundle.getEmailVerificationFailureMessage();
         }
     }
@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
 
             if (claims != null) {
                 Timestamp timestamp = users.getUpdatedAt();
-                return claims.getExpiration().before(new Date(timestamp.getTime()+120000));
+                return claims.getExpiration().before(new Date(timestamp.getTime() + 120000));
             }
         } catch (ExpiredJwtException ex) {
 
@@ -167,6 +167,7 @@ public class UserServiceImpl implements UserService {
         String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
         return token;
     }
+
     @Override
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
@@ -253,9 +254,7 @@ public class UserServiceImpl implements UserService {
             if (user.getStatus() == LoginStatus.NEW.getStatus()) {
                 helper.setSubject(userVerificationMailSubject);
                 helper.setText(Token, true);
-            }
-            else
-            {
+            } else {
                 helper.setSubject(passwordResetMailSubject);
                 helper.setText(Token, true);
             }
