@@ -105,6 +105,8 @@ public final class EndpointURI {
    //URls for users
     public static final String USERS_DELETE=USERS+ID;
     public static final String USER_RESET_PASSWORD =USERS+ID+"/reset"+PASSWORD;
+    public static final String USER = BASE_API_PATH + "user";
+    public static final String VERIFY_USER = USER+"/{token}";
     public static final String USER_BY_ID= USERS +ID;
 
     //URLs for Email Link

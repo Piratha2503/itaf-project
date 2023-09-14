@@ -15,9 +15,11 @@ import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import com.ii.testautomation.utils.StatusCodeBundle;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -41,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +68,8 @@ public class UserServiceImpl implements UserService {
     private EmailBody emailBody;
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    private StatusCodeBundle statusCodeBundle;
 
     @Value("${user.verification.email.subject}")
     private String userVerificationMailSubject;
@@ -79,6 +84,7 @@ public class UserServiceImpl implements UserService {
     @Value("${email.send.temporaryPassword.body}")
     private String temporaryPasswordSendMailBody;
 
+
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
@@ -88,8 +94,8 @@ public class UserServiceImpl implements UserService {
         companyUser.setId(userRequest.getCompanyUserId());
         user.setDesignation(designation);
         user.setCompanyUser(companyUser);
-        user.setStatus(LoginStatus.NEW.getStatus());
         BeanUtils.copyProperties(userRequest, user);
+        user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
         Users userWithId = userRepository.findByEmail(user.getEmail());
         generateEmail(userWithId);
@@ -102,10 +108,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyUser(String token) {
-        Claims claims = Jwts.parser().setSigningKey(String.valueOf(LoginStatus.SECURITY_KEY)).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
         Long id = Long.parseLong(claims.getIssuer());
         Users user = userRepository.findById(id).get();
-        user.setStatus(LoginStatus.VERIFIED.getStatus());
+        user.setStatus(LoginStatus.PENDING.getStatus());
         UUID uuid = UUID.randomUUID();
         String tempPassword = uuid.toString().substring(0, 8);
         user.setPassword(tempPassword);
@@ -114,26 +120,36 @@ public class UserServiceImpl implements UserService {
         simpleMailMessage.setTo(user.getEmail());
         simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
         simpleMailMessage.setText(temporaryPasswordSendMailBody + tempPassword);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody+"-->"+tempPassword);
         javaMailSender.send(simpleMailMessage);
     }
 
     @Override
-    public boolean verifyToken(String token) {
+    public String verifyToken(String token) {
         try {
-            Jwts.parser().setSigningKey(String.valueOf(LoginStatus.SECURITY_KEY)).parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
+            Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
+            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
+            Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
+            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
+            else return Constants.TOKEN_VERIFIED;
+        } catch (ExpiredJwtException e) {
+
+            return statusCodeBundle.getTokenExpiredMessage();
+        }
+        catch (Exception e) {
+            return statusCodeBundle.getEmailVerificationFailureMessage();
         }
     }
 
     @Override
     public boolean checkExpiry(String token) {
         try {
-            Claims claims = Jwts.parser().parseClaimsJws(token).getBody();
-            if (claims != null) {
+            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token.toString()).getBody();
+            Users users = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
 
-                return claims.getExpiration().before(new Date(System.currentTimeMillis()));
+            if (claims != null) {
+                Timestamp timestamp = users.getUpdatedAt();
+                return claims.getExpiration().before(new Date(timestamp.getTime()+120000));
             }
         } catch (ExpiredJwtException ex) {
 
@@ -152,14 +168,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private String generateToken(Users user) {
-        Date expiryDate = new Date(System.currentTimeMillis() + 60000);
+        Date expiryDate = new Date(System.currentTimeMillis() + 120000);
         Claims claims = Jwts.claims().setIssuer(user.getId().toString()).setIssuedAt(user.getUpdatedAt()).setExpiration(expiryDate);
-
-        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, "secret").compact();
-
+        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
         return token;
     }
-
     @Override
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
@@ -279,10 +292,14 @@ public class UserServiceImpl implements UserService {
             helper.setTo(user.getEmail());
             if (user.getStatus() == LoginStatus.NEW.getStatus()) {
                 helper.setSubject(userVerificationMailSubject);
+                helper.setText(Token, true);
+            }
+            else
+            {
                 helper.setText(userVerificationMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
             } else {
                 helper.setSubject(passwordResetMailSubject);
-                helper.setText(passwordResetMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
+                helper.setText(Token, true);
             }
             javaMailSender.send(mimeMessage);
 
