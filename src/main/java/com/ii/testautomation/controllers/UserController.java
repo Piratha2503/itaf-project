@@ -5,8 +5,6 @@ import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
-import com.ii.testautomation.response.common.ContentResponse;
-import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.ProjectService;
@@ -17,7 +15,6 @@ import com.ii.testautomation.utils.StatusCodeBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.scanner.Constant;
 
 @RestController
 @CrossOrigin
