@@ -102,8 +102,7 @@ public class UserController {
         if (!userService.existsByCompanyUserId(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
-        List<UserResponse> userResponseList = userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch);
-        return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userResponseList, RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
+            return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
     }
     @DeleteMapping(value = EndpointURI.USERS_DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
