@@ -52,7 +52,7 @@ public class CompanyUserController {
         if(companyUserRequest.getCompanyName()==null){
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyNameNotGivenMessage()));
         }
-        if (companyUserRequest.getStartDate() != null ) {
+        if (companyUserRequest.getStartDate() == null ) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateNotGiven()));
         }
         if (!companyUserService.existsByLicenseId(companyUserRequest.getLicenses_id())) {
@@ -87,6 +87,9 @@ public class CompanyUserController {
         }
         if(companyUserRequest.getCompanyName()==null){
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyNameNotGivenMessage()));
+        }
+        if (companyUserRequest.getStartDate() == null ) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateNotGiven()));
         }
         if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseNotExistsMessage()));
