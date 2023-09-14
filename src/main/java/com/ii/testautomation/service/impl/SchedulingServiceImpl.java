@@ -321,6 +321,8 @@ public class SchedulingServiceImpl implements SchedulingService {
         try {
             ProgressResponse progressResponse = new ProgressResponse();
             progressResponse.setProjectId(projectId);
+            simpMessagingTemplate.convertAndSend("/queue/percentage/schedule/"+projectId, progressResponse);
+            System.out.println("Hi Send");
             ProcessBuilder runProcessBuilder = new ProcessBuilder("java", "-jar", jarFileName);
             runProcessBuilder.directory(new File(jarDirectory));
             runProcessBuilder.redirectErrorStream(true);
