@@ -46,6 +46,10 @@ public class SubModulesController {
         }
         if (!Utils.checkRagexBeforeAfterWords(subModulesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+       if(subModulesRequest.getName()==null || subModulesRequest.getName().isEmpty() ){
+           return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(),
+                   statusCodeBundle.getSubModuleNameEmptyMessage()));
+       }
         if (subModulesService.existsBySubModulesName(subModulesRequest.getName(), subModulesRequest.getMain_module_Id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
@@ -154,6 +158,10 @@ public class SubModulesController {
         }
         if (!Utils.checkRagexBeforeAfterWords(subModulesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
+        if(subModulesRequest.getName()==null && subModulesRequest.getName().isEmpty()){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(),
+                    statusCodeBundle.getTestCaseNameEmptyMessage()));
+        }
         if (subModulesService.isUpdateSubModuleNameExits(subModulesRequest.getName(), subModulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getSubModulesAlReadyExistCode(),
