@@ -4,6 +4,8 @@ package com.ii.testautomation.utils;
  * Contains all the rest EndPoint URL constants
  */
 public final class EndpointURI {
+
+
     private static final String BASE_API_PATH = "/api/v1/";
     public static final String WEBSOCKET="/queue/percentage";
     private static final String SLASH = "/";
@@ -108,6 +110,8 @@ public final class EndpointURI {
     public static final String USER = BASE_API_PATH + "user";
     public static final String VERIFY_USER = USER+"/{token}";
     public static final String USER_BY_ID= USERS +ID;
+    public static final String USER_LOGIN = USER+SLASH+"login";
+    public static final String USERS_PASSWORD = USER+"/password";
 
     //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";
