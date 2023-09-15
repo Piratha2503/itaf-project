@@ -17,13 +17,23 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
+import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-import com.ii.testautomation.utils.StatusCodeBundle;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,15 +47,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Date;
-import java.util.UUID;
 
 @PropertySource("classpath:MessagesAndCodes.properties")
 @Service
@@ -113,8 +114,6 @@ public class UserServiceImpl implements UserService {
         UUID uuid = UUID.randomUUID();
         String tempPassword = uuid.toString().substring(0,8);
         user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
-        String tempPassword = uuid.toString().substring(0, 8);
-        user.setPassword(tempPassword);
         userRepository.save(user);
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(user.getEmail());
