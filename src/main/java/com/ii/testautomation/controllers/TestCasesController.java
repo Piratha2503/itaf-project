@@ -47,7 +47,7 @@ public class TestCasesController {
         if (!Utils.checkRagexBeforeAfterWordsTestCases(testCaseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if(testCaseRequest.getName()==null && testCaseRequest.getName().isEmpty()){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(),
                     statusCodeBundle.getTestCaseNameEmptyMessage()));
         }
         if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
@@ -78,7 +78,7 @@ public class TestCasesController {
         if (!Utils.checkRagexBeforeAfterWordsTestCases(testCaseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if(testCaseRequest.getName()==null && testCaseRequest.getName().isEmpty()){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(),
                     statusCodeBundle.getTestCaseNameEmptyMessage()));
         }
         if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
