@@ -2,6 +2,7 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.CompanyUserRequest;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
+import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @CrossOrigin
 public class CompanyUserController {
@@ -36,11 +39,27 @@ public class CompanyUserController {
 
     @PostMapping(EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> saveCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
+
+        if(companyUserRequest.getLicenses_id()==null) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserLicenseIdNotGivenMessage()));
+        }
+        if(companyUserRequest.getContactNumber()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserContactNumberNotGiven()));
+        }
+        if(companyUserRequest.getEmail()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserEmailNotGiven()));
+        }
+        if(companyUserRequest.getCompanyName()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyNameNotGivenMessage()));
+        }
+        if (companyUserRequest.getStartDate() == null ) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateNotGiven()));
+        }
         if (!companyUserService.existsByLicenseId(companyUserRequest.getLicenses_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotFoundMessage()));
         }
         if (companyUserService.isExistCompanyUserName(companyUserRequest.getCompanyName())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlreadyExistCode(), statusCodeBundle.getCompanyUserNameAlreadyExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserNameAlreadyExistMessage()));
         }
         if (companyUserService.isExistByCompanyUserEmail(companyUserRequest.getEmail())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserEmailAlreadyExistsCode(), statusCodeBundle.getCompanyUserEmailAlreadyExistMessage()));
@@ -48,32 +67,47 @@ public class CompanyUserController {
         if (companyUserService.isExistByCompanyUserContactNumber(companyUserRequest.getContactNumber())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserContactNumberAlreadyExistsCode(), statusCodeBundle.getCompanyUserContactNumberAlreadyExistMessage()));
         }
-        if (companyUserRequest.getStartDate() != null && companyUserRequest.getEndDate() != null && companyUserRequest.getStartDate().isAfter(companyUserRequest.getEndDate())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateCanNotBeAfterEndDateMessage()));
-        }
         companyUserService.saveCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getCompanyUserSuccessfullyInsertedMessage()));
     }
 
     @PutMapping(value = EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> UpdateCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
+        if(companyUserRequest.getId()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserIdNotGivenMessage()));
+        }
+        if(companyUserRequest.getLicenses_id()==null) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserLicenseIdNotGivenMessage()));
+        }
+        if(companyUserRequest.getContactNumber()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserContactNumberNotGiven()));
+        }
+        if(companyUserRequest.getEmail()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserEmailNotGiven()));
+        }
+        if(companyUserRequest.getCompanyName()==null){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyNameNotGivenMessage()));
+        }
+        if (companyUserRequest.getStartDate() == null ) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateNotGiven()));
+        }
         if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseNotExistsMessage()));
         }
         if (!companyUserService.existsByCompanyUserId(companyUserRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlreadyExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
         if (companyUserService.isUpdateCompanyUserNameExists(companyUserRequest.getCompanyName(), companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlreadyExistCode(), statusCodeBundle.getCompanyUserNameAlReadyExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserNameAlReadyExistsMessage()));
         }
         if (companyUserRequest.getCompanyName() == null || companyUserRequest.getCompanyName().isEmpty()) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserNameNull()));
         }
         if (companyUserService.isUpdateEmailExists(companyUserRequest.getEmail(), companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlreadyExistCode(), statusCodeBundle.getCompanyUserEmailAlReadyExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserEmailAlReadyExistsMessage()));
         }
         if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(), companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlreadyExistCode(), statusCodeBundle.getCompanyUserContactNoAlReadyExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserContactNoAlReadyExistsMessage()));
         }
         companyUserService.saveCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateCompanyUserSuccessMessage()));
@@ -99,7 +133,7 @@ public class CompanyUserController {
     @GetMapping(value = EndpointURI.COMPANY_USER_BY_ID)
     public ResponseEntity<Object> GetCompanyUserById(@PathVariable Long id) {
         if (!companyUserService.existsById(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.COMPANY_USERS, companyUserService.getCompanyUserById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetCompanyUserByIdSuccessMessage()));
     }

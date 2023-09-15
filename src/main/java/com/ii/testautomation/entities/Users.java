@@ -18,8 +18,10 @@ public class Users extends DateAudit {
     private String email;
     private String password;
     private String status;
+    @Column(nullable = false)
     private String firstName;
     private String lastName;
+    @Column(nullable = false)
     private String contactNumber;
     @ManyToOne
     @JoinColumn(name = "designation_id", nullable = false)

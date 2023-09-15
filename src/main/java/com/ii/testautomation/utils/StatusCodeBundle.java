@@ -622,8 +622,8 @@ public class StatusCodeBundle {
     private String CompanyUserContactNumberAlreadyExistMessage;
     @Value("${message.failure.email.AlreadyExist.CompanyUser}")
     private String CompanyUserEmailAlreadyExistMessage;
-    @Value("${message.failure.CompanyUser.StartAndEndDate.NotMatched}")
-    private String StartDateCanNotBeAfterEndDateMessage;
+    @Value("${message.failure.CompanyUser.StartDate}")
+    private String StartDateNotGiven;
     @Value("${message.failure.companyUserId.null}")
     private String CompanyUserIdNullMessage;
     @Value("${message.validation.companyUser.name.null}")
@@ -654,16 +654,29 @@ public class StatusCodeBundle {
     private String companyUserAlReadyExistsCode;
     @Value("${code.validation.companyUser.notExists}")
     private String companyUserNotExistsCode;
-    @Value("${code.validation.CompanyUser.alreadyExists}")
-    private String CompanyUserAlreadyExistCode;
-    @Value("${code.validation.CompanyUser.notExists}")
-    private String CompanyUserNotExistCode;
     @Value("${code.validation.CompanyUser.dependent}")
     private String CompanyUserDependentCode;
     @Value("${code.validation.CompanyUser.emailAlreadyExists}")
     private String CompanyUserEmailAlreadyExistsCode;
     @Value("${code.validation.CompanyUser.contactNumberAlreadyExists}")
     private String CompanyUserContactNumberAlreadyExistsCode;
+    //CompanyUser Message
+
+    @Value("${message.failure.companyUser.licenseId}")
+    private String CompanyUserLicenseIdNotGivenMessage;
+
+
+
+    @Value("${message.failure.companyUser.contactNumber}")
+    private String CompanyUserContactNumberNotGivenMessage;
+    @Value("${message.failure.CompanyUser.email}")
+    private String CompanyUserEmailNotGiven;
+    @Value("${message.validation.CompanyUser.contactNumber.not}")
+    private String CompanyUserContactNumberNotGiven;
+    @Value("${message.failure.companyUser.Id}")
+    private String CompanyUserIdNotGivenMessage;
+    @Value("${message.failure.companyUser.companyname}")
+    private String CompanyNameNotGivenMessage;
 
     //User Codes
     @Value("${code.validation.user.alreadyExists}")
@@ -690,4 +703,16 @@ public class StatusCodeBundle {
     private String AllUserByCompanyIdMessage;
     @Value("${message.success.getById.user}")
     private String getUserByIdSuccessMessage;
+    @Value("${message.validation.user.contact}")
+    private String UserContactNumberNotGiven;
+    @Value("${message.failure.user.email.not}")
+    private String UserEmailNotGiven;
+    @Value("${message.validation.user.firstName}")
+    private String UserFirstNameNotGiven;
+    @Value("${message.validation.user.companyUserId}")
+    private String UserCompanyUserIdNotGiven;
+    @Value("${message.validation.user.designationId}")
+    private String UserDesignationIdNotGiven;
+
+
 }

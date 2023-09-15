@@ -17,6 +17,4 @@ public class CompanyUserRequest {
     private String contactNumber;
     private String status;
     private LocalDate startDate;
-    private LocalDate endDate;
-
 }
