@@ -107,9 +107,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void verifyUser(String token) {
        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
-        Long id = Long.parseLong(claims.getIssuer());
-        Users user = userRepository.findById(id).get();
+        Users user = getUserByToken(token);
         user.setStatus(LoginStatus.PENDING.getStatus());
         UUID uuid = UUID.randomUUID();
         String tempPassword = uuid.toString().substring(0,8);
@@ -119,17 +117,13 @@ public class UserServiceImpl implements UserService {
         simpleMailMessage.setTo(user.getEmail());
         simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
         simpleMailMessage.setText(temporaryPasswordSendMailBody+""+tempPassword);
-        simpleMailMessage.setText(temporaryPasswordSendMailBody + tempPassword);
-        simpleMailMessage.setText(temporaryPasswordSendMailBody+"-->"+tempPassword);
         javaMailSender.send(simpleMailMessage);
     }
 
     @Override
     public String verifyToken(String token) {
         try {
-            Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
-            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
-            Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
+            Users user = getUserByToken(token);
             if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
             else return Constants.TOKEN_VERIFIED;
         } catch (ExpiredJwtException e) {
@@ -244,7 +238,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-        public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
+    public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
@@ -277,6 +271,7 @@ public class UserServiceImpl implements UserService {
         }
         return userResponseList;
     }
+
     private void generateEmail(Users user) {
 
         Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
@@ -321,10 +316,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(Long id, String password) {
+    public void createNewPassword(String token, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        Users users = userRepository.findById(id).get();
-        users.setPassword(bCryptPasswordEncoder.encode(password));
-        userRepository.save(users);
+        Users user = getUserByToken(token);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setStatus(LoginStatus.ACTIVE.getStatus());
+        userRepository.save(user);
     }
+
+    private Users getUserByToken(String token) {
+        Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
+        Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
+        Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
+        return user;
+    }
+
+
+
 }

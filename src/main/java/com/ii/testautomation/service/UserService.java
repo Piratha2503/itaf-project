@@ -42,8 +42,7 @@ public interface UserService {
 
     boolean existsByEmailAndPassword(String email, String password);
 
-    void changePassword(Long id, String password);
-
     List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
 
+    void createNewPassword(String token, String password);
 }

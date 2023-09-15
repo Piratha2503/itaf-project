@@ -1,16 +1,12 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.UserRequest;
-import com.ii.testautomation.enums.LoginStatus;
-import com.ii.testautomation.dto.response.ModulesResponse;
-import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
+import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.ii.testautomation.response.common.ContentResponse;
-import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.ProjectService;
@@ -23,9 +19,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
@@ -147,5 +150,18 @@ public class UserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
         }
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
+    }
+
+    @PostMapping(EndpointURI.USERS_PASSWORD)
+    public ResponseEntity<Object> createPassword(@RequestHeader(name = "token") String token, @RequestParam(name = "password") String password)
+    {
+        if (userService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
+        if (userService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getEmailVerificationFailureMessage()));
+        if (userService.verifyToken(token).equals(statusCodeBundle.getTokenAlreadyUsedMessage()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenAlreadyUsedMessage()));
+        userService.createNewPassword(token,password);
+        return ResponseEntity.ok(token+password);
     }
 }
