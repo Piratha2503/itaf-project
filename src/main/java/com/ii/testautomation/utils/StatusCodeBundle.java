@@ -39,8 +39,6 @@ public class StatusCodeBundle {
     private String ExcelPathNotProvideMessage;
     @Value("${message.failure.file.notExits}")
     private String getFileNotExits;
-    @Value("${code.nullValues.received}")
-    private String NullValuesCode;
     //Project Code
     @Value("${code.validation.project.alreadyExists}")
     private String projectAlReadyExistCode;

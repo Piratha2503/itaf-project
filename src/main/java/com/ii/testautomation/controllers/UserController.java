@@ -126,6 +126,7 @@ public class UserController {
         }
             return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
     }
+
     @DeleteMapping(value = EndpointURI.USERS_DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         if (!userService.existsByUsersId(id)) {
