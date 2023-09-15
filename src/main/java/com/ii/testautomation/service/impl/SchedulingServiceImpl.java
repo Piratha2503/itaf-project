@@ -258,10 +258,6 @@ public class SchedulingServiceImpl implements SchedulingService {
                         autoExecution(scheduling);
                         System.out.println("triggered " + scheduling.getCount() + scheduling.getName());
                     }
-                } else {
-                    int countLast = 0;
-                    scheduling.setCount(countLast);
-                    schedulingRepository.save(scheduling);
                 }
             }
         }
