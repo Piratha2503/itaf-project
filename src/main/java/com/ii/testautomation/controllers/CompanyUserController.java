@@ -40,6 +40,9 @@ public class CompanyUserController {
     @PostMapping(EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> saveCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
 
+        if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotFoundMessage()));
+        }
         if(companyUserRequest.getLicenses_id()==null) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserLicenseIdNotGivenMessage()));
         }
@@ -55,9 +58,7 @@ public class CompanyUserController {
         if (companyUserRequest.getStartDate() == null ) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateNotGiven()));
         }
-        if (!companyUserService.existsByLicenseId(companyUserRequest.getLicenses_id())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotFoundMessage()));
-        }
+
         if (companyUserService.isExistCompanyUserName(companyUserRequest.getCompanyName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserNameAlreadyExistMessage()));
         }
