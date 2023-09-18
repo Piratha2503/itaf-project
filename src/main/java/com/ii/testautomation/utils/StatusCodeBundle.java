@@ -19,8 +19,11 @@ public class StatusCodeBundle {
     private String commonSuccessCode;
     @Value("${code.failure.common}")
     private String failureCode;
+    @Value("${code.nullValues.received}")
+    private String NullValuesCode;
     @Value("${code.failure.file}")
     private String fileFailureCode;
+
     // Common File Failure Message
     @Value("${message.file.failure.common}")
     private String fileFailureMessage;
@@ -520,20 +523,26 @@ public class StatusCodeBundle {
     private String EmailVerificationSuccessMessage;
     @Value("${message.failure.email.verify}")
     private String EmailVerificationFailureMessage;
+    @Value("${message.failure.email.notExist}")
+    private String EmailNotExistMessage;
     @Value("${message.failure.token.expired}")
     private String TokenExpiredMessage;
     @Value("${message.failure.token.alreadyUsed}")
     private String TokenAlreadyUsedMessage;
-    @Value("${message.validation.user.email.alreadyExists}")
-    private String userEmailAlReadyExistMessage;
-    @Value("${message.success.save.user}")
-    private String saveUserSuccessMessage;
-    @Value("${message.validation.user.name.alreadyExists}")
-    private String userIdExistMessage;
-    @Value("${message.validation.user.contactNo.alreadyExists}")
-    private String UserContactNoAlReadyExistsMessage;
-    @Value("${message.success.delete.user}")
-    private String userDeleteSuccessMessage;
+    @Value("${message.failure.userName.Password}")
+    private String InvalidUserNamePasswordMessage;
+    @Value("${message.Success.userName.Password}")
+    private String LoginSuccessMessage;
+    @Value("${message.failure.email.null}")
+    private String EmailCannotNullMessage;
+    @Value("${message.failure.password.null}")
+    private String PasswordCannotNullMessage;
+    @Value("${message.failure.user.deActive}")
+    private String UserDeactivatedMessage;
+    @Value("${message.failure.user.locked}")
+    private String UserLockedMessage;
+    @Value("${message.Success.userName.tempPassword}")
+    private String TempPasswordLoginSuccessMessage;
 
     // Ragex
     @Value("${message.failure.space}")
@@ -665,9 +674,6 @@ public class StatusCodeBundle {
 
     @Value("${message.failure.companyUser.licenseId}")
     private String CompanyUserLicenseIdNotGivenMessage;
-
-
-
     @Value("${message.failure.companyUser.contactNumber}")
     private String CompanyUserContactNumberNotGivenMessage;
     @Value("${message.failure.CompanyUser.email}")
@@ -704,6 +710,14 @@ public class StatusCodeBundle {
     private String AllUserByCompanyIdMessage;
     @Value("${message.success.getById.user}")
     private String getUserByIdSuccessMessage;
+    @Value("${message.success.save.user}")
+    private String saveUserSuccessMessage;
+    @Value("${message.validation.user.name.alreadyExists}")
+    private String userIdExistMessage;
+    @Value("${message.validation.user.contactNo.alreadyExists}")
+    private String UserContactNoAlReadyExistsMessage;
+    @Value("${message.success.delete.user}")
+    private String userDeleteSuccessMessage;
     @Value("${message.validation.user.contact}")
     private String UserContactNumberNotGiven;
     @Value("${message.failure.user.email.not}")

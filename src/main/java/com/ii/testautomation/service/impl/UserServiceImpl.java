@@ -17,13 +17,23 @@ import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
+import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-import com.ii.testautomation.utils.StatusCodeBundle;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,19 +45,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 @PropertySource("classpath:MessagesAndCodes.properties")
 @Service
@@ -84,7 +83,6 @@ public class UserServiceImpl implements UserService {
     @Value("${email.send.temporaryPassword.body}")
     private String temporaryPasswordSendMailBody;
 
-
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
@@ -108,28 +106,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyUser(String token) {
-        Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
-        Long id = Long.parseLong(claims.getIssuer());
-        Users user = userRepository.findById(id).get();
+       BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        Users user = getUserByToken(token);
         user.setStatus(LoginStatus.PENDING.getStatus());
         UUID uuid = UUID.randomUUID();
-        String tempPassword = uuid.toString().substring(0, 8);
-        user.setPassword(tempPassword);
+        String tempPassword = uuid.toString().substring(0,8);
+        user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
         userRepository.save(user);
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(user.getEmail());
         simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
-        simpleMailMessage.setText(temporaryPasswordSendMailBody + tempPassword);
-        simpleMailMessage.setText(temporaryPasswordSendMailBody+"-->"+tempPassword);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody+""+tempPassword);
         javaMailSender.send(simpleMailMessage);
     }
 
     @Override
     public String verifyToken(String token) {
         try {
-            Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
-            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
-            Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
+            Users user = getUserByToken(token);
             if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
             else return Constants.TOKEN_VERIFIED;
         } catch (ExpiredJwtException e) {
@@ -139,22 +133,6 @@ public class UserServiceImpl implements UserService {
         catch (Exception e) {
             return statusCodeBundle.getEmailVerificationFailureMessage();
         }
-    }
-
-    @Override
-    public boolean checkExpiry(String token) {
-        try {
-            Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token.toString()).getBody();
-            Users users = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
-
-            if (claims != null) {
-                Timestamp timestamp = users.getUpdatedAt();
-                return claims.getExpiration().before(new Date(timestamp.getTime()+120000));
-            }
-        } catch (ExpiredJwtException ex) {
-
-        }
-        return false;
     }
 
     @Override
@@ -173,6 +151,7 @@ public class UserServiceImpl implements UserService {
         String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
         return token;
     }
+
     @Override
     public boolean existsByCompanyUserId(Long id) {
         return userRepository.existsByCompanyUserId(id);
@@ -190,6 +169,26 @@ public class UserServiceImpl implements UserService {
         return userResponse;
     }
 
+    @Override
+    public void invalidPassword(String email) {
+        Users user = userRepository.findByEmail(email);
+        if (user.getWrongCount()>0)
+            user.setWrongCount(user.getWrongCount() - 1);
+        else user.setStatus(LoginStatus.LOCKED.getStatus());
+        userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsByStatus(String status) {
+        return userRepository.existsByStatus(status);
+    }
+
+    @Override
+    public boolean existsByEmailAndPassword(String email, String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        Users user = userRepository.findByEmail(email);
+        return bCryptPasswordEncoder.matches(password,user.getPassword());
+    }
 
     @Override
     public boolean existsByDesignationId(Long designationId) {
@@ -239,7 +238,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-        public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
+    public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
@@ -272,6 +271,7 @@ public class UserServiceImpl implements UserService {
         }
         return userResponseList;
     }
+
     private void generateEmail(Users user) {
 
         Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
@@ -305,11 +305,32 @@ public class UserServiceImpl implements UserService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+
     }
+
     @Override
     public void deleteUserById(Long id) {
         Users users = userRepository.findById(id).get();
         users.setStatus(LoginStatus.DEACTIVATE.getStatus());
         userRepository.save(users);
     }
+
+    @Override
+    public void createNewPassword(String token, String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        Users user = getUserByToken(token);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setStatus(LoginStatus.ACTIVE.getStatus());
+        userRepository.save(user);
+    }
+
+    private Users getUserByToken(String token) {
+        Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
+        Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
+        Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
+        return user;
+    }
+
+
+
 }

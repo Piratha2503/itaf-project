@@ -4,9 +4,8 @@ import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-import org.springframework.data.domain.Pageable;
-
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
     void saveUser(UserRequest userRequest);
@@ -14,8 +13,6 @@ public interface UserService {
     void verifyUser(String token);
 
     String verifyToken(String token);
-
-    boolean checkExpiry(String token);
 
     boolean existsByEmail(String email);
 
@@ -39,6 +36,13 @@ public interface UserService {
 
     UserResponse getUserById(Long id);
 
+    void invalidPassword(String email);
+
+    boolean existsByStatus(String status);
+
+    boolean existsByEmailAndPassword(String email, String password);
+
     List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
 
+    void createNewPassword(String token, String password);
 }

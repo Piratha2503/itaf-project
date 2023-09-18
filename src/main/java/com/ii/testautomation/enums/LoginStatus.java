@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum LoginStatus {
-    NEW("new"), VERIFIED("verified"), ACTIVE("active"), DEACTIVATE("deactivate"), PENDING("pending");
+    NEW("new"), VERIFIED("verified"), ACTIVE("active"), DEACTIVATE("deactivate"), PENDING("pending"), LOCKED("locked");
 
     private String status;
 

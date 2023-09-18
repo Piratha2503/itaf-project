@@ -277,8 +277,7 @@ public class TestGroupingController {
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING, testGroupingService.getAllTestGroupingByProjectId(pageable, pagination, id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetTestGroupingSuccessMessage()));
     }
     @GetMapping(value = EndpointURI.TEST_GROUPING_SCHEDULING)
-    public ResponseEntity<Object> getScheduledTestCases(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getScheduledTestCases(@PathVariable Long id) {
         if(!testGroupingService.existsByTestGroupingId(id))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
@@ -290,9 +289,9 @@ public class TestGroupingController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING_SCHEDULING_TESTCASES,schedulingGroupingTestCases,RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getTestGroupingTestCasesSuccessfully()));
     }
+
     @GetMapping(value = EndpointURI.TEST_GROUPING_SCHEDULING_TESTCASES)
-    public ResponseEntity<Object> getScheduledTestScenarios(@PathVariable Long id)
-    {
+    public ResponseEntity<Object> getScheduledTestScenarios(@PathVariable Long id) {
         if(!testGroupingService.existsByTestGroupingId(id))
         {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestGroupingNotExistCode(), statusCodeBundle.getTestGroupingNotExistsMessage()));
@@ -304,5 +303,4 @@ public class TestGroupingController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.TEST_GROUPING_SCHEDULING_TESTCASES,schedulingGroupingTestCases,RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getTestGroupingTestCasesSuccessfully()));
     }
-
 }
