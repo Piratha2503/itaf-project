@@ -39,6 +39,7 @@ public class StatusCodeBundle {
     private String ExcelPathNotProvideMessage;
     @Value("${message.failure.file.notExits}")
     private String getFileNotExits;
+
     //Project Code
     @Value("${code.validation.project.alreadyExists}")
     private String projectAlReadyExistCode;
@@ -46,6 +47,7 @@ public class StatusCodeBundle {
     private String projectNotExistCode;
     @Value("${code.validation.project.dependent}")
     private String projectIdDependentCode;
+
     //Project Message
     @Value("${message.validation.project.notExits}")
     private String projectNotExistsMessage;
@@ -93,6 +95,7 @@ public class StatusCodeBundle {
     private String subModulesNotExistCode;
     @Value("${code.validation.subModules.dependent}")
     private String subModulesDependentCode;
+
     //SubModules Message
     @Value("${message.validation.save.subModule}")
     private String saveSubModuleValidationMessage;
@@ -134,6 +137,7 @@ public class StatusCodeBundle {
     private String subModulePrefixDuplicateMessage;
     @Value("${message.success.getSubModules.project}")
     private String subModulesByProjectId;
+
     //MainModules
     @Value("${code.validation.mainModules.notExists}")
     private String mainModulesNotExistCode;
@@ -545,6 +549,7 @@ public class StatusCodeBundle {
     // Ragex
     @Value("${message.failure.space}")
     private String SpacesNotAllowedMessage;
+
     // License Codes
     @Value("${code.validation.License.alreadyExists}")
     private String LicenseAlreadyExistCode;
@@ -668,8 +673,8 @@ public class StatusCodeBundle {
     private String CompanyUserEmailAlreadyExistsCode;
     @Value("${code.validation.CompanyUser.contactNumberAlreadyExists}")
     private String CompanyUserContactNumberAlreadyExistsCode;
-    //CompanyUser Message
 
+    //CompanyUser Message
     @Value("${message.failure.companyUser.licenseId}")
     private String CompanyUserLicenseIdNotGivenMessage;
     @Value("${message.failure.companyUser.contactNumber}")
@@ -726,6 +731,6 @@ public class StatusCodeBundle {
     private String UserCompanyUserIdNotGiven;
     @Value("${message.validation.user.designationId}")
     private String UserDesignationIdNotGiven;
-
-
+    @Value("${message.validation.user.email.cannot.change}")
+    private String UserEmailCannotChangeMessage;
 }

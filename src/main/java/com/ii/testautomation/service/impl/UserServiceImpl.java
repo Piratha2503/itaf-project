@@ -1,7 +1,6 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.config.EmailConfiguration;
-import com.ii.testautomation.config.ExceptionHandle;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
@@ -122,21 +121,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String verifyToken(String token) {
-        try {
-            Users user = getUserByToken(token);
-            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
-            else return Constants.TOKEN_VERIFIED;
-        } catch (ExpiredJwtException e) {
-
-            return statusCodeBundle.getTokenExpiredMessage();
-        }
-        catch (Exception e) {
-            return statusCodeBundle.getEmailVerificationFailureMessage();
-        }
-    }
-
-    @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmailIgnoreCase(email);
     }
@@ -144,13 +128,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByContactNo(String contactNo) {
         return userRepository.existsByContactNumberIgnoreCase(contactNo);
-    }
-
-    private String generateToken(Users user) {
-        Date expiryDate = new Date(System.currentTimeMillis() + 120000);
-        Claims claims = Jwts.claims().setIssuer(user.getId().toString()).setIssuedAt(user.getUpdatedAt()).setExpiration(expiryDate);
-        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
-        return token;
     }
 
     @Override
@@ -280,7 +257,7 @@ public class UserServiceImpl implements UserService {
             }
             reader.close();
             String htmlContentAsString = htmlContent.toString();
-            String Token = generateToken(user);
+            String Token = generateExpiringToken(user);
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             helper.setTo(user.getEmail());
@@ -311,12 +288,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createNewPassword(String token, String password) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        Users user = getUserByToken(token);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
-        user.setStatus(LoginStatus.ACTIVE.getStatus());
-        userRepository.save(user);
+    public String generateNonExpiringToken(String email) {
+        Users user = userRepository.findByEmail(email);
+        Claims claims = Jwts.claims().setIssuer(user.getId().toString());
+        claims.put("Roll","Admin");
+        return Jwts.builder().setClaims(claims).compact();
+    }
+
+    @Override
+    public String verifyToken(String token) {
+        try {
+            Users user = getUserByToken(token);
+            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
+            else return Constants.TOKEN_VERIFIED;
+        } catch (ExpiredJwtException e) {
+
+            return statusCodeBundle.getTokenExpiredMessage();
+        }
+        catch (Exception e) {
+            return statusCodeBundle.getEmailVerificationFailureMessage();
+        }
     }
 
     private Users getUserByToken(String token) {
@@ -326,6 +317,30 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    private String generateExpiringToken(Users user) {
+        Date expiryDate = new Date(System.currentTimeMillis() + 120000);
+        Claims claims = Jwts.claims().setIssuer(user.getId().toString()).setIssuedAt(user.getUpdatedAt()).setExpiration(expiryDate);
+        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
+        return token;
+    }
 
+    public void createNewPassword(Users user, String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setStatus(LoginStatus.ACTIVE.getStatus());
+        userRepository.save(user);
+    }
 
+    @Override
+    public void changePassword(String token, String email, String password) {
+        if (token == null) {
+            Users user = userRepository.findByEmail(email);
+            createNewPassword(user,password);
+        }
+        else {
+            Users user = getUserByToken(token);
+            createNewPassword(user,password);
+        }
+
+    }
 }
