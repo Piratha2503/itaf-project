@@ -1,6 +1,7 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.config.EmailConfiguration;
+import com.ii.testautomation.config.ExceptionHandle;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
@@ -216,23 +217,17 @@ public class UserServiceImpl implements UserService {
         Users user = userRepository.findById(userRequest.getId()).get();
         newUser.setId(userRequest.getId());
 
-        if (userRequest.getEmail() == null) newUser.setEmail(user.getEmail());
-        else newUser.setEmail(userRequest.getEmail());
+        if (userRequest.getEmail() != null) user.setEmail(userRequest.getEmail());
 
-        if (userRequest.getContactNumber() == null) newUser.setContactNumber(user.getContactNumber());
-        else newUser.setContactNumber(userRequest.getContactNumber());
+        if (userRequest.getContactNumber() != null) user.setContactNumber(userRequest.getContactNumber());
 
-        if (userRequest.getFirstName() == null) newUser.setFirstName(user.getFirstName());
-        else newUser.setFirstName(userRequest.getFirstName());
+        if (userRequest.getFirstName() != null) user.setFirstName(userRequest.getFirstName());
 
-        if (userRequest.getLastName() == null) newUser.setLastName(user.getLastName());
-        else newUser.setLastName(userRequest.getLastName());
+        if (userRequest.getLastName() != null) user.setLastName(userRequest.getLastName());
 
-        if (userRequest.getCompanyUserId() == null) newUser.setCompanyUser(user.getCompanyUser());
-        else newUser.setCompanyUser(companyUserRepository.findById(userRequest.getCompanyUserId()).get());
+        if (userRequest.getCompanyUserId() != null) user.setCompanyUser(companyUserRepository.findById(userRequest.getCompanyUserId()).get());
 
-        if (userRequest.getDesignationId() == null) newUser.setDesignation(user.getDesignation());
-        else newUser.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
+        if (userRequest.getDesignationId() != null) user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
 
         userRepository.save(user);
     }
@@ -291,7 +286,7 @@ public class UserServiceImpl implements UserService {
             helper.setTo(user.getEmail());
             if (user.getStatus() == LoginStatus.NEW.getStatus()) {
                 helper.setSubject(userVerificationMailSubject);
-                helper.setText(userVerificationMailBody + emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
+                helper.setText(Token, true);
             }
             else
             {
