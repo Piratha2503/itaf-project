@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,15 +142,19 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
-        CompanyUser companyUser=new CompanyUser();
-        Licenses licenses=new Licenses();
+        CompanyUser companyUser = new CompanyUser();
+        Licenses licenses = new Licenses();
         licenses.setId(companyUserRequest.getLicenses_id());
+        licenses = licensesRepository.findById(companyUserRequest.getLicenses_id()).orElse(null);
         companyUser.setLicenses(licenses);
-//        Long duration = licenses.getDuration();
-//        LocalDate endDate = startDate.plus(Period.ofMonths(Math.toIntExact((duration))));
-//        companyUser.setEndDate(endDate);
-        BeanUtils.copyProperties(companyUserRequest,companyUser);
-        companyUserRepository.save(companyUser);
+        BeanUtils.copyProperties(companyUserRequest, companyUser);
+                   if (licenses != null && licenses.getDuration() != null) {
+            LocalDate startDate = companyUser.getStartDate();
+            int durationMonths = licenses.getDuration().intValue();
+            LocalDate endDate = startDate.plusMonths(durationMonths);
+            companyUser.setEndDate(endDate);
+            companyUserRepository.save(companyUser);
+        }
     }
 
     @Override
