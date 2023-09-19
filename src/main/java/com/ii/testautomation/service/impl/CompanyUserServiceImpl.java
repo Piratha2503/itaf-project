@@ -70,9 +70,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         if (Utils.isNotNullAndEmpty(companyUserSearch.getLicenseName())) {
             booleanBuilder.and(QCompanyUser.companyUser.licenses.name.containsIgnoreCase(companyUserSearch.getLicenseName()));
         }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getStatus())) {
-            booleanBuilder.and(QCompanyUser.companyUser.status.containsIgnoreCase(companyUserSearch.getStatus()));
-        }
         if (companyUserSearch.getStartDate() != null) {
             if (Utils.isNotNullAndEmpty(companyUserSearch.getStartDate().toString())) {
                 booleanBuilder.and(QCompanyUser.companyUser.startDate.eq(companyUserSearch.getStartDate()));
@@ -148,6 +145,9 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         Licenses licenses=new Licenses();
         licenses.setId(companyUserRequest.getLicenses_id());
         companyUser.setLicenses(licenses);
+//        Long duration = licenses.getDuration();
+//        LocalDate endDate = startDate.plus(Period.ofMonths(Math.toIntExact((duration))));
+//        companyUser.setEndDate(endDate);
         BeanUtils.copyProperties(companyUserRequest,companyUser);
         companyUserRepository.save(companyUser);
     }
