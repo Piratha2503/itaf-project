@@ -143,9 +143,8 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
         CompanyUser companyUser = new CompanyUser();
-        Licenses licenses = new Licenses();
+        Licenses licenses = licensesRepository.findById(companyUserRequest.getLicenses_id()).orElse(null);
         licenses.setId(companyUserRequest.getLicenses_id());
-        licenses = licensesRepository.findById(companyUserRequest.getLicenses_id()).orElse(null);
         companyUser.setLicenses(licenses);
         BeanUtils.copyProperties(companyUserRequest, companyUser);
         if (licenses != null && licenses.getDuration() != null) {
