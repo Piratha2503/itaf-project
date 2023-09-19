@@ -16,5 +16,5 @@ public class CompanyUserRequest {
     private String email;
     private String contactNumber;
     private LocalDate startDate;
-    private LocalDate endDate;
+
 }
