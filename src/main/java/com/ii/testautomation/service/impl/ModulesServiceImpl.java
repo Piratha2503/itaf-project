@@ -54,7 +54,6 @@ public class ModulesServiceImpl implements ModulesService {
         BeanUtils.copyProperties(modulesRequest, modules);
         modulesRepository.save(modules);
     }
-
     @Override
     public boolean isModuleExistsByName(String name, Long projectId) {
         return modulesRepository.existsByNameIgnoreCaseAndProjectId(name, projectId);
