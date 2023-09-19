@@ -148,7 +148,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         licenses = licensesRepository.findById(companyUserRequest.getLicenses_id()).orElse(null);
         companyUser.setLicenses(licenses);
         BeanUtils.copyProperties(companyUserRequest, companyUser);
-                   if (licenses != null && licenses.getDuration() != null) {
+        if (licenses != null && licenses.getDuration() != null) {
             LocalDate startDate = companyUser.getStartDate();
             int durationMonths = licenses.getDuration().intValue();
             LocalDate endDate = startDate.plusMonths(durationMonths);
@@ -169,15 +169,15 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
     @Override
     public CompanyUserResponse getCompanyUserById(Long id) {
-        CompanyUser companyUser =companyUserRepository.findById(id).get();
-        CompanyUserResponse companyUserResponse=new CompanyUserResponse();
+        CompanyUser companyUser = companyUserRepository.findById(id).get();
+        CompanyUserResponse companyUserResponse = new CompanyUserResponse();
         companyUserResponse.setLicenseId(companyUser.getLicenses().getId());
         companyUserResponse.setLicenseName(companyUser.getLicenses().getName());
         companyUserResponse.setLicenseDuration(companyUser.getLicenses().getDuration());
         companyUserResponse.setPrice(companyUser.getLicenses().getPrice());
         companyUserResponse.setNoOfUsers(companyUser.getLicenses().getNoOfUsers());
         companyUserResponse.setNoOfProjects(companyUser.getLicenses().getNoOfProjects());
-        BeanUtils.copyProperties(companyUser,companyUserResponse);
+        BeanUtils.copyProperties(companyUser, companyUserResponse);
         return companyUserResponse;
     }
 }
