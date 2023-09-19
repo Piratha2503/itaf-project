@@ -147,13 +147,12 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         licenses.setId(companyUserRequest.getLicenses_id());
         companyUser.setLicenses(licenses);
         BeanUtils.copyProperties(companyUserRequest, companyUser);
-        if (licenses != null && licenses.getDuration() != null) {
-            LocalDate startDate = companyUser.getStartDate();
+             LocalDate startDate = companyUser.getStartDate();
             int durationMonths = licenses.getDuration().intValue();
             LocalDate endDate = startDate.plusMonths(durationMonths);
             companyUser.setEndDate(endDate);
             companyUserRepository.save(companyUser);
-        }
+
     }
 
     @Override
