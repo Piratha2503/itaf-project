@@ -174,8 +174,8 @@ public class UserController {
     }
 
     @PostMapping(EndpointURI.USERS_PASSWORD)
-    public ResponseEntity<Object> createPassword(@RequestHeader(name = "token",required = false) String token, UserRequest userRequest) {
-        if (token!=null) {
+    public ResponseEntity<Object> createPassword(@RequestHeader(name = "token",required = false) String token,@RequestBody UserRequest userRequest) {
+       if (token!=null) {
             if (userService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
             if (userService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
@@ -185,5 +185,6 @@ public class UserController {
         }
         userService.changePassword(token,userRequest.getEmail(),userRequest.getPassword());
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),"Password Created Successfully"));
+
     }
 }
