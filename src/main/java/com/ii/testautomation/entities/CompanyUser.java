@@ -23,7 +23,7 @@ public class CompanyUser extends DateAudit {
     private String email;
     @Column(unique = true,nullable = false)
     private String contactNumber;
-    private Boolean status= false;
+    private Boolean status=false;
     private LocalDate startDate;
     private LocalDate endDate;
     @ManyToOne

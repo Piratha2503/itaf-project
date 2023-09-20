@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +119,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         }
         return companyUserResponseList;
     }
-List<CompanyUserResponse> companyUserResponseList=new ArrayList<>();
 
     @Override
     public boolean existsByLicenseId(Long id) {
@@ -141,38 +139,43 @@ List<CompanyUserResponse> companyUserResponseList=new ArrayList<>();
     public boolean isExistByCompanyUserContactNumber(String contactNumber) {
         return companyUserRepository.existsByContactNumber(contactNumber);
     }
+
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
-        CompanyUser companyUser=new CompanyUser();
-        Licenses licenses=new Licenses();
+        CompanyUser companyUser = new CompanyUser();
+        Licenses licenses = licensesRepository.findById(companyUserRequest.getLicenses_id()).orElse(null);
         licenses.setId(companyUserRequest.getLicenses_id());
         companyUser.setLicenses(licenses);
-        LocalDate startDate = companyUserRequest.getStartDate();
-        Long duration = licenses.getDuration();
-        LocalDate endDate = startDate.plus(Period.ofMonths(Math.toIntExact((duration))));
-        companyUser.setEndDate(endDate);
-        BeanUtils.copyProperties(companyUserRequest,companyUser);
-        companyUserRepository.save(companyUser);
+        BeanUtils.copyProperties(companyUserRequest, companyUser);
+             LocalDate startDate = companyUser.getStartDate();
+            int durationMonths = licenses.getDuration().intValue();
+            LocalDate endDate = startDate.plusMonths(durationMonths);
+            companyUser.setEndDate(endDate);
+            companyUserRepository.save(companyUser);
+
     }
+
     @Override
     public boolean existsById(Long id) {
         return companyUserRepository.existsById(id);
     }
+
     @Override
     public void deleteById(Long id) {
         companyUserRepository.deleteById(id);
     }
+
     @Override
     public CompanyUserResponse getCompanyUserById(Long id) {
-        CompanyUser companyUser =companyUserRepository.findById(id).get();
-        CompanyUserResponse companyUserResponse=new CompanyUserResponse();
+        CompanyUser companyUser = companyUserRepository.findById(id).get();
+        CompanyUserResponse companyUserResponse = new CompanyUserResponse();
         companyUserResponse.setLicenseId(companyUser.getLicenses().getId());
         companyUserResponse.setLicenseName(companyUser.getLicenses().getName());
         companyUserResponse.setLicenseDuration(companyUser.getLicenses().getDuration());
         companyUserResponse.setPrice(companyUser.getLicenses().getPrice());
         companyUserResponse.setNoOfUsers(companyUser.getLicenses().getNoOfUsers());
         companyUserResponse.setNoOfProjects(companyUser.getLicenses().getNoOfProjects());
-        BeanUtils.copyProperties(companyUser,companyUserResponse);
+        BeanUtils.copyProperties(companyUser, companyUserResponse);
         return companyUserResponse;
     }
 }
