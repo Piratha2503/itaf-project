@@ -2,6 +2,10 @@ package com.ii.testautomation.service;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
 import com.ii.testautomation.dto.response.DesignationResponse;
+import com.ii.testautomation.dto.search.UserSearch;
+import com.ii.testautomation.response.common.PaginatedContentResponse;
+
+import java.awt.print.Pageable;
 import java.util.List;
 
 public interface DesignationService {
@@ -20,4 +24,6 @@ public interface DesignationService {
     boolean existsByNameIdNot(Long id, String name);
 
     DesignationResponse getDesignationById(Long id);
+
+    List<DesignationResponse> getAllDesignationByCompanyUserId(Long companyUserId);
 }

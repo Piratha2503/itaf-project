@@ -8,4 +8,5 @@ import lombok.Setter;
 public class DesignationRequest {
     private Long id;
     private String name;
+    private Long companyUserId;
 }

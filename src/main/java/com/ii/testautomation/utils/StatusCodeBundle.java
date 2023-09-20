@@ -39,8 +39,7 @@ public class StatusCodeBundle {
     private String ExcelPathNotProvideMessage;
     @Value("${message.failure.file.notExits}")
     private String getFileNotExits;
-    @Value("${code.nullValues.received}")
-    private String NullValuesCode;
+
     //Project Code
     @Value("${code.validation.project.alreadyExists}")
     private String projectAlReadyExistCode;
@@ -572,8 +571,6 @@ public class StatusCodeBundle {
     private String LicenseDeleteDependentMessage;
     @Value("${message.success.get.licenses}")
     private String getLicenseSuccessMessage;
-    @Value("${message.validation.License.notExits}")
-    private String LicenseNotExistsMessage;
     @Value("${message.success.view.License}")
     private String LicenseViewSuccessMessage;
     @Value("${message.failure.id.notExist.License}")

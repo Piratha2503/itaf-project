@@ -19,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,9 +72,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         if (Utils.isNotNullAndEmpty(companyUserSearch.getLicenseName())) {
             booleanBuilder.and(QCompanyUser.companyUser.licenses.name.containsIgnoreCase(companyUserSearch.getLicenseName()));
         }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getStatus())) {
-            booleanBuilder.and(QCompanyUser.companyUser.status.containsIgnoreCase(companyUserSearch.getStatus()));
-        }
         if (companyUserSearch.getStartDate() != null) {
             if (Utils.isNotNullAndEmpty(companyUserSearch.getStartDate().toString())) {
                 booleanBuilder.and(QCompanyUser.companyUser.startDate.eq(companyUserSearch.getStartDate()));
@@ -121,6 +120,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         }
         return companyUserResponseList;
     }
+List<CompanyUserResponse> companyUserResponseList=new ArrayList<>();
 
     @Override
     public boolean existsByLicenseId(Long id) {
@@ -141,27 +141,27 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     public boolean isExistByCompanyUserContactNumber(String contactNumber) {
         return companyUserRepository.existsByContactNumber(contactNumber);
     }
-
     @Override
     public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
         CompanyUser companyUser=new CompanyUser();
         Licenses licenses=new Licenses();
         licenses.setId(companyUserRequest.getLicenses_id());
         companyUser.setLicenses(licenses);
+        LocalDate startDate = companyUserRequest.getStartDate();
+        Long duration = licenses.getDuration();
+        LocalDate endDate = startDate.plus(Period.ofMonths(Math.toIntExact((duration))));
+        companyUser.setEndDate(endDate);
         BeanUtils.copyProperties(companyUserRequest,companyUser);
         companyUserRepository.save(companyUser);
     }
-
     @Override
     public boolean existsById(Long id) {
         return companyUserRepository.existsById(id);
     }
-
     @Override
     public void deleteById(Long id) {
         companyUserRepository.deleteById(id);
     }
-
     @Override
     public CompanyUserResponse getCompanyUserById(Long id) {
         CompanyUser companyUser =companyUserRepository.findById(id).get();
