@@ -63,8 +63,8 @@ public class CompanyUserController {
         if (companyUserRequest.getStartDate() == null ) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateNotGiven()));
         }
-        if (!companyUserService.existsByLicenseId(companyUserRequest.getLicenses_id())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotFoundMessage()));
+        if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotExistMessage()));
         }
         if (companyUserService.isExistCompanyUserName(companyUserRequest.getCompanyName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserNameAlreadyExistMessage()));
@@ -100,7 +100,7 @@ public class CompanyUserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getStartDateNotGiven()));
         }
         if (!licenseService.existsById(companyUserRequest.getLicenses_id())) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseNotExistsMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getLicenseNotExistCode(), statusCodeBundle.getLicenseIdNotExistMessage()));
         }
         if (!companyUserService.existsByCompanyUserId(companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
@@ -135,7 +135,7 @@ public class CompanyUserController {
     public ResponseEntity<Object> getAllCompanyUsers(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, CompanyUserSearch companyUserSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
-        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.COMPANY_USERS, companyUserService.getAllCompanyUserWithMultiSearch(pageable, pagination, companyUserSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllCompanyUserSuccessfully, pagination));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.COMPANY_USERS, companyUserService.getAllCompanyUserWithMultiSearch(pageable, pagination, companyUserSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllCompanyUserSuccessfully));
     }
 
     @GetMapping(value = EndpointURI.COMPANY_USER_BY_ID)

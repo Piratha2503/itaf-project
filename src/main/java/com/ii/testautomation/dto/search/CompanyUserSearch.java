@@ -14,7 +14,7 @@ public class CompanyUserSearch {
     private String lastName;
     private String email;
     private String contactNumber;
-    private String status;
+    private boolean status;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

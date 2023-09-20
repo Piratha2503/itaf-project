@@ -131,6 +131,8 @@ public final class EndpointURI {
     public static final String DESIGNATION_BY_ID = BASE_API_PATH + "designation"+ID;
     public static final String DESIGNATIONS_BY_ID=DESIGNATION+ID;
 
+    public static final String DESIGNATIONS_BY_COMPANY_USER_ID=DESIGNATION + "/companyUserID" + ID;
+
     public static final String LICENSES_BY_ID = BASE_API_PATH + "license"+ID;
     private EndpointURI() {
     }
