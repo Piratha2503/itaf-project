@@ -54,4 +54,6 @@ public interface SubModulesService {
     Long getSubModuleIdByNameForProject(String subModuleName, Long projectId);
 
     boolean existsBySubModulesNameForProject(String subModuleName, Long projectId);
+
+
 }

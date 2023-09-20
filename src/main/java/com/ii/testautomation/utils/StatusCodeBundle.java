@@ -571,8 +571,6 @@ public class StatusCodeBundle {
     private String LicenseDeleteDependentMessage;
     @Value("${message.success.get.licenses}")
     private String getLicenseSuccessMessage;
-    @Value("${message.validation.License.notExits}")
-    private String LicenseNotExistsMessage;
     @Value("${message.success.view.License}")
     private String LicenseViewSuccessMessage;
     @Value("${message.failure.id.notExist.License}")

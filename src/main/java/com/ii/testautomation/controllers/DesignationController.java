@@ -100,4 +100,17 @@ public class DesignationController {
         }
         return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATION, designationService.getDesignationById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetDesignationByIdSuccessMessage()));
     }
+
+    @GetMapping(value = EndpointURI.DESIGNATIONS_BY_COMPANY_USER_ID)
+    public ResponseEntity<Object> getAllDesignationByCompanyUserId(@PathVariable Long id) {
+        if(!companyUserService.existsById(id)){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(),statusCodeBundle.getCompanyUserIdNotExistMessage()));
+        }
+        return ResponseEntity.ok(new ContentResponse<>(Constants.DESIGNATION,
+                designationService.getAllDesignationByCompanyUserId(id),
+                RequestStatus.SUCCESS.getStatus(),
+                statusCodeBundle.getCommonSuccessCode(),
+                statusCodeBundle.getGetDesignationSuccessMessage()));
+    }
+
 }
