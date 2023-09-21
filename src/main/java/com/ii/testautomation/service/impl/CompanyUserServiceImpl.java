@@ -19,6 +19,7 @@ import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
+import java.time.Period;
 import org.springframework.beans.BeanUtils;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
@@ -156,19 +157,12 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         licenses.setId(companyUserRequest.getLicenses_id());
         companyUser.setLicenses(licenses);
         BeanUtils.copyProperties(companyUserRequest, companyUser);
-             LocalDate startDate = companyUser.getStartDate();
-            int durationMonths = licenses.getDuration().intValue();
-            LocalDate endDate = startDate.plusMonths(durationMonths);
-            companyUser.setEndDate(endDate);
-            companyUserRepository.save(companyUser);
-
-        LocalDate startDate = companyUserRequest.getStartDate();
-        Long duration = licenses.getDuration();
-        LocalDate endDate = startDate.plus(Period.ofMonths(Math.toIntExact((duration))));
+        LocalDate startDate = companyUser.getStartDate();
+        int durationMonths = licenses.getDuration().intValue();
+        LocalDate endDate = startDate.plusMonths(durationMonths);
         companyUser.setEndDate(endDate);
-        BeanUtils.copyProperties(companyUserRequest,companyUser);
         companyUserRepository.save(companyUser);
-        CompanyUser companyAdmin = companyUserRepository.findByEmail(companyUser.getEmail());
+        CompanyUser companyAdmin = companyUserRepository.findByEmail(companyUserRequest.getEmail());
 
         DesignationRequest adminDesignationRequest = new DesignationRequest();
         adminDesignationRequest.setName(Constants.COMPANY_ADMIN);
@@ -180,6 +174,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         userRequest.setFirstName(companyUserRequest.getFirstName());
         userRequest.setLastName(companyUserRequest.getLastName());
         userRequest.setEmail(companyAdmin.getEmail());
+        userRequest.setContactNumber(companyAdmin.getContactNumber());
         userRequest.setCompanyUserId(companyAdmin.getId());
         userRequest.setDesignationId(adminDesignation.getId());
         userService.saveUser(userRequest);
