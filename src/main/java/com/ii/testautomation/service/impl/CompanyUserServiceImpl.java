@@ -1,36 +1,35 @@
 package com.ii.testautomation.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ii.testautomation.dto.request.CompanyUserRequest;
 import com.ii.testautomation.dto.request.DesignationRequest;
 import com.ii.testautomation.dto.request.UserRequest;
-import com.ii.testautomation.entities.CompanyUser;
-import com.ii.testautomation.entities.Designation;
-import com.ii.testautomation.entities.QCompanyUser;
-import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
+import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Designation;
+import com.ii.testautomation.entities.Licenses;
+import com.ii.testautomation.entities.QCompanyUser;
+import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
+import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
-import java.time.Period;
-import org.springframework.beans.BeanUtils;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CompanyUserServiceImpl implements CompanyUserService {
@@ -44,6 +43,8 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     private DesignationService designationService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public boolean existsByCompanyUserId(Long id) {
@@ -55,6 +56,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         return companyUserRepository.existsByCompanyNameIgnoreCaseAndLicensesIdAndIdNot(name, licensesId, id);
     }
 
+    @Override
     public boolean isUpdateEmailExists(String email, Long licensesId, Long id) {
         return companyUserRepository.existsByEmailIgnoreCaseAndLicensesIdAndIdNot(email, licensesId, id);
     }
@@ -77,7 +79,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         if (Utils.isNotNullAndEmpty(companyUserSearch.getEmail())) {
             booleanBuilder.and(QCompanyUser.companyUser.email.containsIgnoreCase(companyUserSearch.getEmail()));
         }
-
         if (Utils.isNotNullAndEmpty(companyUserSearch.getLicenseName())) {
             booleanBuilder.and(QCompanyUser.companyUser.licenses.name.containsIgnoreCase(companyUserSearch.getLicenseName()));
         }
@@ -111,14 +112,18 @@ public class CompanyUserServiceImpl implements CompanyUserService {
                 booleanBuilder.and(QCompanyUser.companyUser.licenses.price.eq(companyUserSearch.getPrice()));
             }
         }
+
         List<CompanyUserResponse> companyUserResponseList = new ArrayList<>();
         Page<CompanyUser> companyUserPage = companyUserRepository.findAll(booleanBuilder, pageable);
         List<CompanyUser> companyUserList = companyUserPage.getContent();
         pagination.setPageSize(companyUserPage.getTotalPages());
         pagination.setTotalRecords(companyUserPage.getTotalElements());
         for (CompanyUser companyUser : companyUserList) {
+            Users admin = userRepository.findByCompanyUserIdAndDesignationName(companyUser.getId(),Constants.COMPANY_ADMIN);
             CompanyUserResponse companyUserResponse = new CompanyUserResponse();
             BeanUtils.copyProperties(companyUser, companyUserResponse);
+            companyUserResponse.setFirstName(admin.getFirstName());
+            companyUserResponse.setLastName(admin.getLastName());
             companyUserResponse.setNoOfUsers(companyUser.getLicenses().getNoOfUsers());
             companyUserResponse.setLicenseDuration(companyUser.getLicenses().getDuration());
             companyUserResponse.setLicenseName(companyUser.getLicenses().getName());

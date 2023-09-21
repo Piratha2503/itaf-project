@@ -48,7 +48,6 @@ public class CompanyUserController {
     @PostMapping(EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> saveCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
 
-
         if(companyUserRequest.getLicenses_id()==null) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserLicenseIdNotGivenMessage()));
         }

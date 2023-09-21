@@ -113,6 +113,12 @@ public class UserServiceImpl implements UserService {
         String tempPassword = uuid.toString().substring(0,8);
         user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
         userRepository.save(user);
+        if (user.getDesignation().getName().equals(Constants.COMPANY_ADMIN.toString()))
+        {
+            CompanyUser companyAdmin = companyUserRepository.findById(user.getCompanyUser().getId()).get();
+            companyAdmin.setStatus(true);
+            companyUserRepository.save(companyAdmin);
+        }
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(user.getEmail());
         simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
@@ -291,7 +297,7 @@ public class UserServiceImpl implements UserService {
     public String generateNonExpiringToken(String email) {
         Users user = userRepository.findByEmail(email);
         Claims claims = Jwts.claims().setIssuer(user.getId().toString());
-        claims.put("Roll","Admin");
+        claims.put("Roll",Constants.COMPANY_ADMIN);
         return Jwts.builder().setClaims(claims).compact();
     }
 
