@@ -1,15 +1,24 @@
 package com.ii.testautomation.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ii.testautomation.dto.request.CompanyUserRequest;
+import com.ii.testautomation.dto.request.DesignationRequest;
+import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
+import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.CompanyUserRepository;
+import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
+import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
@@ -29,6 +38,12 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     private CompanyUserRepository companyUserRepository;
     @Autowired
     private LicensesRepository licensesRepository;
+    @Autowired
+    private DesignationRepository designationRepository;
+    @Autowired
+    private DesignationService designationService;
+    @Autowired
+    private UserService userService;
 
     @Override
     public boolean existsByCompanyUserId(Long id) {
@@ -62,12 +77,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         if (Utils.isNotNullAndEmpty(companyUserSearch.getEmail())) {
             booleanBuilder.and(QCompanyUser.companyUser.email.containsIgnoreCase(companyUserSearch.getEmail()));
         }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getLastName())) {
-            booleanBuilder.and(QCompanyUser.companyUser.lastName.containsIgnoreCase(companyUserSearch.getLastName()));
-        }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getFirstName())) {
-            booleanBuilder.and(QCompanyUser.companyUser.firstName.containsIgnoreCase(companyUserSearch.getFirstName()));
-        }
+
         if (Utils.isNotNullAndEmpty(companyUserSearch.getLicenseName())) {
             booleanBuilder.and(QCompanyUser.companyUser.licenses.name.containsIgnoreCase(companyUserSearch.getLicenseName()));
         }
@@ -119,7 +129,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         }
         return companyUserResponseList;
     }
-List<CompanyUserResponse> companyUserResponseList=new ArrayList<>();
 
     @Override
     public boolean existsByLicenseId(Long id) {
@@ -153,6 +162,22 @@ List<CompanyUserResponse> companyUserResponseList=new ArrayList<>();
         companyUser.setEndDate(endDate);
         BeanUtils.copyProperties(companyUserRequest,companyUser);
         companyUserRepository.save(companyUser);
+        CompanyUser companyAdmin = companyUserRepository.findByEmail(companyUser.getEmail());
+
+        DesignationRequest adminDesignationRequest = new DesignationRequest();
+        adminDesignationRequest.setName(Constants.COMPANY_ADMIN);
+        adminDesignationRequest.setCompanyUserId(companyAdmin.getId());
+        designationService.saveDesignation(adminDesignationRequest);
+        Designation adminDesignation = designationRepository.findDistinctByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
+
+        UserRequest userRequest = new UserRequest();
+        userRequest.setFirstName(companyUserRequest.getFirstName());
+        userRequest.setLastName(companyUserRequest.getLastName());
+        userRequest.setEmail(companyAdmin.getEmail());
+        userRequest.setCompanyUserId(companyAdmin.getId());
+        userRequest.setDesignationId(adminDesignation.getId());
+        userService.saveUser(userRequest);
+
     }
 
     @Override
