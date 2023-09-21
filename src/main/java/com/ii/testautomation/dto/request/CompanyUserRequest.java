@@ -15,6 +15,6 @@ public class CompanyUserRequest {
     private String lastName;
     private String email;
     private String contactNumber;
+    private String status;
     private LocalDate startDate;
-    private LocalDate endDate;
 }
