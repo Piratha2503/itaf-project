@@ -14,6 +14,7 @@ import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EndpointURI;
 import com.ii.testautomation.utils.StatusCodeBundle;
+import org.codehaus.jackson.map.Serializers.Base;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +63,7 @@ public class UserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistsMessage()));
         if (userService.existsByContactNumberAndIdNot(userRequest.getContactNumber(), userRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserAlreadyExistsCode(), statusCodeBundle.getUserContactNumberAlreadyExistMessage()));
+
         userService.updateUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserUpdateSuccessMessage()));
     }
@@ -126,6 +128,7 @@ public class UserController {
         }
             return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
     }
+
     @DeleteMapping(value = EndpointURI.USERS_DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         if (!userService.existsByUsersId(id)) {
@@ -152,14 +155,14 @@ public class UserController {
         else if (userRequest.getPassword() == null || userRequest.getPassword().isEmpty())
             return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getPasswordCannotNullMessage()));
         else if (!userService.existsByEmail(userRequest.getEmail()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getEmailNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
         else if (userService.existsByStatus(LoginStatus.DEACTIVATE.getStatus()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
         else if (userService.existsByStatus(LoginStatus.LOCKED.getStatus()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getUserLockedMessage()));
         else if (userService.existsByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword())) {
                      if (userService.existsByStatus(LoginStatus.ACTIVE.getStatus()))
-                     return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLoginSuccessMessage()));
+                     return ResponseEntity.ok(new ContentResponse<>(Constants.TOKEN,userService.generateNonExpiringToken(userRequest.getEmail()),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLoginSuccessMessage()));
                      if (userService.existsByStatus(LoginStatus.PENDING.getStatus()))
                      return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTempPasswordLoginSuccessMessage()));
         }
@@ -171,15 +174,17 @@ public class UserController {
     }
 
     @PostMapping(EndpointURI.USERS_PASSWORD)
-    public ResponseEntity<Object> createPassword(@RequestHeader(name = "token") String token, @RequestParam(name = "password") String password)
-    {
-        if (userService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
-        if (userService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getEmailVerificationFailureMessage()));
-        if (userService.verifyToken(token).equals(statusCodeBundle.getTokenAlreadyUsedMessage()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenAlreadyUsedMessage()));
-        userService.createNewPassword(token,password);
-        return ResponseEntity.ok(token+password);
+    public ResponseEntity<Object> createPassword(@RequestHeader(name = "token",required = false) String token,@RequestBody UserRequest userRequest) {
+       if (token!=null) {
+            if (userService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
+            if (userService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getEmailVerificationFailureMessage()));
+            if (userService.verifyToken(token).equals(statusCodeBundle.getTokenAlreadyUsedMessage()))
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenAlreadyUsedMessage()));
+        }
+        userService.changePassword(token,userRequest.getEmail(),userRequest.getPassword());
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),"Password Created Successfully"));
+
     }
 }

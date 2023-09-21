@@ -6,7 +6,6 @@ import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
-
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
