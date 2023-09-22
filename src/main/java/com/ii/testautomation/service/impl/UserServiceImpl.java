@@ -324,13 +324,26 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public List<UserResponse> getAllUsersByCompanyAndDesignation(Long companyUserId, Long designationId) {
+        List<Users> usersList = userRepository.findAllByCompanyUser_IdAndDesignation_Id(companyUserId, designationId);
+        List<UserResponse> userResponseList = new ArrayList<>();
+
+        for (Users user : usersList) {
+            UserResponse userResponse = new UserResponse();
+            userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
+            userResponse.setDesignationName(user.getDesignation().getName());
+            BeanUtils.copyProperties(user, userResponse);
+            userResponseList.add(userResponse);
+
+        }
+        return userResponseList;
+    }
+
     private Users getUserByToken(String token) {
         Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token);
         Claims claims = Jwts.parser().setSigningKey(Constants.SECRET_KEY.toString()).parseClaimsJws(token).getBody();
         Users user = userRepository.findById(Long.parseLong(claims.getIssuer())).get();
         return user;
     }
-
-
-
 }

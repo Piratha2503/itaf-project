@@ -45,4 +45,5 @@ public interface UserService {
     List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
 
     void createNewPassword(String token, String password);
+    List<UserResponse> getAllUsersByCompanyAndDesignation(Long companyUserId, Long designationId);
 }
