@@ -7,6 +7,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPredicateExecutor<Users> {
+
     boolean existsByEmailIgnoreCase(String email);
 
     List<Users> findByCompanyUserId(Long companyId);
@@ -14,8 +15,6 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
     boolean existsByDesignationId(Long designationId);
 
     boolean existsByCompanyUserId(Long id);
-
-    Users findByEmail(String email);
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 
@@ -25,5 +24,7 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
 
     Users findByCompanyUserIdAndDesignationName(Long id, String companyAdmin);
 
-    boolean existsByStatusAndEmail(String status, String email);
+    boolean existsByStatusAndEmailIgnoreCase(String status, String email);
+
+    Users findByEmailIgnoreCase(String email);
 }

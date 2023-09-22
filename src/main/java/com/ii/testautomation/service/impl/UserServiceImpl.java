@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRequest, user);
         user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
-        Users userWithId = userRepository.findByEmail(user.getEmail());
+        Users userWithId = userRepository.findByEmailIgnoreCase(user.getEmail());
         generateEmail(userWithId);
     }
 
@@ -155,7 +155,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void invalidPassword(String email) {
-        Users user = userRepository.findByEmail(email);
+        Users user = userRepository.findByEmailIgnoreCase(email);
         if (user.getWrongCount()>0)
             user.setWrongCount(user.getWrongCount() - 1);
         else user.setStatus(LoginStatus.LOCKED.getStatus());
@@ -164,13 +164,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsByStatusAndEmail(String status, String email) {
-        return userRepository.existsByStatusAndEmail(status,email);
+        return userRepository.existsByStatusAndEmailIgnoreCase(status,email);
     }
 
     @Override
     public boolean existsByEmailAndPassword(String email, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        Users user = userRepository.findByEmail(email);
+        Users user = userRepository.findByEmailIgnoreCase(email);
         return bCryptPasswordEncoder.matches(password,user.getPassword());
     }
 
@@ -269,7 +269,7 @@ public class UserServiceImpl implements UserService {
             helper.setTo(user.getEmail());
             if (user.getStatus() == LoginStatus.NEW.getStatus()) {
                 helper.setSubject(userVerificationMailSubject);
-                helper.setText("http://localhost:3000/"+Token, true);
+                helper.setText(emailBody.getEmailBody1()+Token+emailBody.getEmailBody2(), true);
             }
             else
             {
@@ -295,7 +295,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String generateNonExpiringToken(String email) {
-        Users user = userRepository.findByEmail(email);
+        Users user = userRepository.findByEmailIgnoreCase(email);
+        user.setWrongCount(5);
+        userRepository.save(user);
         Claims claims = Jwts.claims().setIssuer(user.getId().toString());
         claims.put("Roll",Constants.COMPANY_ADMIN);
         return Jwts.builder().setClaims(claims).compact();
@@ -340,7 +342,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(String token, String email, String password) {
         if (token == null) {
-            Users user = userRepository.findByEmail(email);
+            Users user = userRepository.findByEmailIgnoreCase(email);
             createNewPassword(user,password);
         }
         else {

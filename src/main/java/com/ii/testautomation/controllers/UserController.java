@@ -150,7 +150,7 @@ public class UserController {
 
     @PostMapping(EndpointURI.USER_LOGIN)
     public ResponseEntity<Object> loginUser(@RequestBody UserRequest userRequest) {
-        if (userRequest.getEmail() == null || userRequest.getEmail().isEmpty())
+  if (userRequest.getEmail() == null || userRequest.getEmail().isEmpty())
             return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getEmailCannotNullMessage()));
         else if (userRequest.getPassword() == null || userRequest.getPassword().isEmpty())
             return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getPasswordCannotNullMessage()));
