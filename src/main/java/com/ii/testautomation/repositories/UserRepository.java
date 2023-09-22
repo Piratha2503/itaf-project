@@ -23,13 +23,7 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
 
     boolean existsByContactNumberIgnoreCase(String contactNo);
 
-    boolean existsByPassword(String password);
-
-    boolean existsByStatus(String status);
-
-    List<Users> findByFirstNameIgnoreCase(String firstName);
-
-    List<Users> findByLastNameIgnoreCase(String firstName);
-
     Users findByCompanyUserIdAndDesignationName(Long id, String companyAdmin);
+
+    boolean existsByStatusAndEmail(String status, String email);
 }

@@ -163,8 +163,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByStatus(String status) {
-        return userRepository.existsByStatus(status);
+    public boolean existsByStatusAndEmail(String status, String email) {
+        return userRepository.existsByStatusAndEmail(status,email);
     }
 
     @Override
@@ -269,7 +269,7 @@ public class UserServiceImpl implements UserService {
             helper.setTo(user.getEmail());
             if (user.getStatus() == LoginStatus.NEW.getStatus()) {
                 helper.setSubject(userVerificationMailSubject);
-                helper.setText(Token, true);
+                helper.setText("http://localhost:3000/"+Token, true);
             }
             else
             {
