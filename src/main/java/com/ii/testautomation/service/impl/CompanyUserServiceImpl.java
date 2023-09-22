@@ -119,7 +119,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         pagination.setPageSize(companyUserPage.getTotalPages());
         pagination.setTotalRecords(companyUserPage.getTotalElements());
         for (CompanyUser companyUser : companyUserList) {
-            Users admin = userRepository.findByCompanyUserIdAndDesignationName(companyUser.getId(),Constants.COMPANY_ADMIN);
+            Users admin = userRepository.findFirstByCompanyUserIdAndDesignationName(companyUser.getId(),Constants.COMPANY_ADMIN);
             CompanyUserResponse companyUserResponse = new CompanyUserResponse();
             BeanUtils.copyProperties(companyUser, companyUserResponse);
             companyUserResponse.setFirstName(admin.getFirstName());
