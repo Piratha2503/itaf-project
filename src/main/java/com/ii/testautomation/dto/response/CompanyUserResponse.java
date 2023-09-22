@@ -15,7 +15,7 @@ public class CompanyUserResponse {
     private String lastName;
     private String email;
     private String contactNumber;
-    private boolean status;
+    private Boolean status;
     private LocalDate startDate;
     private LocalDate endDate;
     private Long licenseId;

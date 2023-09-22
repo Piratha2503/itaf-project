@@ -33,8 +33,7 @@ public class EmailConfiguration {
     private String debug;
 
     @Bean
-    public JavaMailSenderImpl javaMailSender()
-    {
+    public JavaMailSenderImpl javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(host);
         mailSender.setPort(port);

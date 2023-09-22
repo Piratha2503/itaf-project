@@ -36,5 +36,4 @@ public class ProgressWebSocketHandler implements WebSocketHandler {
     public boolean supportsPartialMessages() {
         return false;
     }
-
 }
