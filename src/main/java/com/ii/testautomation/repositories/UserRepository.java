@@ -31,4 +31,6 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
     boolean existsByPassword(String password);
 
     boolean existsByStatus(String status);
+
+    List<Users> findAllByCompanyUser_IdAndDesignation_Id(Long companyUserId, Long designationId);
 }
