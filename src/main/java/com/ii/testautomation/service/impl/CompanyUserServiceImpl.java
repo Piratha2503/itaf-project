@@ -1,26 +1,35 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.CompanyUserRequest;
-import com.ii.testautomation.entities.CompanyUser;
-import com.ii.testautomation.entities.QCompanyUser;
-import com.ii.testautomation.entities.Licenses;
+import com.ii.testautomation.dto.request.DesignationRequest;
+import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
+import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Designation;
+import com.ii.testautomation.entities.Licenses;
+import com.ii.testautomation.entities.QCompanyUser;
+import com.ii.testautomation.entities.QUsers;
+import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.CompanyUserRepository;
+import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
+import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
-import org.springframework.beans.BeanUtils;
+import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CompanyUserServiceImpl implements CompanyUserService {
@@ -28,6 +37,14 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     private CompanyUserRepository companyUserRepository;
     @Autowired
     private LicensesRepository licensesRepository;
+    @Autowired
+    private DesignationRepository designationRepository;
+    @Autowired
+    private DesignationService designationService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public boolean existsByCompanyUserId(Long id) {
@@ -39,6 +56,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         return companyUserRepository.existsByCompanyNameIgnoreCaseAndLicensesIdAndIdNot(name, licensesId, id);
     }
 
+    @Override
     public boolean isUpdateEmailExists(String email, Long licensesId, Long id) {
         return companyUserRepository.existsByEmailIgnoreCaseAndLicensesIdAndIdNot(email, licensesId, id);
     }
@@ -60,12 +78,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         }
         if (Utils.isNotNullAndEmpty(companyUserSearch.getEmail())) {
             booleanBuilder.and(QCompanyUser.companyUser.email.containsIgnoreCase(companyUserSearch.getEmail()));
-        }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getLastName())) {
-            booleanBuilder.and(QCompanyUser.companyUser.lastName.containsIgnoreCase(companyUserSearch.getLastName()));
-        }
-        if (Utils.isNotNullAndEmpty(companyUserSearch.getFirstName())) {
-            booleanBuilder.and(QCompanyUser.companyUser.firstName.containsIgnoreCase(companyUserSearch.getFirstName()));
         }
         if (Utils.isNotNullAndEmpty(companyUserSearch.getLicenseName())) {
             booleanBuilder.and(QCompanyUser.companyUser.licenses.name.containsIgnoreCase(companyUserSearch.getLicenseName()));
@@ -100,14 +112,18 @@ public class CompanyUserServiceImpl implements CompanyUserService {
                 booleanBuilder.and(QCompanyUser.companyUser.licenses.price.eq(companyUserSearch.getPrice()));
             }
         }
+
         List<CompanyUserResponse> companyUserResponseList = new ArrayList<>();
         Page<CompanyUser> companyUserPage = companyUserRepository.findAll(booleanBuilder, pageable);
         List<CompanyUser> companyUserList = companyUserPage.getContent();
         pagination.setPageSize(companyUserPage.getTotalPages());
         pagination.setTotalRecords(companyUserPage.getTotalElements());
         for (CompanyUser companyUser : companyUserList) {
+            Users admin = userRepository.findByCompanyUserIdAndDesignationName(companyUser.getId(),Constants.COMPANY_ADMIN);
             CompanyUserResponse companyUserResponse = new CompanyUserResponse();
             BeanUtils.copyProperties(companyUser, companyUserResponse);
+            companyUserResponse.setFirstName(admin.getFirstName());
+            companyUserResponse.setLastName(admin.getLastName());
             companyUserResponse.setNoOfUsers(companyUser.getLicenses().getNoOfUsers());
             companyUserResponse.setLicenseDuration(companyUser.getLicenses().getDuration());
             companyUserResponse.setLicenseName(companyUser.getLicenses().getName());
@@ -146,11 +162,27 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         licenses.setId(companyUserRequest.getLicenses_id());
         companyUser.setLicenses(licenses);
         BeanUtils.copyProperties(companyUserRequest, companyUser);
-             LocalDate startDate = companyUser.getStartDate();
-            int durationMonths = licenses.getDuration().intValue();
-            LocalDate endDate = startDate.plusMonths(durationMonths);
-            companyUser.setEndDate(endDate);
-            companyUserRepository.save(companyUser);
+        LocalDate startDate = companyUser.getStartDate();
+        int durationMonths = licenses.getDuration().intValue();
+        LocalDate endDate = startDate.plusMonths(durationMonths);
+        companyUser.setEndDate(endDate);
+        companyUserRepository.save(companyUser);
+        CompanyUser companyAdmin = companyUserRepository.findByEmail(companyUserRequest.getEmail());
+
+        DesignationRequest adminDesignationRequest = new DesignationRequest();
+        adminDesignationRequest.setName(Constants.COMPANY_ADMIN);
+        adminDesignationRequest.setCompanyUserId(companyAdmin.getId());
+        designationService.saveDesignation(adminDesignationRequest);
+        Designation adminDesignation = designationRepository.findDistinctByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
+
+        UserRequest userRequest = new UserRequest();
+        userRequest.setFirstName(companyUserRequest.getFirstName());
+        userRequest.setLastName(companyUserRequest.getLastName());
+        userRequest.setEmail(companyAdmin.getEmail());
+        userRequest.setContactNumber(companyAdmin.getContactNumber());
+        userRequest.setCompanyUserId(companyAdmin.getId());
+        userRequest.setDesignationId(adminDesignation.getId());
+        userService.saveUser(userRequest);
 
     }
 

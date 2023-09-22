@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SchedulingRepository extends JpaRepository<Scheduling, Long>, QuerydslPredicateExecutor<Scheduling> {
+
     Page<Scheduling> findByTestGrouping_ProjectId(Pageable pageable, Long projectId);
 
     boolean existsByTestGroupingId(Long testGroupingId);

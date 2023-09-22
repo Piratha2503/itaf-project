@@ -15,10 +15,10 @@ public class EmailBody {
             "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
             "    <title>Document</title>\n" +
             "</head>\n" +
-            "<body>\n" +
-            "<a href=\"";
+            "<body>\n <B> Click the button to Verify </B>" +
+            "<a href=\"http://localhost:3000/";
 
-   private String emailBody2 ="\">\n Click Here" +
+   private String emailBody2 ="\">\n <button> Click here </button>" +
            "</a>\n" +
            "</body>\n" +
            "</html>";
