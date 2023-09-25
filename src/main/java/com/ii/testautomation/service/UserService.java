@@ -3,6 +3,7 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
+import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -38,11 +39,13 @@ public interface UserService {
 
     void invalidPassword(String email);
 
-    boolean existsByStatus(String status);
-
     boolean existsByEmailAndPassword(String email, String password);
 
     List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
 
-    void createNewPassword(String token, String password);
+    String generateNonExpiringToken(String email);
+
+    void changePassword(String token, String email, String password);
+
+    boolean existsByStatusAndEmail(String status, String email);
 }
