@@ -731,4 +731,6 @@ public class StatusCodeBundle {
     private String UserDesignationIdNotGiven;
     @Value("${message.validation.user.email.cannot.change}")
     private String UserEmailCannotChangeMessage;
+    @Value("${message.success.getId.user}")
+    private String getUserDetailsSuccessMessage;
 }

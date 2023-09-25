@@ -46,6 +46,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation group: 'org.springframework.security', name: 'spring-security-crypto'
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
 }
 
 sourceSets {
