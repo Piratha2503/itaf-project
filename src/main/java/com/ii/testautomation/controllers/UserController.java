@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin
 public class UserController {
@@ -131,6 +129,7 @@ public class UserController {
         }
             return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
     }
+
     @DeleteMapping(value = EndpointURI.USERS_DELETE)
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         if (!userService.existsByUsersId(id)) {
@@ -157,14 +156,14 @@ public class UserController {
         else if (userRequest.getPassword() == null || userRequest.getPassword().isEmpty())
             return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getPasswordCannotNullMessage()));
         else if (!userService.existsByEmail(userRequest.getEmail()))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getEmailNotExistMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
         else if (userService.existsByStatus(LoginStatus.DEACTIVATE.getStatus()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
         else if (userService.existsByStatus(LoginStatus.LOCKED.getStatus()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getUserLockedMessage()));
         else if (userService.existsByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword())) {
                      if (userService.existsByStatus(LoginStatus.ACTIVE.getStatus()))
-                     return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLoginSuccessMessage()));
+                     return ResponseEntity.ok(new ContentResponse<>(Constants.TOKEN,userService.generateNonExpiringToken(userRequest.getEmail()),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLoginSuccessMessage()));
                      if (userService.existsByStatus(LoginStatus.PENDING.getStatus()))
                      return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTempPasswordLoginSuccessMessage()));
         }

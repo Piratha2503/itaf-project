@@ -39,8 +39,6 @@ public interface UserService {
 
     void invalidPassword(String email);
 
-    boolean existsByStatus(String status);
-
     boolean existsByEmailAndPassword(String email, String password);
 
     List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
@@ -48,6 +46,8 @@ public interface UserService {
     String generateNonExpiringToken(String email);
 
     void changePassword(String token, String email, String password);
+
+    boolean existsByStatusAndEmail(String status, String email);
 
     List<UserResponse> getAllUsersByCompanyAndDesignation(Long companyUserId, Long designationId);
 }

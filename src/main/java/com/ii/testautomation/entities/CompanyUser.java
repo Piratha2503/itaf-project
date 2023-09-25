@@ -17,8 +17,6 @@ public class CompanyUser extends DateAudit {
     private Long id;
     @Column(unique = true,nullable = false)
     private String companyName;
-    private String firstName;
-    private String lastName;
     @Column(unique = true,nullable = false)
     private String email;
     @Column(unique = true,nullable = false)
