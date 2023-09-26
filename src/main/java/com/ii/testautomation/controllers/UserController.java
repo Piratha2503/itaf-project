@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 public class UserController {
@@ -157,14 +159,14 @@ public class UserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getPasswordCannotNullMessage()));
         else if (!userService.existsByEmail(userRequest.getEmail()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
-        else if (userService.existsByStatus(LoginStatus.DEACTIVATE.getStatus()))
+        else if (userService.existsByStatusAndEmail(LoginStatus.DEACTIVATE.getStatus(),userRequest.getEmail()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
-        else if (userService.existsByStatus(LoginStatus.LOCKED.getStatus()))
+        else if (userService.existsByStatusAndEmail(LoginStatus.LOCKED.getStatus(),userRequest.getEmail()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getUserLockedMessage()));
         else if (userService.existsByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword())) {
-                     if (userService.existsByStatus(LoginStatus.ACTIVE.getStatus()))
+                     if (userService.existsByStatusAndEmail(LoginStatus.ACTIVE.getStatus(),userRequest.getEmail()))
                      return ResponseEntity.ok(new ContentResponse<>(Constants.TOKEN,userService.generateNonExpiringToken(userRequest.getEmail()),RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLoginSuccessMessage()));
-                     if (userService.existsByStatus(LoginStatus.PENDING.getStatus()))
+                     if (userService.existsByStatusAndEmail(LoginStatus.PENDING.getStatus(),userRequest.getEmail()))
                      return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTempPasswordLoginSuccessMessage()));
         }
         else if (userService.existsByEmail(userRequest.getEmail()) && !userService.existsByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword())) {
