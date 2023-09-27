@@ -116,10 +116,11 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         List<CompanyUserResponse> companyUserResponseList = new ArrayList<>();
         Page<CompanyUser> companyUserPage = companyUserRepository.findAll(booleanBuilder, pageable);
         List<CompanyUser> companyUserList = companyUserPage.getContent();
-        pagination.setPageSize(companyUserPage.getTotalPages());
+        pagination.setTotalPages(companyUserPage.getTotalPages());
         pagination.setTotalRecords(companyUserPage.getTotalElements());
         for (CompanyUser companyUser : companyUserList) {
             Users admin = userRepository.findFirstByCompanyUserIdAndDesignationName(companyUser.getId(),Constants.COMPANY_ADMIN);
+            if (admin == null) continue;
             CompanyUserResponse companyUserResponse = new CompanyUserResponse();
             BeanUtils.copyProperties(companyUser, companyUserResponse);
             companyUserResponse.setFirstName(admin.getFirstName());
@@ -173,7 +174,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         adminDesignationRequest.setName(Constants.COMPANY_ADMIN);
         adminDesignationRequest.setCompanyUserId(companyAdmin.getId());
         designationService.saveDesignation(adminDesignationRequest);
-        Designation adminDesignation = designationRepository.findDistinctByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
+        Designation adminDesignation = designationRepository.findFirstByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
 
         UserRequest userRequest = new UserRequest();
         userRequest.setFirstName(companyUserRequest.getFirstName());
