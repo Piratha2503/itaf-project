@@ -13,7 +13,7 @@ public interface CompanyUserService {
 
     boolean isUpdateCompanyUserNameExists(String name, Long licenseId,Long id);
 
-    boolean isUpdateEmailExists(String email,Long licenseId, Long id);
+    boolean isUpdateEmailExists(String email,Long id);
 
     boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long licenseId, Long id);
 
@@ -34,4 +34,6 @@ public interface CompanyUserService {
     void deleteById(Long id);
 
     CompanyUserResponse getCompanyUserById(Long id);
+
+    void updateCompanyUser(CompanyUserRequest companyUserRequest);
 }

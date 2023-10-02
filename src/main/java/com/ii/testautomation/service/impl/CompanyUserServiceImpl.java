@@ -11,10 +11,13 @@ import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
+import com.ii.testautomation.enums.LoginStatus;
+import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.repositories.UserRepository;
+import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
@@ -29,6 +32,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -57,8 +61,8 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     }
 
     @Override
-    public boolean isUpdateEmailExists(String email, Long licensesId, Long id) {
-        return companyUserRepository.existsByEmailIgnoreCaseAndLicensesIdAndIdNot(email, licensesId, id);
+    public boolean isUpdateEmailExists(String email, Long id) {
+        return companyUserRepository.existsByEmailIgnoreCaseAndIdNot(email,id);
     }
 
     @Override
@@ -184,9 +188,27 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         userRequest.setCompanyUserId(companyAdmin.getId());
         userRequest.setDesignationId(adminDesignation.getId());
         userService.saveUser(userRequest);
-
     }
-
+    @Override
+    public void updateCompanyUser(CompanyUserRequest companyUserRequest) {
+       CompanyUser companyUser = companyUserRepository.findById(companyUserRequest.getId()).get();
+        Users user = userRepository.findFirstByCompanyUserIdAndDesignationName(companyUserRequest.getId(), Constants.COMPANY_ADMIN);
+       if(!(companyUserRequest.getLicenses_id()==null)) {
+            Licenses license = licensesRepository.findById(companyUserRequest.getLicenses_id()).get();
+            companyUser.setLicenses(license);
+        }
+        if(!(companyUserRequest.getContactNumber()==null)) companyUser.setContactNumber(companyUserRequest.getContactNumber());
+        if(!(companyUserRequest.getCompanyName()==null)) companyUser.setCompanyName(companyUserRequest.getCompanyName());
+        if (!(companyUserRequest.getStartDate() == null )) companyUser.setStartDate(companyUserRequest.getStartDate());
+        if (!(companyUserRequest.getFirstName()== null)) user.setFirstName(companyUserRequest.getFirstName());
+        if (!(companyUserRequest.getLastName()== null)) user.setLastName(companyUserRequest.getLastName());
+        if (!(companyUserRequest.getStatus() == true)) {
+            user.setStatus(LoginStatus.ACTIVE.getStatus());
+            user.setWrongCount(5);
+        }
+        user.setEmail(companyUser.getEmail());
+        userRepository.save(user);
+    }
     @Override
     public boolean existsById(Long id) {
         return companyUserRepository.existsById(id);
