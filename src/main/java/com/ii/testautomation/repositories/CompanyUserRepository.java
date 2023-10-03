@@ -4,6 +4,9 @@ import com.ii.testautomation.entities.CompanyUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>, QuerydslPredicateExecutor<CompanyUser> {
 
     boolean existsByCompanyNameIgnoreCase(String name);
@@ -23,4 +26,6 @@ public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>,
     CompanyUser findByEmail(String email);
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
+    List<CompanyUser> findByEndDateLessThanEqualAndStatusTrue(LocalDate currentDate);
+
 }

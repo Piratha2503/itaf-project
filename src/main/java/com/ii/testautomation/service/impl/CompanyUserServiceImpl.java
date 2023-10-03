@@ -30,6 +30,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -228,5 +229,14 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         companyUserResponse.setNoOfProjects(companyUser.getLicenses().getNoOfProjects());
         BeanUtils.copyProperties(companyUser, companyUserResponse);
         return companyUserResponse;
+    }
+    @Scheduled(cron = "0/1 * * * * ?")
+    public void deactivateExpiredCompanyUsers() {
+        LocalDate currentDate = LocalDate.now();
+        List<CompanyUser> expiredCompanyUsers = companyUserRepository.findByEndDateLessThanEqualAndStatusTrue(currentDate);
+        for (CompanyUser companyUser : expiredCompanyUsers) {
+            companyUser.setStatus(false);
+        }
+        companyUserRepository.saveAll(expiredCompanyUsers);
     }
 }
