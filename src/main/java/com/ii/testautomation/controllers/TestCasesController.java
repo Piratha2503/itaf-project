@@ -219,18 +219,6 @@ public class TestCasesController {
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllTestCasesSuccessGivenProjectId(), pagination));
     }
-
-    @DeleteMapping(value = EndpointURI.TESTCASE_BY_ID)
-    public ResponseEntity<Object> DeleteTestCaseById(@PathVariable Long id) {
-        if (!testCasesService.existsByTestCasesId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
-        }
-        if (testGroupingService.existsByTestCasesId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesDependentCode(), statusCodeBundle.getGetValidationTestCaseAssignedMessage()));
-        }
-        testCasesService.DeleteTestCaseById(id);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestCaseSuccessMessage()));
-    }
     @DeleteMapping(value = EndpointURI.TESTCASES_BY_IDS)
    public ResponseEntity<Object> deleteTestCasesByIds(@RequestBody TestCaseRequest testCaseRequest) {
 

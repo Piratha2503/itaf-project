@@ -30,8 +30,6 @@ public interface TestCasesService {
 
     void DeleteTestCaseById(Long id);
 
-    public void deleteTestCasesByIds(List<Long> ids);
-
     boolean existsBySubModuleId(Long subModuleId);
 
     boolean hasExcelFormat(MultipartFile multipartFile);
