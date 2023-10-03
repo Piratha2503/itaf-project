@@ -303,6 +303,8 @@ public class StatusCodeBundle {
     private String getTestCaseByIdSuccessMessage;
     @Value("${message.success.delete.testCase}")
     private String deleteTestCaseSuccessMessage;
+    @Value("${message.success.deleteAll.testCase}")
+    private String onlyDeleteIndependentTestCasesSuccessfullyMessage;
     @Value("${message.success.update.testCase}")
     private String updateTestCaseSuccessMessage;
     @Value("${message.success.getAll.testCases}")

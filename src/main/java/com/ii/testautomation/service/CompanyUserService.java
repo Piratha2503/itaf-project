@@ -34,4 +34,5 @@ public interface CompanyUserService {
     void deleteById(Long id);
 
     CompanyUserResponse getCompanyUserById(Long id);
-}
+
+  }

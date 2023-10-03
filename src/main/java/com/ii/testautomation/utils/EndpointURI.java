@@ -12,6 +12,8 @@ public final class EndpointURI {
     private static final String SEARCH = "search";
     private static final String SEARCH_WITH_PAGE = "page";
     private static final String ID = "/{id}";
+
+    private static final String IDS="/{ids}";
     private static final String PASSWORD = "/{password}";
     private static final String PROJECT_ID = "/{projectId}";
 
@@ -55,6 +57,8 @@ public final class EndpointURI {
     //URLs for TestCases
     public static final String TESTCASE = BASE_API_PATH + "testcase";
     public static final String TESTCASE_BY_ID = TESTCASE + ID;
+
+    public static final String TESTCASES_BY_IDS= TESTCASE + "deleteAll";
     public static final String TESTCASES = BASE_API_PATH + SEARCH + SLASH + "testcases";
     public static final String TESTCASES_BY_ID = BASE_API_PATH + "TestCaseBySubModuleId" + ID;
     public static final String TESTCASE_IMPORT= TESTCASE+"/import"+ID;

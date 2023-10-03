@@ -186,6 +186,20 @@ public class TestCasesServiceImpl implements TestCasesService {
     }
 
     @Override
+    public void deleteTestCasesByIds(List<Long> ids) {
+        List<Long> successfullyDeletedIds = new ArrayList<>();
+        List<Long> failedToDeleteIds = new ArrayList<>();
+
+        for (Long id : ids) {
+            if (!existsByTestCasesId(id)) {
+                failedToDeleteIds.add(id);
+            } else {
+                testCasesRepository.deleteById(id);
+                successfullyDeletedIds.add(id);
+            }
+        }
+    }
+    @Override
     public boolean existsBySubModuleId(Long subModuleId) {
         return testCasesRepository.existsBySubModuleId(subModuleId);
     }
@@ -415,5 +429,6 @@ public class TestCasesServiceImpl implements TestCasesService {
         }
         return false;
     }
+
 
 }

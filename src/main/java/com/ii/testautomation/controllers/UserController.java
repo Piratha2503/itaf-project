@@ -147,7 +147,6 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getUserIdNotExistMessage()));
         return ResponseEntity.ok(new ContentResponse<>(Constants.USERS,userService.getUserById(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getGetUserByIdSuccessMessage()));
     }
-
     @PostMapping(EndpointURI.USER_LOGIN)
     public ResponseEntity<Object> loginUser(@RequestBody UserRequest userRequest) {
   if (userRequest.getEmail() == null || userRequest.getEmail().isEmpty())
