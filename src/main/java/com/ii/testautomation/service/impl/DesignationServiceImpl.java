@@ -67,7 +67,7 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
-    public List<DesignationResponse> getAllDesignationByCompanyId(Long userId) {
+    public List<DesignationResponse> getAllDesignationByCompanyAdminId(Long userId) {
         List<DesignationResponse> designationResponseList = new ArrayList<>();
         Long companyId = userRepository.findById(userId).get().getCompanyUser().getId();
         List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(companyId);
