@@ -519,7 +519,6 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             runProcessBuilder.redirectErrorStream(true);
             Process runProcess = runProcessBuilder.start();
             runProcess.waitFor();
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

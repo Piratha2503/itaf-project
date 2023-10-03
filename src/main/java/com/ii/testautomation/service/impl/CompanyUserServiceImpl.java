@@ -11,6 +11,7 @@ import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
+import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
@@ -57,13 +58,13 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     }
 
     @Override
-    public boolean isUpdateEmailExists(String email, Long licensesId, Long id) {
-        return companyUserRepository.existsByEmailIgnoreCaseAndLicensesIdAndIdNot(email, licensesId, id);
+    public boolean isUpdateEmailExists(String email, Long id) {
+        return companyUserRepository.existsByEmailIgnoreCaseAndIdNot(email,id);
     }
 
     @Override
-    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long licensesId, Long id) {
-        return companyUserRepository.existsByContactNumberIgnoreCaseAndLicensesIdAndIdNot(contactNumber, licensesId, id);
+    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long id) {
+        return companyUserRepository.existsByContactNumberIgnoreCaseAndIdNot(contactNumber,id);
 
     }
 
@@ -116,10 +117,11 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         List<CompanyUserResponse> companyUserResponseList = new ArrayList<>();
         Page<CompanyUser> companyUserPage = companyUserRepository.findAll(booleanBuilder, pageable);
         List<CompanyUser> companyUserList = companyUserPage.getContent();
-        pagination.setPageSize(companyUserPage.getTotalPages());
+        pagination.setTotalPages(companyUserPage.getTotalPages());
         pagination.setTotalRecords(companyUserPage.getTotalElements());
         for (CompanyUser companyUser : companyUserList) {
-            Users admin = userRepository.findByCompanyUserIdAndDesignationName(companyUser.getId(),Constants.COMPANY_ADMIN);
+            Users admin = userRepository.findFirstByCompanyUserIdAndDesignationName(companyUser.getId(),Constants.COMPANY_ADMIN);
+            if (admin == null) continue;
             CompanyUserResponse companyUserResponse = new CompanyUserResponse();
             BeanUtils.copyProperties(companyUser, companyUserResponse);
             companyUserResponse.setFirstName(admin.getFirstName());
@@ -173,7 +175,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         adminDesignationRequest.setName(Constants.COMPANY_ADMIN);
         adminDesignationRequest.setCompanyUserId(companyAdmin.getId());
         designationService.saveDesignation(adminDesignationRequest);
-        Designation adminDesignation = designationRepository.findDistinctByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
+        Designation adminDesignation = designationRepository.findFirstByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
 
         UserRequest userRequest = new UserRequest();
         userRequest.setFirstName(companyUserRequest.getFirstName());
@@ -183,9 +185,27 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         userRequest.setCompanyUserId(companyAdmin.getId());
         userRequest.setDesignationId(adminDesignation.getId());
         userService.saveUser(userRequest);
-
     }
-
+    @Override
+    public void updateCompanyUser(CompanyUserRequest companyUserRequest) {
+       CompanyUser companyUser = companyUserRepository.findById(companyUserRequest.getId()).get();
+        Users user = userRepository.findFirstByCompanyUserIdAndDesignationName(companyUserRequest.getId(), Constants.COMPANY_ADMIN);
+       if(!(companyUserRequest.getLicenses_id()==null)) {
+            Licenses license = licensesRepository.findById(companyUserRequest.getLicenses_id()).get();
+            companyUser.setLicenses(license);
+        }
+        if(!(companyUserRequest.getContactNumber()==null)) companyUser.setContactNumber(companyUserRequest.getContactNumber());
+        if(!(companyUserRequest.getCompanyName()==null)) companyUser.setCompanyName(companyUserRequest.getCompanyName());
+        if (!(companyUserRequest.getStartDate() == null )) companyUser.setStartDate(companyUserRequest.getStartDate());
+        if (!(companyUserRequest.getFirstName()== null)) user.setFirstName(companyUserRequest.getFirstName());
+        if (!(companyUserRequest.getLastName()== null)) user.setLastName(companyUserRequest.getLastName());
+        if (!(companyUserRequest.getStatus() == true)) {
+            user.setStatus(LoginStatus.ACTIVE.getStatus());
+            user.setWrongCount(5);
+        }
+        user.setEmail(companyUser.getEmail());
+        userRepository.save(user);
+    }
     @Override
     public boolean existsById(Long id) {
         return companyUserRepository.existsById(id);
