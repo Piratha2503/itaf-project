@@ -244,47 +244,4 @@ public class TestCasesController {
                     statusCodeBundle.getCommonSuccessCode(),
                     statusCodeBundle.getOnlyDeleteIndependentTestCasesSuccessfullyMessage()));
     }
-//    @DeleteMapping(value = EndpointURI.TESTCASES_BY_IDS)
-//    public ResponseEntity<Object> deleteTestCasesByIds(@PathVariable String ids) {
-//        String[] idArray = ids.split(",");
-//        List<Long> successfullyDeletedIds = new ArrayList<>();
-//        List<Long> failedToDeleteIds = new ArrayList<>();
-//
-//        for (String idStr : idArray) {
-//            try {
-//                Long id = Long.parseLong(idStr.trim());
-//
-//                if (!testCasesService.existsByTestCasesId(id)) {
-//                    failedToDeleteIds.add(id);
-//                } else if (testGroupingService.existsByTestCasesId(id)) {
-//                    failedToDeleteIds.add(id);
-//                } else {
-//                    testCasesService.DeleteTestCaseById(id);
-//                    successfullyDeletedIds.add(id);
-//                }
-//            } catch (NumberFormatException e) {
-//            }
-//        }
-//
-//        if (successfullyDeletedIds.isEmpty()) {
-//            return ResponseEntity.ok(new BaseResponse(
-//                    RequestStatus.FAILURE.getStatus(),
-//                    statusCodeBundle.getTestCasesNotExistCode(),
-//                    statusCodeBundle.getTestCasesNotExistsMessage()
-//            ));
-//        } else if (failedToDeleteIds.isEmpty()) {
-//            return ResponseEntity.ok(new BaseResponse(
-//                    RequestStatus.SUCCESS.getStatus(),
-//                    statusCodeBundle.getCommonSuccessCode(),
-//                    statusCodeBundle.getDeleteTestCaseSuccessMessage()
-//            ));
-//        } else {
-//           return ResponseEntity.ok(
-//                    new DeleteResponse(successfullyDeletedIds, failedToDeleteIds)
-//            );
-//        }
-//    }
     }
-
-
-
