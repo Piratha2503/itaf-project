@@ -15,7 +15,7 @@ public interface CompanyUserService {
 
     boolean isUpdateEmailExists(String email,Long id);
 
-    boolean isUpdateCompanyUserContactNumberExists(String contactNumber,Long licenseId, Long id);
+    boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long id);
 
     List<CompanyUserResponse> getAllCompanyUserWithMultiSearch(Pageable pageable, PaginatedContentResponse.Pagination pagination, CompanyUserSearch companyUserSearch);
 

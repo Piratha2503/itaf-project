@@ -12,12 +12,10 @@ import com.ii.testautomation.entities.QCompanyUser;
 import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
-import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.repositories.UserRepository;
-import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
@@ -32,7 +30,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -66,8 +63,8 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     }
 
     @Override
-    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long licensesId, Long id) {
-        return companyUserRepository.existsByContactNumberIgnoreCaseAndLicensesIdAndIdNot(contactNumber, licensesId, id);
+    public boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long id) {
+        return companyUserRepository.existsByContactNumberIgnoreCaseAndIdNot(contactNumber,id);
 
     }
 

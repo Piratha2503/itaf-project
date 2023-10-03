@@ -104,7 +104,7 @@ public class CompanyUserController {
         if (companyUserService.isUpdateEmailExists(companyUserRequest.getEmail(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserEmailAlReadyExistsMessage()));
         }
-        if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(), companyUserRequest.getLicenses_id(), companyUserRequest.getId())) {
+        if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserContactNoAlReadyExistsMessage()));
         }
         companyUserService.updateCompanyUser(companyUserRequest);
