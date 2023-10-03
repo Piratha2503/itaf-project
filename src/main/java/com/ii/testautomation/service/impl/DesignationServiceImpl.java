@@ -68,19 +68,13 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
-    public List<DesignationResponse> getAllDesignationByCompanyId(Long companyId) {
-        List<Users> usersList = userRepository.findByCompanyUserId(companyId);
-        Set<Designation> uniqueDesignations = new HashSet<>();
-        for (Users user : usersList) {
-            Designation designation = user.getDesignation();
-            if (designation != null) {
-                uniqueDesignations.add(designation);
-            }
-        }
+    public List<DesignationResponse> getAllDesignationByCompanyAdminId(Long userId) {
         List<DesignationResponse> designationResponseList = new ArrayList<>();
-        for (Designation uniqueDesignation : uniqueDesignations) {
+        Long companyId = userRepository.findById(userId).get().getCompanyUser().getId();
+        List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(companyId);
+        for (Designation designation : designationList){
             DesignationResponse designationResponse = new DesignationResponse();
-            BeanUtils.copyProperties(uniqueDesignation, designationResponse);
+            BeanUtils.copyProperties(designation,designationResponse);
             designationResponseList.add(designationResponse);
         }
         return designationResponseList;
