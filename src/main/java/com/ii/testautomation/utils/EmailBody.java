@@ -16,7 +16,7 @@ public class EmailBody {
             "    <title>Document</title>\n" +
             "</head>\n" +
             "<body>\n <B> Click the button to Verify </B>" +
-            "<a href=\"http://localhost:3000/";
+            "<a href=\"http://192.168.1.58:3000/verifyEmail/";
 
    private String emailBody2 ="\">\n <button> Click here </button>" +
            "</a>\n" +

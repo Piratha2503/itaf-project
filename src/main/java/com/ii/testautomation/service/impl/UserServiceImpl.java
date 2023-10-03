@@ -299,8 +299,8 @@ public class UserServiceImpl implements UserService {
         user.setWrongCount(5);
         userRepository.save(user);
         Claims claims = Jwts.claims().setIssuer(user.getId().toString());
-        claims.put("Roll",Constants.COMPANY_ADMIN);
-        return Jwts.builder().setClaims(claims).compact();
+        claims.put("Roll",user.getDesignation().getName());
+        return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
     }
 
     @Override
