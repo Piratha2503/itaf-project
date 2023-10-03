@@ -38,9 +38,6 @@ public class DesignationController {
     @Autowired
     private CompanyUserService companyUserService;
 
-    @Autowired
-    private UserRequest userRequest;
-
     @PostMapping(EndpointURI.DESIGNATION)
     public ResponseEntity<Object> saveDesignation(@RequestBody DesignationRequest designationRequest) {
         if (designationRequest.getName().isEmpty() || designationRequest.getName() == null) {
