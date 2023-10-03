@@ -13,7 +13,7 @@ public interface DesignationService {
 
     boolean existsByName(String designationName);
 
-    List<DesignationResponse> getAllDesignationByCompanyId(Long companyId);
+    List<DesignationResponse> getAllDesignationByCompanyId(Long userId);
 
     boolean existsById(Long id);
 
