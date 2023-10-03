@@ -661,6 +661,8 @@ public class StatusCodeBundle {
     private String designationDeleteDependentMessage;
     @Value("${message.failure.designation.nullValues}")
     private String DesignationNullValuesMessage;
+    @Value("${message.failure.designation.notCompanyAdmin}")
+    private String itsNotCompanyAdminMessage;
 
     //companyUser code
     @Value("${code.validation.companyUser.alreadyExists}")

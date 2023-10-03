@@ -47,5 +47,5 @@ public interface UserService {
 
     void changePassword(String token, String email, String password);
 
-    boolean existsByStatusAndEmail(String status, String email);
+    boolean existsByStatusAndEmail(String status, String email);;
 }
