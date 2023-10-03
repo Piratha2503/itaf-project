@@ -37,3 +37,4 @@ public interface CompanyUserService {
 
     void updateCompanyUser(CompanyUserRequest companyUserRequest);
 }
+

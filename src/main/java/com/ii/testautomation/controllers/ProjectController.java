@@ -77,7 +77,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveProjectSuccessMessage()));
     }
-
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestParam String project,
                                               @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
@@ -116,7 +115,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getUpdateProjectSuccessMessage()));
     }
-
     @GetMapping(value = EndpointURI.PROJECTS)
     public ResponseEntity<Object> getALlProjects(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
@@ -143,7 +141,6 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetProjectSuccessMessage()));
     }
-
     @DeleteMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> deleteProject(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -163,4 +160,3 @@ public class ProjectController {
         ));
     }
 }
-
