@@ -106,7 +106,6 @@ public class SubModulesServiceImpl implements SubModulesService {
         }
         return subModulesResponseList;
     }
-
     @Override
     public List<SubModulesResponse> multiSearchSubModule(Pageable pageable, PaginatedContentResponse.Pagination pagination, SubModuleSearch subModuleSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -186,13 +185,10 @@ public class SubModulesServiceImpl implements SubModulesService {
     public Long getSubModuleIdByNameForProject(String subModuleName, Long projectId) {
         return subModulesRepository.findByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName, projectId).getId();
     }
-
     @Override
     public boolean existsBySubModulesNameForProject(String subModuleName, Long projectId) {
         return subModulesRepository.existsByNameIgnoreCaseAndMainModule_Modules_ProjectId(subModuleName, projectId);
     }
-
-
     @Override
     public Map<Integer, SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
         Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();
@@ -228,7 +224,6 @@ public class SubModulesServiceImpl implements SubModulesService {
             return false;
         }
     }
-
     @Override
     public Map<Integer, SubModulesRequest> excelToSubModuleRequest(MultipartFile multipartFile) {
         Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();
@@ -251,7 +246,6 @@ public class SubModulesServiceImpl implements SubModulesService {
         }
         return subModulesRequestList;
     }
-
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
         try (InputStream inputStream = multipartFile.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {

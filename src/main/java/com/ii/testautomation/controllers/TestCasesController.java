@@ -4,16 +4,14 @@ import com.ii.testautomation.dto.request.TestCaseRequest;
 import com.ii.testautomation.dto.response.TestCaseResponse;
 import com.ii.testautomation.dto.search.TestCaseSearch;
 import com.ii.testautomation.enums.RequestStatus;
-import com.ii.testautomation.response.common.BaseResponse;
-import com.ii.testautomation.response.common.ContentResponse;
-import com.ii.testautomation.response.common.FileResponse;
-import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.response.common.*;
 import com.ii.testautomation.service.*;
 import com.ii.testautomation.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,8 +44,8 @@ public class TestCasesController {
         }
         if (!Utils.checkRagexBeforeAfterWordsTestCases(testCaseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
-        if(testCaseRequest.getName()==null && testCaseRequest.getName().isEmpty()){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(),
+        if (testCaseRequest.getName() == null && testCaseRequest.getName().isEmpty()) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getNullValuesCode(),
                     statusCodeBundle.getTestCaseNameEmptyMessage()));
         }
         if (testCasesService.existsByTestCasesName(testCaseRequest.getName(), testCaseRequest.getSubModuleId())) {
@@ -77,8 +75,8 @@ public class TestCasesController {
         }
         if (!Utils.checkRagexBeforeAfterWordsTestCases(testCaseRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
-        if(testCaseRequest.getName()==null && testCaseRequest.getName().isEmpty()){
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(),
+        if (testCaseRequest.getName() == null && testCaseRequest.getName().isEmpty()) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getNullValuesCode(),
                     statusCodeBundle.getTestCaseNameEmptyMessage()));
         }
         if (testCasesService.isUpdateTestCaseNameExists(testCaseRequest.getName(), testCaseRequest.getId(), testCaseRequest.getSubModuleId())) {
@@ -130,13 +128,11 @@ public class TestCasesController {
             for (Map.Entry<Integer, TestCaseRequest> entry : testCaseRequestList.entrySet()) {
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameEmptyMessage(), entry.getKey());
-                }
-                else if (!Utils.checkRagexBeforeAfterWordsTestCases(entry.getValue().getName()))
+                } else if (!Utils.checkRagexBeforeAfterWordsTestCases(entry.getValue().getName()))
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getSpacesNotAllowedMessage(), entry.getKey());
                 else if (testCasesNames.contains(entry.getValue().getName())) {
                     testCasesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestCaseNameDuplicateMessage(), entry.getKey());
-                }
-                 else {
+                } else {
                     testCasesNames.add(entry.getValue().getName());
                 }
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getSubModuleName())) {
@@ -223,16 +219,17 @@ public class TestCasesController {
                 RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetAllTestCasesSuccessGivenProjectId(), pagination));
     }
+    @DeleteMapping(value = EndpointURI.TESTCASES_BY_IDS)
+   public ResponseEntity<Object> deleteTestCasesByIds(@RequestBody TestCaseRequest testCaseRequest) {
 
-    @DeleteMapping(value = EndpointURI.TESTCASE_BY_ID)
-    public ResponseEntity<Object> DeleteTestCaseById(@PathVariable Long id) {
-        if (!testCasesService.existsByTestCasesId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesNotExistCode(), statusCodeBundle.getTestCasesNotExistsMessage()));
+        for (Long id: testCaseRequest.getTestCaseIds())
+        {
+            if (testGroupingService.existsByTestCasesId(id)) continue;
+            testCasesService.DeleteTestCaseById(id);
         }
-        if (testGroupingService.existsByTestCasesId(id)) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestCasesDependentCode(), statusCodeBundle.getGetValidationTestCaseAssignedMessage()));
-        }
-        testCasesService.DeleteTestCaseById(id);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteTestCaseSuccessMessage()));
+        return ResponseEntity.ok(new BaseResponse(
+                    RequestStatus.SUCCESS.getStatus(),
+                    statusCodeBundle.getCommonSuccessCode(),
+                    statusCodeBundle.getOnlyDeleteIndependentTestCasesSuccessfullyMessage()));
     }
-}
+    }
