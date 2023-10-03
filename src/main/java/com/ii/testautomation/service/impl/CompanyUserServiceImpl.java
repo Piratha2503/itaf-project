@@ -183,7 +183,6 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         userRequest.setCompanyUserId(companyAdmin.getId());
         userRequest.setDesignationId(adminDesignation.getId());
         userService.saveUser(userRequest);
-
     }
 
     @Override

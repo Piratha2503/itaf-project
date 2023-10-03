@@ -1,4 +1,5 @@
 package com.ii.testautomation.service.impl;
+
 import com.ii.testautomation.dto.request.DesignationRequest;
 import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.entities.CompanyUser;
@@ -12,6 +13,7 @@ import org.bouncycastle.jce.provider.JCEMac;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,13 +31,12 @@ public class DesignationServiceImpl implements DesignationService {
     @Override
     public void saveDesignation(DesignationRequest designationRequest) {
         Designation designation = new Designation();
-        CompanyUser companyUser=new CompanyUser();
+        CompanyUser companyUser = new CompanyUser();
         companyUser.setId(designationRequest.getCompanyUserId());
         designation.setCompanyUser(companyUser);
         BeanUtils.copyProperties(designationRequest, designation);
         designationRepository.save(designation);
     }
-
     @Override
     public boolean existsByNameIdNot(Long id, String name) {
         return designationRepository.existsByNameIgnoreCaseAndIdNot(name, id);
@@ -43,20 +44,20 @@ public class DesignationServiceImpl implements DesignationService {
 
     @Override
     public DesignationResponse getDesignationById(Long id) {
-        Designation designation =designationRepository.findById(id).get();
-        DesignationResponse designationResponse=new DesignationResponse();
-        BeanUtils.copyProperties(designation,designationResponse);
+        Designation designation = designationRepository.findById(id).get();
+        DesignationResponse designationResponse = new DesignationResponse();
+        BeanUtils.copyProperties(designation, designationResponse);
         return designationResponse;
     }
 
     @Override
     public List<DesignationResponse> getAllDesignationByCompanyUserId(Long id) {
-        List<DesignationResponse> designationResponseList=new ArrayList<>();
-        List<Designation> designationList=designationRepository.findAllDesignationByCompanyUserId(id);
-        for(Designation designation:designationList){
-            DesignationResponse designationResponse=new DesignationResponse();
-           BeanUtils.copyProperties(designation,designationResponse);
-           designationResponseList.add(designationResponse);
+        List<DesignationResponse> designationResponseList = new ArrayList<>();
+        List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(id);
+        for (Designation designation : designationList) {
+            DesignationResponse designationResponse = new DesignationResponse();
+            BeanUtils.copyProperties(designation, designationResponse);
+            designationResponseList.add(designationResponse);
         }
         return designationResponseList;
     }

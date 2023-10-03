@@ -112,7 +112,6 @@ public class UserController {
         if (userService.existsByContactNo(userRequest.getContactNumber())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserContactNoAlReadyExistsMessage()));
         }
-
         userService.saveUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveUserSuccessMessage()));
     }
@@ -195,10 +194,4 @@ public class UserController {
     public List<UserResponse> getUsersByCompanyAndDesignation(@RequestParam Long companyUserId, @RequestParam Long designationId) {
         return userService.getAllUsersByCompanyAndDesignation(companyUserId, designationId);
     }
-
-    //@GetMapping(EndpointURI.USERS)
-    //public ResponseEntity<Object> getUsersByCompanyAndDesignation(@RequestParam Long companyUserId, @RequestParam Long designationId) {
-    //    List<UserResponse> users = userService.getAllUsersByCompanyAndDesignation(companyUserId, designationId);
-    //    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), successMessage, users));
-    //}
 }

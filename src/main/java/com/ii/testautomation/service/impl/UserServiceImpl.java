@@ -322,14 +322,12 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getAllUsersByCompanyAndDesignation(Long companyUserId, Long designationId) {
         List<Users> usersList = userRepository.findAllByCompanyUser_IdAndDesignation_Id(companyUserId, designationId);
         List<UserResponse> userResponseList = new ArrayList<>();
-
         for (Users user : usersList) {
             UserResponse userResponse = new UserResponse();
             userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
             userResponse.setDesignationName(user.getDesignation().getName());
             BeanUtils.copyProperties(user, userResponse);
             userResponseList.add(userResponse);
-
         }
         return userResponseList;
     }
