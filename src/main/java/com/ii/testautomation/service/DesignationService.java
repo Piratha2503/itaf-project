@@ -12,8 +12,6 @@ public interface DesignationService {
 
     List<DesignationResponse> getAllDesignationByCompanyAdminId(Long userId);
 
-    boolean existsById(Long id);
-
     void deleteDesignationById(Long id);
 
     boolean existById(Long id);

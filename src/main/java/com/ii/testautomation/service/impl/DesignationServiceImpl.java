@@ -31,7 +31,7 @@ public class DesignationServiceImpl implements DesignationService {
     @Override
     public void saveDesignation(DesignationRequest designationRequest) {
         Designation designation = new Designation();
-        CompanyUser companyUser=userRepository.findById(designationRequest.getUserId()).get().getCompanyUser();
+        CompanyUser companyUser = userRepository.findById(designationRequest.getUserId()).get().getCompanyUser();
         designation.setCompanyUser(companyUser);
         BeanUtils.copyProperties(designationRequest, designation);
         designationRepository.save(designation);
@@ -44,20 +44,20 @@ public class DesignationServiceImpl implements DesignationService {
 
     @Override
     public DesignationResponse getDesignationById(Long id) {
-        Designation designation =designationRepository.findById(id).get();
-        DesignationResponse designationResponse=new DesignationResponse();
-        BeanUtils.copyProperties(designation,designationResponse);
+        Designation designation = designationRepository.findById(id).get();
+        DesignationResponse designationResponse = new DesignationResponse();
+        BeanUtils.copyProperties(designation, designationResponse);
         return designationResponse;
     }
 
     @Override
     public List<DesignationResponse> getAllDesignationByCompanyUserId(Long id) {
-        List<DesignationResponse> designationResponseList=new ArrayList<>();
-        List<Designation> designationList=designationRepository.findAllDesignationByCompanyUserId(id);
-        for(Designation designation:designationList){
-            DesignationResponse designationResponse=new DesignationResponse();
-           BeanUtils.copyProperties(designation,designationResponse);
-           designationResponseList.add(designationResponse);
+        List<DesignationResponse> designationResponseList = new ArrayList<>();
+        List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(id);
+        for (Designation designation : designationList) {
+            DesignationResponse designationResponse = new DesignationResponse();
+            BeanUtils.copyProperties(designation, designationResponse);
+            designationResponseList.add(designationResponse);
         }
         return designationResponseList;
     }
@@ -72,19 +72,13 @@ public class DesignationServiceImpl implements DesignationService {
         List<DesignationResponse> designationResponseList = new ArrayList<>();
         Long companyId = userRepository.findById(userId).get().getCompanyUser().getId();
         List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(companyId);
-        for (Designation designation : designationList){
-            DesignationResponse designationResponse = new DesignationResponse();
-            BeanUtils.copyProperties(designation,designationResponse);
-            designationResponseList.add(designationResponse);
+        for (Designation designation : designationList) {
+            DesignationResponse designationResponse=new DesignationResponse();
+            BeanUtils.copyProperties(designation, designationResponse);
+           designationResponseList.add(designationResponse);
         }
         return designationResponseList;
     }
-
-    @Override
-    public boolean existsById(Long id) {
-        return designationRepository.existsById(id);
-    }
-
     @Override
     public void deleteDesignationById(Long id) {
         designationRepository.deleteById(id);

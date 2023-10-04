@@ -50,4 +50,6 @@ public interface UserService {
     boolean existsByStatusAndEmail(String status, String email);
 
     List<UserResponse> getAllUsersByCompanyAndDesignation(Long companyUserId, Long designationId);
+
+    List<UserResponse> getAllUsersByCompanyAdminAndDesignation(Long userId, Long designationId);
 }

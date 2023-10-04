@@ -24,6 +24,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,15 +108,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyUser(String token) {
-       BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Users user = getUserByToken(token);
         user.setStatus(LoginStatus.PENDING.getStatus());
         UUID uuid = UUID.randomUUID();
-        String tempPassword = uuid.toString().substring(0,8);
+        String tempPassword = uuid.toString().substring(0, 8);
         user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
         userRepository.save(user);
-        if (user.getDesignation().getName().equals(Constants.COMPANY_ADMIN.toString()))
-        {
+        if (user.getDesignation().getName().equals(Constants.COMPANY_ADMIN.toString())) {
             CompanyUser companyAdmin = companyUserRepository.findById(user.getCompanyUser().getId()).get();
             companyAdmin.setStatus(true);
             companyUserRepository.save(companyAdmin);
@@ -122,7 +123,7 @@ public class UserServiceImpl implements UserService {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(user.getEmail());
         simpleMailMessage.setSubject(temporaryPasswordSendMailSubject);
-        simpleMailMessage.setText(temporaryPasswordSendMailBody+""+tempPassword);
+        simpleMailMessage.setText(temporaryPasswordSendMailBody + "" + tempPassword);
         javaMailSender.send(simpleMailMessage);
     }
 
@@ -156,22 +157,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void invalidPassword(String email) {
         Users user = userRepository.findByEmailIgnoreCase(email);
-        if (user.getWrongCount()>0)
-            user.setWrongCount(user.getWrongCount() - 1);
+        if (user.getWrongCount() > 0) user.setWrongCount(user.getWrongCount() - 1);
         else user.setStatus(LoginStatus.LOCKED.getStatus());
         userRepository.save(user);
     }
 
     @Override
     public boolean existsByStatusAndEmail(String status, String email) {
-        return userRepository.existsByStatusAndEmailIgnoreCase(status,email);
+        return userRepository.existsByStatusAndEmailIgnoreCase(status, email);
     }
 
     @Override
     public boolean existsByEmailAndPassword(String email, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Users user = userRepository.findByEmailIgnoreCase(email);
-        return bCryptPasswordEncoder.matches(password,user.getPassword());
+        return bCryptPasswordEncoder.matches(password, user.getPassword());
     }
 
     @Override
@@ -208,9 +208,11 @@ public class UserServiceImpl implements UserService {
 
         if (userRequest.getLastName() != null) user.setLastName(userRequest.getLastName());
 
-        if (userRequest.getCompanyUserId() != null) user.setCompanyUser(companyUserRepository.findById(userRequest.getCompanyUserId()).get());
+        if (userRequest.getCompanyUserId() != null)
+            user.setCompanyUser(companyUserRepository.findById(userRequest.getCompanyUserId()).get());
 
-        if (userRequest.getDesignationId() != null) user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
+        if (userRequest.getDesignationId() != null)
+            user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
 
         userRepository.save(user);
     }
@@ -231,11 +233,11 @@ public class UserServiceImpl implements UserService {
         if (Utils.isNotNullAndEmpty(userSearch.getDesignationName())) {
             booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
         }
-        if (companyUserId!=null) {
+        if (companyUserId != null) {
             booleanBuilder.and(QUsers.users.companyUser.id.eq(companyUserId));
         }
         List<UserResponse> userResponseList = new ArrayList<>();
-        Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
+        Page<Users> usersPage = userRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(usersPage.getTotalElements());
         pagination.setPageSize(usersPage.getTotalPages());
         for (Users users : usersPage) {
@@ -269,10 +271,8 @@ public class UserServiceImpl implements UserService {
             helper.setTo(user.getEmail());
             if (user.getStatus() == LoginStatus.NEW.getStatus()) {
                 helper.setSubject(userVerificationMailSubject);
-                helper.setText(emailBody.getEmailBody1()+Token+emailBody.getEmailBody2(), true);
-            }
-            else
-            {
+                helper.setText(emailBody.getEmailBody1() + Token + emailBody.getEmailBody2(), true);
+            } else {
                 helper.setSubject(passwordResetMailSubject);
                 helper.setText(Token, true);
             }
@@ -285,35 +285,32 @@ public class UserServiceImpl implements UserService {
         }
 
     }
-
     @Override
     public void deleteUserById(Long id) {
         Users users = userRepository.findById(id).get();
         users.setStatus(LoginStatus.DEACTIVATE.getStatus());
         userRepository.save(users);
     }
-
     @Override
     public String generateNonExpiringToken(String email) {
         Users user = userRepository.findByEmailIgnoreCase(email);
         user.setWrongCount(5);
         userRepository.save(user);
         Claims claims = Jwts.claims().setIssuer(user.getId().toString());
-        claims.put("Roll",user.getDesignation().getName());
+        claims.put("Roll", user.getDesignation().getName());
         return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256, Constants.SECRET_KEY.toString()).compact();
     }
-
     @Override
     public String verifyToken(String token) {
         try {
             Users user = getUserByToken(token);
-            if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
+            if (!user.getStatus().equals(LoginStatus.NEW.getStatus()))
+                return statusCodeBundle.getTokenAlreadyUsedMessage();
             else return Constants.TOKEN_VERIFIED;
         } catch (ExpiredJwtException e) {
 
             return statusCodeBundle.getTokenExpiredMessage();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return statusCodeBundle.getEmailVerificationFailureMessage();
         }
     }
@@ -357,12 +354,25 @@ public class UserServiceImpl implements UserService {
     public void changePassword(String token, String email, String password) {
         if (token == null) {
             Users user = userRepository.findByEmailIgnoreCase(email);
-            createNewPassword(user,password);
-        }
-        else {
+            createNewPassword(user, password);
+        } else {
             Users user = getUserByToken(token);
-            createNewPassword(user,password);
+            createNewPassword(user, password);
         }
+    }
+    @Override
+    public List<UserResponse> getAllUsersByCompanyAdminAndDesignation(Long userId, Long designationId) {
+        //Long companyUserId = userRepository.findById(userId).get().getCompanyUser().getId();
+        List<Users> usersList = userRepository.findAllByCompanyUser_IdAndDesignation_Id(userId, designationId);
 
+        List<UserResponse> userResponseList = new ArrayList<>();
+        for (Users user : usersList) {
+            UserResponse userResponse = new UserResponse();
+            userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
+            userResponse.setDesignationName(user.getDesignation().getName());
+            BeanUtils.copyProperties(user, userResponse);
+            userResponseList.add(userResponse);
+        }
+        return userResponseList;
     }
 }
