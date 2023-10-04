@@ -54,8 +54,7 @@ public class DesignationController {
         if(!userService.getUserById(designationRequest.getUserId()).getDesignationName().equals(Constants.COMPANY_ADMIN)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getItsNotCompanyAdminMessage()));
         }
-        if (designationService.existsByName(designationRequest.getName())) {
-        if (designationService.existsByNameAndCompanyUserId(designationRequest.getName(),designationRequest.getCompanyUserId())) {
+        if (designationService.existsByNameAndCompanyAdminUserId(designationRequest.getName(),designationRequest.getUserId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
         }
         designationService.saveDesignation(designationRequest);

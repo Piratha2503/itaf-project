@@ -57,8 +57,9 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
-    public boolean existsByNameAndCompanyUserId(String designationName, Long companyUserId) {
-        return designationRepository.existsByNameIgnoreCaseAndCompanyUserId(designationName,companyUserId);
+    public boolean existsByNameAndCompanyAdminUserId(String designationName, Long userId) {
+        Long companyUserId = userRepository.findById(userId).get().getCompanyUser().getId();
+        return designationRepository.existsByNameIgnoreCaseAndCompanyUserId(designationName, companyUserId);
     }
 
     @Override
