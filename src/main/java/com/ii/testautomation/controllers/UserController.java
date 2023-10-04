@@ -83,6 +83,7 @@ public class UserController {
 
     @PostMapping(value = EndpointURI.USERS)
     public ResponseEntity<Object> saveUser(@RequestBody UserRequest userRequest) {
+
           if (userRequest.getCompanyUserId() == null) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserCompanyUserIdNotGiven()));
         }
@@ -110,10 +111,13 @@ public class UserController {
         if (userService.existsByContactNo(userRequest.getContactNumber())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserContactNoAlReadyExistsMessage()));
         }
+        if (userService.getAllUserCountByCompanyUserId(userRequest.getCompanyUserId()) == companyUserService.findByCompanyUserId(userRequest.getCompanyUserId()).getLicenses().getNoOfUsers())
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), userService.getAllUserCountByCompanyUserId(userRequest.getCompanyUserId()).toString()));
 
         userService.saveUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveUserSuccessMessage()));
     }
+
 
 
     @GetMapping(value = EndpointURI.USERS_BY_COMPANY_ID)

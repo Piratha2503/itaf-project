@@ -16,4 +16,6 @@ public interface DesignationRepository extends JpaRepository<Designation, Long> 
   Designation findDistinctByNameAndCompanyUserId(String name, Long id);
 
   Designation findFirstByNameAndCompanyUserId(String companyAdmin, Long id);
+
+  boolean existsByNameIgnoreCaseAndCompanyUserId(String designationName, Long companyUserId);
 }

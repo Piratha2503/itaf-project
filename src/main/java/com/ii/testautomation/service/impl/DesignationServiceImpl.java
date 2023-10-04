@@ -3,19 +3,15 @@ import com.ii.testautomation.dto.request.DesignationRequest;
 import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
-import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.DesignationService;
-import org.bouncycastle.jce.provider.JCEMac;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class DesignationServiceImpl implements DesignationService {
@@ -62,8 +58,8 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
-    public boolean existsByName(String designationName) {
-        return designationRepository.existsByNameIgnoreCase(designationName);
+    public boolean existsByNameAndCompanyUserId(String designationName, Long companyUserId) {
+        return designationRepository.existsByNameIgnoreCaseAndCompanyUserId(designationName,companyUserId);
     }
 
     @Override

@@ -3,9 +3,11 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.CompanyUserRequest;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
+import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Map;
 
 public interface CompanyUserService {
 
@@ -36,4 +38,6 @@ public interface CompanyUserService {
     CompanyUserResponse getCompanyUserById(Long id);
 
     void updateCompanyUser(CompanyUserRequest companyUserRequest);
+
+    CompanyUser findByCompanyUserId(Long companyUserId);
 }

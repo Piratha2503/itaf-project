@@ -199,12 +199,20 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         if (!(companyUserRequest.getStartDate() == null )) companyUser.setStartDate(companyUserRequest.getStartDate());
         if (!(companyUserRequest.getFirstName()== null)) user.setFirstName(companyUserRequest.getFirstName());
         if (!(companyUserRequest.getLastName()== null)) user.setLastName(companyUserRequest.getLastName());
-        if (!(companyUserRequest.getStatus() == true)) {
+        if (companyUserRequest.getStatus() == true) {
             user.setStatus(LoginStatus.ACTIVE.getStatus());
             user.setWrongCount(5);
+            companyUser.setStatus(true);
         }
         user.setEmail(companyUser.getEmail());
         userRepository.save(user);
+        companyUserRepository.save(companyUser);
+    }
+
+    @Override
+    public CompanyUser findByCompanyUserId(Long companyUserId) {
+
+        return companyUserRepository.findById(companyUserId).get();
     }
     @Override
     public boolean existsById(Long id) {

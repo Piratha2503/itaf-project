@@ -168,6 +168,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long getAllUserCountByCompanyUserId(Long companyUserId) {
+
+        List<Users> usersList = userRepository.findByCompanyUserId(companyUserId);
+        Long count = usersList.stream().count();
+        return count;
+    }
+
+    @Override
     public boolean existsByEmailAndPassword(String email, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Users user = userRepository.findByEmailIgnoreCase(email);
@@ -238,7 +246,9 @@ public class UserServiceImpl implements UserService {
         Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
         pagination.setTotalRecords(usersPage.getTotalElements());
         pagination.setPageSize(usersPage.getTotalPages());
+
         for (Users users : usersPage) {
+            if (users.getDesignation().getName().equals("ITAF admin")) continue;
             UserResponse userResponse = new UserResponse();
             userResponse.setCompanyUserId(users.getCompanyUser().getId());
             userResponse.setDesignationId(users.getDesignation().getId());

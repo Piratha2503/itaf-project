@@ -47,7 +47,7 @@ public class DesignationController {
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSpacesNotAllowedMessage()));
         }
-        if (designationService.existsByName(designationRequest.getName())) {
+        if (designationService.existsByNameAndCompanyUserId(designationRequest.getName(),designationRequest.getCompanyUserId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
         }
         designationService.saveDesignation(designationRequest);

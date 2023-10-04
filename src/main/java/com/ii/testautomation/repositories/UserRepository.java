@@ -29,4 +29,6 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
     Users findByEmailIgnoreCase(String email);
 
     Users findFirstByCompanyUserIdAndDesignationName(Long id, String companyAdmin);
+
+    Long findCountByCompanyUserId(Long companyUserId);
 }
