@@ -41,3 +41,4 @@ public interface CompanyUserService {
 
     CompanyUser findByCompanyUserId(Long companyUserId);
 }
+

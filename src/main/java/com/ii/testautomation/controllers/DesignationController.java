@@ -1,6 +1,7 @@
 package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.DesignationRequest;
+import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.DesignationResponse;
 import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.repositories.UserRepository;
@@ -47,6 +48,13 @@ public class DesignationController {
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSpacesNotAllowedMessage()));
         }
+        if (!userService.existsByUserId(designationRequest.getUserId())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getUserIdNotExistMessage()));
+        }
+        if(!userService.getUserById(designationRequest.getUserId()).getDesignationName().equals(Constants.COMPANY_ADMIN)) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getItsNotCompanyAdminMessage()));
+        }
+        if (designationService.existsByName(designationRequest.getName())) {
         if (designationService.existsByNameAndCompanyUserId(designationRequest.getName(),designationRequest.getCompanyUserId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationAlreadyExistsCode(), statusCodeBundle.getDesignationAlreadyExistsMessage()));
         }

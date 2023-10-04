@@ -25,8 +25,7 @@ public class DesignationServiceImpl implements DesignationService {
     @Override
     public void saveDesignation(DesignationRequest designationRequest) {
         Designation designation = new Designation();
-        CompanyUser companyUser=new CompanyUser();
-        companyUser.setId(designationRequest.getCompanyUserId());
+        CompanyUser companyUser=userRepository.findById(designationRequest.getUserId()).get().getCompanyUser();
         designation.setCompanyUser(companyUser);
         BeanUtils.copyProperties(designationRequest, designation);
         designationRepository.save(designation);

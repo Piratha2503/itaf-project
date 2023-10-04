@@ -3,6 +3,8 @@ package com.ii.testautomation.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 public class TestCaseRequest {
@@ -12,4 +14,5 @@ public class TestCaseRequest {
     private String subModuleName;
     private Long subModuleId;
     private Long project_id;
+    private List<Long> testCaseIds;
 }
