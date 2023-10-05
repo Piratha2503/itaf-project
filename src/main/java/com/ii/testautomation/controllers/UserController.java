@@ -106,8 +106,6 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveUserSuccessMessage()));
     }
 
-
-
     @GetMapping(value = EndpointURI.USERS_BY_COMPANY_ID)
     public ResponseEntity<Object> getAllUserByCompanyIdWithPagination(@PathVariable Long id,
                                                                       @RequestParam(name = "page") int page,
