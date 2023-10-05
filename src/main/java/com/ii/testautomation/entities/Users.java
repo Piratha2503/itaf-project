@@ -21,6 +21,7 @@ public class Users extends DateAudit {
     @Column(nullable = false)
     private String firstName;
     private String lastName;
+    private String uniqueIdentification;
     @Column(nullable = false)
     private String contactNumber;
     private int wrongCount = 5;

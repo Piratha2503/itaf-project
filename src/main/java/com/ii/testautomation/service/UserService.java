@@ -11,10 +11,6 @@ import org.springframework.data.domain.Pageable;
 public interface UserService {
     void saveUser(UserRequest userRequest);
 
-    void verifyUser(String token);
-
-    String verifyToken(String token);
-
     boolean existsByEmail(String email);
 
     boolean existsByUsersId(Long usersId);
@@ -33,8 +29,6 @@ public interface UserService {
 
     void updateUser(UserRequest userRequest);
 
-    void generateEmail(Users user);
-
     void deleteUserById(Long id);
 
     UserResponse getUserById(Long id);
@@ -52,4 +46,12 @@ public interface UserService {
     boolean existsByStatusAndEmail(String status, String email);
 
     Long getAllUserCountByCompanyUserId(Long companyUserId);
+
+    /*
+     void generateEmail(Users user);
+    String verifyToken(String token);
+
+    String generateNonExpiringToken(String email);
+     */
+
 }

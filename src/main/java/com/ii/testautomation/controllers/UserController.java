@@ -9,6 +9,7 @@ import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.service.EmailAndTokenService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
@@ -45,6 +46,8 @@ public class UserController {
     private CompanyUserService companyUserService;
     @Autowired
     private DesignationService designationService;
+    @Autowired
+    private EmailAndTokenService emailAndTokenService;
 
     @PutMapping(EndpointURI.USERS)
     public ResponseEntity<Object> updateUser(@RequestBody UserRequest userRequest) {
@@ -69,13 +72,13 @@ public class UserController {
 
     @PostMapping(EndpointURI.VERIFY_USER)
     public ResponseEntity<Object> verifyUser(@PathVariable String token) {
-        if (userService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
+        if (emailAndTokenService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
-        if (userService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
+        if (emailAndTokenService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getEmailVerificationFailureMessage()));
-        if (userService.verifyToken(token).equals(statusCodeBundle.getTokenAlreadyUsedMessage()))
+        if (emailAndTokenService.verifyToken(token).equals(statusCodeBundle.getTokenAlreadyUsedMessage()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenAlreadyUsedMessage()));
-        userService.verifyUser(token);
+        emailAndTokenService.sendTempPasswordToEmail(token);
        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getEmailVerificationSuccessMessage()));
     }
 
@@ -167,11 +170,11 @@ public class UserController {
     @PostMapping(EndpointURI.USERS_PASSWORD)
     public ResponseEntity<Object> createPassword(@RequestHeader(name = "token",required = false) String token,@RequestBody UserRequest userRequest) {
        if (token!=null) {
-            if (userService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
+            if (emailAndTokenService.verifyToken(token).equals(statusCodeBundle.getTokenExpiredMessage()))
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenExpiredMessage()));
-            if (userService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
+            if (emailAndTokenService.verifyToken(token).equals(statusCodeBundle.getEmailVerificationFailureMessage()))
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getEmailVerificationFailureMessage()));
-            if (userService.verifyToken(token).equals(statusCodeBundle.getTokenAlreadyUsedMessage()))
+            if (emailAndTokenService.verifyToken(token).equals(statusCodeBundle.getTokenAlreadyUsedMessage()))
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenAlreadyUsedMessage()));
         }
         userService.changePassword(token,userRequest.getEmail(),userRequest.getPassword());
