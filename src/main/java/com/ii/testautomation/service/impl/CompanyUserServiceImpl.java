@@ -171,20 +171,23 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         companyUserRepository.save(companyUser);
         CompanyUser companyAdmin = companyUserRepository.findByEmail(companyUserRequest.getEmail());
 
-        DesignationRequest adminDesignationRequest = new DesignationRequest();
-        adminDesignationRequest.setName(Constants.COMPANY_ADMIN);
-        adminDesignationRequest.setCompanyUserId(companyAdmin.getId());
-        designationService.saveDesignation(adminDesignationRequest);
+        Designation designation =  new Designation();
+        designation.setName(Constants.COMPANY_ADMIN);
+        designation.setCompanyUser(companyAdmin);
+        designationRepository.save(designation);
         Designation adminDesignation = designationRepository.findFirstByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
 
-        UserRequest userRequest = new UserRequest();
-        userRequest.setFirstName(companyUserRequest.getFirstName());
-        userRequest.setLastName(companyUserRequest.getLastName());
-        userRequest.setEmail(companyAdmin.getEmail());
-        userRequest.setContactNumber(companyAdmin.getContactNumber());
-        userRequest.setCompanyUserId(companyAdmin.getId());
-        userRequest.setDesignationId(adminDesignation.getId());
-        userService.saveUser(userRequest);
+        Users user = new Users();
+        user.setFirstName(companyUserRequest.getFirstName());
+        user.setLastName(companyUserRequest.getLastName());
+        user.setEmail(companyAdmin.getEmail());
+        user.setContactNumber(companyAdmin.getContactNumber());
+        user.setCompanyUser(companyAdmin);
+        user.setDesignation(adminDesignation);
+        user.setStatus(LoginStatus.NEW.getStatus());
+        userRepository.save(user);
+        Users userWithId = userRepository.findByEmailIgnoreCase(user.getEmail());
+        userService.generateEmail(userWithId);
     }
     @Override
     public void updateCompanyUser(CompanyUserRequest companyUserRequest) {
@@ -199,11 +202,12 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         if (!(companyUserRequest.getStartDate() == null )) companyUser.setStartDate(companyUserRequest.getStartDate());
         if (!(companyUserRequest.getFirstName()== null)) user.setFirstName(companyUserRequest.getFirstName());
         if (!(companyUserRequest.getLastName()== null)) user.setLastName(companyUserRequest.getLastName());
-        if (companyUserRequest.getStatus() == true) {
+        if (companyUserRequest.getStatus()) {
             user.setStatus(LoginStatus.ACTIVE.getStatus());
             user.setWrongCount(5);
             companyUser.setStatus(true);
         }
+        if (!(companyUserRequest.getStatus())) companyUser.setStatus(false);
         user.setEmail(companyUser.getEmail());
         userRepository.save(user);
         companyUserRepository.save(companyUser);
@@ -214,6 +218,12 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
         return companyUserRepository.findById(companyUserId).get();
     }
+
+    @Override
+    public boolean existsByStatusAndEmail(boolean b, String email) {
+        return companyUserRepository.existsByStatusAndEmailIgnoreCase(b,email);
+    }
+
     @Override
     public boolean existsById(Long id) {
         return companyUserRepository.existsById(id);

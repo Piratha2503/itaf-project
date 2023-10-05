@@ -23,4 +23,6 @@ public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>,
     CompanyUser findByEmail(String email);
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
+
+  boolean existsByStatusAndEmailIgnoreCase(boolean b, String email);
 }

@@ -33,6 +33,8 @@ public interface UserService {
 
     void updateUser(UserRequest userRequest);
 
+    void generateEmail(Users user);
+
     void deleteUserById(Long id);
 
     UserResponse getUserById(Long id);
@@ -41,7 +43,7 @@ public interface UserService {
 
     boolean existsByEmailAndPassword(String email, String password);
 
-    List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch);
+    List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long userId, UserSearch userSearch);
 
     String generateNonExpiringToken(String email);
 

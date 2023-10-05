@@ -31,4 +31,6 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
     Users findFirstByCompanyUserIdAndDesignationName(Long id, String companyAdmin);
 
     Long findCountByCompanyUserId(Long companyUserId);
+
+  Users findFirstByOrderByCreatedAtDesc();
 }

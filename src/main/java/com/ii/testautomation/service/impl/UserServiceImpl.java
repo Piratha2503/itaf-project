@@ -86,10 +86,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(UserRequest userRequest) {
         Users user = new Users();
-        CompanyUser companyUser = new CompanyUser();
         Designation designation = new Designation();
         designation.setId(userRequest.getDesignationId());
-        companyUser.setId(userRequest.getCompanyUserId());
+        CompanyUser companyUser = userRepository.findById(userRequest.getCompanyUserId()).get().getCompanyUser();
         user.setDesignation(designation);
         user.setCompanyUser(companyUser);
         BeanUtils.copyProperties(userRequest, user);
@@ -216,7 +215,10 @@ public class UserServiceImpl implements UserService {
 
         if (userRequest.getLastName() != null) user.setLastName(userRequest.getLastName());
 
-        if (userRequest.getCompanyUserId() != null) user.setCompanyUser(companyUserRepository.findById(userRequest.getCompanyUserId()).get());
+        if (userRequest.getCompanyUserId() != null) {
+            CompanyUser companyUser = userRepository.findById(userRequest.getCompanyUserId()).get().getCompanyUser();
+            user.setCompanyUser(companyUser);
+        }
 
         if (userRequest.getDesignationId() != null) user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
 
@@ -224,9 +226,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long companyUserId, UserSearch userSearch) {
+    public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long userId, UserSearch userSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-
+        Long companyUserId = userRepository.findById(userId).get().getCompanyUser().getId();
         if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
             booleanBuilder.and(QUsers.users.firstName.containsIgnoreCase(userSearch.getFirstName()));
         }
@@ -260,7 +262,8 @@ public class UserServiceImpl implements UserService {
         return userResponseList;
     }
 
-    private void generateEmail(Users user) {
+    @Override
+    public void generateEmail(Users user) {
 
         Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
         try {
