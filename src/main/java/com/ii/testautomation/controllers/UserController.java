@@ -183,14 +183,4 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),"Password Created Successfully"));
 
     }
-
-    @PostMapping(EndpointURI.USER_RESET_PASSWORD)
-    public ResponseEntity<Object> resetPassword(@RequestBody UserRequest userRequest) {
-      if (userRequest.getEmail() == null || userRequest.getEmail().isEmpty())
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getEmailCannotNullMessage()));
-      if (!userService.existsByEmail(userRequest.getEmail()))
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(),statusCodeBundle.getEmailNotExistMessage()));
-      userService.resetPassword(userRequest.getEmail());
-      return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getResetLinkForwardSuccessMessage()));
-    }
 }
