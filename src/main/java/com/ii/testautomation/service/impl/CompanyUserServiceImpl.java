@@ -1,15 +1,12 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.CompanyUserRequest;
-import com.ii.testautomation.dto.request.DesignationRequest;
-import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.entities.QCompanyUser;
-import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
@@ -19,6 +16,7 @@ import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.service.EmailAndTokenService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.Utils;
@@ -139,6 +137,9 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     }
 
     @Override
+    public CompanyUser findByCompanyUserId(Long companyUserId) {
+
+        return companyUserRepository.findById(companyUserId).get();
     public boolean existsByLicenseId(Long id) {
         return companyUserRepository.existsByLicensesId(id);
     }

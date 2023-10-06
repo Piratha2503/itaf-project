@@ -8,7 +8,7 @@ import java.util.List;
 public interface DesignationService {
     void saveDesignation(DesignationRequest designationRequest);
 
-    boolean existsByName(String designationName);
+    boolean existsByNameAndCompanyAdminUserId(String designationName, Long userId);
 
     List<DesignationResponse> getAllDesignationByCompanyAdminId(Long userId);
 

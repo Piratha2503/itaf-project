@@ -35,6 +35,7 @@ public class LicenseServiceImpl implements LicenseService {
         pagination.setTotalRecords(licensesPage.getTotalElements());
 
         for (Licenses licenses : licensesPage) {
+            if (licenses.getId()==1L) continue;
             LicenseResponse licenseResponse = new LicenseResponse();
             BeanUtils.copyProperties(licenses, licenseResponse);
             licenseResponseList.add(licenseResponse);

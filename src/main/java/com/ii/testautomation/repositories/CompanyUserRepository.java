@@ -26,6 +26,8 @@ public interface CompanyUserRepository extends JpaRepository<CompanyUser, Long>,
     CompanyUser findByEmail(String email);
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
+
     List<CompanyUser> findByEndDateLessThanEqualAndStatusTrue(LocalDate currentDate);
 
+  boolean existsByStatusAndEmailIgnoreCase(boolean b, String email);
 }

@@ -7,13 +7,11 @@ import java.util.List;
 
 public interface DesignationRepository extends JpaRepository<Designation, Long> {
 
-  boolean existsByNameIgnoreCase(String designationName);
-
   List<Designation> findAllDesignationByCompanyUserId(Long id);
 
   boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 
-  Designation findDistinctByNameAndCompanyUserId(String name, Long id);
-
   Designation findFirstByNameAndCompanyUserId(String companyAdmin, Long id);
+
+  boolean existsByNameIgnoreCaseAndCompanyUserId(String designationName, Long companyUserId);
 }
