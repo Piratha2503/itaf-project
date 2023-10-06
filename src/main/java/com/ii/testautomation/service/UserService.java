@@ -52,4 +52,6 @@ public interface UserService {
     List<UserResponse> getAllUsersByCompanyAndDesignation(Long companyUserId, Long designationId);
 
     List<UserResponse> getAllUsersByCompanyAdminAndDesignation(Long userId, Long designationId);
+
+   Boolean totalCountUser(Long companyId);
 }

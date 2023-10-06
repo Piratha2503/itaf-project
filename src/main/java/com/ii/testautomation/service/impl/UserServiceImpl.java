@@ -9,10 +9,7 @@ import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
-import com.ii.testautomation.repositories.CompanyUserRepository;
-import com.ii.testautomation.repositories.DesignationRepository;
-import com.ii.testautomation.repositories.ProjectRepository;
-import com.ii.testautomation.repositories.UserRepository;
+import com.ii.testautomation.repositories.*;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
@@ -29,10 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -55,6 +49,8 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LicensesRepository licensesRepository;
     @Autowired
     private CompanyUserRepository companyUserRepository;
     @Autowired
@@ -99,6 +95,19 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         Users userWithId = userRepository.findByEmailIgnoreCase(user.getEmail());
         generateEmail(userWithId);
+    }
+
+
+    @Override
+    public Boolean totalCountUser(Long companyId) {
+        //Long user = userRepository.findById(companyId).get().getCompanyUser().getId();
+       Long user = userRepository.findByCompanyUserId(companyId).stream().count();
+        CompanyUser companyUser = companyUserRepository.findById(companyId).get();
+        Long number = companyUser.getLicenses().getNoOfUsers();
+        if(user < number){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -197,7 +206,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(UserRequest userRequest) {
         Users newUser = new Users();
-        Users user = userRepository.findById(userRequest.getId()).get();
+        Users user = userRepository.findById(userRequest.getCompanyUserId()).get();
         newUser.setId(userRequest.getId());
 
         if (userRequest.getEmail() != null) user.setEmail(userRequest.getEmail());
@@ -362,9 +371,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public List<UserResponse> getAllUsersByCompanyAdminAndDesignation(Long userId, Long designationId) {
-        //Long companyUserId = userRepository.findById(userId).get().getCompanyUser().getId();
         List<Users> usersList = userRepository.findAllByCompanyUser_IdAndDesignation_Id(userId, designationId);
-
         List<UserResponse> userResponseList = new ArrayList<>();
         for (Users user : usersList) {
             UserResponse userResponse = new UserResponse();

@@ -87,6 +87,8 @@ public class StatusCodeBundle {
     private String projectConfigPathNotProvideMessage;
     @Value("${message.failure.project.jarPath}")
     private String projectJarPathNotProvideMessage;
+    @Value("${message.validation.project}")
+    private String getTotalProjectCountExceedsTheLimit;
 
     //SubModules Code
     @Value("${code.validation.subModules.alreadyExists}")
@@ -737,4 +739,6 @@ public class StatusCodeBundle {
     private String UserEmailCannotChangeMessage;
     @Value("${message.success.getId.user}")
     private String getUserDetailsSuccessMessage;
+    @Value("${message.validation.user}")
+    private String getTotalUserCountExceedsTheLimit;
 }

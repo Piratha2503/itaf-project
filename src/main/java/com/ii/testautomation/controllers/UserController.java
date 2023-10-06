@@ -5,6 +5,7 @@ import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.enums.RequestStatus;
+import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -113,6 +114,9 @@ public class UserController {
         if (userService.existsByContactNo(userRequest.getContactNumber())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserContactNoAlReadyExistsMessage()));
         }
+        if (!userService.totalCountUser(userRequest.getCompanyUserId())) {
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getGetTotalUserCountExceedsTheLimit()));
+        }
         userService.saveUser(userRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSaveUserSuccessMessage()));
     }
@@ -196,16 +200,8 @@ public class UserController {
         return userService.getAllUsersByCompanyAndDesignation(companyUserId, designationId);
     }
 
-//    @GetMapping("/by-company-and-designation")
-//    public ResponseEntity<List<UserResponse>> getUsersByCompanyAdminAndDesignation(@RequestParam Long userId, @RequestParam Long designationId) {
-//
-//        List<UserResponse> userResponseList = userService.getAllUsersByCompanyAndDesignation(userId, designationId);
-//
-//        if (userResponseList.isEmpty()) {
-//            return ResponseEntity.noContent().build();
-//        } else {
-//            return ResponseEntity.ok(userResponseList);
-//        }
-//    }
-
+//public ResponseEntity<Object> verifyToken(@PathVariable Long userId) {
+//    if (!userService.existsByUsersId(userId))
+//        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getUserIdExistMessage()));
+//}
     }

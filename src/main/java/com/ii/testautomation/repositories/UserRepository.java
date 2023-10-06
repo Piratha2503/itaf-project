@@ -33,4 +33,9 @@ public interface UserRepository extends JpaRepository<Users, Long>, QuerydslPred
     List<Users> findAllByCompanyUser_IdAndDesignation_Id(Long companyUserId, Long designationId);
 
     Users findFirstByCompanyUserIdAndDesignationName(Long id, String companyAdmin);
+
+    //Users findUserByCompanyIdAndStatus(Long companyId, String status);
+    Long findCountByCompanyUserIdAndStatus(Long companyId, String status);
+
+    List<Users> findByCompanyUserIdAndStatus(Long companyId, String status);
 }
