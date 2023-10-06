@@ -279,10 +279,10 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
-
     @Override
     public void sendMail(String email) {
         Users user = userRepository.findByEmailIgnoreCase(email);
+        user.setStatus(LoginStatus.PENDING.getStatus());
         emailAndTokenService.sendTokenToEmail(user);
     }
 }

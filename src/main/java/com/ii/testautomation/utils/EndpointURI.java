@@ -12,6 +12,7 @@ public final class EndpointURI {
     private static final String SEARCH = "search";
     private static final String SEARCH_WITH_PAGE = "page";
     private static final String ID = "/{id}";
+    private static final String EMAIL= "/{email}";
     private static final String IDS = "/{ids}";
     private static final String PASSWORD = "/{password}";
     private static final String PROJECT_ID = "/{projectId}";
@@ -115,7 +116,7 @@ public final class EndpointURI {
     public static final String USER_BY_ID = USERS + ID;
     public static final String USER_LOGIN = USER + SLASH + "login";
     public static final String USERS_PASSWORD = USER + "/password";
-    public static final String USERS_SENDMAIL = USER + ID;
+    public static final String USERS_SENDEMAIL = USER +"/email" ;
 
     //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";

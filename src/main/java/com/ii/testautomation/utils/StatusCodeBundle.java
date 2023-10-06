@@ -691,7 +691,8 @@ public class StatusCodeBundle {
     private String CompanyUserIdNotGivenMessage;
     @Value("${message.failure.companyUser.companyname}")
     private String CompanyNameNotGivenMessage;
-
+//    @Value("${message.failure.companyUser}")
+//    private String company
     //User Codes
     @Value("${code.validation.user.alreadyExists}")
     private String UserAlreadyExistsCode;
@@ -743,4 +744,5 @@ public class StatusCodeBundle {
     private String getTotalUserCountExceedsTheLimit;
     @Value("${message.Success.Email.Password}")
     private String EmailSuccessFullySend;
+
 }
