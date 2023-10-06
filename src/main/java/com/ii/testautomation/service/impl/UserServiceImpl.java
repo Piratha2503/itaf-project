@@ -9,43 +9,25 @@ import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
-import com.ii.testautomation.repositories.CompanyUserRepository;
-import com.ii.testautomation.repositories.DesignationRepository;
-import com.ii.testautomation.repositories.ProjectRepository;
-import com.ii.testautomation.repositories.UserRepository;
+import com.ii.testautomation.repositories.*;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.EmailAndTokenService;
 import com.ii.testautomation.service.UserService;
-import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+
+import java.util.*;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +36,8 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LicensesRepository licensesRepository;
     @Autowired
     private CompanyUserRepository companyUserRepository;
     @Autowired
@@ -96,8 +80,6 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRequest, user);
         user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
-        Users userWithId = userRepository.findByEmailIgnoreCase(user.getEmail());
-        emailAndTokenService.sendTokenToEmail(userWithId);
     }
 
     @Override
@@ -135,15 +117,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void invalidPassword(String email) {
         Users user = userRepository.findByEmailIgnoreCase(email);
-        if (user.getWrongCount()>0)
-            user.setWrongCount(user.getWrongCount() - 1);
+        if (user.getWrongCount() > 0) user.setWrongCount(user.getWrongCount() - 1);
         else user.setStatus(LoginStatus.LOCKED.getStatus());
         userRepository.save(user);
     }
 
     @Override
     public boolean existsByStatusAndEmail(String status, String email) {
-        return userRepository.existsByStatusAndEmailIgnoreCase(status,email);
+        return userRepository.existsByStatusAndEmailIgnoreCase(status, email);
     }
 
     @Override
@@ -158,7 +139,7 @@ public class UserServiceImpl implements UserService {
     public boolean existsByEmailAndPassword(String email, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Users user = userRepository.findByEmailIgnoreCase(email);
-        return bCryptPasswordEncoder.matches(password,user.getPassword());
+        return bCryptPasswordEncoder.matches(password, user.getPassword());
     }
 
     @Override
@@ -200,7 +181,8 @@ public class UserServiceImpl implements UserService {
             user.setCompanyUser(companyUser);
         }
 
-        if (userRequest.getDesignationId() != null) user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
+        if (userRequest.getDesignationId() != null)
+            user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
 
         userRepository.save(user);
     }
@@ -221,11 +203,11 @@ public class UserServiceImpl implements UserService {
         if (Utils.isNotNullAndEmpty(userSearch.getDesignationName())) {
             booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
         }
-        if (companyUserId!=null) {
+        if (companyUserId != null) {
             booleanBuilder.and(QUsers.users.companyUser.id.eq(companyUserId));
         }
         List<UserResponse> userResponseList = new ArrayList<>();
-        Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
+        Page<Users> usersPage = userRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(usersPage.getTotalElements());
         pagination.setPageSize(usersPage.getTotalPages());
 
@@ -266,12 +248,42 @@ public class UserServiceImpl implements UserService {
     public void changePassword(String token, String email, String password) {
         if (token == null) {
             Users user = userRepository.findByEmailIgnoreCase(email);
-            createNewPassword(user,password);
-        }
-        else {
+            createNewPassword(user, password);
+        } else {
             Users user = emailAndTokenService.getUserByToken(token);
-            createNewPassword(user,password);
+            createNewPassword(user, password);
         }
+    }
 
+    @Override
+    public List<UserResponse> getAllUsersByCompanyAdminAndDesignation(Long userId, Long designationId) {
+        List<Users> usersList = userRepository.findAllByCompanyUser_IdAndDesignation_Id(userId, designationId);
+        List<UserResponse> userResponseList = new ArrayList<>();
+        for (Users user : usersList) {
+            UserResponse userResponse = new UserResponse();
+            userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
+            userResponse.setDesignationName(user.getDesignation().getName());
+            BeanUtils.copyProperties(user, userResponse);
+            userResponseList.add(userResponse);
+        }
+        return userResponseList;
+    }
+
+    @Override
+    public Boolean totalCountUser(Long companyId) {
+        Long user = userRepository.findByCompanyUserId(companyId).stream().count();
+        CompanyUser companyUser = companyUserRepository.findById(companyId).get();
+        Long number = companyUser.getLicenses().getNoOfUsers();
+        if (user < number) {
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public void sendMail(String email) {
+        Users user = userRepository.findByEmailIgnoreCase(email);
+        user.setStatus(LoginStatus.PENDING.getStatus());
+        userRepository.save(user);
+        emailAndTokenService.sendTokenToEmail(user);
     }
 }

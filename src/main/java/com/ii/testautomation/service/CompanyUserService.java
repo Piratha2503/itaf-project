@@ -40,7 +40,6 @@ public interface CompanyUserService {
     void updateCompanyUser(CompanyUserRequest companyUserRequest);
 
     CompanyUser findByCompanyUserId(Long companyUserId);
-
     boolean existsByStatusAndEmail(boolean b, String email);
 }
 

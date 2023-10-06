@@ -71,6 +71,11 @@ public class ProjectController {
                     statusCodeBundle.getConfigFileFailureMessage()));
 
         }
+        if(!projectService.projectCount(projectRequest.getCompanyUserId())){
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(),
+                    statusCodeBundle.getGetTotalProjectCountExceedsTheLimit()));
+
+        }
 
         projectService.saveProject(projectRequest, jarFile, configFile);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),

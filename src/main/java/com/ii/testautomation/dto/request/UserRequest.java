@@ -17,4 +17,5 @@ public class UserRequest {
     private Long companyUserId;
     private String companyUserName;
     private Long designationId;
+    private Boolean status;
 }

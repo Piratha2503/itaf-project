@@ -3,16 +3,18 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
-import com.ii.testautomation.entities.Project;
-import com.ii.testautomation.entities.QProject;
-import com.ii.testautomation.entities.TestGrouping;
+import com.ii.testautomation.entities.*;
+import com.ii.testautomation.repositories.CompanyUserRepository;
+import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
+
 import javax.mail.Folder;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -42,9 +44,12 @@ public class ProjectServiceImpl implements ProjectService {
     private String fileFolder;
     @Autowired
     private ProjectRepository projectRepository;
-
+    @Autowired
+    private LicensesRepository licensesRepository;
     @Autowired
     private TestGroupingRepository testGroupingRepository;
+    @Autowired
+    private CompanyUserRepository companyUserRepository;
 
     @Override
     public boolean checkJarFile(MultipartFile jarFile) {
@@ -74,6 +79,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
+        CompanyUser companyUser = new CompanyUser();
+        companyUser.setId(projectRequest.getCompanyUserId());
+        project.setCompanyUser(companyUser);
         BeanUtils.copyProperties(projectRequest, project);
         String directoryPath = fileFolder + projectRequest.getName();
         String uploadedJarFilePath = null;
@@ -426,6 +434,16 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public boolean existsByUsersId(Long usersId) {
         return projectRepository.existsByUsersId(usersId);
+    }
+
+    @Override
+    public boolean projectCount(Long companyId) {
+        Long project = projectRepository.findByCompanyUserId(companyId).stream().count();
+        Long numberOfProject = licensesRepository.findByCompanyId(companyId).getNoOfProjects();
+        if (project < numberOfProject) {
+            return true;
+        }
+        return false;
     }
 }
 

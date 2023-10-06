@@ -117,8 +117,7 @@ public class TestGroupingServiceImpl implements TestGroupingService {
             }
         }
         if (testGroupingRequest.getTestCaseId() != null && !testGroupingRequest.getTestCaseId().isEmpty()) {
-            for (Long testCaseId : testGroupingRequest.getTestCaseId()
-            ) {
+            for (Long testCaseId : testGroupingRequest.getTestCaseId()) {
                 TestCases testCases = testCasesRepository.findById(testCaseId).get();
                 testCasesList.add(testCases);
             }

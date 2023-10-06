@@ -90,12 +90,12 @@ public class SubModulesServiceImpl implements SubModulesService {
         BeanUtils.copyProperties(subModules, subModulesResponse);
         return subModulesResponse;
     }
+
     @Override
     public List<SubModulesResponse> getAllSubModuleByMainModuleId(Long mainModuleId) {
         List<SubModules> subModulesList = subModulesRepository.findAllSubModulesByMainModuleId(mainModuleId);
         List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
-        for (SubModules subModules : subModulesList
-        ) {
+        for (SubModules subModules : subModulesList) {
             SubModulesResponse subModulesResponse = new SubModulesResponse();
             subModulesResponse.setModuleName(subModules.getMainModule().getModules().getName());
             subModulesResponse.setMainModuleName(subModules.getMainModule().getName());
@@ -192,8 +192,7 @@ public class SubModulesServiceImpl implements SubModulesService {
     @Override
     public Map<Integer, SubModulesRequest> csvToSubModuleRequest(InputStream inputStream) {
         Map<Integer, SubModulesRequest> subModulesRequestList = new HashMap<>();
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)); CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
 
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
@@ -249,8 +248,7 @@ public class SubModulesServiceImpl implements SubModulesService {
     }
     @Override
     public boolean isExcelHeaderMatch(MultipartFile multipartFile) {
-        try (InputStream inputStream = multipartFile.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
+        try (InputStream inputStream = multipartFile.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
             String[] actualHeaders = new String[headerRow.getLastCellNum()];
@@ -283,6 +281,7 @@ public class SubModulesServiceImpl implements SubModulesService {
             return false;
         }
     }
+
     private String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return null;

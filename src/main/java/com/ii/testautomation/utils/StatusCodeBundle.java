@@ -87,6 +87,8 @@ public class StatusCodeBundle {
     private String projectConfigPathNotProvideMessage;
     @Value("${message.failure.project.jarPath}")
     private String projectJarPathNotProvideMessage;
+    @Value("${message.validation.project}")
+    private String getTotalProjectCountExceedsTheLimit;
 
     //SubModules Code
     @Value("${code.validation.subModules.alreadyExists}")
@@ -606,7 +608,7 @@ public class StatusCodeBundle {
     @Value("${message.validation.companyUser.dependent}")
     private String CompanyUserDeleteDependentMessage;
     @Value("${message.success.companyUser.getById}")
-    private  String getCompanyUserByIdSuccessMessage;
+    private String getCompanyUserByIdSuccessMessage;
     @Value("${message.validation.companyUser.name.alreadyExists}")
     private String companyUserNameAlReadyExistsMessage;
     @Value("${message.validation.companyUser.email.alreadyExists}")
@@ -689,7 +691,6 @@ public class StatusCodeBundle {
     private String CompanyUserIdNotGivenMessage;
     @Value("${message.failure.companyUser.companyname}")
     private String CompanyNameNotGivenMessage;
-
     //User Codes
     @Value("${code.validation.user.alreadyExists}")
     private String UserAlreadyExistsCode;
@@ -735,4 +736,11 @@ public class StatusCodeBundle {
     private String UserDesignationIdNotGiven;
     @Value("${message.validation.user.email.cannot.change}")
     private String UserEmailCannotChangeMessage;
+    @Value("${message.success.getId.user}")
+    private String getUserDetailsSuccessMessage;
+    @Value("${message.validation.user}")
+    private String getTotalUserCountExceedsTheLimit;
+    @Value("${message.Success.Email.Password}")
+    private String EmailSuccessFullySend;
+
 }
