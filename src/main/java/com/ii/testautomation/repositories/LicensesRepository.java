@@ -16,4 +16,5 @@ public interface LicensesRepository extends JpaRepository<Licenses, Long>, Query
 
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 
+    Licenses findByCompanyId(Long companyId);
 }

@@ -3,11 +3,9 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.ProjectRequest;
 import com.ii.testautomation.dto.response.ProjectResponse;
 import com.ii.testautomation.dto.search.ProjectSearch;
-import com.ii.testautomation.entities.CompanyUser;
-import com.ii.testautomation.entities.Project;
-import com.ii.testautomation.entities.QProject;
-import com.ii.testautomation.entities.TestGrouping;
+import com.ii.testautomation.entities.*;
 import com.ii.testautomation.repositories.CompanyUserRepository;
+import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -46,7 +44,8 @@ public class ProjectServiceImpl implements ProjectService {
     private String fileFolder;
     @Autowired
     private ProjectRepository projectRepository;
-
+    @Autowired
+    private LicensesRepository licensesRepository;
     @Autowired
     private TestGroupingRepository testGroupingRepository;
     @Autowired
@@ -80,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void saveProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile) {
         Project project = new Project();
-        CompanyUser companyUser=new CompanyUser();
+        CompanyUser companyUser = new CompanyUser();
         companyUser.setId(projectRequest.getCompanyUserId());
         project.setCompanyUser(companyUser);
         BeanUtils.copyProperties(projectRequest, project);
@@ -437,11 +436,10 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.existsByUsersId(usersId);
     }
 
-   @Override
+    @Override
     public boolean projectCount(Long companyId) {
         Long project = projectRepository.findByCompanyUserId(companyId).stream().count();
-        CompanyUser companyUser = companyUserRepository.findById(companyId).get();
-        Long numberOfProject = companyUser.getLicenses().getNoOfProjects();
+        Long numberOfProject = licensesRepository.findByCompanyId(companyId).getNoOfProjects();
         if (project < numberOfProject) {
             return true;
         }
