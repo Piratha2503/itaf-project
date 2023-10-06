@@ -608,7 +608,7 @@ public class StatusCodeBundle {
     @Value("${message.validation.companyUser.dependent}")
     private String CompanyUserDeleteDependentMessage;
     @Value("${message.success.companyUser.getById}")
-    private  String getCompanyUserByIdSuccessMessage;
+    private String getCompanyUserByIdSuccessMessage;
     @Value("${message.validation.companyUser.name.alreadyExists}")
     private String companyUserNameAlReadyExistsMessage;
     @Value("${message.validation.companyUser.email.alreadyExists}")
@@ -691,8 +691,6 @@ public class StatusCodeBundle {
     private String CompanyUserIdNotGivenMessage;
     @Value("${message.failure.companyUser.companyname}")
     private String CompanyNameNotGivenMessage;
-//    @Value("${message.failure.companyUser}")
-//    private String company
     //User Codes
     @Value("${code.validation.user.alreadyExists}")
     private String UserAlreadyExistsCode;
