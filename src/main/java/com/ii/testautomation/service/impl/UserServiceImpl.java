@@ -281,8 +281,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendMail(Long userId) {
-        Users user = userRepository.findById(userId).orElse(null);
+    public void sendMail(String email) {
+        Users user = userRepository.findByEmailIgnoreCase(email);
         emailAndTokenService.sendTokenToEmail(user);
     }
 }

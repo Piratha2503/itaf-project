@@ -52,5 +52,5 @@ public interface UserService {
 
     Boolean totalCountUser(Long companyId);
 
-    void sendMail(Long userId);
+    void sendMail(String email);
 }
