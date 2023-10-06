@@ -2,8 +2,10 @@ package com.ii.testautomation.controllers;
 
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.search.UserSearch;
+import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.enums.RequestStatus;
+import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
@@ -180,5 +182,15 @@ public class UserController {
         userService.changePassword(token,userRequest.getEmail(),userRequest.getPassword());
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),"Password Created Successfully"));
 
+    }
+
+    @PostMapping(EndpointURI.USER_RESET_PASSWORD)
+    public ResponseEntity<Object> resetPassword(@RequestBody UserRequest userRequest) {
+      if (userRequest.getEmail() == null || userRequest.getEmail().isEmpty())
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(),statusCodeBundle.getNullValuesCode(), statusCodeBundle.getEmailCannotNullMessage()));
+      if (!userService.existsByEmail(userRequest.getEmail()))
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getUserNotExistsCode(),statusCodeBundle.getEmailNotExistMessage()));
+      userService.resetPassword(userRequest.getEmail());
+      return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getResetLinkForwardSuccessMessage()));
     }
 }

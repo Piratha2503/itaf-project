@@ -547,6 +547,8 @@ public class StatusCodeBundle {
     private String UserLockedMessage;
     @Value("${message.Success.userName.tempPassword}")
     private String TempPasswordLoginSuccessMessage;
+    @Value("${message.success.verificationLink.send}")
+    private String ResetLinkForwardSuccessMessage;
 
     // Ragex
     @Value("${message.failure.space}")

@@ -5,8 +5,7 @@ package com.ii.testautomation.utils;
  */
 public final class EndpointURI {
 
-
-    private static final String BASE_API_PATH = "/api/v1/";
+  private static final String BASE_API_PATH = "/api/v1/";
     public static final String WEBSOCKET="/queue/percentage";
     private static final String SLASH = "/";
     private static final String SEARCH = "search";

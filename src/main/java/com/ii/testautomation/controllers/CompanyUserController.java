@@ -80,7 +80,6 @@ public class CompanyUserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getCompanyUserSuccessfullyInsertedMessage()));
     }
 
-
     @PutMapping(value = EndpointURI.COMPANY_USERS)
     public ResponseEntity<Object> UpdateCompanyUser(@RequestBody CompanyUserRequest companyUserRequest) {
         if(companyUserRequest.getId()==null){

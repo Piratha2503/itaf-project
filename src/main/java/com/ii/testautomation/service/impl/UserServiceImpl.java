@@ -155,6 +155,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void resetPassword(String email) {
+        Users user = userRepository.findByEmailIgnoreCase(email);
+        user.setStatus(LoginStatus.DEACTIVATE.getStatus());
+        emailAndTokenService.sendTokenToEmail(user);
+    }
+
+    @Override
     public boolean existsByEmailAndPassword(String email, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Users user = userRepository.findByEmailIgnoreCase(email);
@@ -272,6 +279,5 @@ public class UserServiceImpl implements UserService {
             Users user = emailAndTokenService.getUserByToken(token);
             createNewPassword(user,password);
         }
-
     }
 }
