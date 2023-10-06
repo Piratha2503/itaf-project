@@ -3,7 +3,6 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.UserResponse;
 import com.ii.testautomation.dto.search.UserSearch;
-import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -47,11 +46,9 @@ public interface UserService {
 
     Long getAllUserCountByCompanyUserId(Long companyUserId);
 
-    void resetPassword(String email);
-
-    List<UserResponse> getAllUsersByCompanyAndDesignation(Long companyUserId, Long designationId);
-
     List<UserResponse> getAllUsersByCompanyAdminAndDesignation(Long userId, Long designationId);
 
-   Boolean totalCountUser(Long companyId);
+    Boolean totalCountUser(Long companyId);
+
+    void sendMail(Long userId);
 }

@@ -116,6 +116,7 @@ public final class EndpointURI {
     public static final String USER_BY_ID= USERS +ID;
     public static final String USER_LOGIN = USER+SLASH+"login";
     public static final String USERS_PASSWORD = USER+"/password";
+    public static final String USERS_SENDMAIL = USER+ID;
 
     //URLs for Email Link
     public static final String EMAIL_lINK = "http://localhost:";

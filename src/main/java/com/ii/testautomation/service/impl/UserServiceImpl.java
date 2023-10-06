@@ -13,34 +13,21 @@ import com.ii.testautomation.repositories.*;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.EmailAndTokenService;
 import com.ii.testautomation.service.UserService;
-import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +54,8 @@ public class UserServiceImpl implements UserService {
     ProjectRepository projectRepository;
     @Autowired
     private StatusCodeBundle statusCodeBundle;
+    @Autowired
+    private EmailAndTokenService emailAndTokenService;
 
     @Value("${user.verification.email.subject}")
     private String userVerificationMailSubject;
@@ -91,8 +80,6 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRequest, user);
         user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
-        Users userWithId = userRepository.findByEmailIgnoreCase(user.getEmail());
-        emailAndTokenService.sendTokenToEmail(userWithId);
     }
 
     @Override
@@ -148,6 +135,8 @@ public class UserServiceImpl implements UserService {
         Long count = usersList.stream().count();
         return count;
     }
+
+
 
     @Override
     public boolean existsByEmailAndPassword(String email, String password) {
@@ -280,5 +269,22 @@ public class UserServiceImpl implements UserService {
             userResponseList.add(userResponse);
         }
         return userResponseList;
+    }
+
+    @Override
+    public Boolean totalCountUser(Long companyId) {
+        Long user = userRepository.findByCompanyUserId(companyId).stream().count();
+        CompanyUser companyUser = companyUserRepository.findById(companyId).get();
+        Long number = companyUser.getLicenses().getNoOfUsers();
+        if(user < number){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void sendMail(Long userId) {
+        Users user = userRepository.findById(userId).orElse(null);
+        emailAndTokenService.sendTokenToEmail(user);
     }
 }

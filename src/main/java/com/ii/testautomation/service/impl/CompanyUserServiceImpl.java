@@ -138,12 +138,17 @@ public class CompanyUserServiceImpl implements CompanyUserService {
 
     @Override
     public CompanyUser findByCompanyUserId(Long companyUserId) {
-
         return companyUserRepository.findById(companyUserId).get();
+    }
+
+    @Override
+    public boolean existsByStatusAndEmail(boolean b, String email) {
+        return companyUserRepository.existsByStatusAndEmailIgnoreCase(b,email);
+    }
+
     public boolean existsByLicenseId(Long id) {
         return companyUserRepository.existsByLicensesId(id);
     }
-
     @Override
     public boolean isExistCompanyUserName(String companyName) {
         return companyUserRepository.existsByCompanyNameIgnoreCase(companyName);
@@ -232,6 +237,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         BeanUtils.copyProperties(companyUser, companyUserResponse);
         return companyUserResponse;
     }
+
     @Scheduled(cron = "0/1 * * * * ?")
     public void deactivateExpiredCompanyUsers() {
         LocalDate currentDate = LocalDate.now();
