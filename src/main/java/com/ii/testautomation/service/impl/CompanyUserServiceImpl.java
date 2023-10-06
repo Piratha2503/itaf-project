@@ -1,15 +1,12 @@
 package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.dto.request.CompanyUserRequest;
-import com.ii.testautomation.dto.request.DesignationRequest;
-import com.ii.testautomation.dto.request.UserRequest;
 import com.ii.testautomation.dto.response.CompanyUserResponse;
 import com.ii.testautomation.dto.search.CompanyUserSearch;
 import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.entities.Designation;
 import com.ii.testautomation.entities.Licenses;
 import com.ii.testautomation.entities.QCompanyUser;
-import com.ii.testautomation.entities.QUsers;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
@@ -19,6 +16,7 @@ import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.service.EmailAndTokenService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.Utils;
@@ -46,6 +44,8 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EmailAndTokenService emailAndTokenService;
 
     @Override
     public boolean existsByCompanyUserId(Long id) {
@@ -66,6 +66,93 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     public boolean isUpdateCompanyUserContactNumberExists(String contactNumber, Long id) {
         return companyUserRepository.existsByContactNumberIgnoreCaseAndIdNot(contactNumber,id);
 
+    }
+
+    @Override
+    public boolean existsByLicenseId(Long id) {
+        return companyUserRepository.existsByLicensesId(id);
+    }
+
+    @Override
+    public boolean isExistCompanyUserName(String companyName) {
+        return companyUserRepository.existsByCompanyNameIgnoreCase(companyName);
+    }
+
+    @Override
+    public boolean isExistByCompanyUserEmail(String email) {
+        return companyUserRepository.existsByEmailIgnoreCase(email);
+    }
+
+    @Override
+    public boolean isExistByCompanyUserContactNumber(String contactNumber) {
+        return companyUserRepository.existsByContactNumber(contactNumber);
+    }
+
+    @Override
+    public boolean existsByStatusAndEmail(boolean b, String email) {
+        return companyUserRepository.existsByStatusAndEmailIgnoreCase(b,email);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return companyUserRepository.existsById(id);
+    }
+
+    @Override
+    public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
+        CompanyUser companyUser = new CompanyUser();
+        Licenses licenses = licensesRepository.findById(companyUserRequest.getLicenses_id()).orElse(null);
+        licenses.setId(companyUserRequest.getLicenses_id());
+        companyUser.setLicenses(licenses);
+        BeanUtils.copyProperties(companyUserRequest, companyUser);
+        LocalDate startDate = companyUser.getStartDate();
+        int durationMonths = licenses.getDuration().intValue();
+        LocalDate endDate = startDate.plusMonths(durationMonths);
+        companyUser.setEndDate(endDate);
+        companyUserRepository.save(companyUser);
+        CompanyUser companyAdmin = companyUserRepository.findByEmail(companyUserRequest.getEmail());
+
+        Designation designation =  new Designation();
+        designation.setName(Constants.COMPANY_ADMIN);
+        designation.setCompanyUser(companyAdmin);
+        designationRepository.save(designation);
+        Designation adminDesignation = designationRepository.findFirstByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
+
+        Users user = new Users();
+        user.setFirstName(companyUserRequest.getFirstName());
+        user.setLastName(companyUserRequest.getLastName());
+        user.setEmail(companyAdmin.getEmail());
+        user.setContactNumber(companyAdmin.getContactNumber());
+        user.setCompanyUser(companyAdmin);
+        user.setDesignation(adminDesignation);
+        user.setStatus(LoginStatus.NEW.getStatus());
+        userRepository.save(user);
+        Users userWithId = userRepository.findByEmailIgnoreCase(user.getEmail());
+        emailAndTokenService.sendTokenToEmail(userWithId);
+    }
+
+    @Override
+    public void updateCompanyUser(CompanyUserRequest companyUserRequest) {
+       CompanyUser companyUser = companyUserRepository.findById(companyUserRequest.getId()).get();
+        Users user = userRepository.findFirstByCompanyUserIdAndDesignationName(companyUserRequest.getId(), Constants.COMPANY_ADMIN);
+       if(!(companyUserRequest.getLicenses_id()==null)) {
+            Licenses license = licensesRepository.findById(companyUserRequest.getLicenses_id()).get();
+            companyUser.setLicenses(license);
+        }
+        if(!(companyUserRequest.getContactNumber()==null)) companyUser.setContactNumber(companyUserRequest.getContactNumber());
+        if(!(companyUserRequest.getCompanyName()==null)) companyUser.setCompanyName(companyUserRequest.getCompanyName());
+        if (!(companyUserRequest.getStartDate() == null )) companyUser.setStartDate(companyUserRequest.getStartDate());
+        if (!(companyUserRequest.getFirstName()== null)) user.setFirstName(companyUserRequest.getFirstName());
+        if (!(companyUserRequest.getLastName()== null)) user.setLastName(companyUserRequest.getLastName());
+        if (companyUserRequest.getStatus()) {
+            user.setStatus(LoginStatus.ACTIVE.getStatus());
+            user.setWrongCount(5);
+            companyUser.setStatus(true);
+        }
+        if (!(companyUserRequest.getStatus())) companyUser.setStatus(false);
+        user.setEmail(companyUser.getEmail());
+        userRepository.save(user);
+        companyUserRepository.save(companyUser);
     }
 
     @Override
@@ -138,77 +225,9 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     }
 
     @Override
-    public boolean existsByLicenseId(Long id) {
-        return companyUserRepository.existsByLicensesId(id);
-    }
+    public CompanyUser findByCompanyUserId(Long companyUserId) {
 
-    @Override
-    public boolean isExistCompanyUserName(String companyName) {
-        return companyUserRepository.existsByCompanyNameIgnoreCase(companyName);
-    }
-
-    @Override
-    public boolean isExistByCompanyUserEmail(String email) {
-        return companyUserRepository.existsByEmailIgnoreCase(email);
-    }
-
-    @Override
-    public boolean isExistByCompanyUserContactNumber(String contactNumber) {
-        return companyUserRepository.existsByContactNumber(contactNumber);
-    }
-
-    @Override
-    public void saveCompanyUser(CompanyUserRequest companyUserRequest) {
-        CompanyUser companyUser = new CompanyUser();
-        Licenses licenses = licensesRepository.findById(companyUserRequest.getLicenses_id()).orElse(null);
-        licenses.setId(companyUserRequest.getLicenses_id());
-        companyUser.setLicenses(licenses);
-        BeanUtils.copyProperties(companyUserRequest, companyUser);
-        LocalDate startDate = companyUser.getStartDate();
-        int durationMonths = licenses.getDuration().intValue();
-        LocalDate endDate = startDate.plusMonths(durationMonths);
-        companyUser.setEndDate(endDate);
-        companyUserRepository.save(companyUser);
-        CompanyUser companyAdmin = companyUserRepository.findByEmail(companyUserRequest.getEmail());
-
-        DesignationRequest adminDesignationRequest = new DesignationRequest();
-        adminDesignationRequest.setName(Constants.COMPANY_ADMIN);
-        adminDesignationRequest.setCompanyUserId(companyAdmin.getId());
-        designationService.saveDesignation(adminDesignationRequest);
-        Designation adminDesignation = designationRepository.findFirstByNameAndCompanyUserId(Constants.COMPANY_ADMIN, companyAdmin.getId());
-
-        UserRequest userRequest = new UserRequest();
-        userRequest.setFirstName(companyUserRequest.getFirstName());
-        userRequest.setLastName(companyUserRequest.getLastName());
-        userRequest.setEmail(companyAdmin.getEmail());
-        userRequest.setContactNumber(companyAdmin.getContactNumber());
-        userRequest.setCompanyUserId(companyAdmin.getId());
-        userRequest.setDesignationId(adminDesignation.getId());
-        userService.saveUser(userRequest);
-    }
-    @Override
-    public void updateCompanyUser(CompanyUserRequest companyUserRequest) {
-       CompanyUser companyUser = companyUserRepository.findById(companyUserRequest.getId()).get();
-        Users user = userRepository.findFirstByCompanyUserIdAndDesignationName(companyUserRequest.getId(), Constants.COMPANY_ADMIN);
-       if(!(companyUserRequest.getLicenses_id()==null)) {
-            Licenses license = licensesRepository.findById(companyUserRequest.getLicenses_id()).get();
-            companyUser.setLicenses(license);
-        }
-        if(!(companyUserRequest.getContactNumber()==null)) companyUser.setContactNumber(companyUserRequest.getContactNumber());
-        if(!(companyUserRequest.getCompanyName()==null)) companyUser.setCompanyName(companyUserRequest.getCompanyName());
-        if (!(companyUserRequest.getStartDate() == null )) companyUser.setStartDate(companyUserRequest.getStartDate());
-        if (!(companyUserRequest.getFirstName()== null)) user.setFirstName(companyUserRequest.getFirstName());
-        if (!(companyUserRequest.getLastName()== null)) user.setLastName(companyUserRequest.getLastName());
-        if (!(companyUserRequest.getStatus() == true)) {
-            user.setStatus(LoginStatus.ACTIVE.getStatus());
-            user.setWrongCount(5);
-        }
-        user.setEmail(companyUser.getEmail());
-        userRepository.save(user);
-    }
-    @Override
-    public boolean existsById(Long id) {
-        return companyUserRepository.existsById(id);
+        return companyUserRepository.findById(companyUserId).get();
     }
 
     @Override
