@@ -47,11 +47,5 @@ public interface UserService {
 
     Long getAllUserCountByCompanyUserId(Long companyUserId);
 
-    /*
-     void generateEmail(Users user);
-    String verifyToken(String token);
-
-    String generateNonExpiringToken(String email);
-     */
-
+    void resetPassword(String email);
 }
