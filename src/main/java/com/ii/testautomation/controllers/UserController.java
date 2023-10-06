@@ -187,7 +187,7 @@ public class UserController {
     public ResponseEntity<Object> sendMail(@PathVariable Long userId) {
         if (!userService.existsByUsersId(userId))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getUserIdExistMessage()));
-        userService.sendMail(userId);
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getEmailSuccessFullyVerified()));
+         userService.sendMail(userId);
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getEmailSuccessFullySend()));
     }
 }

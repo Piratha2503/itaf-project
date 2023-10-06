@@ -117,15 +117,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void invalidPassword(String email) {
         Users user = userRepository.findByEmailIgnoreCase(email);
-        if (user.getWrongCount()>0)
-            user.setWrongCount(user.getWrongCount() - 1);
+        if (user.getWrongCount() > 0) user.setWrongCount(user.getWrongCount() - 1);
         else user.setStatus(LoginStatus.LOCKED.getStatus());
         userRepository.save(user);
     }
 
     @Override
     public boolean existsByStatusAndEmail(String status, String email) {
-        return userRepository.existsByStatusAndEmailIgnoreCase(status,email);
+        return userRepository.existsByStatusAndEmailIgnoreCase(status, email);
     }
 
     @Override
@@ -136,13 +135,11 @@ public class UserServiceImpl implements UserService {
         return count;
     }
 
-
-
     @Override
     public boolean existsByEmailAndPassword(String email, String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Users user = userRepository.findByEmailIgnoreCase(email);
-        return bCryptPasswordEncoder.matches(password,user.getPassword());
+        return bCryptPasswordEncoder.matches(password, user.getPassword());
     }
 
     @Override
@@ -184,7 +181,8 @@ public class UserServiceImpl implements UserService {
             user.setCompanyUser(companyUser);
         }
 
-        if (userRequest.getDesignationId() != null) user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
+        if (userRequest.getDesignationId() != null)
+            user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
 
         userRepository.save(user);
     }
@@ -205,11 +203,11 @@ public class UserServiceImpl implements UserService {
         if (Utils.isNotNullAndEmpty(userSearch.getDesignationName())) {
             booleanBuilder.and(QUsers.users.designation.name.containsIgnoreCase(userSearch.getDesignationName()));
         }
-        if (companyUserId!=null) {
+        if (companyUserId != null) {
             booleanBuilder.and(QUsers.users.companyUser.id.eq(companyUserId));
         }
         List<UserResponse> userResponseList = new ArrayList<>();
-        Page<Users> usersPage = userRepository.findAll(booleanBuilder,pageable);
+        Page<Users> usersPage = userRepository.findAll(booleanBuilder, pageable);
         pagination.setTotalRecords(usersPage.getTotalElements());
         pagination.setPageSize(usersPage.getTotalPages());
 
@@ -250,13 +248,13 @@ public class UserServiceImpl implements UserService {
     public void changePassword(String token, String email, String password) {
         if (token == null) {
             Users user = userRepository.findByEmailIgnoreCase(email);
-            createNewPassword(user,password);
-        }
-        else {
+            createNewPassword(user, password);
+        } else {
             Users user = emailAndTokenService.getUserByToken(token);
-            createNewPassword(user,password);
+            createNewPassword(user, password);
         }
     }
+
     @Override
     public List<UserResponse> getAllUsersByCompanyAdminAndDesignation(Long userId, Long designationId) {
         List<Users> usersList = userRepository.findAllByCompanyUser_IdAndDesignation_Id(userId, designationId);
@@ -276,7 +274,7 @@ public class UserServiceImpl implements UserService {
         Long user = userRepository.findByCompanyUserId(companyId).stream().count();
         CompanyUser companyUser = companyUserRepository.findById(companyId).get();
         Long number = companyUser.getLicenses().getNoOfUsers();
-        if(user < number){
+        if (user < number) {
             return true;
         }
         return false;

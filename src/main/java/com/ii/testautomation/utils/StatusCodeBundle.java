@@ -741,10 +741,6 @@ public class StatusCodeBundle {
     private String getUserDetailsSuccessMessage;
     @Value("${message.validation.user}")
     private String getTotalUserCountExceedsTheLimit;
-
-    @Value("${message.validation.user.email}")
-    private String getEmailNotVerifiedMessage;
-
     @Value("${message.Success.Email.Password}")
-    private String EmailSuccessFullyVerified;
+    private String EmailSuccessFullySend;
 }
