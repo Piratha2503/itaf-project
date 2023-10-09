@@ -153,7 +153,6 @@ public class EmailAndTokenServiceImpl implements EmailAndTokenService {
   public String verifyToken(String token) {
     try {
       Users user = getUserByToken(token);
-      //if (!user.getUniqueIdentification().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
       Jwts.parser().setSigningKey(user.getUniqueIdentification()).parseClaimsJws(token);
       return Constants.TOKEN_VERIFIED;
     } catch (ExpiredJwtException e) {
