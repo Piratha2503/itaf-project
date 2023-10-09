@@ -2,6 +2,7 @@ package com.ii.testautomation.service.impl;
 
 import com.ii.testautomation.config.EmailConfiguration;
 import com.ii.testautomation.entities.CompanyUser;
+import com.ii.testautomation.entities.Project;
 import com.ii.testautomation.entities.Users;
 import com.ii.testautomation.enums.LoginStatus;
 import com.ii.testautomation.repositories.CompanyUserRepository;
@@ -152,7 +153,7 @@ public class EmailAndTokenServiceImpl implements EmailAndTokenService {
   public String verifyToken(String token) {
     try {
       Users user = getUserByToken(token);
-      if (!user.getStatus().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
+      //if (!user.getUniqueIdentification().equals(LoginStatus.NEW.getStatus())) return statusCodeBundle.getTokenAlreadyUsedMessage();
       Jwts.parser().setSigningKey(user.getUniqueIdentification()).parseClaimsJws(token);
       return Constants.TOKEN_VERIFIED;
     } catch (ExpiredJwtException e) {

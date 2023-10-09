@@ -96,8 +96,6 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRequest, user);
         user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
-        Users userWithId = userRepository.findByEmailIgnoreCase(user.getEmail());
-        emailAndTokenService.sendTokenToEmail(userWithId);
     }
 
     @Override
@@ -272,5 +270,13 @@ public class UserServiceImpl implements UserService {
             Users user = emailAndTokenService.getUserByToken(token);
             createNewPassword(user,password);
         }
+    }
+
+    @Override
+    public void sendMail(String email) {
+        Users user = userRepository.findByEmailIgnoreCase(email);
+        user.setStatus(LoginStatus.PENDING.getStatus());
+        userRepository.save(user);
+        emailAndTokenService.sendTokenToEmail(user);
     }
 }

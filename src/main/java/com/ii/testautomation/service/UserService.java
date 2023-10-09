@@ -46,4 +46,6 @@ public interface UserService {
     boolean existsByStatusAndEmail(String status, String email);
 
     Long getAllUserCountByCompanyUserId(Long companyUserId);
+
+    void sendMail(String email);
 }

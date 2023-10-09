@@ -183,4 +183,15 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),"Password Created Successfully"));
 
     }
+
+  @PostMapping(EndpointURI.USERS_SENDEMAIL)
+  public ResponseEntity<Object> sendMail(@RequestBody UserRequest userRequest) {
+    String email = userRequest.getEmail();
+    if (!userService.existsByEmail(email))
+      return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistsCode(),statusCodeBundle.getEmailNotExistMessage()));
+    if(companyUserService.existsByStatusAndEmail(false,email))
+      return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
+    userService.sendMail(email);
+    return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),"statusCodeBundle.getEmailSuccessFullySend()"));
+  }
 }
