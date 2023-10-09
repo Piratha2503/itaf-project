@@ -78,7 +78,7 @@ public class DesignationController {
     @DeleteMapping(EndpointURI.DESIGNATION_BY_ID)
     public ResponseEntity<Object> deleteDesignation(@PathVariable Long id) {
 
-        if (!designationService.existsById(id)) {
+        if (!designationService.existById(id)) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getDesignationNotExistsCode(), statusCodeBundle.getDesignationNotExistMessage()));
         }
         if (userService.existsByDesignationId(id)) {

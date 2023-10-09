@@ -24,4 +24,7 @@ public class Project extends DateAudit {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id", nullable = false)
     private List<Users> users;
+    @ManyToOne
+    @JoinColumn(name = "company_user_id", nullable = false)
+    private CompanyUser companyUser;
 }

@@ -10,5 +10,6 @@ public class ProjectRequest {
   private String name;
   private String description;
   private String code;
+  private Long companyUserId;
 }
 
