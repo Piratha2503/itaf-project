@@ -281,8 +281,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void sendMail(String email) {
         Users user = userRepository.findByEmailIgnoreCase(email);
-        user.setStatus(LoginStatus.PENDING.getStatus());
-        userRepository.save(user);
         emailAndTokenService.sendTokenToEmail(user);
     }
 }

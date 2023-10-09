@@ -95,15 +95,6 @@ public class EmailAndTokenServiceImpl implements EmailAndTokenService {
   public void sendTokenToEmail(Users user) {
     Resource resource = resourceLoader.getResource("classpath:Templates/button.html");
     try {
-      InputStream inputStream = resource.getInputStream();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-      StringBuilder htmlContent = new StringBuilder();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        htmlContent.append(line);
-      }
-      reader.close();
-      String htmlContentAsString = htmlContent.toString();
       String token = generateToken(user);
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -118,10 +109,9 @@ public class EmailAndTokenServiceImpl implements EmailAndTokenService {
         helper.setText(emailBody.getEmailBody1()+token+emailBody.getEmailBody2(), true);
       }
       javaMailSender.send(mimeMessage);
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (MessagingException e) {
+      user.setStatus(LoginStatus.PENDING.getStatus());
+      userRepository.save(user);
+    }  catch (MessagingException e) {
       throw new RuntimeException(e);
     }
 
