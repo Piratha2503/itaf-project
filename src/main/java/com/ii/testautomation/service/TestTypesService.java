@@ -41,6 +41,8 @@ public interface TestTypesService {
     void addToErrorMessages(Map<String, List<Integer>> errorMessages, String key, int value);
 
     boolean isExcelHeaderMatch(MultipartFile multipartFile);
-
+    List<TestTypesResponse> getTestTypesByCompanyUserId(Long companyUserId);
     boolean isCSVHeaderMatch(MultipartFile multipartFile);
+
+    boolean isExistCompanyUserId(Long id);
 }
