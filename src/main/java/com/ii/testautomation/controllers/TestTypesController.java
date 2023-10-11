@@ -58,7 +58,8 @@ public class TestTypesController {
 
         if (testTypesService.isExistsTestTypesByNameIgnoreCaseAndIdNot(testTypesRequest.getName(), testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypeAlReadyExistCode(), statusCodeBundle.getTestTypeNameAlReadyExistMessage()));
-
+        if (!companyUserService.existsByCompanyUserId(testTypesRequest.getCompanyUserId()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         testTypesService.saveTestTypes(testTypesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateTestTypeSuccessMessage()));
     }
@@ -83,32 +84,27 @@ public class TestTypesController {
 
     @GetMapping(EndpointURI.TEST_TYPE_BY_PROJECT_ID)
     public ResponseEntity<Object> getTestTypeByProjectId(@PathVariable Long id) {
-        if (!projectService.existByProjectId(id)) return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(),statusCodeBundle.getProjectNotExistsMessage()));
-        else if (testTypesService.getTestTypesByProjectId(id).isEmpty()) return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getFailureCode(),statusCodeBundle.getTestTypeNotMappedMessage()));
-        else return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,testTypesService.getTestTypesByProjectId(id),statusCodeBundle.getCommonSuccessCode(),RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getViewTestTypeByProjectIdSuccessMessage()));
+        if (!projectService.existByProjectId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.UNKNOWN.getStatus(), statusCodeBundle.getProjectNotExistCode(), statusCodeBundle.getProjectNotExistsMessage()));
+        else if (testTypesService.getTestTypesByProjectId(id).isEmpty())
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestTypeNotMappedMessage()));
+        else
+            return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES, testTypesService.getTestTypesByProjectId(id), statusCodeBundle.getCommonSuccessCode(), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getViewTestTypeByProjectIdSuccessMessage()));
     }
 
     @GetMapping(EndpointURI.TEST_TYPES_SEARCH)
-    public ResponseEntity<Object> SearchTestTypesWithPagination(@RequestParam(name = "page") int page,
-                                                                @RequestParam(name = "size") int size,
-                                                                @RequestParam(name = "direction") String direction,
-                                                                @RequestParam(name = "sortField") String sortField,
-                                                                TestTypesSearch testTypesSearch) {
+    public ResponseEntity<Object> SearchTestTypesWithPagination(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, TestTypesSearch testTypesSearch) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0l);
 
-        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES,
-                testTypesService.SearchTestTypesWithPagination(pageable, pagination, testTypesSearch),
-                RequestStatus.SUCCESS.getStatus(),
-                statusCodeBundle.getCommonSuccessCode(),
-                statusCodeBundle.getSuccessViewAllMessageMainModules()));
+        return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES, testTypesService.SearchTestTypesWithPagination(pageable, pagination, testTypesSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getSuccessViewAllMessageMainModules()));
     }
 
     @PostMapping(EndpointURI.TEST_TYPE_IMPORT)
     public ResponseEntity<Object> importTestTypes(@RequestParam MultipartFile multipartFile) {
 
         Map<String, List<Integer>> errorMessages = new HashMap<>();
-        Map<Integer,TestTypesRequest> testTypesRequestList;
+        Map<Integer, TestTypesRequest> testTypesRequestList;
         Set<String> testTypeNames = new HashSet<>();
 
         try {
@@ -142,22 +138,15 @@ public class TestTypesController {
             }
 
             if (!errorMessages.isEmpty()) {
-                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(),
-                        statusCodeBundle.getFailureCode(),
-                        statusCodeBundle.getTestTypesNotSavedMessage(),
-                        errorMessages));
+                return ResponseEntity.ok(new FileResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTestTypesNotSavedMessage(), errorMessages));
             } else {
                 for (Map.Entry<Integer, TestTypesRequest> entry : testTypesRequestList.entrySet()) {
                     testTypesService.saveTestTypes(entry.getValue());
                 }
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(),
-                        statusCodeBundle.getCommonSuccessCode(),
-                        statusCodeBundle.getInsertTestTypesSuccessMessage()));
+                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getInsertTestTypesSuccessMessage()));
             }
         } catch (IOException e) {
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
-                    statusCodeBundle.getFailureCode(),
-                    statusCodeBundle.getFileFailureMessage()));
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getFileFailureMessage()));
         }
     }
 
