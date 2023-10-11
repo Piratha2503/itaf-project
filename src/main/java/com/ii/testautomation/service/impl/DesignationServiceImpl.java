@@ -8,6 +8,7 @@ import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.DesignationRepository;
 import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.service.DesignationService;
+import com.ii.testautomation.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,7 @@ public class DesignationServiceImpl implements DesignationService {
         List<DesignationResponse> designationResponseList = new ArrayList<>();
         List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(id);
         for (Designation designation : designationList) {
+            if (designation.getName().equals(Constants.COMPANY_ADMIN.toString())) continue;
             DesignationResponse designationResponse = new DesignationResponse();
             BeanUtils.copyProperties(designation, designationResponse);
             designationResponseList.add(designationResponse);
@@ -70,12 +72,14 @@ public class DesignationServiceImpl implements DesignationService {
         Long companyId = userRepository.findById(userId).get().getCompanyUser().getId();
         List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(companyId);
         for (Designation designation : designationList) {
+            if (designation.getName().equals(Constants.COMPANY_ADMIN.toString())) continue;
             DesignationResponse designationResponse=new DesignationResponse();
             BeanUtils.copyProperties(designation, designationResponse);
            designationResponseList.add(designationResponse);
         }
         return designationResponseList;
     }
+
     @Override
     public void deleteDesignationById(Long id) {
         designationRepository.deleteById(id);

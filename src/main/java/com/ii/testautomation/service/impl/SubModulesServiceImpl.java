@@ -129,7 +129,6 @@ public class SubModulesServiceImpl implements SubModulesService {
         }
         List<SubModulesResponse> subModulesResponseList = new ArrayList<>();
         Page<SubModules> subModulesPage = subModulesRepository.findAll(booleanBuilder, pageable);
-//        Collections.sort(subModulesPage.toList(),Comparator.comparing(SubModules::getCreatedAt));
         pagination.setTotalRecords(subModulesPage.getTotalElements());
         pagination.setPageSize(subModulesPage.getTotalPages());
 

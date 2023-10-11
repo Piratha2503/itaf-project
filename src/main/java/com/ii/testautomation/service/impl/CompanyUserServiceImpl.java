@@ -16,16 +16,13 @@ import com.ii.testautomation.repositories.UserRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.DesignationService;
-import com.ii.testautomation.service.EmailAndTokenService;
 import com.ii.testautomation.service.UserService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -217,6 +214,8 @@ public class CompanyUserServiceImpl implements CompanyUserService {
             user.setStatus(LoginStatus.ACTIVE.getStatus());
             user.setWrongCount(5);
         }
+        companyUser.setStatus(companyUserRequest.getStatus());
+        companyUserRepository.save(companyUser);
         user.setEmail(companyUser.getEmail());
         userRepository.save(user);
     }

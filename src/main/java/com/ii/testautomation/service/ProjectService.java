@@ -21,9 +21,9 @@ public interface ProjectService {
 
     void updateProject(ProjectRequest projectRequest, MultipartFile jarFile, MultipartFile configFile);
 
-    boolean existByProjectName(String projectName);
+    boolean existByProjectNameAndCompanyId(String projectName, Long companyUserId);
 
-    boolean existByProjectCode(String projectCode);
+    boolean existByProjectCodeAndCompanyId(String projectCode,Long companyUserId);
 
     boolean isUpdateProjectNameExist(String projectName, Long projectId);
 
@@ -56,4 +56,6 @@ public interface ProjectService {
     public boolean hasConfigPath(Long projectId);
 
     boolean projectCount(Long companyId);
+
+    List<ProjectResponse> getProjectByCompanyId(Long companyUserId,Pageable pageable,PaginatedContentResponse.Pagination pagination);
 }

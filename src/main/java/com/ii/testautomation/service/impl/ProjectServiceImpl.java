@@ -8,12 +8,10 @@ import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.LicensesRepository;
 import com.ii.testautomation.repositories.ProjectRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
-import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.response.common.PaginatedContentResponse.Pagination;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
-
-import javax.mail.Folder;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -199,13 +197,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public boolean existByProjectName(String projectName) {
-        return projectRepository.existsByNameIgnoreCase(projectName);
+    public boolean existByProjectNameAndCompanyId(String projectName, Long companyUserId) {
+        return projectRepository.existsByNameIgnoreCaseAndCompanyUserId(projectName,companyUserId);
     }
 
     @Override
-    public boolean existByProjectCode(String projectCode) {
-        return projectRepository.existsByCodeIgnoreCase(projectCode);
+    public boolean existByProjectCodeAndCompanyId(String projectCode, Long companyUserId) {
+        return projectRepository.existsByCodeIgnoreCaseAndCompanyUserId(projectCode,companyUserId);
     }
 
     @Override
@@ -247,7 +245,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectResponse;
     }
 
-    public List<ProjectResponse> multiSearchProject(Pageable pageable, PaginatedContentResponse.Pagination pagination, ProjectSearch projectSearch) {
+    public List<ProjectResponse> multiSearchProject(Pageable pageable, Pagination pagination, ProjectSearch projectSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (Utils.isNotNullAndEmpty(projectSearch.getName())) {
             booleanBuilder.and(QProject.project.name.containsIgnoreCase(projectSearch.getName()));
@@ -439,11 +437,38 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public boolean projectCount(Long companyId) {
         Long project = projectRepository.findByCompanyUserId(companyId).stream().count();
-        Long numberOfProject = companyUserRepository.findById(companyId).get().getLicenses().getNoOfProjects();
-        if (project < numberOfProject) {
+        CompanyUser companyUser = companyUserRepository.findById(companyId).get();
+        Long number = companyUser.getLicenses().getNoOfProjects();
+        if (project < number) {
             return true;
         }
         return false;
     }
-}
 
+    @Override
+    public List<ProjectResponse> getProjectByCompanyId(Long companyUserId, Pageable pageable,
+        Pagination pagination) {
+        List<ProjectResponse> projectResponseList = new ArrayList<>();
+        Page<Project> projectPage = projectRepository.findByCompanyUserId(companyUserId,pageable);
+        pagination.setTotalRecords(projectPage.getTotalElements());
+        pagination.setPageSize(projectPage.getTotalPages());
+        for (Project project : projectPage){
+            ProjectResponse projectResponse = new ProjectResponse();
+            BeanUtils.copyProperties(project,projectResponse);
+            String existingConfigFile = project.getConfigFilePath();
+            String existingJarFile = project.getJarFilePath();
+            if (existingConfigFile != null && !existingConfigFile.isEmpty()) {
+                Path config = Paths.get(existingConfigFile);
+                String jarFileName = config.getFileName().toString();
+                projectResponse.setConfigFile(jarFileName);
+            }
+            if (existingJarFile != null && !existingJarFile.isEmpty()) {
+                Path jar = Paths.get(existingJarFile);
+                String configFileName = jar.getFileName().toString();
+                projectResponse.setJarFile(configFileName);
+            }
+            projectResponseList.add(projectResponse);
+        }
+        return projectResponseList;
+    }
+}

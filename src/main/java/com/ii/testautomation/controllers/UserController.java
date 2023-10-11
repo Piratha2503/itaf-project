@@ -115,6 +115,8 @@ public class UserController {
 
     @GetMapping(value = EndpointURI.USERS_BY_COMPANY_ID)
     public ResponseEntity<Object> getAllUserByCompanyIdWithPagination(@PathVariable Long id, @RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @RequestParam(name = "direction") String direction, @RequestParam(name = "sortField") String sortField, UserSearch userSearch) {
+        if (!companyUserService.existsById(id))
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), sortField);
         PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page, size, 0, 0L);
         return ResponseEntity.ok(new ContentResponse<>(Constants.USERS, userService.getAllUserByCompanyUserId(pageable, pagination, id, userSearch), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getAllUserByCompanyIdMessage()));
@@ -149,15 +151,17 @@ public class UserController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistsCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
         else if (userService.existsByStatusAndEmail(LoginStatus.DEACTIVATE.getStatus(), userRequest.getEmail()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
-        else if (companyUserService.existsByStatusAndEmail(false, userRequest.getEmail()))
+           else if (userService.existsByStatusAndEmail(LoginStatus.MAILED.getStatus(), userRequest.getEmail()))
+               return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserVerificationPendingMessage()));
+           else if (companyUserService.existsByStatusAndEmail(false, userRequest.getEmail()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
         else if (userService.existsByStatusAndEmail(LoginStatus.LOCKED.getStatus(), userRequest.getEmail()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserLockedMessage()));
         else if (userService.existsByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword())) {
-            if (userService.existsByStatusAndEmail(LoginStatus.ACTIVE.getStatus(), userRequest.getEmail()))
-                return ResponseEntity.ok(new ContentResponse<>(Constants.TOKEN, userService.generateNonExpiringToken(userRequest.getEmail()), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLoginSuccessMessage()));
-            if (userService.existsByStatusAndEmail(LoginStatus.PENDING.getStatus(), userRequest.getEmail()))
-                return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTempPasswordLoginSuccessMessage()));
+               if (userService.existsByStatusAndEmail(LoginStatus.ACTIVE.getStatus(), userRequest.getEmail()))
+                   return ResponseEntity.ok(new ContentResponse<>(Constants.TOKEN, userService.generateNonExpiringToken(userRequest.getEmail()), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getLoginSuccessMessage()));
+               if (userService.existsByStatusAndEmail(LoginStatus.PENDING.getStatus(), userRequest.getEmail()))
+                   return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getTempPasswordLoginSuccessMessage()));
         } else if (userService.existsByEmail(userRequest.getEmail()) && !userService.existsByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword())) {
             userService.invalidPassword(userRequest.getEmail());
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getInvalidUserNamePasswordMessage()));
@@ -177,7 +181,7 @@ public class UserController {
                 return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getTokenAlreadyUsedMessage()));
         }
         userService.changePassword(token, userRequest.getEmail(), userRequest.getPassword());
-        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), "Password Created Successfully"));
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUserPasswordCreateSuccessMessage()));
 
     }
 
@@ -187,6 +191,8 @@ public class UserController {
         if (!userService.existsByEmail(email))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getUserNotExistsCode(),statusCodeBundle.getEmailNotExistMessage()));
         if(companyUserService.existsByStatusAndEmail(false,email))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
+        if(userService.existsByStatusAndEmail(LoginStatus.DEACTIVATE.getStatus(), email))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getUserDeactivatedMessage()));
         userService.sendMail(email);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getEmailSuccessFullySend()));

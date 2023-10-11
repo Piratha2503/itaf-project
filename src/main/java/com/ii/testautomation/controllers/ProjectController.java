@@ -8,6 +8,7 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.response.common.PaginatedContentResponse.Pagination;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
@@ -47,17 +48,20 @@ public class ProjectController {
                                               @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
                                               @RequestParam(value = "configFile", required = false) MultipartFile configFile) throws JsonProcessingException {
         ProjectRequest projectRequest = objectMapper.readValue(project, ProjectRequest.class);
+        if (projectRequest.getCompanyUserId() == null)
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getNullValuesCode(),statusCodeBundle.getCompanyUserIdNullMessage()));
+
         if (!Utils.checkRagexBeforeAfterWords(projectRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSpacesNotAllowedMessage()));
         }
-        if (projectService.existByProjectName(projectRequest.getName())) {
+        if (projectService.existByProjectNameAndCompanyId(projectRequest.getName(),projectRequest.getCompanyUserId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectNameAlReadyExistMessage()));
         }
-        if (projectService.existByProjectCode(projectRequest.getCode())) {
+        if (projectService.existByProjectCodeAndCompanyId(projectRequest.getCode(),projectRequest.getCompanyUserId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
@@ -82,6 +86,7 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getSaveProjectSuccessMessage()));
     }
+
     @PutMapping(value = EndpointURI.PROJECT)
     public ResponseEntity<Object> editProject(@RequestParam String project,
                                               @RequestParam(value = "jarFile", required = false) MultipartFile jarFile,
@@ -146,6 +151,7 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(),
                 statusCodeBundle.getGetProjectSuccessMessage()));
     }
+
     @DeleteMapping(value = EndpointURI.PROJECT_BY_ID)
     public ResponseEntity<Object> deleteProject(@PathVariable Long id) {
         if (!projectService.existByProjectId(id)) {
@@ -164,4 +170,18 @@ public class ProjectController {
                 statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDeleteProjectSuccessMessage()
         ));
     }
+
+    @GetMapping(EndpointURI.PROJECT_BY_COMPANY_ID)
+    public ResponseEntity<Object> getProjectByCompanyId(@PathVariable Long id,
+        @RequestParam(name = "page") int page,
+        @RequestParam(name = "size") int size,
+        @RequestParam(name = "direction") String direction,
+        @RequestParam(name = "sortField") String sortField) {
+        if (id == null)
+        return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getNullValuesCode(),statusCodeBundle.getCompanyUserIdNullMessage()));
+        Pageable pageable = PageRequest.of(page,size,Sort.Direction.valueOf(direction),sortField);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page,size,0,0L);
+        return ResponseEntity.ok(new PaginatedContentResponse<>(Constants.PROJECTS,projectService.getProjectByCompanyId(id,pageable,pagination),RequestStatus.SUCCESS.getStatus(),statusCodeBundle.getCommonSuccessCode(),statusCodeBundle.getGetAllProjectSuccessMessage(),pagination));
+    }
+
 }

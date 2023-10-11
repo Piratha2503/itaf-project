@@ -40,7 +40,6 @@ public class TestTypesController {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getTestTypeNameAlReadyExistMessage()));
-
         testTypesService.saveTestTypes(testTypesRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getInsertTestTypesSuccessMessage()));
     }

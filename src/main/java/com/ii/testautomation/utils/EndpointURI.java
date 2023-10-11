@@ -23,6 +23,7 @@ public final class EndpointURI {
     public static final String PROJECT_IMPORT = PROJECT + "/import";
     public static final String PROJECTS = BASE_API_PATH + SEARCH + SLASH + "products";
     public static final String PROJECT_BY_ID = PROJECT + ID;
+    public static final String PROJECT_BY_COMPANY_ID = PROJECT + "/company" + ID;
 
     // URL for Main Modules
     public static final String MAIN_MODULE = BASE_API_PATH + "Mainmodule";

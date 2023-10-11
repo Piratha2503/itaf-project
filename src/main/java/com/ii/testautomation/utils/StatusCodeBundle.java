@@ -551,6 +551,10 @@ public class StatusCodeBundle {
     private String TempPasswordLoginSuccessMessage;
     @Value("${message.success.verificationLink.send}")
     private String ResetLinkForwardSuccessMessage;
+    @Value("${message.failure.user.mailed}")
+    private String UserVerificationPendingMessage;
+    @Value("${message.success.validation.user.password.create}")
+    private String UserPasswordCreateSuccessMessage;
 
     // Ragex
     @Value("${message.failure.space}")

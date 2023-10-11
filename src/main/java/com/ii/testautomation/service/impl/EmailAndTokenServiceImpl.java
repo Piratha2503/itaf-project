@@ -85,7 +85,7 @@ public class EmailAndTokenServiceImpl implements EmailAndTokenService {
 
     Claims claims = Jwts.claims().setIssuer(user.getId().toString());
     claims.put("Roll",user.getDesignation().getName());
-    claims.put("companyUserId:",user.getCompanyUser().getId());
+    claims.put("companyUserId",user.getCompanyUser().getId());
     return Jwts.builder()
           .setClaims(claims)
           .signWith(SignatureAlgorithm.HS256, uniqueIdentifier).compact();
@@ -109,7 +109,7 @@ public class EmailAndTokenServiceImpl implements EmailAndTokenService {
         helper.setText(emailBody.getEmailBody1()+token+emailBody.getEmailBody2(), true);
       }
       javaMailSender.send(mimeMessage);
-      user.setStatus(LoginStatus.PENDING.getStatus());
+      user.setStatus(LoginStatus.MAILED.getStatus());
       userRepository.save(user);
     }  catch (MessagingException e) {
       throw new RuntimeException(e);

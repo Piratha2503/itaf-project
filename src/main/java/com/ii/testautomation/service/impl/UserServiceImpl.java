@@ -13,6 +13,7 @@ import com.ii.testautomation.repositories.*;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import com.ii.testautomation.service.EmailAndTokenService;
 import com.ii.testautomation.service.UserService;
+import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
 import com.ii.testautomation.utils.StatusCodeBundle;
 import com.ii.testautomation.utils.Utils;
@@ -72,11 +73,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(UserRequest userRequest) {
+        Users companyAdmin = userRepository.findById(userRequest.getCompanyUserId()).get();
         Users user = new Users();
         Designation designation = designationRepository.findById(userRequest.getDesignationId()).get();
-        CompanyUser companyUser = companyUserRepository.findById(userRequest.getCompanyUserId()).get();
         user.setDesignation(designation);
-        user.setCompanyUser(companyUser);
+        user.setCompanyUser(companyAdmin.getCompanyUser());
         BeanUtils.copyProperties(userRequest, user);
         user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
@@ -212,7 +213,8 @@ public class UserServiceImpl implements UserService {
         pagination.setPageSize(usersPage.getTotalPages());
 
         for (Users users : usersPage) {
-            if (users.getDesignation().getName().equals("ITAF admin")) continue;
+            if (users.getDesignation().getName().equals(Constants.ITAF_ADMIN)) continue;
+            if (users.getDesignation().getName().equals(Constants.COMPANY_ADMIN)) continue;
             UserResponse userResponse = new UserResponse();
             userResponse.setCompanyUserId(users.getCompanyUser().getId());
             userResponse.setDesignationId(users.getDesignation().getId());
@@ -270,10 +272,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean totalCountUser(Long companyId) {
-        Long user = userRepository.findByCompanyUserId(companyId).stream().count();
-        CompanyUser companyUser = companyUserRepository.findById(companyId).get();
+        Users user = userRepository.findById(companyId).get();
+        Long companyUserId = user.getCompanyUser().getId();
+        Long userCount = userRepository.findByCompanyUserId(companyUserId).stream().count();
+        CompanyUser companyUser = companyUserRepository.findById(companyUserId).get();
         Long number = companyUser.getLicenses().getNoOfUsers();
-        if (user < number) {
+        if (userCount < number) {
             return true;
         }
         return false;

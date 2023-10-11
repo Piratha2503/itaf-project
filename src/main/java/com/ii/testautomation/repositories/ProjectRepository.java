@@ -1,6 +1,8 @@
 package com.ii.testautomation.repositories;
 
 import com.ii.testautomation.entities.Project;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
@@ -18,4 +20,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, Queryds
     boolean existsByUsersId(Long usersId);
 
     List<Project> findByCompanyUserId(Long companyId);
+
+    Page<Project> findByCompanyUserId(Long companyUserId, Pageable pageable);
+
+    boolean existsByNameIgnoreCaseAndCompanyUserId(String projectName, Long companyUserId);
+
+    boolean existsByCodeIgnoreCaseAndCompanyUserId(String projectCode, Long companyUserId);
 }
