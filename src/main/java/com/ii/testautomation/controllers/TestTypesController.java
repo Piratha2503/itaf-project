@@ -168,5 +168,4 @@ public class TestTypesController {
 
         return ResponseEntity.ok(new ContentResponse<>(Constants.TESTTYPES, testTypesService.getTestTypesByCompanyUserId(id), RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getViewTestTypeByCompanyUSerIdSuccessMessage()));
     }
-
 }
