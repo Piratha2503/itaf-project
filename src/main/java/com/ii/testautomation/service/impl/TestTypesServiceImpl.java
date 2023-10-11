@@ -3,12 +3,12 @@ package com.ii.testautomation.service.impl;
 import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
-import com.ii.testautomation.entities.TestGrouping;
-import com.ii.testautomation.entities.TestTypes;
-import com.ii.testautomation.entities.QTestTypes;
+import com.ii.testautomation.entities.*;
+import com.ii.testautomation.repositories.CompanyUserRepository;
 import com.ii.testautomation.repositories.TestGroupingRepository;
 import com.ii.testautomation.repositories.TestTypesRepository;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
+import com.ii.testautomation.service.CompanyUserService;
 import com.ii.testautomation.service.TestTypesService;
 import com.ii.testautomation.utils.Utils;
 import com.querydsl.core.BooleanBuilder;
@@ -37,10 +37,14 @@ public class TestTypesServiceImpl implements TestTypesService {
     private TestTypesRepository testTypesRepository;
     @Autowired
     private TestGroupingRepository testGroupingRepository;
+    @Autowired
+    private CompanyUserRepository companyUserRepository;
 
     @Override
     public void saveTestTypes(TestTypesRequest testTypesRequest) {
         TestTypes testTypes = new TestTypes();
+        CompanyUser companyUser=companyUserRepository.findById(testTypesRequest.getCompanyUserId()).get();
+        testTypes.setCompanyUser(companyUser);
         BeanUtils.copyProperties(testTypesRequest, testTypes);
         testTypesRepository.save(testTypes);
     }
@@ -212,6 +216,11 @@ public class TestTypesServiceImpl implements TestTypesService {
         }
     }
 
+    @Override
+    public boolean isExistCompanyUserId(Long id) {
+            return companyUserRepository.existsById(id);
+        }
+
     private Map<String, Integer> getColumnMap(Row headerRow) {
         Map<String, Integer> columnMap = new HashMap<>();
 
@@ -238,5 +247,18 @@ public class TestTypesServiceImpl implements TestTypesService {
         }
         cell.setCellType(CellType.NUMERIC);
         return (long) cell.getNumericCellValue();
+    }
+
+    @Override
+    public List<TestTypesResponse> getTestTypesByCompanyUserId(Long companyUserId) {
+        List<TestTypesResponse> testTypesResponseList = new ArrayList<>();
+        List<TestTypes> testTypesList = testTypesRepository.findAllByCompanyUserId(companyUserId);
+        for (TestTypes testTypes : testTypesList) {
+            TestTypesResponse testTypesResponse = new TestTypesResponse();
+            testTypesResponse.setCompanyUserId(testTypes.getCompanyUser().getId());
+            BeanUtils.copyProperties(testTypes, testTypesResponse);
+            testTypesResponseList.add(testTypesResponse);
+        }
+        return testTypesResponseList;
     }
 }

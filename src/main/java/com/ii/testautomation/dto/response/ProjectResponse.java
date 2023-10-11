@@ -12,4 +12,5 @@ public class ProjectResponse {
     private String code;
     private String jarFile;
     private String configFile;
+    private Long companyUserId;
 }

@@ -16,4 +16,7 @@ public class TestTypes extends DateAudit
     private String name;
     @Column(length = 1500)
     private String description;
+    @ManyToOne
+    @JoinColumn(name = "company_user_id", nullable = false)
+    private CompanyUser companyUser;
 }
