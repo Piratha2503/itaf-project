@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
+import java.util.List;
+
 public interface LicensesRepository extends JpaRepository<Licenses, Long>, QuerydslPredicateExecutor<Licenses> {
     boolean existsByNameIgnoreCase(String name);
 
@@ -16,5 +18,4 @@ public interface LicensesRepository extends JpaRepository<Licenses, Long>, Query
 
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 
-    Licenses findByCompanyId(Long companyId);
 }

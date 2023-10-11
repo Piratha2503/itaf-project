@@ -114,7 +114,7 @@ public class EmailAndTokenServiceImpl implements EmailAndTokenService {
       else
       {
         helper.setSubject(passwordResetMailSubject);
-        helper.setText(token, true);
+        helper.setText(emailBody.getEmailBody1()+token, true);
       }
       javaMailSender.send(mimeMessage);
 

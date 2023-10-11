@@ -281,6 +281,8 @@ public class StatusCodeBundle {
     private String TestTypeNotMappedMessage;
     @Value("${message.success.getType.project}")
     private String testTypeByProjectId;
+    @Value("${message.success.getType.comapanyUser}")
+    private String viewTestTypeByCompanyUSerIdSuccessMessage;
 
     //TestCases code
     @Value("${code.validation.testCases.notExists}")
@@ -696,6 +698,8 @@ public class StatusCodeBundle {
     private String UserAlreadyExistsCode;
     @Value("${code.validation.user.notExists}")
     private String UserNotExistsCode;
+    @Value("${message.failure.ComapanyUser.Id.NotFound}")
+    private String comapanyUserIdNotFound;
 
     // User Messages
     @Value("${message.validation.user.email.alreadyExists}")

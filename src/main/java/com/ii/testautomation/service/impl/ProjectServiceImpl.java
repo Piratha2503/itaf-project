@@ -439,8 +439,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public boolean projectCount(Long companyId) {
         Long project = projectRepository.findByCompanyUserId(companyId).stream().count();
-        Long numberOfProject = licensesRepository.findByCompanyId(companyId).getNoOfProjects();
-        if (project < numberOfProject) {
+        CompanyUser companyUser = companyUserRepository.findById(companyId).get();
+        Long number = companyUser.getLicenses().getNoOfProjects();
+        if (project < number) {
             return true;
         }
         return false;
