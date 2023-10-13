@@ -114,8 +114,6 @@ public class CompanyUserController {
     public ResponseEntity<Object> deleteById(@PathVariable Long id) {
         if (!companyUserService.existsById(id))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
-        if (userService.existsByCompanyUserId(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserDeleteDependentCode(), statusCodeBundle.getCompanyUserDeleteDependentMessage()));
         companyUserService.deleteById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getCompanyUserDeleteSuccessMessage()));
     }

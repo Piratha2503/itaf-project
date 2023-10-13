@@ -184,14 +184,16 @@ public class UserServiceImpl implements UserService {
 
         if (userRequest.getDesignationId() != null)
             user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
-
+        if (userRequest.getStatus()) user.setStatus(LoginStatus.NEW.getStatus());
+        else if (!(userRequest.getStatus())) user.setStatus(LoginStatus.DEACTIVATE.getStatus());
         userRepository.save(user);
     }
 
     @Override
     public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long userId, UserSearch userSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        Long companyUserId = userRepository.findById(userId).get().getCompanyUser().getId();
+        //Long companyUserId = userRepository.findById(userId).get().getCompanyUser().getId();
+        Long companyUserId = userId;
         if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
             booleanBuilder.and(QUsers.users.firstName.containsIgnoreCase(userSearch.getFirstName()));
         }
@@ -261,6 +263,8 @@ public class UserServiceImpl implements UserService {
         List<Users> usersList = userRepository.findAllByCompanyUser_IdAndDesignation_Id(userId, designationId);
         List<UserResponse> userResponseList = new ArrayList<>();
         for (Users user : usersList) {
+            if (user.getDesignation().getName().equals(Constants.ITAF_ADMIN)) continue;
+            if (user.getDesignation().getName().equals(Constants.COMPANY_ADMIN)) continue;
             UserResponse userResponse = new UserResponse();
             userResponse.setCompanyUserName(user.getCompanyUser().getCompanyName());
             userResponse.setDesignationName(user.getDesignation().getName());
@@ -274,7 +278,9 @@ public class UserServiceImpl implements UserService {
     public Boolean totalCountUser(Long companyId) {
         Users user = userRepository.findById(companyId).get();
         Long companyUserId = user.getCompanyUser().getId();
-        Long userCount = userRepository.findByCompanyUserId(companyUserId).stream().count();
+        Long totalUserCount = userRepository.findByCompanyUserId(companyUserId).stream().count();
+        Long deActiveCount = userRepository.findByCompanyUserIdAndStatus(companyUserId,LoginStatus.DEACTIVATE.getStatus()).stream().count();
+        Long userCount = totalUserCount-deActiveCount;
         CompanyUser companyUser = companyUserRepository.findById(companyUserId).get();
         Long number = companyUser.getLicenses().getNoOfUsers();
         if (userCount < number) {

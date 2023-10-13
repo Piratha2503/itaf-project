@@ -9,9 +9,9 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import java.util.List;
 
 public interface TestTypesRepository extends JpaRepository<TestTypes, Long>, QuerydslPredicateExecutor<TestTypes> {
-
-    boolean existsByNameIgnoreCase(String name);
-
-    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
     List<TestTypes> findAllByCompanyUserId(Long id);
+
+    boolean existsByNameIgnoreCaseAndCompanyUserId(String name, Long companyUserId);
+
+    boolean existsByNameIgnoreCaseAndCompanyUserIdAndIdNot(String name, Long companyUserId, Long id);
 }

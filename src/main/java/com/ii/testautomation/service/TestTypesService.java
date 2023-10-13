@@ -3,7 +3,6 @@ package com.ii.testautomation.service;
 import com.ii.testautomation.dto.request.TestTypesRequest;
 import com.ii.testautomation.dto.response.TestTypesResponse;
 import com.ii.testautomation.dto.search.TestTypesSearch;
-import com.ii.testautomation.entities.TestTypes;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,11 +27,11 @@ public interface TestTypesService {
 
     Map<Integer, TestTypesRequest> excelProcess(MultipartFile multipartFile);
 
-    boolean isExistsTestTypeByName(String name);
+    boolean isExistsTestTypeByNameAndCompanyUserId(String name, Long companyUserId);
 
     boolean isExistsTestTypeById(Long id);
 
-    boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id);
+    boolean isExistsTestTypesByNameIgnoreCaseAndCompanyUserIdAndIdNot(String name, Long companyUserId ,Long id);
 
     boolean existsByTestTypesId(Long id);
 

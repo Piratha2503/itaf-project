@@ -41,7 +41,7 @@ public class TestTypesController {
     public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (!Utils.checkRagexBeforeAfterWords(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
-        if (testTypesService.isExistsTestTypeByName(testTypesRequest.getName()))
+        if (testTypesService.isExistsTestTypeByNameAndCompanyUserId(testTypesRequest.getName(),testTypesRequest.getCompanyUserId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getTestTypeNameAlReadyExistMessage()));
         if (!companyUserService.existsByCompanyUserId(testTypesRequest.getCompanyUserId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
@@ -56,7 +56,7 @@ public class TestTypesController {
         if (!Utils.checkRagexBeforeAfterWords(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
 
-        if (testTypesService.isExistsTestTypesByNameIgnoreCaseAndIdNot(testTypesRequest.getName(), testTypesRequest.getId()))
+        if (testTypesService.isExistsTestTypesByNameIgnoreCaseAndCompanyUserIdAndIdNot(testTypesRequest.getName(), testTypesRequest.getCompanyUserId(), testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypeAlReadyExistCode(), statusCodeBundle.getTestTypeNameAlReadyExistMessage()));
         if (!companyUserService.existsByCompanyUserId(testTypesRequest.getCompanyUserId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
@@ -131,9 +131,6 @@ public class TestTypesController {
                 }
                 if (!Utils.isNotNullAndEmpty(entry.getValue().getDescription())) {
                     testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeDescriptionEmptyMessage(), entry.getKey());
-                }
-                if (testTypesService.isExistsTestTypeByName(entry.getValue().getName())) {
-                    testTypesService.addToErrorMessages(errorMessages, statusCodeBundle.getTestTypeNameAlReadyExistMessage(), entry.getKey());
                 }
             }
 

@@ -95,8 +95,8 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public boolean isExistsTestTypeByName(String name) {
-        return testTypesRepository.existsByNameIgnoreCase(name);
+    public boolean isExistsTestTypeByNameAndCompanyUserId(String name, Long companyUserId) {
+        return testTypesRepository.existsByNameIgnoreCaseAndCompanyUserId(name,companyUserId);
     }
 
     @Override
@@ -105,8 +105,8 @@ public class TestTypesServiceImpl implements TestTypesService {
     }
 
     @Override
-    public boolean isExistsTestTypesByNameIgnoreCaseAndIdNot(String name, Long id) {
-        return testTypesRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+    public boolean isExistsTestTypesByNameIgnoreCaseAndCompanyUserIdAndIdNot(String name, Long companyUserId ,Long id) {
+        return testTypesRepository.existsByNameIgnoreCaseAndCompanyUserIdAndIdNot(name,companyUserId,id);
     }
 
     @Override
