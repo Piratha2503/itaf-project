@@ -28,8 +28,7 @@ public class DesignationServiceImpl implements DesignationService {
     @Override
     public void saveDesignation(DesignationRequest designationRequest) {
         Designation designation = new Designation();
-        CompanyUser companyUser=userRepository.findById(designationRequest.getUserId()).get().getCompanyUser();
-        designation.setCompanyUser(companyUser);
+        designation.setCompanyUser(companyUserRepository.findById(designationRequest.getCompanyUserId()).get());
         BeanUtils.copyProperties(designationRequest, designation);
         designationRepository.save(designation);
     }
@@ -48,9 +47,9 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
-    public List<DesignationResponse> getAllDesignationByCompanyUserId(Long id) {
+    public List<DesignationResponse> getAllDesignationByCompanyUserId(Long companyUserId) {
         List<DesignationResponse> designationResponseList = new ArrayList<>();
-        List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(id);
+        List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(companyUserId);
         for (Designation designation : designationList) {
             if (designation.getName().equals(Constants.COMPANY_ADMIN.toString())) continue;
             DesignationResponse designationResponse = new DesignationResponse();
@@ -61,21 +60,24 @@ public class DesignationServiceImpl implements DesignationService {
     }
 
     @Override
-    public boolean existsByNameAndCompanyAdminUserId(String designationName, Long userId) {
-        Long companyUserId = userRepository.findById(userId).get().getCompanyUser().getId();
+    public boolean existByCompanyAdminId(Long id) {
+        return designationRepository.existsByCompanyUserId(id);
+    }
+
+    @Override
+    public boolean existsByNameAndCompanyAdminId(String designationName, Long companyUserId) {
         return designationRepository.existsByNameIgnoreCaseAndCompanyUserId(designationName, companyUserId);
     }
 
     @Override
-    public List<DesignationResponse> getAllDesignationByCompanyAdminId(Long userId) {
+    public List<DesignationResponse> getAllDesignationByCompanyAdminId(Long companyUserId) {
         List<DesignationResponse> designationResponseList = new ArrayList<>();
-        Long companyId = userRepository.findById(userId).get().getCompanyUser().getId();
-        List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserId(companyId);
+        List<Designation> designationList = designationRepository.findAllDesignationByCompanyUserIdOrderByUpdatedAtDesc(companyUserId);
         for (Designation designation : designationList) {
             if (designation.getName().equals(Constants.COMPANY_ADMIN.toString())) continue;
             DesignationResponse designationResponse=new DesignationResponse();
             BeanUtils.copyProperties(designation, designationResponse);
-           designationResponseList.add(designationResponse);
+            designationResponseList.add(designationResponse);
         }
         return designationResponseList;
     }

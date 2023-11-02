@@ -106,6 +106,9 @@ public class CompanyUserController {
         if (companyUserService.isUpdateCompanyUserContactNumberExists(companyUserRequest.getContactNumber(), companyUserRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserAlReadyExistsCode(), statusCodeBundle.getCompanyUserContactNoAlReadyExistsMessage()));
         }
+        if (!licenseService.checkLicenseReduce(companyUserService.findByCompanyUserId(companyUserRequest.getId()).getLicenses().getId(), companyUserRequest.getLicenses_id()))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getLicenseReducingNotAllowedMessage()));
+
         companyUserService.updateCompanyUser(companyUserRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getUpdateCompanyUserSuccessMessage()));
     }
@@ -113,7 +116,9 @@ public class CompanyUserController {
     @DeleteMapping(EndpointURI.COMPANY_USER_BY_ID)
     public ResponseEntity<Object> deleteById(@PathVariable Long id) {
         if (!companyUserService.existsById(id))
-            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
+       return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
+        if(designationService.existByCompanyAdminId(id))
+            return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),statusCodeBundle.getCompanyUserDependentCode(), statusCodeBundle.getCompanyUserDeleteDependentMessage()));
         companyUserService.deleteById(id);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getCompanyUserDeleteSuccessMessage()));
     }

@@ -202,6 +202,10 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         if (!(companyUserRequest.getLicenses_id() == null)) {
             Licenses license = licensesRepository.findById(companyUserRequest.getLicenses_id()).get();
             companyUser.setLicenses(license);
+            LocalDate startDate = companyUser.getStartDate();
+            int durationMonths = license.getDuration().intValue();
+            LocalDate endDate = startDate.plusMonths(durationMonths);
+            companyUser.setEndDate(endDate);
         }
         if (!(companyUserRequest.getContactNumber() == null))
             companyUser.setContactNumber(companyUserRequest.getContactNumber());
@@ -244,7 +248,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         return companyUserResponse;
     }
 
-    @Scheduled(cron = "0/1 * * * * ?")
+ @Scheduled(cron = "0/1 * * * * ?")
     public void deactivateExpiredCompanyUsers() {
         LocalDate currentDate = LocalDate.now();
         List<CompanyUser> expiredCompanyUsers = companyUserRepository.findByEndDateLessThanEqualAndStatusTrue(currentDate);
@@ -253,4 +257,5 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         }
         companyUserRepository.saveAll(expiredCompanyUsers);
     }
+
 }

@@ -31,4 +31,5 @@ public interface LicenseService {
 
     LicenseResponse getLicenseById(Long licenseId);
 
+    boolean checkLicenseReduce(Long oldLicenseId,Long newLicenseId);
 }

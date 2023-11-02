@@ -73,11 +73,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(UserRequest userRequest) {
-        Users companyAdmin = userRepository.findById(userRequest.getCompanyUserId()).get();
+        CompanyUser companyAdmin = companyUserRepository.findById(userRequest.getCompanyUserId()).get();
         Users user = new Users();
         Designation designation = designationRepository.findById(userRequest.getDesignationId()).get();
         user.setDesignation(designation);
-        user.setCompanyUser(companyAdmin.getCompanyUser());
+        user.setCompanyUser(companyAdmin);
         BeanUtils.copyProperties(userRequest, user);
         user.setStatus(LoginStatus.NEW.getStatus());
         userRepository.save(user);
@@ -165,9 +165,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(UserRequest userRequest) {
-        Users newUser = new Users();
+
         Users user = userRepository.findById(userRequest.getId()).get();
-        newUser.setId(userRequest.getId());
 
         if (userRequest.getEmail() != null) user.setEmail(userRequest.getEmail());
 
@@ -178,10 +177,9 @@ public class UserServiceImpl implements UserService {
         if (userRequest.getLastName() != null) user.setLastName(userRequest.getLastName());
 
         if (userRequest.getCompanyUserId() != null) {
-            CompanyUser companyUser = userRepository.findById(userRequest.getCompanyUserId()).get().getCompanyUser();
-            user.setCompanyUser(companyUser);
+            CompanyUser companyAdmin = companyUserRepository.findById(userRequest.getCompanyUserId()).get();
+            user.setCompanyUser(companyAdmin);
         }
-
         if (userRequest.getDesignationId() != null)
             user.setDesignation(designationRepository.findById(userRequest.getDesignationId()).get());
         if (userRequest.getStatus()) user.setStatus(LoginStatus.NEW.getStatus());
@@ -192,7 +190,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> getAllUserByCompanyUserId(Pageable pageable, PaginatedContentResponse.Pagination pagination, Long userId, UserSearch userSearch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        //Long companyUserId = userRepository.findById(userId).get().getCompanyUser().getId();
         Long companyUserId = userId;
         if (Utils.isNotNullAndEmpty(userSearch.getFirstName())) {
             booleanBuilder.and(QUsers.users.firstName.containsIgnoreCase(userSearch.getFirstName()));
@@ -218,6 +215,9 @@ public class UserServiceImpl implements UserService {
             if (users.getDesignation().getName().equals(Constants.ITAF_ADMIN)) continue;
             if (users.getDesignation().getName().equals(Constants.COMPANY_ADMIN)) continue;
             UserResponse userResponse = new UserResponse();
+            if (users.getStatus().equals(LoginStatus.DEACTIVATE.getStatus()))
+                userResponse.setActive(false);
+            else userResponse.setActive(true);
             userResponse.setCompanyUserId(users.getCompanyUser().getId());
             userResponse.setDesignationId(users.getDesignation().getId());
             userResponse.setCompanyUserName(users.getCompanyUser().getCompanyName());
@@ -275,9 +275,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean totalCountUser(Long companyId) {
-        Users user = userRepository.findById(companyId).get();
-        Long companyUserId = user.getCompanyUser().getId();
+    public Boolean totalCountUser(Long companyUserId) {
+
         Long totalUserCount = userRepository.findByCompanyUserId(companyUserId).stream().count();
         Long deActiveCount = userRepository.findByCompanyUserIdAndStatus(companyUserId,LoginStatus.DEACTIVATE.getStatus()).stream().count();
         Long userCount = totalUserCount-deActiveCount;

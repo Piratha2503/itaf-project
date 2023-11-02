@@ -17,4 +17,5 @@ public class UserResponse {
     private String designationName;
     private Long companyUserId;
     private String companyUserName;
+    private boolean isActive;
 }

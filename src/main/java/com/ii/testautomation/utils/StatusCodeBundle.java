@@ -595,6 +595,8 @@ public class StatusCodeBundle {
     private String LicenseNameNullOrEmptyMessage;
     @Value("${message.failure.LicenceId.null}")
     private String LicenseIdNullMessage;
+    @Value("${message.error.reduce.notAllowed.License}")
+    private String LicenseReducingNotAllowedMessage;
 
     //Designation Code
     @Value("${code.validation.designation.alreadyExist}")

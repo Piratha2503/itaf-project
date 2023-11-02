@@ -48,7 +48,7 @@ public interface UserService {
 
     List<UserResponse> getAllUsersByCompanyAdminAndDesignation(Long userId, Long designationId);
 
-    Boolean totalCountUser(Long companyId);
+    Boolean totalCountUser(Long companyUserId);
 
     void sendMail(String email);
 }

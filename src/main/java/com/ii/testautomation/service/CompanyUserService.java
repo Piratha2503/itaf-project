@@ -7,7 +7,6 @@ import com.ii.testautomation.entities.CompanyUser;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
-import java.util.Map;
 
 public interface CompanyUserService {
 

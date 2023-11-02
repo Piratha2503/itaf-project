@@ -89,6 +89,25 @@ public class LicenseServiceImpl implements LicenseService {
     }
 
     @Override
+    public boolean checkLicenseReduce(Long oldLicenseId, Long newLicenseId) {
+        Licenses oldLicense = licenseRepository.findById(oldLicenseId).get();
+        Long oldNoOfUsers = oldLicense.getNoOfUsers();
+        Long oldNoOfProjects = oldLicense.getNoOfProjects();
+        Long oldDuration = oldLicense.getDuration();
+
+        Licenses newLicense = licenseRepository.findById(newLicenseId).get();
+        Long newNoOfUsers = newLicense.getNoOfUsers();
+        Long newNoOfProjects = newLicense.getNoOfProjects();
+        Long newDuration = newLicense.getDuration();
+
+        if (newNoOfUsers < oldNoOfUsers) return false;
+        else if (newNoOfProjects < oldNoOfProjects) return false;
+        else if (newDuration < oldDuration) return false;
+        else return true;
+
+    }
+
+    @Override
     public Licenses findById(Long id) {
         return licenseRepository.findById(id).get();
     }

@@ -8,9 +8,9 @@ import java.util.List;
 public interface DesignationService {
     void saveDesignation(DesignationRequest designationRequest);
 
-    boolean existsByNameAndCompanyAdminUserId(String designationName, Long userId);
+    boolean existsByNameAndCompanyAdminId(String designationName, Long companyUserId);
 
-    List<DesignationResponse> getAllDesignationByCompanyAdminId(Long userId);
+    List<DesignationResponse> getAllDesignationByCompanyAdminId(Long companyUserId);
 
     void deleteDesignationById(Long id);
 
@@ -21,4 +21,6 @@ public interface DesignationService {
     DesignationResponse getDesignationById(Long id);
 
     List<DesignationResponse> getAllDesignationByCompanyUserId(Long companyUserId);
+
+    boolean existByCompanyAdminId(Long id);
 }
