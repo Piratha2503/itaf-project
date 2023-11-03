@@ -240,7 +240,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Transactional
-//    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 5000)
     public void staticScheduling() throws IOException {
         System.out.println("==========================================DYNAMIC===============");
         List<Scheduling> schedulingList = schedulingRepository.findAll();
