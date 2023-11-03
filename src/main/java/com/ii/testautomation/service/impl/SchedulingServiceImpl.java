@@ -424,7 +424,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Transactional
-//    @Scheduled(fixedRate = 1000)
+   @Scheduled(fixedRate = 1000)
     public void calculateAndPrintPercentage() {
         List<ProgressBar> progressBarList = progressBarRepository.findAll();
         for (ProgressBar progressBar : progressBarList) {

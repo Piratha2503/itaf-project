@@ -97,7 +97,7 @@ public class DesignationController {
         if (!companyUserService.existsByCompanyUserId(designationRequest.getCompanyUserId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getCompanyUserNotExistsCode(), statusCodeBundle.getCompanyUserIdNotExistMessage()));
         }
-       // if(userService.getAllUserCountByCompanyUserId())
+
         designationService.saveDesignation(designationRequest);
         return ResponseEntity.ok(new BaseResponse(RequestStatus.SUCCESS.getStatus(), statusCodeBundle.getCommonSuccessCode(), statusCodeBundle.getDesignationUpdateSuccessMessage()));
     }
