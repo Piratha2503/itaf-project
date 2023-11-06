@@ -8,7 +8,6 @@ import com.ii.testautomation.enums.RequestStatus;
 import com.ii.testautomation.response.common.BaseResponse;
 import com.ii.testautomation.response.common.ContentResponse;
 import com.ii.testautomation.response.common.PaginatedContentResponse;
-import com.ii.testautomation.response.common.PaginatedContentResponse.Pagination;
 import com.ii.testautomation.service.ModulesService;
 import com.ii.testautomation.service.ProjectService;
 import com.ii.testautomation.utils.Constants;
@@ -51,7 +50,7 @@ public class ProjectController {
         if (projectRequest.getCompanyUserId() == null)
             return ResponseEntity.ok(new BaseResponse(RequestStatus.ERROR.getStatus(), statusCodeBundle.getNullValuesCode(),statusCodeBundle.getCompanyUserIdNullMessage()));
 
-        if (!Utils.checkRagexBeforeAfterWords(projectRequest.getName())) {
+        if (!Utils.checkRegexBeforeAfterWords(projectRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSpacesNotAllowedMessage()));
@@ -102,7 +101,7 @@ public class ProjectController {
                     statusCodeBundle.getProjectAlReadyExistCode(),
                     statusCodeBundle.getProjectCodeAlReadyExistMessage()));
         }
-        if (!Utils.checkRagexBeforeAfterWords(projectRequest.getName())) {
+        if (!Utils.checkRegexBeforeAfterWords(projectRequest.getName())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),
                     statusCodeBundle.getFailureCode(),
                     statusCodeBundle.getSpacesNotAllowedMessage()));

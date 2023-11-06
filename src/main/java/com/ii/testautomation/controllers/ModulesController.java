@@ -42,7 +42,7 @@ public class ModulesController {
 
     @PostMapping(value = EndpointURI.MODULE)
     public ResponseEntity<Object> saveModule(@RequestBody ModulesRequest modulesRequest) {
-        if (!Utils.checkRagexBeforeAfterWords(modulesRequest.getName()))
+        if (!Utils.checkRegexBeforeAfterWords(modulesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (modulesService.isModuleExistsByName(modulesRequest.getName(), modulesRequest.getProject_id())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleAlReadyExistsCode(), statusCodeBundle.getModuleNameAlReadyExistsMessage()));
@@ -62,7 +62,7 @@ public class ModulesController {
         if (!modulesService.existsByModulesId(modulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getModuleNotExistsCode(), statusCodeBundle.getModuleNotExistsMessage()));
         }
-        if (!Utils.checkRagexBeforeAfterWords(modulesRequest.getName()))
+        if (!Utils.checkRegexBeforeAfterWords(modulesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (modulesService.isUpdateModuleNameExists(modulesRequest.getName(), modulesRequest.getId())) {
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(),

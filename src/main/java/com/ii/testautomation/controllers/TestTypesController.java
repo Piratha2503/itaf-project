@@ -39,7 +39,7 @@ public class TestTypesController {
 
     @PostMapping(EndpointURI.TEST_TYPE)
     public ResponseEntity<Object> insertTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
-        if (!Utils.checkRagexBeforeAfterWords(testTypesRequest.getName()))
+        if (!Utils.checkRegexBeforeAfterWords(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
         if (testTypesService.isExistsTestTypeByNameAndCompanyUserId(testTypesRequest.getName(),testTypesRequest.getCompanyUserId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getAlreadyExistCode(), statusCodeBundle.getTestTypeNameAlReadyExistMessage()));
@@ -53,7 +53,7 @@ public class TestTypesController {
     public ResponseEntity<Object> updateTestTypes(@RequestBody TestTypesRequest testTypesRequest) {
         if (!testTypesService.isExistsTestTypeById(testTypesRequest.getId()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getTestTypeNotExistCode(), statusCodeBundle.getTestTypeIdNotFoundMessage()));
-        if (!Utils.checkRagexBeforeAfterWords(testTypesRequest.getName()))
+        if (!Utils.checkRegexBeforeAfterWords(testTypesRequest.getName()))
             return ResponseEntity.ok(new BaseResponse(RequestStatus.FAILURE.getStatus(), statusCodeBundle.getFailureCode(), statusCodeBundle.getSpacesNotAllowedMessage()));
 
         if (testTypesService.isExistsTestTypesByNameIgnoreCaseAndCompanyUserIdAndIdNot(testTypesRequest.getName(), testTypesRequest.getCompanyUserId(), testTypesRequest.getId()))

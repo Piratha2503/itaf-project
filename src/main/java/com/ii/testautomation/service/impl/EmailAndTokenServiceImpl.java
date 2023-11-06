@@ -14,10 +14,8 @@ import com.ii.testautomation.service.EmailAndTokenService;
 import com.ii.testautomation.utils.Constants;
 import com.ii.testautomation.utils.EmailBody;
 import com.ii.testautomation.utils.StatusCodeBundle;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -150,7 +148,7 @@ public class EmailAndTokenServiceImpl implements EmailAndTokenService {
       return statusCodeBundle.getTokenExpiredMessage();
     }
     catch (Exception e) {
-      return statusCodeBundle.getEmailVerificationFailureMessage();
+      return e.getMessage();
     }
   }
 

@@ -1,8 +1,5 @@
 package com.ii.testautomation.utils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class Utils {
     public static boolean isNotNullAndEmpty(String field)
     {
@@ -13,7 +10,7 @@ public class Utils {
     return true;
     }
 
-    public static boolean checkRagexBeforeAfterWords(String input) {
+    public static boolean checkRegexBeforeAfterWords(String input) {
        return true;
 
     }

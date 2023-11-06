@@ -38,7 +38,9 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
     implementation 'javax.mail:javax.mail-api:1.6.2'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     implementation 'org.springframework.security:spring-security-jwt:1.0.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jpa",
             "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final",
